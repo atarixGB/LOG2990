@@ -1,12 +1,27 @@
 .container {
-    height: auto;
-    min-height: 98vh;
-    border: 1px solid black;
-    padding: 0 5px 0 5px;
-    margin-right: 5px;
+    color: rgb(247, 247, 247);
+    background-color:rgb(46, 46, 46);
+    box-shadow: 3px 2px 5px 2px rgb(194, 194, 194);
+    height: 100vh;
+    padding: 1em;
 }
 
-.sidebar-container {
-    display: flex;
-    flex-direction: column;
+h2, h5 {
+    margin: 0;
+    text-align: center;
+}
+
+h2 {
+    padding: 5px;
+}
+
+hr {
+    width: 80%;
+}
+
+.file-menu {
+    position: fixed;
+    bottom: 0;
+    right: auto;
+    left: auto;
 }
