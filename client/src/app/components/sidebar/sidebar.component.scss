@@ -13,10 +13,25 @@ h2, h5 {
 
 h2 {
     padding: 5px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
 }
 
 hr {
     width: 80%;
+    margin-top: 25px;
+}
+
+p {
+    text-align: center;
+}
+
+.tools-container {
+    padding-bottom: 100%;
+}
+
+.config-container {
+    padding-bottom: 100%;
 }
 
 .file-menu {
@@ -24,4 +39,10 @@ hr {
     bottom: 0;
     right: auto;
     left: auto;
+}
+
+mat-icon {
+    display: inline;
+    font-size: 30px;
+    margin: 5px;
 }
