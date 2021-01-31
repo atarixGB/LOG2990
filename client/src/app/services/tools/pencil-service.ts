@@ -20,11 +20,14 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    public pencilThickness: number;
+
     private pathData: Vec2[];
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+        this.pencilThickness = 10;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -62,6 +65,7 @@ export class PencilService extends Tool {
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
+            ctx.lineWidth = this.pencilThickness;
         }
         ctx.stroke();
     }
