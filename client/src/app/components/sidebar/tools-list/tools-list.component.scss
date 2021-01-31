@@ -12,10 +12,16 @@ button:hover {
 h3 {
     text-align: center;
     letter-spacing: 3px;
+    text-shadow: 1px 1px 5px rgb(27, 27, 27);
 }
 
 hr {
     width: 80%;
     margin: 20px;
     color: rgb(56, 56, 56);
+}
+
+mat-icon {
+    font-size: 30px;
+    text-shadow: 1px 1px 5px rgb(27, 27, 27);
 }

@@ -4,7 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
@@ -16,7 +18,17 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
 
 @NgModule({
     declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, FileMenuComponent, ToolsListComponent],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule, MatIconModule, MatButtonModule, MatListModule, MatGridListModule],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        AppRoutingModule,
+        MatIconModule,
+        MatButtonModule,
+        MatListModule,
+        MatGridListModule,
+        MatTooltipModule,
+        BrowserAnimationsModule,
+    ],
     providers: [],
     bootstrap: [AppComponent],
 })
