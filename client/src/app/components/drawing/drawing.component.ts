@@ -2,8 +2,8 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LineService } from '@app/services/tools/line.service';
 import { PencilService } from '@app/services/tools/pencil-service';
-
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
@@ -22,11 +22,11 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
+    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
     private tools: Tool[];
     currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService) {
-        this.tools = [pencilService];
+    constructor(private drawingService: DrawingService, pencilService: PencilService, lineService: LineService) {
+        this.tools = [pencilService, lineService];
         this.currentTool = this.tools[0];
     }
 
