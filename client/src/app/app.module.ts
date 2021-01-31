@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { BrowserModule } from '@angular/platform-browser';
@@ -15,7 +16,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
 
 @NgModule({
     declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, FileMenuComponent, ToolsListComponent],
-    imports: [BrowserModule, HttpClientModule, AppRoutingModule, MatIconModule, MatButtonModule, MatListModule],
+    imports: [BrowserModule, HttpClientModule, AppRoutingModule, MatIconModule, MatButtonModule, MatListModule, MatGridListModule],
     providers: [],
     bootstrap: [AppComponent],
 })
