@@ -9,9 +9,11 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
+    lineWidth: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.lineWidth = 1;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -64,6 +66,7 @@ export class LineService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y); // Get first point of pathData
         ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y); // Get last point of pathData

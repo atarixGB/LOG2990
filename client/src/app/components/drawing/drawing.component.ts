@@ -27,7 +27,7 @@ export class DrawingComponent implements AfterViewInit {
     currentTool: Tool;
     constructor(private drawingService: DrawingService, pencilService: PencilService, lineService: LineService) {
         this.tools = [pencilService, lineService];
-        this.currentTool = this.tools[0];
+        this.currentTool = this.tools[1];
     }
 
     ngAfterViewInit(): void {
