@@ -1,12 +1,9 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
-
-// TODO : Avoir un fichier séparé pour les constantes ?
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
 
 @Component({
     selector: 'app-drawing',
@@ -51,6 +48,11 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+    }
+
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.currentTool.onMouseClick(event);
     }
 
     get width(): number {
