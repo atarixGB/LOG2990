@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton } from '@app/constants';
+import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -10,15 +10,29 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 export class LineService extends Tool {
     private pathData: Vec2[];
     lineWidth: number;
+    junctionType: TypeOfJunctions;
+    junctionRadius: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.lineWidth = 1;
+        this.lineWidth = DEFAULT_LINE_THICKNESS;
+        this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
+        this.junctionType = TypeOfJunctions.REGULAR;
     }
 
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
+
+        if (this.junctionType === TypeOfJunctions.CIRCLE) {
+            this.drawingService.baseCtx.lineWidth = this.lineWidth;
+            this.drawingService.baseCtx.fillStyle = 'black';
+            this.drawingService.baseCtx.beginPath();
+            this.drawingService.baseCtx.arc(this.mouseDownCoord.x, this.mouseDownCoord.y, this.junctionRadius, 0, 2 * Math.PI);
+            this.drawingService.baseCtx.stroke();
+            this.drawingService.baseCtx.fill();
+        }
+
         this.pathData.push(this.mouseDownCoord);
     }
 
