@@ -20,6 +20,11 @@ export class LineService extends Tool {
         this.pathData.push(this.mouseDownCoord);
     }
 
+    onMouseDoubleClick(event: MouseEvent): void {
+        this.clearPath();
+        this.mouseDown = false;
+    }
+
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
@@ -36,6 +41,25 @@ export class LineService extends Tool {
             this.pathData.push(mousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
+        }
+    }
+
+    onKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
+
+        switch (event.key) {
+            case 'Escape':
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.mouseDown = false;
+                break;
+            case 'Shift':
+                // TODO
+                break;
+            case 'Backspace':
+                // TODO
+                break;
+            default:
+                break;
         }
     }
 
