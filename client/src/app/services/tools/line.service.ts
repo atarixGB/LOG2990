@@ -14,14 +14,10 @@ export class LineService extends Tool {
         super(drawingService);
     }
 
-    onMouseDown(event: MouseEvent): void {
+    onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.clearPath();
-
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
-        }
+        this.mouseDownCoord = this.getPositionFromMouse(event);
+        this.pathData.push(this.mouseDownCoord);
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -45,9 +41,9 @@ export class LineService extends Tool {
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
-        ctx.stroke();
+        ctx.moveTo(path[0].x, path[0].y); // Get first point of pathData
+        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y); // Get last point of pathData
+        ctx.stroke(); // Stroke a line between these two points
     }
 
     private clearPath(): void {
