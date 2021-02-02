@@ -1,12 +1,35 @@
 .container {
-    height: auto;
-    min-height: 98vh;
-    border: 1px solid black;
-    padding: 0 5px 0 5px;
-    margin-right: 5px;
+    color: rgb(247, 247, 247);
+    background-color: rgb(46, 46, 46);
+    box-shadow: 3px 2px 5px 2px rgb(194, 194, 194);
+    height: 97vh;
+    padding: 1em;
+    position: relative;
 }
 
-.sidebar-container {
-    display: flex;
-    flex-direction: column;
+h2,
+h5 {
+    margin: 0;
+    text-align: center;
+    text-shadow: 1px 1px 5px rgb(27, 27, 27);
+}
+
+h2 {
+    padding: 5px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+}
+
+hr {
+    width: 80%;
+    margin-top: 25px;
+    color: rgb(56, 56, 56);
+}
+
+p {
+    text-align: center;
+}
+
+.config-container {
+    padding-bottom: 100%;
 }
