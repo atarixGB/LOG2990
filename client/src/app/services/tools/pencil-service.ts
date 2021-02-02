@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -39,6 +38,7 @@ export class PencilService extends Tool {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
+        console.log('mousedownvalue', this.mouseDown);
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -50,6 +50,7 @@ export class PencilService extends Tool {
 
         this.mouseDown = false;
         this.clearPath();
+        console.log('mousedownvalue', this.mouseDown);
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -61,6 +62,20 @@ export class PencilService extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
+        }
+    }
+
+    onMouseLeave(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.onMouseUp(event);
+            this.mouseLeave = true;
+        }
+    }
+
+    onMouseEnter(event: MouseEvent): void {
+        if (this.mouseLeave) {
+            this.onMouseDown(event);
+            this.mouseLeave = false;
         }
     }
 
@@ -77,8 +92,6 @@ export class PencilService extends Tool {
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         for (const point of path) {
-            if (point.x >= DEFAULT_WIDTH || point.y >= DEFAULT_HEIGHT) ctx.strokeStyle = '#FFF';
-            else ctx.strokeStyle = '#000';
             ctx.lineTo(point.x, point.y);
             ctx.lineWidth = this.pencilThickness;
         }
