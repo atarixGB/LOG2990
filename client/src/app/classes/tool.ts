@@ -24,6 +24,10 @@ export abstract class Tool {
 
     onMouseEnter(event: MouseEvent): void {}
 
+    onMouseDoubleClick(event: MouseEvent): void {}
+
+    onKeyDown(event: KeyboardEvent): void {}
+
     getPositionFromMouse(event: MouseEvent): Vec2 {
         return {
             x: event.offsetX <= DEFAULT_WIDTH ? event.offsetX : DEFAULT_WIDTH,

@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LineService } from '@app/services/tools/line.service';
 import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 @Component({
@@ -19,12 +20,12 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
+    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
     private tools: Tool[];
     currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService) {
-        this.tools = [pencilService];
-        this.currentTool = this.tools[0];
+    constructor(private drawingService: DrawingService, pencilService: PencilService, lineService: LineService) {
+        this.tools = [pencilService, lineService];
+        this.currentTool = this.tools[1];
     }
 
     ngAfterViewInit(): void {
@@ -63,6 +64,16 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.currentTool.onMouseEnter(event);
+    }
+
+    @HostListener('dblclick', ['$event'])
+    onMousonDoubleClick(event: MouseEvent): void {
+        this.currentTool.onMouseDoubleClick(event);
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent): void {
+        this.currentTool.onKeyDown(event);
     }
 
     get width(): number {
