@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { TypeOfJunctions } from '@app/constants';
 import { LineService } from '@app/services/tools/line.service';
 
 @Component({
@@ -8,7 +9,18 @@ import { LineService } from '@app/services/tools/line.service';
 })
 export class LineConfigComponent {
     lineService: LineService;
-    lineWidth: number;
+    @Input() value: TypeOfJunctions = TypeOfJunctions.REGULAR;
+
+    typeOfJunctions = [
+        {
+            name: 'Régulière',
+            enumId: TypeOfJunctions.REGULAR,
+        },
+        {
+            name: 'Point',
+            enumId: TypeOfJunctions.CIRCLE,
+        },
+    ];
 
     constructor(lineService: LineService) {
         this.lineService = lineService;
