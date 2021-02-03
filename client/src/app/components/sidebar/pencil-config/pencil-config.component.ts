@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { PencilService } from '@app/services/tools/pencil/pencil-service';
 
 @Component({
     selector: 'app-pencil-config',
