@@ -35,7 +35,7 @@ export class EllipseService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            //  this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.drawEllipse(this.drawingService.previewCtx, this.pathData);
         }
         this.mouseDown = false;
         this.clearPath();
@@ -55,10 +55,8 @@ export class EllipseService extends Tool {
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let upperRight: [number, number];
         upperRight = [path[0].x, path[0].y];
-        let width: number;
-        let height: number;
-        width = path[path.length - 1].x - upperRight[0];
-        height = path[path.length - 1].y - upperRight[1];
+        let width = path[path.length - 1].x - upperRight[0];
+        let height = path[path.length - 1].y - upperRight[1];
 
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], width, height);
@@ -66,7 +64,31 @@ export class EllipseService extends Tool {
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         this.drawRectangle(this.drawingService.previewCtx, this.pathData);
-        //ctx.ellipse(path[0].x, path[0].y, 100, 600, 0, 2 * Math.PI, 0);
+        let xRadius = (path[path.length - 1].x - path[0].x) / 2;
+        let yRadius = (path[path.length - 1].y - path[0].y) / 2;
+        let origin: [number, number];
+        if (xRadius < 0 && yRadius < 0) {
+            //Go right-up
+            yRadius = Math.abs(yRadius);
+            xRadius = Math.abs(xRadius);
+            origin = [path[0].x - xRadius, path[0].y - yRadius];
+        } else if (xRadius < 0) {
+            //Go right-down
+            console.log('2e');
+            xRadius = Math.abs(xRadius);
+            origin = [path[0].x - xRadius, path[0].y + yRadius];
+        } else if (yRadius < 0) {
+            //Go left-up
+            yRadius = Math.abs(yRadius);
+            origin = [path[0].x + xRadius, path[0].y - yRadius];
+        } else {
+            //Go left-down
+            origin = [path[0].x + xRadius, path[0].y + yRadius];
+        }
+        ctx.beginPath();
+        ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
+        ctx.stroke();
+        //test idea : radius is negative ? Look at the documentation
     }
 
     private clearPath(): void {
