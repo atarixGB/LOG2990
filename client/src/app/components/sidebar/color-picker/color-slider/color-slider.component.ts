@@ -6,15 +6,15 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Outpu
     styleUrls: ['./color-slider.component.scss'],
 })
 export class ColorSliderComponent implements AfterViewInit {
-    @ViewChild('canvas', { static: false })
+    @ViewChild('canvas', { static: false }) 
     canvas: ElementRef;
-    ctx: CanvasRenderingContext2D;
     constructor() {}
 
     @Output()
     color: EventEmitter<string> = new EventEmitter();
 
-    
+    //object context that will hold the value obtained by the method getContext in the canvas element
+    context: CanvasRenderingContext2D;
     //both the properties are used in the implemetation of the mousedown
     private mousedown: boolean = false;
     private selectedHeight: number;
@@ -27,17 +27,17 @@ export class ColorSliderComponent implements AfterViewInit {
     }
 
     draw() {
-        if (!this.ctx) {
-            this.ctx = this.canvas.nativeElement.getContext('2d'); //getting the context and putting it in the object we created
+        if (!this.context) {
+            this.context = this.canvas.nativeElement.getContext('2d'); //getting the context and putting it in the object we created
         }
 
         //get the height and width for the canvas element and add the clear whole canvas option
         const width = this.canvas.nativeElement.width;
         const height = this.canvas.nativeElement.height;
-        this.ctx.clearRect(0, 0, width, height);
+        this.context.clearRect(0, 0, width, height);
 
         //To create this rainbow-like effect for our color-slider, we are going to use a gradient.
-        const gradient = this.ctx.createLinearGradient(0, 0, 0, height);
+        const gradient = this.context.createLinearGradient(0, 0, 0, height);
 
         //colorstops, to devide the gradient into 6 different sub-gradients.
         gradient.addColorStop(0, 'rgba(255, 0, 0, 1)');
@@ -49,22 +49,22 @@ export class ColorSliderComponent implements AfterViewInit {
         gradient.addColorStop(1, 'rgba(255, 0, 0, 1)');
 
         //using the gradiant to fill the whole canvas with it
-        this.ctx.beginPath();
-        this.ctx.rect(0, 0, width, height);
-        this.ctx.fillStyle = gradient;
-        this.ctx.fill();
-        this.ctx.closePath();
+        this.context.beginPath();
+        this.context.rect(0, 0, width, height);
+        this.context.fillStyle = gradient;
+        this.context.fill();
+        this.context.closePath();
 
         //indicate the current color with a nob (which will be a simple rectangle in our case).
         //what we do here is drawing a transparent rectangle with a white border of 5px at the selectedHeight
         //the draw method is called every time selectedHeight changes, the nob always indicates the currently selected value.
         if (this.selectedHeight) {
-            this.ctx.beginPath();
-            this.ctx.strokeStyle = 'white';
-            this.ctx.lineWidth = 5;
-            this.ctx.rect(0, this.selectedHeight - 5, width, 10);
-            this.ctx.stroke();
-            this.ctx.closePath();
+            this.context.beginPath();
+            this.context.strokeStyle = 'white';
+            this.context.lineWidth = 5;
+            this.context.rect(0, this.selectedHeight - 5, width, 10);
+            this.context.stroke();
+            this.context.closePath();
         }
     } //end of the method draw()
 
@@ -114,7 +114,7 @@ export class ColorSliderComponent implements AfterViewInit {
     //Implementation of getColorAtPosition
     //This method is using the canvas context to read out the color at the given position.
     getColorAtPosition(x: number, y: number) {
-        const imageData = this.ctx.getImageData(x, y, 1, 1).data;
+        const imageData = this.context.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
     }
 }

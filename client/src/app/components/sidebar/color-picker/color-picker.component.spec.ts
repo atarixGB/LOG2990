@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OpacityConfigComponent } from './opacity-config.component';
+import { ColorPickerComponent } from './color-picker.component';
 
-describe('OpacityConfigComponent', () => {
-  let component: OpacityConfigComponent;
-  let fixture: ComponentFixture<OpacityConfigComponent>;
+describe('ColorPickerComponent', () => {
+  let component: ColorPickerComponent;
+  let fixture: ComponentFixture<ColorPickerComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ OpacityConfigComponent ]
+      declarations: [ ColorPickerComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(OpacityConfigComponent);
+    fixture = TestBed.createComponent(ColorPickerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
