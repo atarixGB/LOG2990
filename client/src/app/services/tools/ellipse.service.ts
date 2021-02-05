@@ -63,7 +63,6 @@ export class EllipseService extends Tool {
             origin = [path[0].x - xRadius, path[0].y - yRadius];
         } else if (xRadius < 0) {
             //Go right-down
-            console.log('2e');
             xRadius = Math.abs(xRadius);
             origin = [path[0].x - xRadius, path[0].y + yRadius];
         } else if (yRadius < 0) {
@@ -81,6 +80,7 @@ export class EllipseService extends Tool {
     }
 
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        //similar to how Paint works
         let xRadius = (path[path.length - 1].x - path[0].x) / 2;
         let yRadius = (path[path.length - 1].y - path[0].y) / 2;
         let origin: [number, number];
@@ -92,7 +92,6 @@ export class EllipseService extends Tool {
             origin = [path[0].x - xRadius, path[0].y - yRadius];
         } else if (xRadius < 0) {
             //Go right-down
-            console.log('2e');
             xRadius = Math.abs(xRadius);
             origin = [path[0].x - xRadius, path[0].y + yRadius];
         } else if (yRadius < 0) {
@@ -112,11 +111,19 @@ export class EllipseService extends Tool {
         this.pathData = [];
     }
 
-    handleKeyPress(event: KeyboardEvent): void {
+    handleKeyDown(event: KeyboardEvent): void {
         if (event.key == 'Shift') {
             this.isEllipse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawCircle(this.drawingService.previewCtx, this.pathData);
+        }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+        if (event.key == 'Shift') {
+            this.isEllipse = true;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawEllipse(this.drawingService.previewCtx, this.pathData);
         }
     }
 }

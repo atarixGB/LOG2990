@@ -58,9 +58,15 @@ export class DrawingComponent implements AfterViewInit {
         if (event.key == '2') {
             this.currentTool = this.tools[1];
         }
-        if (this.currentTool == this.tools[1] && event.key == 'Shift') {
-            this.currentTool.handleKeyPress(event);
-            console.log('shift is pressed');
+        if (this.currentTool == this.tools[1]) {
+            this.currentTool.handleKeyDown(event);
+        }
+    }
+
+    @HostListener('keyup', ['$event'])
+    handleKeyUp(event: KeyboardEvent) {
+        if (this.currentTool == this.tools[1]) {
+            this.currentTool.handleKeyUp(event);
         }
     }
 
