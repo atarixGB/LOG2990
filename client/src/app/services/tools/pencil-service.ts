@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -20,14 +21,14 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    public pencilThickness: number;
+    pencilThickness: number;
 
     private pathData: Vec2[];
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
-        this.pencilThickness = 10;
+        this.pencilThickness = DEFAULT_LINE_THICKNESS;
     }
 
     onMouseDown(event: MouseEvent): void {

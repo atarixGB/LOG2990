@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PencilService } from '@app/services/tools/pencil-service';
 
 @Component({
@@ -6,12 +6,10 @@ import { PencilService } from '@app/services/tools/pencil-service';
     templateUrl: './pencil-config.component.html',
     styleUrls: ['./pencil-config.component.scss'],
 })
-export class PencilConfigComponent implements OnInit {
+export class PencilConfigComponent {
     constructor(public pencilService: PencilService) {}
 
-    ngOnInit(): void {}
-
-    formatLabel(value: number) {
+    formatLabel(value: number): string {
         return value + 'px';
     }
 }
