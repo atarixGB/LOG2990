@@ -46,9 +46,13 @@ export class EllipseService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            if (this.isEllipse) this.drawEllipse(this.drawingService.previewCtx, this.pathData);
-            else this.drawCircle(this.drawingService.previewCtx, this.pathData);
-            //this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+            if (this.isEllipse) {
+                this.drawEllipse(this.drawingService.previewCtx, this.pathData);
+                // this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+            } else {
+                this.drawCircle(this.drawingService.previewCtx, this.pathData);
+                // this.drawSquare(this.drawingService.previewCtx, this.pathData);
+            }
         }
     }
 
@@ -79,28 +83,68 @@ export class EllipseService extends Tool {
         //test idea : radius is negative ? Look at the documentation
     }
 
+    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        let upperRight: [number, number];
+        upperRight = [path[0].x, path[0].y];
+        let width = path[path.length - 1].x - upperRight[0];
+        let height = path[path.length - 1].y - upperRight[1];
+
+        ctx.beginPath();
+        ctx.strokeRect(upperRight[0], upperRight[1], width, height);
+    }
+
+    private drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        let width: number;
+        let origin: [number, number];
+
+        if (path[path.length - 1].x > path[path.length - 1].y) {
+            width = path[path.length - 1].x - path[0].x;
+        } else {
+            width = path[path.length - 1].y - path[0].y;
+        }
+        if (width < 0) width = Math.abs(width);
+
+        if (path[path.length - 1].x - path[0].x < 0 && path[path.length - 1].y - path[0].y >= 0) {
+            //go down-left
+            origin = [path[0].x - width, path[0].y];
+        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x >= 0) {
+            //go up-right
+            origin = [path[0].x, path[0].y - width];
+        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x < 0) {
+            // up-left
+            origin = [path[0].x - width, path[0].y - width];
+        } else {
+            //go down-right
+            origin = [path[0].x, path[0].y];
+        }
+        ctx.beginPath();
+        ctx.strokeRect(origin[0], origin[1], width, width);
+    }
+
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         //similar to how Paint works
-        let xRadius = (path[path.length - 1].x - path[0].x) / 2;
-        let yRadius = (path[path.length - 1].y - path[0].y) / 2;
+        let radius: number;
         let origin: [number, number];
-        let radius = xRadius > yRadius ? xRadius : yRadius;
-        if (xRadius < 0 && yRadius < 0) {
-            //Go right-up
-            yRadius = Math.abs(yRadius);
-            xRadius = Math.abs(xRadius);
-            origin = [path[0].x - xRadius, path[0].y - yRadius];
-        } else if (xRadius < 0) {
-            //Go right-down
-            xRadius = Math.abs(xRadius);
-            origin = [path[0].x - xRadius, path[0].y + yRadius];
-        } else if (yRadius < 0) {
-            //Go left-up
-            yRadius = Math.abs(yRadius);
-            origin = [path[0].x + xRadius, path[0].y - yRadius];
+        if (path[path.length - 1].x > path[path.length - 1].y) {
+            radius = (path[path.length - 1].x - path[0].x) / 2;
         } else {
-            //Go left-down
-            origin = [path[0].x + xRadius, path[0].y + yRadius];
+            radius = (path[path.length - 1].y - path[0].y) / 2;
+        }
+
+        if (radius < 0) radius = Math.abs(radius);
+
+        if (path[path.length - 1].x - path[0].x < 0 && path[path.length - 1].y - path[0].y >= 0) {
+            //go down-left
+            origin = [path[0].x - radius, path[0].y + radius];
+        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x >= 0) {
+            //go up-right
+            origin = [path[0].x + radius, path[0].y - radius];
+        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x < 0) {
+            // up-left
+            origin = [path[0].x - radius, path[0].y - radius];
+        } else {
+            //go down-right
+            origin = [path[0].x + radius, path[0].y + radius];
         }
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
