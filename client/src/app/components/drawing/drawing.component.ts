@@ -3,8 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineService } from '@app/services/tools/line/line.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-drawing',
@@ -21,11 +20,9 @@ export class DrawingComponent implements AfterViewInit {
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
     // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
-    private tools: Tool[];
     currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService, lineService: LineService) {
-        this.tools = [pencilService, lineService];
-        this.currentTool = this.tools[1];
+    constructor(private drawingService: DrawingService, toolManagerService: ToolManagerService) {
+        this.currentTool = toolManagerService.getCurrentTool();
     }
 
     ngAfterViewInit(): void {
