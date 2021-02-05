@@ -26,8 +26,7 @@ export class DrawingComponent implements AfterViewInit {
     private tools: Tool[];
     currentTool: Tool;
     constructor(private drawingService: DrawingService, pencilService: PencilService, ellipseService: EllipseService) {
-        //this.tools = [pencilService];
-        this.tools = [ellipseService];
+        this.tools = [pencilService, ellipseService];
         this.currentTool = this.tools[0];
     }
 
@@ -52,6 +51,13 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+    }
+
+    @HostListener('window:keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent) {
+        if (event.key == '2') {
+            this.currentTool = this.tools[1];
+        }
     }
 
     get width(): number {

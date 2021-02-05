@@ -32,11 +32,15 @@ export class EllipseService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
+        //codeMort?
+        /* if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-            this.drawEllipse(this.drawingService.previewCtx, this.pathData);
-        }
+            //this.drawEllipse(this.drawingService.baseCtx, this.pathData);
+            console.log('inside');
+        } */
+        console.log('outside');
+        this.drawEllipse(this.drawingService.baseCtx, this.pathData);
         this.mouseDown = false;
         this.clearPath();
     }
@@ -49,6 +53,7 @@ export class EllipseService extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.previewCtx, this.pathData);
+            this.drawRectangle(this.drawingService.previewCtx, this.pathData);
         }
     }
 
@@ -63,7 +68,6 @@ export class EllipseService extends Tool {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        this.drawRectangle(this.drawingService.previewCtx, this.pathData);
         let xRadius = (path[path.length - 1].x - path[0].x) / 2;
         let yRadius = (path[path.length - 1].y - path[0].y) / 2;
         let origin: [number, number];
@@ -93,5 +97,18 @@ export class EllipseService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        switch (event.key) {
+            case '2':
+                console.log('hola');
+                break;
+            case 'ArrowUp':
+                // Faire quelque chose pour la touche "up arrow" pressée.
+                break;
+            default:
+                return; // Quitter lorsque cela ne gère pas l'événement touche.
+        }
     }
 }
