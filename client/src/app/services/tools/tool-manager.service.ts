@@ -5,33 +5,41 @@ import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class ToolManagerService {
-  private currentTool: Tool;
-  toolList: ToolList;
+    private currentTool: Tool;
+    toolList: ToolList;
 
-  constructor(private pencilService: PencilService, private lineService: LineService) {
-    this.currentTool = this.pencilService;
-  }
-
-  getCurrentTool(): Tool {
-    return this.currentTool;
-  }
-
-  switchTool(tool: ToolList): void {
-    switch (tool) {
-      case ToolList.Pencil: {
+    constructor(private pencilService: PencilService, private lineService: LineService) {
         this.currentTool = this.pencilService;
-        break;
-      }
-      case ToolList.Line: {
-        this.currentTool = this.lineService;
-        break;
-      }
     }
 
-  }
+    getCurrentTool(): Tool {
+        return this.currentTool;
+    }
 
+    switchTool(tool: ToolList): void {
+        switch (tool) {
+            case ToolList.Pencil:
+                this.currentTool = this.pencilService;
+                break;
 
+            case ToolList.Line:
+                this.currentTool = this.lineService;
+                break;
+
+            case ToolList.Rectangle:
+                //this.currentTool = this.rectangleService;
+                break;
+
+            case ToolList.Ellipse:
+                //this.currentTool = this.ellipseService;
+                break;
+
+            case ToolList.Eraser:
+                //this.currentTool = this.eraserService;
+                break;
+        }
+    }
 }

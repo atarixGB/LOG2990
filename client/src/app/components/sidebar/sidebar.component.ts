@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { ToolList } from '@app/constants';
-import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -8,9 +6,5 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    constructor(private toolManagerService: ToolManagerService) { }
-
-    onTool(selectedTool: ToolList): void {
-        this.toolManagerService.switchTool(selectedTool);
-    }
+    constructor() {}
 }
