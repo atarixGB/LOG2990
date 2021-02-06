@@ -2,12 +2,9 @@ import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from '@app/services/tools/pencil-service';
-
-// TODO : Avoir un fichier séparé pour les constantes ?
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
 
 @Component({
     selector: 'app-drawing',
@@ -57,6 +54,21 @@ export class DrawingComponent implements AfterViewInit {
     dragMoved(event: CdkDragMove): void {
         this.canvasSize.x = event.pointerPosition.x;
         this.canvasSize.y = event.pointerPosition.y;
+    }
+
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.currentTool.onMouseClick(event);
+    }
+
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave(event: MouseEvent): void {
+        this.currentTool.onMouseLeave(event);
+    }
+
+    @HostListener('mouseenter', ['$event'])
+    onMouseEnter(event: MouseEvent): void {
+        this.currentTool.onMouseEnter(event);
     }
 
     get width(): number {
