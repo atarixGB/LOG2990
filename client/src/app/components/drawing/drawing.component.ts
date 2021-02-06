@@ -1,3 +1,4 @@
+import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -51,6 +52,11 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.currentTool.onMouseUp(event);
+    }
+
+    dragMoved(event: CdkDragMove): void {
+        this.canvasSize.x = event.pointerPosition.x;
+        this.canvasSize.y = event.pointerPosition.y;
     }
 
     get width(): number {
