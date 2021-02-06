@@ -1,3 +1,6 @@
+// Code used for this section is from an External Source
+// Lukas Marx (2018) Creating a Color Picker Component with Angular
+// Available at : https://github.com/LukasMarx/angular-color-picker
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
 
 const ONE_SIXTH = 0.17;

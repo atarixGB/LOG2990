@@ -1,1 +1,10 @@
-<p>color-opacity works!</p>
+<label>
+    Opacité:
+    <input type="text" id="opacityValue" [formControl]="opacityForm" />
+</label>
+
+<p>Valeur: {{ opacityForm.value }}</p>
+
+<p>
+    <button (click)="updateOpacity()">Changer</button>
+</p>
