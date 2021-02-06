@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
     styleUrls: ['./color-picker.component.scss'],
 })
 export class ColorPickerComponent {
-    //Hue is the result of the color-slider, whereas color is the result of the color-palette.
-    public hue: string;
-    public color: string;
+    // Hue is the result of the color-slider, whereas color is the result of the color-palette.
+    hue: string;
+    color: string;
 }

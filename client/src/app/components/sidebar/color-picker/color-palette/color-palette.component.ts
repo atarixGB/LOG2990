@@ -8,7 +8,6 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input
 export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     @Input()
     hue: string;
-    opacity: string;
 
     @Output()
     color: EventEmitter<string> = new EventEmitter(true);
@@ -20,14 +19,14 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
 
     private mousedown: boolean = false;
 
-    public primarySelectedPosition: { x: number; y: number };
-    public secondarySelectedPosition: { x: number; y: number };
+    primarySelectedPosition: { x: number; y: number };
+    secondarySelectedPosition: { x: number; y: number };
 
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         this.draw();
     }
 
-    draw() {
+    draw(): void {
         if (!this.context) {
             this.context = this.canvas.nativeElement.getContext('2d');
         }
@@ -70,23 +69,23 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    ngOnChanges(changes: SimpleChanges) {
-        if (changes['hue']) {
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.hue) {
             this.draw();
             const pos = this.primarySelectedPosition;
             if (pos) {
                 this.color.emit(this.getColorAtPosition(pos.x, pos.y));
             }
         }
-        if (changes['hue']) {
+        if (changes.hue) {
             this.draw();
             const pos = this.secondarySelectedPosition;
             if (pos) {
                 this.color.emit(this.getColorAtPosition(pos.x, pos.y));
             }
         }
-        //change the transparency with the opacity given and display the color
-        if (changes['opacity']) {
+        // change the transparency with the opacity given and display the color
+        if (changes.opacity) {
             this.context.globalAlpha = +'opacity';
             this.draw();
             const pos = this.primarySelectedPosition;
@@ -97,18 +96,18 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     }
 
     @HostListener('window:mouseup', ['$event'])
-    onMouseUp(evt: MouseEvent) {
+    onMouseUp(evt: MouseEvent): void {
         this.mousedown = false;
     }
 
-    onMouseDown(evt: MouseEvent) {
+    onMouseDown(evt: MouseEvent): void {
         this.mousedown = true;
         this.primarySelectedPosition = { x: evt.offsetX, y: evt.offsetY };
         this.draw();
         this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
     }
 
-    onMouseMove(evt: MouseEvent) {
+    onMouseMove(evt: MouseEvent): void {
         if (this.mousedown) {
             this.primarySelectedPosition = { x: evt.offsetX, y: evt.offsetY };
             this.draw();
@@ -116,12 +115,12 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
         }
     }
 
-    emitColor(x: number, y: number) {
+    emitColor(x: number, y: number): void {
         const rgbaColor = this.getColorAtPosition(x, y);
         this.color.emit(rgbaColor);
     }
 
-    getColorAtPosition(x: number, y: number) {
+    getColorAtPosition(x: number, y: number): string {
         const imageData = this.context.getImageData(x, y, 1, 1).data;
         return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
     }
