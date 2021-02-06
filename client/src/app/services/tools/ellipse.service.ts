@@ -33,9 +33,10 @@ export class EllipseService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
+        this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isEllipse) this.drawEllipse(this.drawingService.baseCtx, this.pathData);
         else this.drawCircle(this.drawingService.baseCtx, this.pathData);
-        this.mouseDown = false;
         this.clearPath();
     }
 
@@ -48,10 +49,10 @@ export class EllipseService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             if (this.isEllipse) {
                 this.drawEllipse(this.drawingService.previewCtx, this.pathData);
-                // this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+                this.drawRectangle(this.drawingService.previewCtx, this.pathData);
             } else {
                 this.drawCircle(this.drawingService.previewCtx, this.pathData);
-                // this.drawSquare(this.drawingService.previewCtx, this.pathData);
+                this.drawSquare(this.drawingService.previewCtx, this.pathData);
             }
         }
     }
@@ -160,6 +161,7 @@ export class EllipseService extends Tool {
             this.isEllipse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawCircle(this.drawingService.previewCtx, this.pathData);
+            this.drawSquare(this.drawingService.previewCtx, this.pathData);
         }
     }
 
@@ -168,6 +170,7 @@ export class EllipseService extends Tool {
             this.isEllipse = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.previewCtx, this.pathData);
+            this.drawRectangle(this.drawingService.previewCtx, this.pathData);
         }
     }
 }
