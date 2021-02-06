@@ -21,9 +21,11 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
 import { ColorPickerComponent } from './components/sidebar/color-picker/color-picker.component';
 import { ColorPaletteComponent } from './components/sidebar/color-picker/color-palette/color-palette.component';
 import { ColorSliderComponent } from './components/sidebar/color-picker/color-slider/color-slider.component';
+import { ColorOpacityComponent } from './components/sidebar/color-picker/color-opacity/color-opacity.component';
+import { ColorDisplayerComponent } from './components/sidebar/color-picker/color-displayer/color-displayer.component';
 
 @NgModule({
-    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, FileMenuComponent, ToolsListComponent, ColorPickerComponent, ColorPaletteComponent, ColorSliderComponent],
+    declarations: [AppComponent, EditorComponent, SidebarComponent, DrawingComponent, MainPageComponent, FileMenuComponent, ToolsListComponent, ColorPickerComponent, ColorPaletteComponent, ColorSliderComponent, ColorOpacityComponent, ColorDisplayerComponent],
     imports: [
         BrowserModule,
         HttpClientModule,

@@ -1,12 +1,12 @@
 <div class="color-wrapper">
     <app-color-palette [hue]="hue" (color)="color = $event"></app-color-palette>
     <app-color-slider (color)="hue = $event" style="margin-left: 16px"></app-color-slider>
+    <app-color-opacity (opacity)="($event)"></app-color-opacity>
 </div>
 
 <div class="order-color">
     couleur principale
     <div class="input-wrapper">
-        <span class="text">{{ color }}</span>
         <div class="color-div" [ngStyle]="{ 'background-color': color || 'white' }"></div>
         <form>
             <input type="text" placeholder="Opacity" />
@@ -15,9 +15,8 @@
 </div>
 
 <div class="order-color">
-  couleur secondaire
+    couleur secondaire
     <div class="input-wrapper">
-        <span class="text">{{ color }}</span>
         <div class="color-div2" [ngStyle]="{ 'background-color': color || 'white' }"></div>
         <form>
             <input type="text" placeholder="Opacity" />

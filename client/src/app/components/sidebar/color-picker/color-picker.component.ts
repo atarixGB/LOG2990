@@ -9,4 +9,5 @@ export class ColorPickerComponent {
     // Hue is the result of the color-slider, whereas color is the result of the color-palette.
     hue: string;
     color: string;
+    opacity: number;
 }
