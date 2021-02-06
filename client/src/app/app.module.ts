@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
@@ -16,6 +17,7 @@ import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
+import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
@@ -31,6 +33,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         ToolsListComponent,
         PencilConfigComponent,
         EraserConfigComponent,
+        LineConfigComponent,
     ],
     imports: [
         BrowserModule,
@@ -44,6 +47,8 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         BrowserAnimationsModule,
         MatSliderModule,
         FormsModule,
+        MatSelectModule,
+        BrowserAnimationsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
