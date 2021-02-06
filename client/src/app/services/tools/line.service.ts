@@ -5,15 +5,11 @@ import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-const WHITE: string = '#ffffff';
-
 @Injectable({
     providedIn: 'root',
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
-    private firstClickedCoord: Vec2;
-    private lastCoordinate: Vec2;
     private coords: Vec2[];
     lineWidth: number;
     junctionType: TypeOfJunctions;
@@ -31,10 +27,8 @@ export class LineService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
-        if (this.firstClickedCoord === undefined) {
-            this.firstClickedCoord = this.mouseDownCoord;
-            console.log('first click:' + this.firstClickedCoord.x, this.firstClickedCoord.y);
-        }
+        this.coords.push(this.mouseDownCoord);
+        console.log('click :', this.coords[this.coords.length - 1]);
 
         if (this.junctionType === TypeOfJunctions.CIRCLE) {
             this.drawingService.baseCtx.lineWidth = this.lineWidth;
@@ -56,10 +50,6 @@ export class LineService extends Tool {
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
-            this.lastCoordinate = mousePosition;
-            this.coords.push(this.lastCoordinate);
-            console.log('coords: ' + this.coords[this.coords.length - 1].x + this.coords[this.coords.length - 1].y);
-            console.log('last coordinates: ' + this.lastCoordinate.x, this.lastCoordinate.y);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
@@ -83,12 +73,15 @@ export class LineService extends Tool {
             case 'Escape':
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.mouseDown = false;
+                console.log(event.key);
                 break;
             case 'Shift':
                 // TODO
                 break;
             case 'Backspace':
-                this.removeLastSegment(this.drawingService.baseCtx, this.coords);
+                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+                this.removeLastSegment(this.drawingService.baseCtx);
+                console.log(event.key);
                 break;
             default:
                 break;
@@ -103,19 +96,25 @@ export class LineService extends Tool {
         ctx.stroke(); // Stroke a line between these two points
     }
 
-    private removeLastSegment(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.lineWidth = this.lineWidth + 10;
-        ctx.strokeStyle = WHITE;
-        ctx.beginPath();
-        ctx.moveTo(path[path.length - 2].x, path[path.length - 2].y); // Get first point of pathData
-        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y); // Get last point of pathData
-        ctx.stroke(); // Stroke a line between these two points
-    }
+    private removeLastSegment(ctx: CanvasRenderingContext2D): void {
+        // redraw all segments since beginning except the last one
+        ctx.lineWidth = this.lineWidth;
 
-    // private isCloseToXAxis(coords: Vec2): boolean {
-    //   let angle = Math.tan(coords.y/coords.x);
-    //   return angle >= 0 && angle < 45;
-    // }
+        for (let i = 0; i < this.coords.length - 2; i++) {
+            console.log('--- New segment---');
+            ctx.beginPath();
+
+            console.log('move to: ', this.coords[i].x, this.coords[i].y);
+            ctx.moveTo(this.coords[i].x, this.coords[i].y);
+
+            console.log('line to: ', this.coords[i + 1].x, this.coords[i + 1].y);
+            ctx.lineTo(this.coords[i + 1].x, this.coords[i + 1].y);
+
+            ctx.stroke();
+        }
+
+        this.clearPath();
+    }
 
     private clearPath(): void {
         this.pathData = [];
