@@ -8,6 +8,9 @@ const ONE_THIRD = 0.34;
 const ONE_HALF = 0.51;
 const TWO_THIRD = 0.68;
 const FIVE_SIXTH = 0.85;
+const Y_DECREMENT = 5;
+const RECT_HEIGHT = 10;
+const LINE_WIDTH = 5;
 
 @Component({
     selector: 'app-color-slider',
@@ -69,8 +72,8 @@ export class ColorSliderComponent implements AfterViewInit {
         if (this.selectedHeight) {
             this.context.beginPath();
             this.context.strokeStyle = 'white';
-            this.context.lineWidth = 5;
-            this.context.rect(0, this.selectedHeight - 5, width, 10);
+            this.context.lineWidth = LINE_WIDTH;
+            this.context.rect(0, this.selectedHeight - Y_DECREMENT, width, RECT_HEIGHT);
             this.context.stroke();
             this.context.closePath();
         }

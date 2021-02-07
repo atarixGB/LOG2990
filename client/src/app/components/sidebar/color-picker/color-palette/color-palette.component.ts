@@ -1,8 +1,11 @@
 // Code used for this section is from an External Source
-// Lukas Marx (2018) Creating a Color Picker Component with Angular 
+// Lukas Marx (2018) Creating a Color Picker Component with Angular
 // Available at : https://github.com/LukasMarx/angular-color-picker
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 
+const RADIUS = 10;
+const START_ANGLE = 0;
+const LINE_WIDTH = 5;
 @Component({
     selector: 'app-color-palette',
     templateUrl: './color-palette.component.html',
@@ -57,8 +60,8 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.context.strokeStyle = 'white';
             this.context.fillStyle = 'white';
             this.context.beginPath();
-            this.context.arc(this.primarySelectedPosition.x, this.primarySelectedPosition.y, 10, 0, 2 * Math.PI);
-            this.context.lineWidth = 5;
+            this.context.arc(this.primarySelectedPosition.x, this.primarySelectedPosition.y, RADIUS, START_ANGLE, 2 * Math.PI);
+            this.context.lineWidth = LINE_WIDTH;
             this.context.stroke();
         }
 
@@ -66,8 +69,8 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
             this.context.strokeStyle = 'white';
             this.context.fillStyle = 'white';
             this.context.beginPath();
-            this.context.arc(this.secondarySelectedPosition.x, this.secondarySelectedPosition.y, 10, 0, 2 * Math.PI);
-            this.context.lineWidth = 5;
+            this.context.arc(this.secondarySelectedPosition.x, this.secondarySelectedPosition.y, RADIUS, START_ANGLE, 2 * Math.PI);
+            this.context.lineWidth = LINE_WIDTH;
             this.context.stroke();
         }
     }

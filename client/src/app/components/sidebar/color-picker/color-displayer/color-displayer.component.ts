@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
-import { ColorOrder } from './../../../../interfaces-enums/color-order';
-import { ColorManagerService } from './../../../../services/color-manager/color-manager.service';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 @Component({
     selector: 'app-color-displayer',
@@ -11,7 +11,6 @@ import { ColorManagerService } from './../../../../services/color-manager/color-
 export class ColorDisplayerComponent {
     primaryColor: RGBA;
     secondaryColor: RGBA;
-    ColorOrder: ColorOrder;
 
     constructor(private colorManager: ColorManagerService) {
         this.primaryColor = this.colorManager.selectedColors[ColorOrder.primaryColor];

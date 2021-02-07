@@ -1,8 +1,8 @@
 // this service is responsible of the storage of our 10 selected colors
 // it will also handle the conversion from hex code to RGB
 import { Injectable } from '@angular/core';
-import { RGBA } from '../../interfaces-enums/rgba';
-import { ColorOrder } from './../../interfaces-enums/color-order';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { RGBA } from 'src/app/interfaces-enums/rgba';
 
 const NUMBER_OF_HISTORY_COLORS = 10; // we can store the last 10 chosen colors
 const COLOR_CHOICE = 2; // we have 2 color choices primary and secondary color
