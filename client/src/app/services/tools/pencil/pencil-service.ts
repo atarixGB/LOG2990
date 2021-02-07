@@ -12,7 +12,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
-    public pencilThickness: number;
+    pencilThickness: number;
 
     private pathData: Vec2[];
 
