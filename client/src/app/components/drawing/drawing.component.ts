@@ -1,10 +1,9 @@
 import { CdkDragMove } from '@angular/cdk/drag-drop';
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Tool } from '@app/classes/tool';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-drawing',
@@ -16,17 +15,19 @@ export class DrawingComponent implements AfterViewInit {
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
+    @Input()
+    set mousePositionChanged(position: Vec2) {
+        this.mousePosition = position;
+        this.toolManagerService.getCurrentTool().mouseCoord = position;
+    }
+    private mousePosition: Vec2;
+
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
-    private tools: Tool[];
-    currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService) {
-        this.tools = [pencilService];
-        this.currentTool = this.tools[0];
-    }
+    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
+    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -36,19 +37,23 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.currentTool.onMouseMove(event);
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().onMouseMove(event);
     }
 
-    @HostListener('mousedown', ['$event'])
+    @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        this.currentTool.onMouseDown(event);
+        console.log('dans drawing: ' + this.mousePosition.x);
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event);
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().onMouseUp(event);
     }
 
     dragMoved(event: CdkDragMove): void {
@@ -58,17 +63,31 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        this.currentTool.onMouseClick(event);
+        this.toolManagerService.getCurrentTool().onMouseClick(event);
     }
 
-    @HostListener('mouseleave', ['$event'])
-    onMouseLeave(event: MouseEvent): void {
-        this.currentTool.onMouseLeave(event);
+    @HostListener('dblclick', ['$event'])
+    onMousonDoubleClick(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
     }
 
-    @HostListener('mouseenter', ['$event'])
-    onMouseEnter(event: MouseEvent): void {
-        this.currentTool.onMouseEnter(event);
+    // @HostListener('keydown', ['$event'])
+    // onKeyDown(event: KeyboardEvent): void {
+    //     this.toolManagerService.getCurrentTool().onKeyDown(event);
+    // }
+
+    @HostListener('document:keyup', ['$event'])
+    handleKeyUp(event: KeyboardEvent): void {
+        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
+            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+            this.toolManagerService.getCurrentTool().handleKeyUp(event);
+        }
+    }
+
+    @HostListener('keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent): void {
+        this.toolManagerService.mousePosition = this.mousePosition;
+        this.toolManagerService.handleHotKeysShortcut(event);
     }
 
     get width(): number {
