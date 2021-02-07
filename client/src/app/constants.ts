@@ -1,4 +1,3 @@
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -14,3 +13,5 @@ export enum TypeOfJunctions {
 
 export const DEFAULT_LINE_THICKNESS = 1;
 export const DEFAULT_JUNCTION_RADIUS = 2;
+export const DEFAULT_WIDTH = 1000;
+export const DEFAULT_HEIGHT = 800;

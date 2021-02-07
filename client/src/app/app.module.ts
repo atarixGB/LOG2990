@@ -17,6 +17,7 @@ import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
+import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 
@@ -30,6 +31,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         FileMenuComponent,
         ToolsListComponent,
         LineConfigComponent,
+        PencilConfigComponent,
     ],
     imports: [
         BrowserModule,

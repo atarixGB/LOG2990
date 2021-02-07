@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton } from '@app/constants';
+import { DEFAULT_LINE_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
@@ -12,11 +12,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PencilService extends Tool {
+    pencilThickness: number;
+
     private pathData: Vec2[];
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.clearPath();
+        this.pencilThickness = DEFAULT_LINE_THICKNESS;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -27,6 +30,7 @@ export class PencilService extends Tool {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
+        console.log('mousedownvalue', this.mouseDown);
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -35,12 +39,15 @@ export class PencilService extends Tool {
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
+
         this.mouseDown = false;
         this.clearPath();
+        console.log('mousedownvalue', this.mouseDown);
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
+            this.mouseMove = true;
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
@@ -50,12 +57,43 @@ export class PencilService extends Tool {
         }
     }
 
+    onMouseLeave(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.onMouseUp(event);
+            this.mouseLeave = true;
+        }
+    }
+
+    onMouseEnter(event: MouseEvent): void {
+        if (this.mouseLeave) {
+            this.onMouseDown(event);
+            this.mouseLeave = false;
+        }
+    }
+
+    onMouseClick(event: MouseEvent): void {
+        if (!this.mouseMove) {
+            this.clearPath();
+            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.pathData.push(this.mouseDownCoord);
+            this.drawPoint(this.drawingService.baseCtx, this.pathData);
+        }
+        this.mouseMove = false;
+    }
+
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         for (const point of path) {
             ctx.lineTo(point.x, point.y);
+            ctx.lineWidth = this.pencilThickness;
         }
         ctx.stroke();
+    }
+
+    private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.beginPath();
+        ctx.arc(path[0].x, path[0].y, this.pencilThickness, 0, 2 * Math.PI, true);
+        ctx.fill();
     }
 
     private clearPath(): void {
