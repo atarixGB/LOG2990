@@ -17,8 +17,6 @@ export abstract class Tool {
 
     onMouseMove(event: MouseEvent): void {}
 
-    onMouseEnter(event: MouseEvent): void {}
-
     handleKeyDown(event: KeyboardEvent): void {}
 
     handleKeyUp(event: KeyboardEvent): void {}
@@ -27,8 +25,6 @@ export abstract class Tool {
         return this.mouseCoord;
     }
     onMouseClick(event: MouseEvent): void {}
-
-    onMouseLeave(event: MouseEvent): void {}
 
     onMouseDoubleClick(event: MouseEvent): void {}
 
