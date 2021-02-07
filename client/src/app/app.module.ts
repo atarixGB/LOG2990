@@ -25,6 +25,7 @@ import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.comp
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+import { AlphaSliderComponent } from './components/sidebar/color-picker/alpha-slider/alpha-slider.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         ColorOpacityComponent,
         ColorDisplayerComponent,
         PencilConfigComponent,
+        AlphaSliderComponent,
     ],
     imports: [
         BrowserModule,
