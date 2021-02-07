@@ -90,7 +90,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === '2') {
-            //this.currentTool = this.tools[1];
+            // this.currentTool = this.tools[1];
             this.toolManagerService.setCurrentTool(ToolList.Ellipse);
         }
         if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
