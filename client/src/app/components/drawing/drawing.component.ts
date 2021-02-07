@@ -1,12 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EllipseService } from '@app/services/tools/ellipse.service';
-import { PencilService } from '@app/services/tools/pencil-service';
-// TODO : Avoir un fichier séparé pour les constantes ?
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-drawing',
@@ -21,7 +17,7 @@ export class DrawingComponent implements AfterViewInit {
     @Input()
     set mousePositionChanged(position: Vec2) {
         this.mousePosition = position;
-        this.currentTool.mouseCoord = position;
+        this.toolManagerService.getCurrentTool().mouseCoord = position;
     }
     private mousePosition: Vec2;
 
@@ -29,13 +25,8 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Avoir un service dédié pour gérer tous les outils ? Ceci peut devenir lourd avec le temps
-    private tools: Tool[];
-    currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService, ellipseService: EllipseService) {
-        this.tools = [pencilService, ellipseService];
-        this.currentTool = this.tools[0];
-    }
+    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
+    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -47,38 +38,65 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.currentTool.mouseCoord = this.mousePosition;
-        this.currentTool.onMouseMove(event);
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().onMouseMove(event);
     }
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        this.currentTool.mouseCoord = this.mousePosition;
-        this.currentTool.onMouseDown(event);
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.mouseCoord = this.mousePosition;
-        this.currentTool.onMouseUp(event);
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().onMouseUp(event);
+    }
+
+    @HostListener('click', ['$event'])
+    onMouseClick(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().onMouseClick(event);
+    }
+
+    @HostListener('mouseleave', ['$event'])
+    onMouseLeave(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().onMouseLeave(event);
+    }
+
+    @HostListener('mouseenter', ['$event'])
+    onMouseEnter(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().onMouseEnter(event);
+    }
+
+    @HostListener('dblclick', ['$event'])
+    onMousonDoubleClick(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
+    }
+
+    @HostListener('keydown', ['$event'])
+    onKeyDown(event: KeyboardEvent): void {
+        this.toolManagerService.getCurrentTool().onKeyDown(event);
     }
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.currentTool === this.tools[1]) {
-            this.currentTool.mouseCoord = this.mousePosition;
-            this.currentTool.handleKeyUp(event);
+        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
+            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+            this.toolManagerService.getCurrentTool().handleKeyUp(event);
         }
     }
 
     @HostListener('keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === '2') {
-            this.currentTool = this.tools[1];
+            //this.currentTool = this.tools[1];
+            this.toolManagerService.setCurrentTool(ToolList.Ellipse);
         }
-        if (this.currentTool === this.tools[1]) {
-            this.currentTool.mouseCoord = this.mousePosition;
-            this.currentTool.handleKeyDown(event);
+        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
+            // This is for the SHIFT
+            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+            this.toolManagerService.getCurrentTool().handleKeyDown(event);
         }
     }
 

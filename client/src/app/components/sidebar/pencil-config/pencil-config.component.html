@@ -1,0 +1,3 @@
+<br />
+<h2>Épaisseur du crayon : {{ pencilService.pencilThickness }} px</h2>
+<mat-slider thumbLabel [displayWith]="formatLabel" tickInterval="1000" min="1" max="100" [(ngModel)]="pencilService.pencilThickness"></mat-slider>
