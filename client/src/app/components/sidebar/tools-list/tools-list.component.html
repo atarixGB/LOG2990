@@ -2,8 +2,13 @@
     <h3>Outils</h3>
     <mat-grid-list cols="3">
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Crayon (C)" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Crayon (C)" matTooltipPosition="above" (click)="onTool(ToolList.Pencil)">
                 <mat-icon>create</mat-icon>
+            </button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <button mat-icon-button matTooltip="Efface (E)" matTooltipPosition="above" (click)="onTool(ToolList.Eraser)">
+                <mat-icon>how_to_vote</mat-icon>
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
@@ -12,18 +17,13 @@
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Couleur" matTooltipPosition="above">
-                <mat-icon>palette</mat-icon>
-            </button>
-        </mat-grid-tile>
-        <mat-grid-tile>
-            <button mat-icon-button matTooltip="Ellipse (2)" matTooltipPosition="above">
-                <mat-icon>radio_button_unchecked</mat-icon>
-            </button>
-        </mat-grid-tile>
-        <mat-grid-tile>
-            <button mat-icon-button matTooltip="Rectangle (1)" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Rectangle (1)" matTooltipPosition="above" (click)="onTool(ToolList.Rectangle)">
                 <mat-icon>check_box_outline_blank</mat-icon>
+            </button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <button mat-icon-button matTooltip="Ellipse (2)" matTooltipPosition="above" (click)="onTool(ToolList.Ellipse)">
+                <mat-icon>radio_button_unchecked</mat-icon>
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
@@ -32,7 +32,7 @@
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Ligne (L)" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Ligne (L)" matTooltipPosition="above" (click)="onTool(ToolList.Line)">
                 <mat-icon>power_input</mat-icon>
             </button>
         </mat-grid-tile>
@@ -48,5 +48,4 @@
         </mat-grid-tile>
     </mat-grid-list>
     <hr />
-    (Tool's config here)
 </div>

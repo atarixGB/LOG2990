@@ -1,7 +1,12 @@
 <div class="container">
   <h2>&#123; Poly Dessine &#125;</h2>
   <h5>Équipe 104</h5>
-  <hr>
+  <hr />
   <app-tools-list></app-tools-list>
+  <app-line-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Line"></app-line-config>
+  <app-pencil-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Pencil"></app-pencil-config>
+  <app-eraser-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Eraser"></app-eraser-config>
+  <app-rectangle-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Rectangle"></app-rectangle-config>
+  <app-ellipse-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Ellipse"></app-ellipse-config>
   <app-file-menu></app-file-menu>
 </div>
