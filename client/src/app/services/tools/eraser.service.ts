@@ -21,8 +21,8 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    public eraserThickness: number;
-    public eraserColor: string;
+    eraserThickness: number;
+    eraserColor: string;
 
     private pathData: Vec2[];
 
