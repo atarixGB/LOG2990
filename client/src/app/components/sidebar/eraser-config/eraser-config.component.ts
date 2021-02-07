@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { EraserService } from '@app/services/tools/eraser.service';
 
 @Component({
@@ -6,12 +6,10 @@ import { EraserService } from '@app/services/tools/eraser.service';
     templateUrl: './eraser-config.component.html',
     styleUrls: ['./eraser-config.component.scss'],
 })
-export class EraserConfigComponent implements OnInit {
+export class EraserConfigComponent {
     constructor(public eraserService: EraserService) {}
 
-    ngOnInit(): void {}
-
-    formatLabel(value: number) {
+    formatLabel(value: number): string {
         return value + 'px';
     }
 }
