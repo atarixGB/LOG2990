@@ -6,7 +6,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 
 const NUMBER_OF_HISTORY_COLORS = 10; // we can store the last 10 chosen colors
 const COLOR_CHOICE = 2; // we have 2 color choices primary and secondary color
-const VALIDATOR_HEX = RegExp('^[a-fA-f0-9 ]+'); // RegExp (regular expression) ensures that the hex code is valid ( 0 to 9, a->f and a->f)
+const VALIDATOR_HEX = RegExp('^[a-fA-F0-9 ]+'); // RegExp (regular expression) ensures that the hex code is valid ( 0 to 9, A->F and a->f)
 const BASE = 16;
 
 @Injectable({
@@ -51,6 +51,7 @@ export class ColorManagerService {
             this.selectedColors[colorOrder].Dec.Alpha +
             ')';
     }
+
     customizeOpacity(colorOrder: ColorOrder, alpha: number): void {
         if (alpha > 0 && alpha < 1) {
             this.selectedColors[colorOrder].Dec.Alpha - alpha;
