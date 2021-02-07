@@ -64,11 +64,6 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
     }
 
-    @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.getCurrentTool().onKeyDown(event);
-    }
-
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
         this.toolManagerService.getCurrentTool().onKeyUp(event);
@@ -82,6 +77,12 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().onMouseEnter(event);
+    }
+
+    @HostListener('keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent): void {
+        this.toolManagerService.mousePosition = this.mousePosition;
+        this.toolManagerService.handleHotKeysShortcut(event);
     }
 
     get width(): number {

@@ -44,5 +44,4 @@ export abstract class Tool {
             y: event.offsetY <= DEFAULT_HEIGHT ? event.offsetY : DEFAULT_HEIGHT,
         };
     } */
-  }
 }
