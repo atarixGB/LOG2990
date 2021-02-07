@@ -9,22 +9,10 @@ import { LineService } from '@app/services/tools/line/line.service';
 })
 export class LineConfigComponent {
     lineService: LineService;
-    value: TypeOfJunctions;
-
-    typeOfJunctions = [
-        {
-            name: 'Régulière',
-            enumId: TypeOfJunctions.REGULAR,
-        },
-        {
-            name: 'Point',
-            enumId: TypeOfJunctions.CIRCLE,
-        },
-    ];
+    TypeOfJunctions: typeof TypeOfJunctions = TypeOfJunctions;
 
     constructor(lineService: LineService) {
         this.lineService = lineService;
-        this.value = TypeOfJunctions.REGULAR;
     }
 
     updateLineWidth(value: number): number {

@@ -5,12 +5,11 @@
   </mat-slider>
 </div>
 
-<h4>Type de la jonction: </h4>
-<mat-form-field appearance="fill">
+<mat-form-field>
   <mat-label>Type de jonction</mat-label>
   <mat-select [(ngModel)]="lineService.junctionType">
-    <mat-option *ngFor="let type of typeOfJunctions" [value]="type.enumId">{{ type.name }}
-    </mat-option>
+    <mat-option [value]="TypeOfJunctions.REGULAR">Normal</mat-option>
+    <mat-option [value]="TypeOfJunctions.CIRCLE">Point</mat-option>
   </mat-select>
 </mat-form-field>
 
