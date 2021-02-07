@@ -15,3 +15,11 @@ export const DEFAULT_LINE_THICKNESS = 1;
 export const DEFAULT_JUNCTION_RADIUS = 2;
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
+
+export enum ToolList {
+    Pencil = 0,
+    Eraser = 1,
+    Line = 2,
+    Rectangle = 3,
+    Ellipse = 4,
+}

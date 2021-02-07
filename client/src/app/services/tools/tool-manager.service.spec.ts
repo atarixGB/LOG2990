@@ -1,13 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { ToolManagerService } from './tool-manager.service';
 
-import { LineService } from './line.service';
-
-describe('LineService', () => {
-    let service: LineService;
+describe('ToolManagerService', () => {
+    let service: ToolManagerService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(LineService);
+        service = TestBed.inject(ToolManagerService);
     });
 
     it('should be created', () => {

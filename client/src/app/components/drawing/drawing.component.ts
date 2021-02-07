@@ -1,10 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineService } from '@app/services/tools/line.service';
-import { PencilService } from '@app/services/tools/pencil-service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
     selector: 'app-drawing',
@@ -21,12 +19,7 @@ export class DrawingComponent implements AfterViewInit {
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
     // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
-    private tools: Tool[];
-    currentTool: Tool;
-    constructor(private drawingService: DrawingService, pencilService: PencilService, lineService: LineService) {
-        this.tools = [pencilService, lineService];
-        this.currentTool = this.tools[1];
-    }
+    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
@@ -38,47 +31,47 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.currentTool.onMouseMove(event);
+        this.toolManagerService.getCurrentTool().onMouseMove(event);
     }
 
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        this.currentTool.onMouseDown(event);
+        this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
 
     @HostListener('mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.currentTool.onMouseUp(event);
+        this.toolManagerService.getCurrentTool().onMouseUp(event);
     }
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        this.currentTool.onMouseClick(event);
+        this.toolManagerService.getCurrentTool().onMouseClick(event);
     }
 
     @HostListener('dblclick', ['$event'])
     onMousonDoubleClick(event: MouseEvent): void {
-        this.currentTool.onMouseDoubleClick(event);
+        this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
     }
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent): void {
-        this.currentTool.onKeyDown(event);
+        this.toolManagerService.getCurrentTool().onKeyDown(event);
     }
 
     @HostListener('keyup', ['$event'])
     onKeyUp(event: KeyboardEvent): void {
-        this.currentTool.onKeyUp(event);
+        this.toolManagerService.getCurrentTool().onKeyUp(event);
     }
 
     @HostListener('mouseleave', ['$event'])
     onMouseLeave(event: MouseEvent): void {
-        this.currentTool.onMouseLeave(event);
+        this.toolManagerService.getCurrentTool().onMouseLeave(event);
     }
 
     @HostListener('mouseenter', ['$event'])
     onMouseEnter(event: MouseEvent): void {
-        this.currentTool.onMouseEnter(event);
+        this.toolManagerService.getCurrentTool().onMouseEnter(event);
     }
 
     get width(): number {

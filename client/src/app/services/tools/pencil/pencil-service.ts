@@ -30,7 +30,6 @@ export class PencilService extends Tool {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
-        console.log('mousedownvalue', this.mouseDown);
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -42,7 +41,6 @@ export class PencilService extends Tool {
 
         this.mouseDown = false;
         this.clearPath();
-        console.log('mousedownvalue', this.mouseDown);
     }
 
     onMouseMove(event: MouseEvent): void {
