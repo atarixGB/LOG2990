@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -59,6 +60,7 @@ export class RectangleService extends Tool {
         const finalPoint = path[this.pathData.length - 1];
         const width = finalPoint.y - firstPoint.y;
         const length = finalPoint.x - firstPoint.x;
+        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
         ctx.rect(firstPoint.x, firstPoint.y, length, width);
         ctx.stroke();
     }
