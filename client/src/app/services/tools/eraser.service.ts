@@ -92,13 +92,9 @@ export class EraserService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
         for (const point of path) {
-            ctx.lineTo(point.x, point.y);
-            ctx.lineWidth = this.eraserThickness;
+            ctx.clearRect(point.x, point.y, this.eraserThickness, this.eraserThickness);
         }
-        ctx.strokeStyle = DEFAULT_ERASER_COLOR;
-        ctx.stroke();
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
