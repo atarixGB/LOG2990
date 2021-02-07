@@ -14,6 +14,7 @@ export class ToolManagerService {
 
     constructor(private pencilService: PencilService, private lineService: LineService) {
         this.currentTool = this.pencilService;
+        this.currentToolEnum = ToolList.Pencil;
     }
 
     getCurrentTool(): Tool {
@@ -33,7 +34,7 @@ export class ToolManagerService {
 
             case ToolList.Line:
                 this.currentTool = this.lineService;
-                this.currentToolEnum = ToolList.Pencil;
+                this.currentToolEnum = ToolList.Line;
                 break;
 
             case ToolList.Rectangle:
