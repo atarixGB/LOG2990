@@ -17,12 +17,9 @@ export enum TypeOfJunctions {
 }
 
 export const DEFAULT_LINE_THICKNESS = 1;
-<<<<<<< HEAD
-=======
 export const MIN_ERASER_THICKNESS = 5;
 
 export const DEFAULT_ERASER_COLOR = '#FFF';
->>>>>>> 2aabbe641a83957648e0fc40ada10184986e30f9
 export const DEFAULT_JUNCTION_RADIUS = 2;
 
 export enum ToolList {
