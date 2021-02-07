@@ -3,8 +3,10 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
+import { EraserService } from './eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
+import { RectangleService } from './rectangle/rectangle.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +17,13 @@ export class ToolManagerService {
     mousePosition: Vec2;
     toolList: ToolList;
 
-    constructor(private pencilService: PencilService, private lineService: LineService, private ellipseService: EllipseService) {
+    constructor(
+        private pencilService: PencilService,
+        private lineService: LineService,
+        private eraserService: EraserService,
+        private ellipseService: EllipseService,
+        private rectangleService: RectangleService,
+    ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
     }
@@ -114,8 +122,8 @@ export class ToolManagerService {
                 break;
 
             case ToolList.Rectangle:
-                // this.currentTool = this.rectangleService;
-                // this.currentToolEnum = ToolList.Rectangle;
+                this.currentTool = this.rectangleService;
+                this.currentToolEnum = ToolList.Rectangle;
                 break;
 
             case ToolList.Ellipse:
@@ -124,8 +132,8 @@ export class ToolManagerService {
                 break;
 
             case ToolList.Eraser:
-                // this.currentTool = this.eraserService;
-                // this.currentToolEnum = ToolList.Eraser;
+                this.currentTool = this.eraserService;
+                this.currentToolEnum = ToolList.Eraser;
                 break;
         }
     }
