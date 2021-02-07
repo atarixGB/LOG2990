@@ -59,7 +59,7 @@ export class RectangleService extends Tool {
         const finalPoint = path[this.pathData.length - 1];
         const width = finalPoint.y - firstPoint.y;
         const length = finalPoint.x - firstPoint.x;
-        ctx.rect(firstPoint.x, firstPoint.y, width, length);
+        ctx.rect(firstPoint.x, firstPoint.y, length, width);
         ctx.stroke();
     }
 }
