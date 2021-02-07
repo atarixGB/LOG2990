@@ -67,8 +67,8 @@ export class ToolManagerService {
                 break;
 
             case 'e':
-                // this.currentTool = this.eraserService;
-                // this.currentToolEnum = ToolList.Eraser;
+                this.currentTool = this.eraserService;
+                this.currentToolEnum = ToolList.Eraser;
                 break;
             case 'd':
                 // TODO etampe
