@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
+import { EraserService } from './eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 import { RectangleService } from './rectangle/rectangle.service';
@@ -17,6 +18,7 @@ export class ToolManagerService {
     constructor(
         private pencilService: PencilService,
         private lineService: LineService,
+        private eraserService: EraserService,
         private ellipseService: EllipseService,
         private rectangleService: RectangleService,
     ) {
@@ -59,8 +61,8 @@ export class ToolManagerService {
                 break;
 
             case ToolList.Eraser:
-                // this.currentTool = this.eraserService;
-                // this.currentToolEnum = ToolList.Eraser;
+                this.currentTool = this.eraserService;
+                this.currentToolEnum = ToolList.Eraser;
                 break;
         }
     }
