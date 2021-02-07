@@ -98,9 +98,9 @@ export class EraserService extends Tool {
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        ctx.arc(path[0].x, path[0].y, this.eraserThickness, 0, 2 * Math.PI, true);
-        ctx.fill();
+        for (const point of path) {
+            ctx.clearRect(point.x, point.y, this.eraserThickness, this.eraserThickness);
+        }
     }
 
     private clearPath(): void {
