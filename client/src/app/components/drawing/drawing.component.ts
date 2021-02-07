@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -17,6 +17,13 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+
+    @Input()
+    set mousePositionChanged(position: Vec2) {
+        this.mousePosition = position;
+        this.currentTool.mouseCoord = position;
+    }
+    private mousePosition: Vec2;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -38,35 +45,40 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
+        this.currentTool.mouseCoord = this.mousePosition;
         this.currentTool.onMouseMove(event);
     }
 
-    @HostListener('mousedown', ['$event'])
+    @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
+        this.currentTool.mouseCoord = this.mousePosition;
         this.currentTool.onMouseDown(event);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
+        this.currentTool.mouseCoord = this.mousePosition;
         this.currentTool.onMouseUp(event);
     }
 
-    @HostListener('keydown', ['$event'])
-    handleKeyDown(event: KeyboardEvent) {
-        if (event.key == '2') {
-            this.currentTool = this.tools[1];
-        }
-        if (this.currentTool == this.tools[1]) {
-            this.currentTool.handleKeyDown(event);
+    @HostListener('document:keyup', ['$event'])
+    handleKeyUp(event: KeyboardEvent): void {
+        if (this.currentTool === this.tools[1]) {
+            this.currentTool.mouseCoord = this.mousePosition;
+            this.currentTool.handleKeyUp(event);
         }
     }
 
-    @HostListener('keyup', ['$event'])
-    handleKeyUp(event: KeyboardEvent) {
-        if (this.currentTool == this.tools[1]) {
-            this.currentTool.handleKeyUp(event);
+    @HostListener('keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.key === '2') {
+            this.currentTool = this.tools[1];
+        }
+        if (this.currentTool === this.tools[1]) {
+            this.currentTool.mouseCoord = this.mousePosition;
+            this.currentTool.handleKeyDown(event);
         }
     }
 
