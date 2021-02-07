@@ -13,10 +13,10 @@ export class LineService extends Tool {
     private pathData: Vec2[];
     private coordinates: Vec2[];
     private hasPressedShiftKey: boolean;
+    private basePoint: Vec2;
     lineWidth: number;
     junctionType: TypeOfJunctions;
     junctionRadius: number;
-    lockedPoint: Vec2;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
@@ -51,31 +51,66 @@ export class LineService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+
         if (this.mouseDown && !this.hasPressedShiftKey) {
-            const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
 
+        // TODO: Refactoring --> Put the following code in a method
         if (this.hasPressedShiftKey) {
-            let line: Vec2[] = [];
-            line.push(this.coordinates[this.coordinates.length - 1]);
-            this.drawLine(this.drawingService.baseCtx, line);
+            console.log('last cood before:', this.coordinates[this.coordinates.length - 1]);
+            this.basePoint = this.coordinates[this.coordinates.length - 1];
+            this.drawingService.baseCtx.beginPath();
+            if (this.isCloseToXAxis(mousePosition, this.basePoint)) {
+                console.log('horizontal');
+                this.drawingService.baseCtx.moveTo(this.basePoint.x, this.basePoint.y);
+                this.drawingService.baseCtx.lineTo(mousePosition.x, this.basePoint.y);
+                this.drawingService.baseCtx.stroke();
+            } else {
+                console.log('vertical');
+                this.drawingService.baseCtx.moveTo(this.basePoint.x, this.basePoint.y);
+                this.drawingService.baseCtx.lineTo(this.basePoint.x, mousePosition.y);
+                this.drawingService.baseCtx.stroke();
+            }
+            console.log('last cood before:', this.coordinates[this.coordinates.length - 1]);
         }
 
         this.mouseDown = false;
-        this.hasPressedShiftKey = false;
 
         this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            // this.drawLine(this.drawingService.previewCtx, this.pathData);
+
+            // TODO: Refactoring --> Put the following code in a method
+            if (this.hasPressedShiftKey) {
+                this.basePoint = this.coordinates[this.coordinates.length - 1];
+
+                this.drawingService.previewCtx.lineWidth = this.lineWidth;
+                this.drawingService.previewCtx.beginPath();
+
+                if (this.isCloseToXAxis(mousePosition, this.coordinates[this.coordinates.length - 1])) {
+                    console.log('horizontal');
+                    this.drawingService.previewCtx.moveTo(this.basePoint.x, this.basePoint.y);
+                    this.drawingService.previewCtx.lineTo(mousePosition.x, this.basePoint.y);
+                    this.drawingService.previewCtx.stroke();
+                } else {
+                    console.log('vertical');
+                    this.drawingService.previewCtx.moveTo(this.basePoint.x, this.basePoint.y);
+                    this.drawingService.previewCtx.lineTo(this.basePoint.x, mousePosition.y);
+                    this.drawingService.previewCtx.stroke();
+                }
+            } else {
+                this.drawLine(this.drawingService.previewCtx, this.pathData);
+            }
         }
     }
 
@@ -89,11 +124,7 @@ export class LineService extends Tool {
                 console.log(event.key);
                 break;
             case 'Shift':
-                let line: Vec2[] = [];
-                line.push(this.coordinates[this.coordinates.length - 1]);
-                line.push(this.lockedPoint);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                console.log(event.key);
+                this.hasPressedShiftKey = true;
                 break;
             case 'Backspace':
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
@@ -105,12 +136,18 @@ export class LineService extends Tool {
         }
     }
 
+    onKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Shift') {
+            this.hasPressedShiftKey = false;
+        }
+    }
+
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y); // Get first point of pathData
         ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y); // Get last point of pathData
-        ctx.stroke(); // Stroke a line between these two points
+        ctx.stroke();
     }
 
     private getAllDrawnSegments(coordinates: Vec2[]): Segment[] {
@@ -143,28 +180,11 @@ export class LineService extends Tool {
         }
     }
 
-    /*
-    private computeHorizontalAndVerticalLine(currentPoint: Vec2, basePoint: Vec2): Vec2 {
+    private isCloseToXAxis(currentPoint: Vec2, basePoint: Vec2): boolean {
         let projectionOnXAxis = Math.abs(currentPoint.x - basePoint.x);
         let projectionOnYAxis = Math.abs(currentPoint.y - basePoint.y);
-
-        if (projectionOnXAxis > projectionOnYAxis) {
-            // console.log('horizontal');
-            return {
-                // lock to horizontal line
-                x: currentPoint.x,
-                y: basePoint.y,
-            };
-        } else {
-            // console.log('vertical');
-            return {
-                // lock to vertical line
-                x: basePoint.x,
-                y: currentPoint.y,
-            };
-        }
+        return projectionOnXAxis > projectionOnYAxis;
     }
-    */
 
     private clearPath(): void {
         this.pathData = [];
