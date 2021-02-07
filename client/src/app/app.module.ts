@@ -22,6 +22,7 @@ import { ColorOpacityComponent } from './components/sidebar/color-picker/color-o
 import { ColorPaletteComponent } from './components/sidebar/color-picker/color-palette/color-palette.component';
 import { ColorPickerComponent } from './components/sidebar/color-picker/color-picker.component';
 import { ColorSliderComponent } from './components/sidebar/color-picker/color-slider/color-slider.component';
+import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
@@ -45,6 +46,7 @@ import { AlphaSliderComponent } from './components/sidebar/color-picker/alpha-sl
         ColorDisplayerComponent,
         PencilConfigComponent,
         AlphaSliderComponent,
+        EraserConfigComponent,
         LineConfigComponent,
     ],
     imports: [
