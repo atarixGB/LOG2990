@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Segment } from '@app/classes/segment';
 // import { Segment } from '@app/classes/segment';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -10,8 +11,8 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
-    private segmentsData: Vec2[];
-    private isShiftKeyDown: boolean;
+    private coordinates: Vec2[];
+    private hasPressedShiftKey: boolean;
     lineWidth: number;
     junctionType: TypeOfJunctions;
     junctionRadius: number;
@@ -22,15 +23,16 @@ export class LineService extends Tool {
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
         this.junctionType = TypeOfJunctions.REGULAR;
-        this.segmentsData = [];
+        this.coordinates = [];
+        this.hasPressedShiftKey = false;
     }
 
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
-        this.segmentsData.push(this.mouseDownCoord);
-        console.log('click :', this.segmentsData[this.segmentsData.length - 1]);
+        this.coordinates.push(this.mouseDownCoord);
+        console.log('click :', this.coordinates[this.coordinates.length - 1]);
 
         if (this.junctionType === TypeOfJunctions.CIRCLE) {
             this.drawingService.baseCtx.lineWidth = this.lineWidth;
@@ -49,38 +51,31 @@ export class LineService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown && !this.isShiftKeyDown) {
+        if (this.mouseDown && !this.hasPressedShiftKey) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
 
-        if (this.isShiftKeyDown) {
+        if (this.hasPressedShiftKey) {
             let line: Vec2[] = [];
-            line.push(this.segmentsData[this.segmentsData.length - 1]);
-            line.push(this.lockedPoint);
+            line.push(this.coordinates[this.coordinates.length - 1]);
             this.drawLine(this.drawingService.baseCtx, line);
         }
+
         this.mouseDown = false;
-        this.isShiftKeyDown = false;
+        this.hasPressedShiftKey = false;
 
         this.clearPath();
     }
 
     onMouseMove(event: MouseEvent): void {
-        let basePoint = this.segmentsData[this.segmentsData.length - 1];
-
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
-
-            this.lockedPoint = this.computeHorizontalAndVerticalLine(mousePosition, basePoint);
-
-            console.log('current: ', mousePosition, '\nlast: ', basePoint);
-            console.log('nearest: ', this.lockedPoint);
         }
     }
 
@@ -94,16 +89,15 @@ export class LineService extends Tool {
                 console.log(event.key);
                 break;
             case 'Shift':
-                this.isShiftKeyDown = true;
                 let line: Vec2[] = [];
-                line.push(this.segmentsData[this.segmentsData.length - 1]);
+                line.push(this.coordinates[this.coordinates.length - 1]);
                 line.push(this.lockedPoint);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawLine(this.drawingService.previewCtx, line);
+                console.log(event.key);
                 break;
             case 'Backspace':
                 this.drawingService.clearCanvas(this.drawingService.baseCtx);
-                this.removeLastSegment(this.drawingService.baseCtx);
+                this.redrawCanvas(this.drawingService.baseCtx, this.getAllDrawnSegments(this.coordinates));
                 console.log(event.key);
                 break;
             default:
@@ -119,40 +113,50 @@ export class LineService extends Tool {
         ctx.stroke(); // Stroke a line between these two points
     }
 
-    private removeLastSegment(ctx: CanvasRenderingContext2D): void {
-        // redraw all segments since beginning except the last one
-        ctx.lineWidth = this.lineWidth;
-
-        for (let i = 0; i < this.segmentsData.length - 2; i++) {
-            console.log('--- New segment---');
-            ctx.beginPath();
-
-            console.log('move to: ', this.segmentsData[i].x, this.segmentsData[i].y);
-            ctx.moveTo(this.segmentsData[i].x, this.segmentsData[i].y);
-
-            console.log('line to: ', this.segmentsData[i + 1].x, this.segmentsData[i + 1].y);
-            ctx.lineTo(this.segmentsData[i + 1].x, this.segmentsData[i + 1].y);
-
-            ctx.stroke();
-            ctx.closePath();
+    private getAllDrawnSegments(coordinates: Vec2[]): Segment[] {
+        let segments: Segment[] = [];
+        if (this.mouseDown) {
+            for (let i = 0; i < coordinates.length - 1; i++) {
+                segments.push({
+                    startPoint: {
+                        x: coordinates[i].x,
+                        y: coordinates[i].y,
+                    },
+                    endPoint: {
+                        x: coordinates[i + 1].x,
+                        y: coordinates[i + 1].y,
+                    },
+                });
+                console.log(segments, '\nnb of segments:', segments.length);
+            }
         }
-
-        this.clearPath();
+        return segments;
     }
 
+    private redrawCanvas(ctx: CanvasRenderingContext2D, segments: Segment[]): void {
+        ctx.lineWidth = this.lineWidth;
+        for (let i = 0; i < segments.length - 1; i++) {
+            ctx.beginPath();
+            ctx.moveTo(segments[i].endPoint.x, segments[i].endPoint.y);
+            ctx.lineTo(segments[i].startPoint.x, segments[i].startPoint.y);
+            ctx.stroke();
+        }
+    }
+
+    /*
     private computeHorizontalAndVerticalLine(currentPoint: Vec2, basePoint: Vec2): Vec2 {
         let projectionOnXAxis = Math.abs(currentPoint.x - basePoint.x);
         let projectionOnYAxis = Math.abs(currentPoint.y - basePoint.y);
 
         if (projectionOnXAxis > projectionOnYAxis) {
-            console.log('horizontal');
+            // console.log('horizontal');
             return {
                 // lock to horizontal line
                 x: currentPoint.x,
                 y: basePoint.y,
             };
         } else {
-            console.log('vertical');
+            // console.log('vertical');
             return {
                 // lock to vertical line
                 x: basePoint.x,
@@ -160,6 +164,7 @@ export class LineService extends Tool {
             };
         }
     }
+    */
 
     private clearPath(): void {
         this.pathData = [];
