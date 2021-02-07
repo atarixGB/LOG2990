@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -13,6 +13,13 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+
+    @Input()
+    set mousePositionChanged(position: Vec2) {
+        this.mousePosition = position;
+        this.toolManagerService.getCurrentTool().mouseCoord = position;
+    }
+    private mousePosition: Vec2;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -29,18 +36,21 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    @HostListener('mousemove', ['$event'])
+    @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseMove(event);
     }
 
-    @HostListener('mousedown', ['$event'])
+    @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
 
-    @HostListener('mouseup', ['$event'])
+    @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseUp(event);
     }
 
