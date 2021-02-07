@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_ERASER_COLOR, DEFAULT_LINE_THICKNESS } from '@app/constants';
+import { DEFAULT_ERASER_COLOR, MIN_ERASER_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -30,7 +30,7 @@ export class EraserService extends Tool {
         super(drawingService);
         this.clearPath();
 
-        this.eraserThickness = DEFAULT_LINE_THICKNESS;
+        this.eraserThickness = MIN_ERASER_THICKNESS;
         this.eraserColor = DEFAULT_ERASER_COLOR;
     }
 

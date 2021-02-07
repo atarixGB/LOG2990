@@ -14,7 +14,7 @@ import { AppComponent } from './components/app/app.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
-import { EraserConfigService } from './components/sidebar/eraser-config/eraser-config.component';
+import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -30,7 +30,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         FileMenuComponent,
         ToolsListComponent,
         PencilConfigComponent,
-        EraserConfigService,
+        EraserConfigComponent,
     ],
     imports: [
         BrowserModule,
