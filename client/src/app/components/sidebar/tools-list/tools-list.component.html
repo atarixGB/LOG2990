@@ -2,8 +2,13 @@
     <h3>Outils</h3>
     <mat-grid-list cols="3">
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Crayon" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Crayon" matTooltipPosition="above" (click)="onTool(ToolList.Pencil)">
                 <mat-icon>create</mat-icon>
+            </button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <button mat-icon-button matTooltip="Efface" matTooltipPosition="above" (click)="onTool(ToolList.Eraser)">
+                <mat-icon>auto_fix_normal</mat-icon>
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
@@ -12,18 +17,12 @@
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Couleur" matTooltipPosition="above">
-                <mat-icon>palette</mat-icon>
-                
-            </button>
-        </mat-grid-tile>
-        <mat-grid-tile>
-            <button mat-icon-button matTooltip="Ellipse" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Ellipse" matTooltipPosition="above" (click)="onTool(ToolList.Ellipse)">
                 <mat-icon>radio_button_unchecked</mat-icon>
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Rectangle" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Rectangle" matTooltipPosition="above" (click)="onTool(ToolList.Rectangle)">
                 <mat-icon>check_box_outline_blank</mat-icon>
             </button>
         </mat-grid-tile>
@@ -33,7 +32,7 @@
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
-            <button mat-icon-button matTooltip="Ligne" matTooltipPosition="above">
+            <button mat-icon-button matTooltip="Ligne" matTooltipPosition="above" (click)="onTool(ToolList.Line)">
                 <mat-icon>power_input</mat-icon>
             </button>
         </mat-grid-tile>
@@ -49,5 +48,4 @@
         </mat-grid-tile>
     </mat-grid-list>
     <hr />
-    (Tool's config here)
 </div>
