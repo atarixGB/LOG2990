@@ -4,6 +4,7 @@ import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
+import { RectangleService } from './rectangle/rectangle.service';
 
 @Injectable({
     providedIn: 'root',
@@ -13,7 +14,12 @@ export class ToolManagerService {
     private currentToolEnum: ToolList;
     toolList: ToolList;
 
-    constructor(private pencilService: PencilService, private lineService: LineService, private ellipseService: EllipseService) {
+    constructor(
+        private pencilService: PencilService,
+        private lineService: LineService,
+        private ellipseService: EllipseService,
+        private rectangleService: RectangleService,
+    ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
     }
@@ -43,8 +49,8 @@ export class ToolManagerService {
                 break;
 
             case ToolList.Rectangle:
-                // this.currentTool = this.rectangleService;
-                // this.currentToolEnum = ToolList.Rectangle;
+                this.currentTool = this.rectangleService;
+                this.currentToolEnum = ToolList.Rectangle;
                 break;
 
             case ToolList.Ellipse:
