@@ -21,8 +21,8 @@ export enum MouseButton {
     providedIn: 'root',
 })
 export class EraserService extends Tool {
-    public eraserThickness: number;
-    public eraserColor: string;
+    eraserThickness: number;
+    eraserColor: string;
 
     private pathData: Vec2[];
 
@@ -63,7 +63,7 @@ export class EraserService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawLine(this.drawingService.previewCtx, this.pathData);
+            this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
     }
 

@@ -31,6 +31,10 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         FileMenuComponent,
         ToolsListComponent,
         PencilConfigComponent,
+<<<<<<< HEAD
+=======
+        EraserConfigComponent,
+>>>>>>> 2aabbe641a83957648e0fc40ada10184986e30f9
         LineConfigComponent,
     ],
     imports: [
