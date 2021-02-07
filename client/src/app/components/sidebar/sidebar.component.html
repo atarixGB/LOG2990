@@ -2,7 +2,7 @@
     <h2>&#123; Poly Dessine &#125;</h2>
     <h5>Équipe 104</h5>
     <hr />
-    <app-color-picker></app-color-picker>
+    
     <app-tools-list></app-tools-list>
     <app-line-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Line"></app-line-config>
     <app-pencil-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Pencil"></app-pencil-config>
