@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { TypeOfJunctions } from '@app/constants';
 import { LineService } from '@app/services/tools/line/line.service';
 
@@ -9,7 +9,7 @@ import { LineService } from '@app/services/tools/line/line.service';
 })
 export class LineConfigComponent {
     lineService: LineService;
-    @Input() value: TypeOfJunctions = TypeOfJunctions.REGULAR;
+    value: TypeOfJunctions;
 
     typeOfJunctions = [
         {
@@ -24,6 +24,7 @@ export class LineConfigComponent {
 
     constructor(lineService: LineService) {
         this.lineService = lineService;
+        this.value = TypeOfJunctions.REGULAR;
     }
 
     updateLineWidth(value: number): number {

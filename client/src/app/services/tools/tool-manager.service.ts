@@ -43,13 +43,13 @@ export class ToolManagerService {
                 break;
 
             case ToolList.Ellipse:
-                //this.currentTool = this.ellipseService;
-                //this.currentToolEnum = ToolList.Ellipse;
+                // this.currentTool = this.ellipseService;
+                // this.currentToolEnum = ToolList.Ellipse;
                 break;
 
             case ToolList.Eraser:
-                //this.currentTool = this.eraserService;
-                //this.currentToolEnum = ToolList.Eraser;
+                // this.currentTool = this.eraserService;
+                // this.currentToolEnum = ToolList.Eraser;
                 break;
         }
     }

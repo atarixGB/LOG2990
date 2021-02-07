@@ -8,7 +8,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     styleUrls: ['./tools-list.component.scss'],
 })
 export class ToolsListComponent {
-    ToolList = ToolList;
+    ToolList: typeof ToolList = ToolList;
     constructor(private toolManagerService: ToolManagerService) {}
 
     onTool(selectedTool: ToolList): void {

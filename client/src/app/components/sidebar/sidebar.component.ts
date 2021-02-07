@@ -10,5 +10,5 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 export class SidebarComponent {
     constructor(public toolManagerService: ToolManagerService) {}
 
-    ToolList = ToolList;
+    ToolList: typeof ToolList = ToolList;
 }
