@@ -12,9 +12,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
+import { DrawingSurfaceComponent } from './components/drawing-surface/drawing-surface.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
@@ -31,7 +33,9 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         FileMenuComponent,
         ToolsListComponent,
         PencilConfigComponent,
+        EraserConfigComponent,
         LineConfigComponent,
+        DrawingSurfaceComponent,
     ],
     imports: [
         BrowserModule,

@@ -44,6 +44,7 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
+        console.log('dans drawing: ' + this.mousePosition.x);
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
@@ -64,10 +65,10 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
     }
 
-    @HostListener('keydown', ['$event'])
-    onKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.getCurrentTool().onKeyDown(event);
-    }
+    // @HostListener('keydown', ['$event'])
+    // onKeyDown(event: KeyboardEvent): void {
+    //     this.toolManagerService.getCurrentTool().onKeyDown(event);
+    // }
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
@@ -79,15 +80,8 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        if (event.key === '2') {
-            // this.currentTool = this.tools[1];
-            this.toolManagerService.setCurrentTool(ToolList.Ellipse);
-        }
-        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
-            // This is for the SHIFT
-            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-            this.toolManagerService.getCurrentTool().handleKeyDown(event);
-        }
+        this.toolManagerService.mousePosition = this.mousePosition;
+        this.toolManagerService.handleHotKeysShortcut(event);
     }
 
     get width(): number {
