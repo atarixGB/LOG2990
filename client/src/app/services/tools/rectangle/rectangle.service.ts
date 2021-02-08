@@ -17,8 +17,11 @@ export enum MouseButton {
 })
 export class RectangleService extends Tool {
     private pathData: Vec2[];
+    lineWidth: number;
+
     constructor(drawingService: DrawingService) {
         super(drawingService);
+        this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.clearPath();
     }
     private clearPath(): void {
@@ -60,7 +63,7 @@ export class RectangleService extends Tool {
         const finalPoint = path[this.pathData.length - 1];
         const width = finalPoint.y - firstPoint.y;
         const length = finalPoint.x - firstPoint.x;
-        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
+        ctx.lineWidth = this.lineWidth;
         ctx.rect(firstPoint.x, firstPoint.y, length, width);
         ctx.stroke();
     }
