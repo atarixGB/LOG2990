@@ -4,3 +4,11 @@
     [(ngModel)]="rectangleService.lineWidth">
   </mat-slider>
 </div>
+
+<mat-form-field>
+  <mat-label>Type de rectangle</mat-label>
+  <mat-select [(ngModel)]="rectangleService.isFilled">
+    <mat-option [value]="false">Contour</mat-option>
+    <mat-option [value]="true">Plein</mat-option>
+  </mat-select>
+</mat-form-field>
