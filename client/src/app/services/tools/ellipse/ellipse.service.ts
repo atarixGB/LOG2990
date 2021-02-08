@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
+import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 export enum MouseButton {
@@ -17,10 +18,12 @@ export enum MouseButton {
 export class EllipseService extends Tool {
     private pathData: Vec2[];
     private isEllipse: boolean;
+    lineWidth: number;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isEllipse = true;
+        this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.clearPath();
     }
     onMouseDown(event: MouseEvent): void {
@@ -80,6 +83,7 @@ export class EllipseService extends Tool {
             // Go left-down
             origin = [path[0].x + xRadius, path[0].y + yRadius];
         }
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
         ctx.stroke();
@@ -122,6 +126,7 @@ export class EllipseService extends Tool {
             // go down-right
             origin = [path[0].x, path[0].y];
         }
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.strokeRect(origin[0], origin[1], width, width);
     }
@@ -154,6 +159,7 @@ export class EllipseService extends Tool {
             // go down-right
             origin = [path[0].x + radius, path[0].y + radius];
         }
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
         ctx.stroke();
