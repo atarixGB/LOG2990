@@ -40,8 +40,8 @@ export class ToolManagerService {
                 break;
 
             case '1':
-                // this.currentTool = this.rectangleService;
-                // this.currentToolEnum = ToolList.Rectangle;
+                this.currentTool = this.rectangleService;
+                this.currentToolEnum = ToolList.Rectangle;
                 break;
 
             case '2':
@@ -90,6 +90,10 @@ export class ToolManagerService {
 
             case 'Shift':
                 if (this.currentTool === this.ellipseService) {
+                    this.currentTool.mouseCoord = this.mousePosition;
+                    this.currentTool.handleKeyDown(event);
+                }
+                if (this.currentTool === this.rectangleService) {
                     this.currentTool.mouseCoord = this.mousePosition;
                     this.currentTool.handleKeyDown(event);
                 }
