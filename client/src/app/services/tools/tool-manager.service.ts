@@ -28,6 +28,36 @@ export class ToolManagerService {
         this.currentToolEnum = ToolList.Pencil;
     }
 
+    onPencil(): void {
+        this.currentTool = this.pencilService;
+        this.currentToolEnum = ToolList.Pencil;
+    }
+    onRectangle(): void {
+        this.currentTool = this.rectangleService;
+        this.currentToolEnum = ToolList.Rectangle;
+    }
+    onEllipse(): void {
+        this.currentTool = this.ellipseService;
+        this.currentToolEnum = ToolList.Ellipse;
+    }
+    onLine(): void {
+        this.currentTool = this.lineService;
+        this.currentToolEnum = ToolList.Line;
+    }
+    onEraser(): void {
+        this.currentTool = this.eraserService;
+        this.currentToolEnum = ToolList.Eraser;
+    }
+    onRectOrEllip(event: KeyboardEvent): void {
+        if (this.currentTool === this.ellipseService) {
+            this.currentTool.mouseCoord = this.mousePosition;
+            this.currentTool.handleKeyDown(event);
+        }
+        if (this.currentTool === this.rectangleService) {
+            this.currentTool.mouseCoord = this.mousePosition;
+            this.currentTool.handleKeyDown(event);
+        }
+    }
     handleHotKeysShortcut(event: KeyboardEvent): void {
         switch (event.key) {
             case 'c':
