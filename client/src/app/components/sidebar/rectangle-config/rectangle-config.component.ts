@@ -7,9 +7,13 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
     styleUrls: ['./rectangle-config.component.scss'],
 })
 export class RectangleConfigComponent {
-    constructor(public rectangleService: RectangleService) {}
+    rectangleService: RectangleService;
 
-    updateLineWidth(value: number): string {
-        return value + 'px';
+    constructor(rectangleService: RectangleService) {
+        this.rectangleService = rectangleService;
+    }
+
+    updateLineWidth(value: number): number {
+        return value;
     }
 }

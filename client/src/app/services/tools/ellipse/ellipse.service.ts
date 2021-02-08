@@ -19,10 +19,12 @@ export class EllipseService extends Tool {
     private pathData: Vec2[];
     private isEllipse: boolean;
     lineWidth: number;
+    isFilled: boolean;
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
         this.isEllipse = true;
+        this.isFilled = false;
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.clearPath();
     }
@@ -86,7 +88,12 @@ export class EllipseService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
-        ctx.stroke();
+
+        if (this.isFilled) {
+            ctx.fill();
+        } else {
+            ctx.stroke();
+        }
         // test idea : radius is negative ? Look at the documentation
     }
 
@@ -162,7 +169,12 @@ export class EllipseService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
-        ctx.stroke();
+
+        if (this.isFilled) {
+            ctx.fill();
+        } else {
+            ctx.stroke();
+        }
     }
 
     private clearPath(): void {
