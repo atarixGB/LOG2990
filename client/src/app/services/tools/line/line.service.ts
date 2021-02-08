@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
-import { LineStyleService } from '@app/line-style.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 @Injectable({
@@ -14,7 +13,7 @@ export class LineService extends Tool {
     junctionType: TypeOfJunctions;
     junctionRadius: number;
 
-    constructor(drawingService: DrawingService, private lineStyleService: LineStyleService) {
+    constructor(drawingService: DrawingService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
@@ -26,7 +25,7 @@ export class LineService extends Tool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
         if (this.junctionType === TypeOfJunctions.CIRCLE) {
-            this.drawingService.baseCtx.lineWidth = this.lineStyleService.thickness;
+            this.drawingService.baseCtx.lineWidth = this.lineWidth;
             this.drawingService.baseCtx.fillStyle = 'black';
             this.drawingService.baseCtx.beginPath();
             this.drawingService.baseCtx.arc(this.mouseDownCoord.x, this.mouseDownCoord.y, this.junctionRadius, 0, 2 * Math.PI);
@@ -81,7 +80,7 @@ export class LineService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.lineWidth = this.lineStyleService.thickness;
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y); // Get first point of pathData
         ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y); // Get last point of pathData
