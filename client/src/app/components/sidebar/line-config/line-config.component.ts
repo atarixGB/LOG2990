@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TypeOfJunctions } from '@app/constants';
+import { LineStyleService } from '@app/line-style.service';
 import { LineService } from '@app/services/tools/line/line.service';
 
 @Component({
@@ -9,9 +10,10 @@ import { LineService } from '@app/services/tools/line/line.service';
 })
 export class LineConfigComponent {
     lineService: LineService;
+    lineStyleService: LineStyleService;
     TypeOfJunctions: typeof TypeOfJunctions = TypeOfJunctions;
 
-    constructor(lineService: LineService) {
+    constructor(lineService: LineService, lineStyleService: LineStyleService) {
         this.lineService = lineService;
     }
 
