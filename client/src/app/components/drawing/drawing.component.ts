@@ -60,16 +60,6 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManagerService.getCurrentTool().onMouseClick(event);
     }
 
-    @HostListener('mouseleave', ['$event'])
-    onMouseLeave(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().onMouseLeave(event);
-    }
-
-    @HostListener('mouseenter', ['$event'])
-    onMouseEnter(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().onMouseEnter(event);
-    }
-
     @HostListener('dblclick', ['$event'])
     onMousonDoubleClick(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
