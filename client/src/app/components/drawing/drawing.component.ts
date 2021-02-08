@@ -13,7 +13,7 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
-    toolManagerService:ToolManagerService;
+    
 
     @Input()
     set mousePositionChanged(position: Vec2) {
@@ -27,7 +27,7 @@ export class DrawingComponent implements AfterViewInit {
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
     // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
-    constructor(private drawingService: DrawingService, toolManagerService: ToolManagerService) {}
+    constructor(private drawingService: DrawingService, public toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
