@@ -6,7 +6,7 @@
   <app-line-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Line"></app-line-config>
   <app-pencil-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Pencil"></app-pencil-config>
   <app-eraser-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Eraser"></app-eraser-config>
-  <!-- <app-rectangle-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Rectangle"></app-rectangle-config> -->
+  <app-rectangle-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Rectangle"></app-rectangle-config>
   <app-ellipse-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Ellipse"></app-ellipse-config>
   <app-file-menu></app-file-menu>
 </div>
