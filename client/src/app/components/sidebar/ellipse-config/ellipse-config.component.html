@@ -4,3 +4,11 @@
     [(ngModel)]="ellipseService.lineWidth">
   </mat-slider>
 </div>
+
+<mat-form-field>
+  <mat-label>Type de cercle</mat-label>
+  <mat-select [(ngModel)]="ellipseService.isFilled">
+    <mat-option [value]="false">Contour</mat-option>
+    <mat-option [value]="true">Plein</mat-option>
+  </mat-select>
+</mat-form-field>
