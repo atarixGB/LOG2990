@@ -21,6 +21,7 @@ import { LineConfigComponent } from './components/sidebar/line-config/line-confi
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+import { DrawingSurfaceComponent } from './components/drawing-surface/drawing-surface.component';
 
 @NgModule({
     declarations: [
@@ -34,6 +35,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         PencilConfigComponent,
         EraserConfigComponent,
         LineConfigComponent,
+        DrawingSurfaceComponent,
     ],
     imports: [
         BrowserModule,
