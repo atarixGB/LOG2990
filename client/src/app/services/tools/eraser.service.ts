@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_ERASER_COLOR, MIN_ERASER_THICKNESS } from '@app/constants';
+import { MIN_ERASER_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
@@ -22,7 +22,6 @@ export enum MouseButton {
 })
 export class EraserService extends Tool {
     eraserThickness: number;
-    eraserColor: string;
 
     private pathData: Vec2[];
 
@@ -31,7 +30,6 @@ export class EraserService extends Tool {
         this.clearPath();
 
         this.eraserThickness = MIN_ERASER_THICKNESS;
-        this.eraserColor = DEFAULT_ERASER_COLOR;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -64,20 +62,6 @@ export class EraserService extends Tool {
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
-        }
-    }
-
-    onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
-            this.onMouseUp(event);
-            this.mouseLeave = true;
-        }
-    }
-
-    onMouseEnter(event: MouseEvent): void {
-        if (this.mouseLeave) {
-            this.onMouseDown(event);
-            this.mouseLeave = false;
         }
     }
 
