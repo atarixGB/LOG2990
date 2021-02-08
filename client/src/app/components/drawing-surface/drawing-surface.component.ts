@@ -12,5 +12,4 @@ export class DrawingSurfaceComponent {
     onMouseMove(event: MouseEvent): void {
         this.mousePosition = { x: event.offsetX, y: event.offsetY };
     }
-    constructor() {}
 }
