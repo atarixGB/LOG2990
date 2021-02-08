@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -44,6 +44,7 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
+        console.log('dans drawing: ' + this.mousePosition.x);
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
@@ -64,19 +65,17 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
     }
 
-    @HostListener('keyup', ['$event'])
-    onKeyUp(event: KeyboardEvent): void {
-        this.toolManagerService.getCurrentTool().onKeyUp(event);
-    }
+    // @HostListener('keydown', ['$event'])
+    // onKeyDown(event: KeyboardEvent): void {
+    //     this.toolManagerService.getCurrentTool().onKeyDown(event);
+    // }
 
-    @HostListener('mouseleave', ['$event'])
-    onMouseLeave(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().onMouseLeave(event);
-    }
-
-    @HostListener('mouseenter', ['$event'])
-    onMouseEnter(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().onMouseEnter(event);
+    @HostListener('document:keyup', ['$event'])
+    handleKeyUp(event: KeyboardEvent): void {
+        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
+            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+            this.toolManagerService.getCurrentTool().handleKeyUp(event);
+        }
     }
 
     @HostListener('keydown', ['$event'])
