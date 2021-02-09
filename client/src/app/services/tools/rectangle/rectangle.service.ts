@@ -93,7 +93,7 @@ export class RectangleService extends Tool {
     private drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         const width = path[path.length - 1].x - path[0].x;
         const height = path[path.length - 1].y - path[0].y;
-        let shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
+        const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
 
         let upperRight: [number, number];
         upperRight = [path[0].x, path[0].y];

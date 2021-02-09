@@ -89,14 +89,16 @@ export class ToolManagerService {
                 break;
 
             case 'Shift':
-                if (this.currentTool === this.ellipseService) {
+                this.currentTool.mouseCoord = this.mousePosition;
+                this.currentTool.handleKeyDown(event);
+                /*                 if (this.currentTool === this.ellipseService) {
                     this.currentTool.mouseCoord = this.mousePosition;
                     this.currentTool.handleKeyDown(event);
                 }
                 if (this.currentTool === this.rectangleService) {
                     this.currentTool.mouseCoord = this.mousePosition;
                     this.currentTool.handleKeyDown(event);
-                }
+                } */
                 break;
         }
     }
