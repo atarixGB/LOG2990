@@ -69,10 +69,10 @@ export class RectangleService extends Tool {
 
     handleKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift' && this.mouseDown) {
-            this.isRectangle = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, this.pathData);
-        }
+            this.isRectangle = true;
+        } else this.drawRectangle(this.drawingService.previewCtx, this.pathData);
     }
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
@@ -86,6 +86,12 @@ export class RectangleService extends Tool {
         if (this.isFilled) {
             ctx.fill();
         } else {
+            ctx.stroke();
+        }
+        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
+        if (this.isRectangle) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.rect(firstPoint.x, firstPoint.y, length, width);
             ctx.stroke();
         }
     }
