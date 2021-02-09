@@ -42,7 +42,10 @@ export class EllipseService extends Tool {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isEllipse) this.drawEllipse(this.drawingService.baseCtx, this.pathData);
-        else this.drawCircle(this.drawingService.baseCtx, this.pathData);
+        else {
+            this.drawCircle(this.drawingService.baseCtx, this.pathData);
+            this.isEllipse = true;
+        }
         this.clearPath();
     }
 
