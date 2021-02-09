@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -72,10 +72,8 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
-            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-            this.toolManagerService.getCurrentTool().handleKeyUp(event);
-        }
+        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+        this.toolManagerService.getCurrentTool().handleKeyUp(event);
     }
 
     @HostListener('keydown', ['$event'])
