@@ -55,20 +55,6 @@ export class PencilService extends Tool {
         }
     }
 
-    onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
-            this.onMouseUp(event);
-            this.mouseLeave = true;
-        }
-    }
-
-    onMouseEnter(event: MouseEvent): void {
-        if (this.mouseLeave) {
-            this.onMouseDown(event);
-            this.mouseLeave = false;
-        }
-    }
-
     onMouseClick(event: MouseEvent): void {
         if (!this.mouseMove) {
             this.clearPath();

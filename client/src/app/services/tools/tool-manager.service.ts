@@ -40,8 +40,8 @@ export class ToolManagerService {
                 break;
 
             case '1':
-                // this.currentTool = this.rectangleService;
-                // this.currentToolEnum = ToolList.Rectangle;
+                this.currentTool = this.rectangleService;
+                this.currentToolEnum = ToolList.Rectangle;
                 break;
 
             case '2':
