@@ -5,4 +5,6 @@ import { Component } from '@angular/core';
     templateUrl: './file-menu.component.html',
     styleUrls: ['./file-menu.component.scss'],
 })
-export class FileMenuComponent {}
+export class FileMenuComponent {
+    createNewSketch(): void {}
+}

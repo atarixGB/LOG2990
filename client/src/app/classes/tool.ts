@@ -8,7 +8,6 @@ export abstract class Tool {
     mouseDown: boolean = false;
     mouseCoord: Vec2;
     mouseMove: boolean = false;
-    mouseLeave: boolean = false;
 
     constructor(protected drawingService: DrawingService) {}
 
@@ -17,8 +16,6 @@ export abstract class Tool {
     onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {}
-
-    onMouseEnter(event: MouseEvent): void {}
 
     handleKeyDown(event: KeyboardEvent): void {}
 
@@ -29,16 +26,7 @@ export abstract class Tool {
     }
     onMouseClick(event: MouseEvent): void {}
 
-    onMouseLeave(event: MouseEvent): void {}
-
     onMouseDoubleClick(event: MouseEvent): void {}
 
     onKeyDown(event: KeyboardEvent): void {}
-
-    /* getPositionFromMouse(event: MouseEvent): Vec2 {
-        return {
-            x: event.offsetX <= DEFAULT_WIDTH ? event.offsetX : DEFAULT_WIDTH,
-            y: event.offsetY <= DEFAULT_HEIGHT ? event.offsetY : DEFAULT_HEIGHT,
-        };
-    } */
 }
