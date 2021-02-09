@@ -44,7 +44,10 @@ export class RectangleService extends Tool {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isRectangle) this.drawRectangle(this.drawingService.baseCtx, this.pathData);
-        else this.drawSquare(this.drawingService.baseCtx, this.pathData);
+        else {
+            this.drawSquare(this.drawingService.baseCtx, this.pathData);
+            this.isRectangle = true;
+        }
         this.clearPath();
     }
 
@@ -72,7 +75,7 @@ export class RectangleService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, this.pathData);
             this.isRectangle = true;
-        } else this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+        }
     }
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
