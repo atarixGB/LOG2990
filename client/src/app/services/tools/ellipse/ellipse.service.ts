@@ -42,7 +42,10 @@ export class EllipseService extends Tool {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (this.isEllipse) this.drawEllipse(this.drawingService.baseCtx, this.pathData);
-        else this.drawCircle(this.drawingService.baseCtx, this.pathData);
+        else {
+            this.drawCircle(this.drawingService.baseCtx, this.pathData);
+            this.isEllipse = true;
+        }
         this.clearPath();
     }
 
@@ -108,58 +111,51 @@ export class EllipseService extends Tool {
     }
 
     private drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let width: number;
-        let origin: [number, number];
-        width = 0;
-        origin = [0, 0];
+        const width = path[path.length - 1].x - path[0].x;
+        const height = path[path.length - 1].y - path[0].y;
+        const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
 
-        if (path[path.length - 1].x > path[path.length - 1].y) {
-            width = path[path.length - 1].x - path[0].x;
-        } else {
-            width = path[path.length - 1].y - path[0].y;
-        }
-        if (width < 0) width = Math.abs(width);
+        let upperRight: [number, number];
+        upperRight = [path[0].x, path[0].y];
 
-        if (path[path.length - 1].x - path[0].x < 0 && path[path.length - 1].y - path[0].y >= 0) {
+        if (width <= 0 && height >= 0) {
             // go down-left
-            origin = [path[0].x - width, path[0].y];
-        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x >= 0) {
+            console.log('lower-left');
+            upperRight = [path[0].x - shortestSide, path[0].y];
+        } else if (height <= 0 && width >= 0) {
             // go up-right
-            origin = [path[0].x, path[0].y - width];
-        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x < 0) {
+            console.log('upper-right');
+            upperRight = [path[0].x, path[0].y - shortestSide];
+        } else if (height <= 0 && width <= 0) {
             // up-left
-            origin = [path[0].x - width, path[0].y - width];
+            console.log('upper-left');
+            upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
         } else {
             // go down-right
-            origin = [path[0].x, path[0].y];
+            console.log('lower-right');
+            upperRight = [path[0].x, path[0].y];
         }
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
-        ctx.strokeRect(origin[0], origin[1], width, width);
+        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
+        console.log('shortestSide : ' + shortestSide);
     }
 
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        // similar to how Paint works
-        let radius: number;
         let origin: [number, number];
-        radius = 0;
         origin = [0, 0];
 
-        if (path[path.length - 1].x > path[path.length - 1].y) {
-            radius = (path[path.length - 1].x - path[0].x) / 2;
-        } else {
-            radius = (path[path.length - 1].y - path[0].y) / 2;
-        }
+        const width = path[path.length - 1].x - path[0].x;
+        const height = path[path.length - 1].y - path[0].y;
+        const radius = Math.abs(width) < Math.abs(height) ? Math.abs(width) / 2 : Math.abs(height) / 2;
 
-        if (radius < 0) radius = Math.abs(radius);
-
-        if (path[path.length - 1].x - path[0].x < 0 && path[path.length - 1].y - path[0].y >= 0) {
+        if (width <= 0 && height >= 0) {
             // go down-left
             origin = [path[0].x - radius, path[0].y + radius];
-        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x >= 0) {
+        } else if (height <= 0 && width >= 0) {
             // go up-right
             origin = [path[0].x + radius, path[0].y - radius];
-        } else if (path[path.length - 1].y - path[0].y < 0 && path[path.length - 1].x - path[0].x < 0) {
+        } else if (height <= 0 && width <= 0) {
             // up-left
             origin = [path[0].x - radius, path[0].y - radius];
         } else {
@@ -182,7 +178,7 @@ export class EllipseService extends Tool {
     }
 
     handleKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Shift') {
+        if (event.key === 'Shift' && this.mouseDown) {
             this.isEllipse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawCircle(this.drawingService.previewCtx, this.pathData);
@@ -191,7 +187,7 @@ export class EllipseService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        if (event.key === 'Shift') {
+        if (event.key === 'Shift' && this.mouseDown) {
             this.isEllipse = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawEllipse(this.drawingService.previewCtx, this.pathData);
