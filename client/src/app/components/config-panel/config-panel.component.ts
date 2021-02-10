@@ -9,5 +9,12 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class ConfigPanelComponent {
     ToolList: typeof ToolList = ToolList;
+    isOpened: boolean = true;
+
     constructor(public toolManagerService: ToolManagerService) {}
+
+    closePanel(): void {
+        this.isOpened = false;
+        console.log('close');
+    }
 }

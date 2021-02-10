@@ -1,8 +1,22 @@
-<div class="config-container">
-  <app-line-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Line"></app-line-config>
-  <app-pencil-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Pencil"></app-pencil-config>
-  <app-eraser-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Eraser"></app-eraser-config>
-  <app-rectangle-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Rectangle">
-  </app-rectangle-config>
-  <app-ellipse-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Ellipse"></app-ellipse-config>
-</div>
+<mat-sidenav-container class="config-container" *ngIf="isOpened">
+  <mat-sidenav-content>
+    <button id="close-btn" mat-icon-button matTooltip="Fermer" matTooltipPosition="after" (click)="closePanel()">
+      <mat-icon id="">close</mat-icon>
+    </button>
+    <h3>
+      Paramètres de l'outil
+    </h3>
+    <app-line-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Line"></app-line-config>
+    <app-pencil-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Pencil"></app-pencil-config>
+    <app-eraser-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Eraser"></app-eraser-config>
+    <app-rectangle-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Rectangle">
+    </app-rectangle-config>
+    <app-ellipse-config *ngIf="toolManagerService.getCurrentToolEnum() == ToolList.Ellipse"></app-ellipse-config>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<!-- <div *ngIf="!isOpened">
+  <button mat-icon-button matTooltip="Ouvrir" matTooltipPosition="after" (click)="isOpened = !isOpened">
+    <mat-icon id="">keyboard_arrow_right</mat-icon>
+  </button>
+</div> -->
