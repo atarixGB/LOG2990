@@ -12,8 +12,9 @@ import { RectangleService } from './rectangle/rectangle.service';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    private currentTool: Tool;
-    private currentToolEnum: ToolList;
+    currentTool: Tool | undefined;
+    currentToolEnum: ToolList | undefined;
+    serviceBindings: Map<ToolList, Tool>;
     mousePosition: Vec2;
     toolList: ToolList;
 
@@ -26,6 +27,13 @@ export class ToolManagerService {
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
+        this.serviceBindings = new Map<ToolList, Tool>();
+        this.serviceBindings
+            .set(ToolList.Pencil, this.pencilService)
+            .set(ToolList.Ellipse, this.ellipseService)
+            .set(ToolList.Rectangle, this.rectangleService)
+            .set(ToolList.Eraser, this.eraserService)
+            .set(ToolList.Line, this.lineService);
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
@@ -89,50 +97,44 @@ export class ToolManagerService {
                 break;
 
             case 'Shift':
-                this.currentTool.mouseCoord = this.mousePosition;
-                this.currentTool.handleKeyDown(event);
+                if (this.currentTool != undefined) {
+                    this.currentTool.mouseCoord = this.mousePosition;
+                    this.currentTool.handleKeyDown(event);
+                }
                 break;
         }
-    }
-
-    getCurrentTool(): Tool {
-        return this.currentTool;
-    }
-
-    getCurrentToolEnum(): ToolList {
-        return this.currentToolEnum;
-    }
-
-    setCurrentTool(tool: ToolList): void {
-        this.switchTool(tool);
     }
 
     switchTool(tool: ToolList): void {
-        switch (tool) {
-            case ToolList.Pencil:
-                this.currentTool = this.pencilService;
-                this.currentToolEnum = ToolList.Pencil;
-                break;
-
-            case ToolList.Line:
-                this.currentTool = this.lineService;
-                this.currentToolEnum = ToolList.Line;
-                break;
-
-            case ToolList.Rectangle:
-                this.currentTool = this.rectangleService;
-                this.currentToolEnum = ToolList.Rectangle;
-                break;
-
-            case ToolList.Ellipse:
-                this.currentTool = this.ellipseService;
-                this.currentToolEnum = ToolList.Ellipse;
-                break;
-
-            case ToolList.Eraser:
-                this.currentTool = this.eraserService;
-                this.currentToolEnum = ToolList.Eraser;
-                break;
+        if (this.serviceBindings.has(tool)) {
+            this.currentTool = this.serviceBindings.get(tool);
+            this.currentToolEnum = tool;
         }
+        // switch (tool) {
+        //     case ToolList.Pencil:
+        //         this.currentTool = this.pencilService;
+        //         this.currentToolEnum = ToolList.Pencil;
+        //         break;
+
+        //     case ToolList.Line:
+        //         this.currentTool = this.lineService;
+        //         this.currentToolEnum = ToolList.Line;
+        //         break;
+
+        //     case ToolList.Rectangle:
+        //         this.currentTool = this.rectangleService;
+        //         this.currentToolEnum = ToolList.Rectangle;
+        //         break;
+
+        //     case ToolList.Ellipse:
+        //         this.currentTool = this.ellipseService;
+        //         this.currentToolEnum = ToolList.Ellipse;
+        //         break;
+
+        //     case ToolList.Eraser:
+        //         this.currentTool = this.eraserService;
+        //         this.currentToolEnum = ToolList.Eraser;
+        //         break;
+        // }
     }
 }
