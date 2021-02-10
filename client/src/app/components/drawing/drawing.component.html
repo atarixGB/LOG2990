@@ -1,22 +1,7 @@
 <div id="canvas-container">
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"> </canvas>
-    <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"> </canvas>
+    <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"></canvas>
+    <div class="corner bottom-right" cdkDrag (cdkDragMoved)="dragMoved($event)"></div>
+    <div class="corner bottom-left" cdkDragLockAxis="y" cdkDrag></div>
+    <div class="corner top-right" cdkDragLockAxis="x" cdkDrag></div>
 </div>
-<div class="example-box" cdkDrag (cdkDragMoved)="dragMoved($event)"></div>
-<!-- <div class="canvasAndOverlayWrapper container" style="position: relative">
-    <div class="overlay overlayTopLeft">
-        <div>top left</div>
-    </div>
-
-    <div class="overlay overlayTopRight">
-        <div>top right</div>
-    </div>
-
-    <div class="overlay overlayBottomLeft">
-        <div>bottom left</div>
-    </div>
-
-    <div class="overlay overlayBottomRight">
-        <div>bottom right</div>
-    </div>
-</div> -->
