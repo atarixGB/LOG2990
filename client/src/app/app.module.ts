@@ -6,6 +6,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
@@ -55,6 +56,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         FormsModule,
         MatSelectModule,
         BrowserAnimationsModule,
+        MatSidenavModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
