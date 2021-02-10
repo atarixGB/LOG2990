@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { EraserService } from './eraser.service';
+import { EraserService } from './eraser/eraser.service';
 
 describe('EraserService', () => {
     let service: EraserService;
