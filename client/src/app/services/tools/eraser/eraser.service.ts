@@ -82,8 +82,24 @@ export class EraserService extends Tool {
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        let previousPointX = path[0].x;
+        let previousPointY = path[0].y;
+        let interpolation = 0;
+        let interpolationY = 0;
+
+        ctx.beginPath();
         for (const point of path) {
             ctx.clearRect(point.x, point.y, this.eraserThickness, this.eraserThickness);
+
+            interpolation = (point.y - previousPointY) / (point.x - previousPointX);
+
+            for (var x = previousPointX; x < point.x; x++) {
+                interpolationY = (1 - interpolation) * previousPointX + interpolation * x;
+                ctx.clearRect(x, interpolationY, this.eraserThickness, this.eraserThickness);
+            }
+
+            previousPointX = point.x;
+            previousPointY = point.y;
         }
     }
 
