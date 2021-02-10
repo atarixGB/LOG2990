@@ -16,15 +16,12 @@ canvas {
 
 #canvas-container {
     position: relative;
-    width: 1000px;
-    height: 800px;
 }
 
 .corner {
     width: 10px;
     height: 10px;
     border: solid 1px rgb(0, 0, 0);
-    cursor: move;
     display: flex;
     border-radius: 4px;
     position: absolute;
@@ -45,12 +42,12 @@ canvas {
 
 .bottom-left {
     bottom: -10px;
-    left: 0px;
+    left: 50%;
     cursor: s-resize;
 }
 
 .top-right {
-    top: 0px;
+    top: 50%;
     right: -10px;
     cursor: e-resize;
 }

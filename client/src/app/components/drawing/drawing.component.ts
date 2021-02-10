@@ -37,6 +37,14 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
+    dragMoved(event: CdkDragMove): void {
+        // this.canvasSize.x = event.pointerPosition.x;
+        // this.canvasSize.y = event.pointerPosition.y;
+        this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
+        this.previewCanvas.nativeElement.width = event.pointerPosition.x;
+        this.previewCanvas.nativeElement.height = event.pointerPosition.y;
+    }
+
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
@@ -54,11 +62,6 @@ export class DrawingComponent implements AfterViewInit {
     onMouseUp(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseUp(event);
-    }
-
-    dragMoved(event: CdkDragMove): void {
-        this.canvasSize.x = event.pointerPosition.x;
-        this.canvasSize.y = event.pointerPosition.y;
     }
 
     @HostListener('click', ['$event'])
