@@ -1,4 +1,3 @@
-import { CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
@@ -26,6 +25,8 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
+    private isCorner: boolean;
+
     // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
@@ -37,31 +38,36 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    dragMoved(event: CdkDragMove): void {
-        // this.canvasSize.x = event.pointerPosition.x;
-        // this.canvasSize.y = event.pointerPosition.y;
-        this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
-        this.previewCanvas.nativeElement.width = event.pointerPosition.x;
-        this.previewCanvas.nativeElement.height = event.pointerPosition.y;
-    }
-
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseMove(event);
+
+        if (this.isCorner) {
+            this.baseCanvas.nativeElement.style.borderStyle = 'dotted';
+            this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
+
+            this.canvasSize.x = event.x;
+            this.canvasSize.y = event.y;
+        }
     }
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        console.log('dans drawing: ' + this.mousePosition.x);
-        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-        this.toolManagerService.getCurrentTool().onMouseDown(event);
+        if (!this.isCorner) {
+            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
+            this.toolManagerService.getCurrentTool().onMouseDown(event);
+        }
     }
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseUp(event);
+
+        this.isCorner = false;
+        this.baseCanvas.nativeElement.style.borderStyle = 'solid';
+        this.previewCanvas.nativeElement.style.borderStyle = 'solid';
     }
 
     @HostListener('click', ['$event'])
@@ -73,11 +79,6 @@ export class DrawingComponent implements AfterViewInit {
     onMousonDoubleClick(event: MouseEvent): void {
         this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
     }
-
-    // @HostListener('keydown', ['$event'])
-    // onKeyDown(event: KeyboardEvent): void {
-    //     this.toolManagerService.getCurrentTool().onKeyDown(event);
-    // }
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
@@ -91,6 +92,10 @@ export class DrawingComponent implements AfterViewInit {
     handleKeyDown(event: KeyboardEvent): void {
         this.toolManagerService.mousePosition = this.mousePosition;
         this.toolManagerService.handleHotKeysShortcut(event);
+    }
+
+    onCornerClick(event: MouseEvent): void {
+        this.isCorner = true;
     }
 
     get width(): number {

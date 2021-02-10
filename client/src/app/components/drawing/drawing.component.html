@@ -1,7 +1,7 @@
 <div id="canvas-container" [style.width.px]="width" [style.height.px]="height">
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"> </canvas>
     <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"></canvas>
-    <div class="corner bottom-right" cdkDrag (cdkDragMoved)="dragMoved($event)"></div>
+    <div class="corner bottom-right" (mousedown)="onCornerClick($event)"></div>
     <div class="corner bottom-left" cdkDragLockAxis="y" cdkDrag></div>
     <div class="corner top-right" cdkDragLockAxis="x" cdkDrag></div>
 </div>
