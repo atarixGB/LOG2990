@@ -76,31 +76,42 @@ export class EraserService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        for (const point of path) {
-            ctx.clearRect(point.x, point.y, this.eraserThickness, this.eraserThickness);
-        }
-    }
-
-    private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let previousPointX = path[0].x;
         let previousPointY = path[0].y;
         let interpolation = 0;
         let interpolationY = 0;
 
-        ctx.beginPath();
         for (const point of path) {
             ctx.clearRect(point.x, point.y, this.eraserThickness, this.eraserThickness);
 
             interpolation = (point.y - previousPointY) / (point.x - previousPointX);
 
-            for (var x = previousPointX; x < point.x; x++) {
-                interpolationY = (1 - interpolation) * previousPointX + interpolation * x;
-                ctx.clearRect(x, interpolationY, this.eraserThickness, this.eraserThickness);
+            if (previousPointX < point.x) {
+                for (let x = previousPointX; x < point.x; x++) {
+                    interpolationY = interpolation * x + (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
+                    ctx.clearRect(x, interpolationY, this.eraserThickness, this.eraserThickness);
+                }
+            } else if (previousPointX > point.x) {
+                for (let x = point.x; x < previousPointX; x++) {
+                    interpolationY = interpolation * x + (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
+                    ctx.clearRect(x, interpolationY, this.eraserThickness, this.eraserThickness);
+                }
+            } else if (previousPointY < point.y) {
+                for (let y = previousPointY; y < point.y; y++) {
+                    ctx.clearRect(point.x, y, this.eraserThickness, this.eraserThickness);
+                }
+            } else if (previousPointY > point.y) {
+                for (let y = previousPointY; y > point.y; y--) {
+                    ctx.clearRect(point.x, y, this.eraserThickness, this.eraserThickness);
+                }
             }
-
             previousPointX = point.x;
             previousPointY = point.y;
         }
+    }
+
+    private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        ctx.clearRect(path[0].x, path[0].y, this.eraserThickness, this.eraserThickness);
     }
 
     private clearPath(): void {
