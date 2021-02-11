@@ -17,7 +17,7 @@ export class ToolManagerService {
     currentToolEnum: ToolList | undefined;
 
     serviceBindings: Map<ToolList, Tool>;
-    keyBindings: Map<String, Tool>;
+    keyBindings: Map<string, Tool>;
 
     mousePosition: Vec2;
 
@@ -39,7 +39,7 @@ export class ToolManagerService {
             .set(ToolList.Eraser, this.eraserService)
             .set(ToolList.Line, this.lineService);
 
-        this.keyBindings = new Map<String, Tool>();
+        this.keyBindings = new Map<string, Tool>();
         this.keyBindings
             .set('c', this.pencilService)
             .set('1', this.rectangleService)
@@ -49,7 +49,7 @@ export class ToolManagerService {
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
-        if (this.currentTool != undefined && event.key == 'Shift') {
+        if (this.currentTool != undefined && event.key === 'Shift') {
             this.currentTool.mouseCoord = this.mousePosition;
             this.currentTool.handleKeyDown(event);
         } else {
