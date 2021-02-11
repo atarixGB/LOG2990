@@ -13,8 +13,7 @@ export class ConfigPanelComponent {
 
     constructor(public toolManagerService: ToolManagerService) {}
 
-    closePanel(): void {
-        this.isOpened = false;
-        console.log('close');
+    toggleConfigPanel(): void {
+        this.isOpened = !this.isOpened;
     }
 }

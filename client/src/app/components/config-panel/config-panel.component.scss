@@ -1,9 +1,9 @@
 mat-sidenav-container {
-    background-color: rgb(85, 85, 85);
+    background-color: rgb(65, 65, 65);
     color: rgb(247, 247, 247);
     height: 100%;
     width: 220px;
-    padding: 10px;
+    padding: 15px;
     border-left: 1px solid grey;
 }
 
@@ -17,4 +17,11 @@ h3 {
     display: block;
     right: 0;
     float: right;
+}
+
+.minimized-panel {
+    background-color: rgb(65, 65, 65);
+    color: rgb(247, 247, 247);
+    position: fixed;
+    bottom: 0;
 }
