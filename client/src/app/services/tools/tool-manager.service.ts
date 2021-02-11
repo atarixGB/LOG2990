@@ -92,6 +92,14 @@ export class ToolManagerService {
                 this.currentTool.mouseCoord = this.mousePosition;
                 this.currentTool.handleKeyDown(event);
                 break;
+            case 'Escape':
+                this.currentTool.mouseCoord = this.mousePosition;
+                this.currentTool.handleKeyDown(event);
+                break;
+            case 'Backspace':
+                this.currentTool.mouseCoord = this.mousePosition;
+                this.currentTool.handleKeyDown(event);
+                break;
         }
     }
 

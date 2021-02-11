@@ -44,7 +44,6 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        console.log('dans drawing: ' + this.mousePosition.x);
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseDown(event);
     }
