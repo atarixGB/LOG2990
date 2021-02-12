@@ -127,15 +127,9 @@ export class EraserService extends Tool {
         this.drawingService.cursorCtx.clearRect(0, 0, this.drawingService.getCanvasWidth(), this.drawingService.getCanvasHeight());
 
         ctx.beginPath();
-        ctx.fillStyle = 'black';
-        ctx.fillRect(this.getPositionFromMouse(event).x, this.getPositionFromMouse(event).y, this.eraserThickness, this.eraserThickness);
         ctx.fillStyle = 'white';
-        let ratio = 1 / 4;
-        ctx.fillRect(
-            this.getPositionFromMouse(event).x + (ratio / 2) * this.eraserThickness,
-            this.getPositionFromMouse(event).y + (ratio / 2) * this.eraserThickness,
-            (1 - ratio) * this.eraserThickness,
-            (1 - ratio) * this.eraserThickness,
-        );
+        ctx.fillRect(this.getPositionFromMouse(event).x, this.getPositionFromMouse(event).y, this.eraserThickness, this.eraserThickness);
+        ctx.strokeStyle = 'black';
+        ctx.strokeRect(this.getPositionFromMouse(event).x, this.getPositionFromMouse(event).y, this.eraserThickness, this.eraserThickness);
     }
 }
