@@ -33,6 +33,7 @@ export class EraserService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
+        this.updateCursor(this.drawingService.cursorCtx, event);
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
@@ -43,6 +44,7 @@ export class EraserService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
+        this.updateCursor(this.drawingService.cursorCtx, event);
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
@@ -54,6 +56,7 @@ export class EraserService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.updateCursor(this.drawingService.cursorCtx, event);
         if (this.mouseDown) {
             this.mouseMove = true;
             const mousePosition = this.getPositionFromMouse(event);
@@ -66,6 +69,7 @@ export class EraserService extends Tool {
     }
 
     onMouseClick(event: MouseEvent): void {
+        this.updateCursor(this.drawingService.cursorCtx, event);
         if (!this.mouseMove) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(event);
@@ -105,6 +109,7 @@ export class EraserService extends Tool {
                     ctx.clearRect(point.x, y, this.eraserThickness, this.eraserThickness);
                 }
             }
+
             previousPointX = point.x;
             previousPointY = point.y;
         }
@@ -116,5 +121,21 @@ export class EraserService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    private updateCursor(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
+        this.drawingService.cursorCtx.clearRect(0, 0, this.drawingService.getCanvasWidth(), this.drawingService.getCanvasHeight());
+
+        ctx.beginPath();
+        ctx.fillStyle = 'black';
+        ctx.fillRect(this.getPositionFromMouse(event).x, this.getPositionFromMouse(event).y, this.eraserThickness, this.eraserThickness);
+        ctx.fillStyle = 'white';
+        let ratio = 1 / 4;
+        ctx.fillRect(
+            this.getPositionFromMouse(event).x + (ratio / 2) * this.eraserThickness,
+            this.getPositionFromMouse(event).y + (ratio / 2) * this.eraserThickness,
+            (1 - ratio) * this.eraserThickness,
+            (1 - ratio) * this.eraserThickness,
+        );
     }
 }

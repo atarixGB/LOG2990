@@ -10,6 +10,10 @@ canvas {
     z-index: 0;
 }
 
+#cursor {
+    z-index: 1;
+}
+
 #drawCanvas {
     z-index: 1;
 }
