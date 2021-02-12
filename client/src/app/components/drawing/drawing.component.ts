@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_HEIGHT, MIN_WIDTH, ToolList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -27,6 +27,8 @@ export class DrawingComponent implements AfterViewInit {
 
     private isCorner: boolean;
 
+    private resizer: (x?: number, y?: number) => void;
+
     // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
@@ -46,9 +48,7 @@ export class DrawingComponent implements AfterViewInit {
         if (this.isCorner) {
             this.baseCanvas.nativeElement.style.borderStyle = 'dotted';
             this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
-
-            this.canvasSize.x = event.x;
-            this.canvasSize.y = event.y;
+            this.resizer(event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().left, event.clientY);
         }
     }
 
@@ -94,8 +94,34 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManagerService.handleHotKeysShortcut(event);
     }
 
-    onCornerClick(event: MouseEvent): void {
+    onCornerClick(event: MouseEvent, resizer: (x?: number, y?: number) => void): void {
         this.isCorner = true;
+        this.resizer = resizer;
+
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    rightCenter(mousePositionX: number): void {
+        console.log('right center');
+        if (mousePositionX > MIN_WIDTH) {
+            this.canvasSize.x = mousePositionX;
+        }
+    }
+
+    bottomCenter(mousePositionY: number): void {
+        console.log('bottom center');
+        if (mousePositionY > MIN_HEIGHT) {
+            this.canvasSize.y = mousePositionY;
+        }
+    }
+
+    bottomRight(mousePositionX: number, mousePositionY: number): void {
+        console.log('bottom right');
+        if (mousePositionY > MIN_HEIGHT && mousePositionX > MIN_WIDTH) {
+            this.canvasSize.x = mousePositionX;
+            this.canvasSize.y = mousePositionY;
+        }
     }
 
     get width(): number {
