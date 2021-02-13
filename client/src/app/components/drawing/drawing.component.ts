@@ -1,7 +1,7 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_SIZE } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -30,7 +30,14 @@ export class DrawingComponent implements AfterViewInit {
 
     private isResizing: boolean;
 
-    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
+    dragPosition = { x: 0, y: 0 };
+
+    changePosition() {
+        this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
+        console.log('x :', this.dragPosition.x);
+        console.log('y :', this.dragPosition.y);
+    }
+
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
@@ -105,27 +112,32 @@ export class DrawingComponent implements AfterViewInit {
 
         this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
 
-        if (resizeX) {
-            console.log('resize x', event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left);
+        if (resizeX && event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left > MIN_SIZE) {
             this.previewCanvas.nativeElement.width = event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left;
         }
 
-        if (resizeY) {
-            console.log('resize y');
+        if (resizeY && event.pointerPosition.y > MIN_SIZE) {
             this.previewCanvas.nativeElement.height = event.pointerPosition.y;
         }
     }
 
     dragEnded(event: CdkDragEnd): void {
-        console.log('DragReleased', event.distance.x);
+        let newWidth: number = this.canvasSize.x + event.distance.x;
+        let newHeight: number = this.canvasSize.y + event.distance.y;
 
-        console.log('canvasSize before', this.canvasSize.x);
+        this.previewCanvas.nativeElement.style.borderStyle = 'solid';
 
-        this.canvasSize.x = this.canvasSize.x + event.distance.x;
-        this.canvasSize.y = this.canvasSize.y + event.distance.y;
+        if (newWidth >= MIN_SIZE) {
+            this.canvasSize.x = newWidth;
+        } else {
+            this.canvasSize.x = MIN_SIZE;
+        }
 
-        console.log('position x', this.canvasSize.x + event.distance.x);
-        console.log('canvasSize after', this.canvasSize.x);
+        if (newHeight >= MIN_SIZE) {
+            this.canvasSize.y = newHeight;
+        } else {
+            this.canvasSize.y = MIN_SIZE;
+        }
 
         setTimeout(() => {
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);

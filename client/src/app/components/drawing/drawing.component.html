@@ -1,13 +1,22 @@
 <div id="canvas-container" [style.width.px]="width" [style.height.px]="height">
     <canvas id="canvas" #baseCanvas [attr.width]="width" [attr.height]="height"> </canvas>
     <canvas id="previewLayer" #previewCanvas [attr.width]="width" [attr.height]="height"></canvas>
-    <div class="box bottom-right" cdkDrag (cdkDragMoved)="dragMoved($event, true, true)" (cdkDragEnded)="dragEnded($event)"></div>
+    <div
+        class="box bottom-right"
+        cdkDrag
+        (cdkDragMoved)="dragMoved($event, true, true)"
+        (cdkDragEnded)="dragEnded($event)"
+        (cdkDragEnded)="changePosition()"
+        [cdkDragFreeDragPosition]="dragPosition"
+    ></div>
     <div
         class="box right-center"
         cdkDrag
         cdkDragLockAxis="x"
         (cdkDragMoved)="dragMoved($event, true, false)"
         (cdkDragEnded)="dragEnded($event)"
+        (cdkDragEnded)="changePosition()"
+        [cdkDragFreeDragPosition]="dragPosition"
     ></div>
     <div
         class="box bottom-center"
@@ -15,8 +24,7 @@
         cdkDragLockAxis="y"
         (cdkDragMoved)="dragMoved($event, false, true)"
         (cdkDragEnded)="dragEnded($event)"
+        (cdkDragEnded)="changePosition()"
+        [cdkDragFreeDragPosition]="dragPosition"
     ></div>
-    <!-- <div class="box bottom-right" (mousedown)="onCornerClick($event, bottomRight)"></div>
-    <div class="box bottom-center" (mouseDown)="onCornerClick($event, bottomCenter)"></div>
-    <div class="box right-center" (mouseDown)="onCornerClick($event, rightCenter)"></div> -->
 </div>

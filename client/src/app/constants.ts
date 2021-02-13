@@ -1,8 +1,7 @@
 // Canvas constants
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
-export const MIN_WIDTH = 250;
-export const MIN_HEIGHT = 250;
+export const MIN_SIZE = 250;
 
 export enum MouseButton {
     Left = 0,
