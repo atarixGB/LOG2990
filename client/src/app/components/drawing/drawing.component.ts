@@ -1,7 +1,7 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_HEIGHT, MIN_WIDTH } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -28,9 +28,7 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    private isCorner: boolean;
-
-    private resizer: (x?: number, y?: number) => void;
+    private isResizing: boolean;
 
     // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
@@ -48,27 +46,12 @@ export class DrawingComponent implements AfterViewInit {
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseMove(event);
-
-            if (this.isCorner) {
-                this.baseCanvas.nativeElement.style.borderStyle = 'dotted';
-                this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
-                let currentDrawing: ImageData = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
-                if (this.resizer === this.bottomCenter) {
-                    this.resizer(event.clientY);
-                } else {
-                    console.log('else');
-                    this.resizer(event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().left, event.clientY);
-                }
-                setTimeout(() => {
-                    this.baseCtx.putImageData(currentDrawing, 0, 0);
-                }, 0);
-            }
         }
     }
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseDown(event);
         }
@@ -80,17 +63,12 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseUp(event);
         }
-
-        if (this.isCorner) {
-            this.isCorner = false;
-            this.baseCanvas.nativeElement.style.borderStyle = 'solid';
-            this.previewCanvas.nativeElement.style.borderStyle = 'solid';
-        }
+        this.isResizing = false;
     }
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
             this.toolManagerService.currentTool.onMouseClick(event);
         }
     }
@@ -118,47 +96,14 @@ export class DrawingComponent implements AfterViewInit {
         }
     }
 
-    onCornerClick(event: MouseEvent, resizer: (x?: number, y?: number) => void): void {
-        console.log('onCornerCLick');
-        this.isCorner = true;
-        this.resizer = resizer;
-
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    rightCenter(mousePositionX: number): void {
-        console.log('right center');
-        if (mousePositionX >= MIN_WIDTH) {
-            this.canvasSize.x = mousePositionX;
-        }
-    }
-
-    bottomCenter(mousePositionY: number): void {
-        console.log('bottom center');
-        if (mousePositionY >= MIN_HEIGHT) {
-            this.canvasSize.y = mousePositionY;
-        }
-    }
-
-    bottomRight(mousePositionX: number, mousePositionY: number): void {
-        if (mousePositionY >= MIN_HEIGHT && mousePositionX >= MIN_WIDTH) {
-            this.canvasSize.x = mousePositionX;
-            this.canvasSize.y = mousePositionY;
-        }
-    }
-
-    // dragStarted(event: CdkDragStart, resizeX: boolean, resizeY: boolean): void {
-    //     console.log('DragStarted');
-    //     this.resizeX = resizeX;
-    //     this.resizeY = resizeY;
-    // }
+    private currentDrawing: ImageData;
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
-        console.log('DragMoved');
-        //this.baseCanvas.nativeElement.style.borderStyle = 'dotted';
+        this.isResizing = true;
+
         this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
-        // let currentDrawing: ImageData = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
+
+        this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
 
         if (resizeX) {
             console.log('resize x', event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left);
@@ -169,22 +114,22 @@ export class DrawingComponent implements AfterViewInit {
             console.log('resize y');
             this.previewCanvas.nativeElement.height = event.pointerPosition.y;
         }
-        // setTimeout(() => {
-        //     this.baseCtx.putImageData(currentDrawing, 0, 0);
-        // }, 0);
     }
 
     dragEnded(event: CdkDragEnd): void {
         console.log('DragReleased', event.distance.x);
-        console.log('position x', this.canvasSize.x + event.distance.x);
-        // if (this.resizeX) {
+
+        console.log('canvasSize before', this.canvasSize.x);
+
         this.canvasSize.x = this.canvasSize.x + event.distance.x;
         this.canvasSize.y = this.canvasSize.y + event.distance.y;
-        // }
 
-        // if (this.resizeY) {
-        //     this.canvasSize.y = this.mousePosition.y;
-        // }
+        console.log('position x', this.canvasSize.x + event.distance.x);
+        console.log('canvasSize after', this.canvasSize.x);
+
+        setTimeout(() => {
+            this.baseCtx.putImageData(this.currentDrawing, 0, 0);
+        }, 0);
     }
 
     get width(): number {
