@@ -86,27 +86,37 @@ export class EraserService extends Tool {
         let interpolationY = 0;
 
         for (const point of path) {
-            ctx.clearRect(point.x, point.y, this.eraserThickness, this.eraserThickness);
+            ctx.clearRect(point.x - this.eraserThickness / 2, point.y - this.eraserThickness / 2, this.eraserThickness, this.eraserThickness);
 
             interpolation = (point.y - previousPointY) / (point.x - previousPointX);
 
             if (previousPointX < point.x) {
                 for (let x = previousPointX; x < point.x; x++) {
                     interpolationY = interpolation * x + (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
-                    ctx.clearRect(x, interpolationY, this.eraserThickness, this.eraserThickness);
+                    ctx.clearRect(
+                        x - this.eraserThickness / 2,
+                        interpolationY - this.eraserThickness / 2,
+                        this.eraserThickness,
+                        this.eraserThickness,
+                    );
                 }
             } else if (previousPointX > point.x) {
                 for (let x = point.x; x < previousPointX; x++) {
                     interpolationY = interpolation * x + (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
-                    ctx.clearRect(x, interpolationY, this.eraserThickness, this.eraserThickness);
+                    ctx.clearRect(
+                        x - this.eraserThickness / 2,
+                        interpolationY - this.eraserThickness / 2,
+                        this.eraserThickness,
+                        this.eraserThickness,
+                    );
                 }
             } else if (previousPointY < point.y) {
                 for (let y = previousPointY; y < point.y; y++) {
-                    ctx.clearRect(point.x, y, this.eraserThickness, this.eraserThickness);
+                    ctx.clearRect(point.x - this.eraserThickness / 2, y - this.eraserThickness / 2, this.eraserThickness, this.eraserThickness);
                 }
             } else if (previousPointY > point.y) {
                 for (let y = previousPointY; y > point.y; y--) {
-                    ctx.clearRect(point.x, y, this.eraserThickness, this.eraserThickness);
+                    ctx.clearRect(point.x - this.eraserThickness / 2, y - this.eraserThickness / 2, this.eraserThickness, this.eraserThickness);
                 }
             }
 
@@ -116,7 +126,7 @@ export class EraserService extends Tool {
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.clearRect(path[0].x, path[0].y, this.eraserThickness, this.eraserThickness);
+        ctx.clearRect(path[0].x - this.eraserThickness / 2, path[0].y - this.eraserThickness / 2, this.eraserThickness, this.eraserThickness);
     }
 
     private clearPath(): void {
@@ -128,8 +138,18 @@ export class EraserService extends Tool {
 
         ctx.beginPath();
         ctx.fillStyle = 'white';
-        ctx.fillRect(this.getPositionFromMouse(event).x, this.getPositionFromMouse(event).y, this.eraserThickness, this.eraserThickness);
+        ctx.fillRect(
+            this.getPositionFromMouse(event).x - this.eraserThickness / 2,
+            this.getPositionFromMouse(event).y - this.eraserThickness / 2,
+            this.eraserThickness,
+            this.eraserThickness,
+        );
         ctx.strokeStyle = 'black';
-        ctx.strokeRect(this.getPositionFromMouse(event).x, this.getPositionFromMouse(event).y, this.eraserThickness, this.eraserThickness);
+        ctx.strokeRect(
+            this.getPositionFromMouse(event).x - this.eraserThickness / 2,
+            this.getPositionFromMouse(event).y - this.eraserThickness / 2,
+            this.eraserThickness,
+            this.eraserThickness,
+        );
     }
 }
