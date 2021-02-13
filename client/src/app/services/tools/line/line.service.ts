@@ -17,6 +17,7 @@ export class LineService extends Tool {
     private coordinates: Vec2[];
 
     private hasPressedShiftKey: boolean;
+    private hasDblClick: boolean;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
@@ -33,6 +34,7 @@ export class LineService extends Tool {
         this.coordinates = [];
         this.lastCanvasImages = [];
         this.hasPressedShiftKey = false;
+        this.hasDblClick = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -56,6 +58,7 @@ export class LineService extends Tool {
     onMouseDoubleClick(event: MouseEvent): void {
         this.clearPath();
         this.mouseDown = false;
+        this.hasDblClick = true;
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -97,21 +100,23 @@ export class LineService extends Tool {
 
     handleKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
+        let keyPressed = event.key;
 
-        switch (event.key) {
-            case 'Escape':
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.mouseDown = false;
-                break;
-            case 'Shift':
-                this.hasPressedShiftKey = true;
-                break;
-            case 'Backspace':
-                console.log(event.key);
-                this.drawingService.clearCanvas(this.drawingService.baseCtx);
+        if (keyPressed == 'Escape') {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.mouseDown = false;
+        } else if (keyPressed == 'Shift') {
+            this.hasPressedShiftKey = true;
+        } else if (keyPressed === 'Backspace') {
+            this.drawingService.clearCanvas(this.drawingService.baseCtx);
+
+            if (this.hasDblClick) {
+                this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length - 3], 0, 0);
+                this.hasDblClick = false;
+            } else {
                 // We use the second last index to get the canvas state just before last stroked line
                 this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
-                break;
+            }
         }
     }
 
@@ -144,7 +149,8 @@ export class LineService extends Tool {
     }
 
     // Cramer's Rule is used for solving the linear system equation
-    //    ax + by = r and cx + dy = f
+    //    ax + by = e
+    //    cx + dy = f
     private solveLinearEquationsSystem(a: number, b: number, c: number, d: number, e: number, f: number): Vec2 {
         const determinant = a * d - b * c;
         const point: Vec2 = {
