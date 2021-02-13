@@ -7,8 +7,8 @@ export enum MouseButton {
 }
 
 export enum TypeOfJunctions {
-    REGULAR = 0,
-    CIRCLE = 1,
+    Regular = 0,
+    Circle = 1,
 }
 
 export const DEFAULT_LINE_THICKNESS = 1;

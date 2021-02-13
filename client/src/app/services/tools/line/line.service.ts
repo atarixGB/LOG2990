@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-// import { Segment } from '@app/classes/segment';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
@@ -30,7 +29,7 @@ export class LineService extends Tool {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
-        this.junctionType = TypeOfJunctions.REGULAR;
+        this.junctionType = TypeOfJunctions.Regular;
         this.coordinates = [];
         this.lastCanvasImages = [];
         this.hasPressedShiftKey = false;
@@ -41,27 +40,17 @@ export class LineService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.coordinates.push(this.mouseDownCoord);
+        const point: Vec2 | undefined = this.calculatePosition(this.mouseCoord, this.basePoint);
 
-        if (this.junctionType === TypeOfJunctions.CIRCLE) {
-            this.drawingService.baseCtx.lineWidth = this.lineWidth;
-            this.drawingService.baseCtx.beginPath();
-            this.drawingService.baseCtx.arc(this.mouseDownCoord.x, this.mouseDownCoord.y, this.junctionRadius, 0, 2 * Math.PI);
-            this.drawingService.baseCtx.stroke();
-            this.drawingService.baseCtx.fill();
-        }
-
-        // Handle automatic junction when drawing constrained-angle line
         if (this.hasPressedShiftKey) {
-            const point: Vec2 | undefined = this.calculatePosition(this.mouseCoord, this.basePoint);
+            // Handle automatic junction when drawing constrained-angle lines
             if (point) {
-                let newStartPoint: Vec2 = {
-                    x: point.x,
-                    y: point.y,
-                };
-                this.coordinates.push(newStartPoint);
+                this.coordinates.push(point);
+                if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, point);
             }
         } else {
             this.pathData.push(this.mouseDownCoord);
+            if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, this.mouseDownCoord);
         }
     }
 
@@ -109,23 +98,25 @@ export class LineService extends Tool {
 
     handleKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        let keyPressed = event.key;
+        const keyPressed = event.key;
 
-        if (keyPressed == 'Escape') {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.mouseDown = false;
-        } else if (keyPressed == 'Shift') {
-            this.hasPressedShiftKey = true;
-        } else if (keyPressed === 'Backspace') {
-            this.drawingService.clearCanvas(this.drawingService.baseCtx);
-
-            if (this.hasDblClick) {
-                this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length - 3], 0, 0);
-                this.hasDblClick = false;
-            } else {
-                // We use the second last index to get the canvas state just before last stroked line
-                this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
-            }
+        switch (keyPressed) {
+            case 'Escape':
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.mouseDown = false;
+                break;
+            case 'Shift':
+                this.hasPressedShiftKey = true;
+                break;
+            case 'Backspace':
+                if (this.hasDblClick) {
+                    this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length - 3], 0, 0);
+                    this.hasDblClick = false;
+                } else {
+                    // We use the second last index to get the canvas state just before last stroked line
+                    this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
+                }
+                break;
         }
     }
 
@@ -212,6 +203,14 @@ export class LineService extends Tool {
             ctx.lineTo(point.x, point.y);
             ctx.stroke();
         }
+    }
+
+    private drawPoint(ctx: CanvasRenderingContext2D, position: Vec2): void {
+        ctx.lineWidth = this.lineWidth;
+        ctx.beginPath();
+        ctx.arc(position.x, position.y, this.junctionRadius, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.fill();
     }
 
     private clearPath(): void {
