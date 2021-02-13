@@ -1,3 +1,9 @@
+nimport;
+{
+    TestBed;
+}
+from;
+('@angular/core/testing');
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { TestBed } from ;
 '@angular/core/testing';
