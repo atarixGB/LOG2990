@@ -29,3 +29,21 @@ export enum ToolList {
     Rectangle = 3,
     Ellipse = 4,
 }
+export const COLOR_WIN_WIDTH = '500px';
+
+export const WIDTH = 20;
+export const HEIGHT = 200;
+export const ONE_SIX = 0.17;
+export const ONE_THREE = 0.33;
+export const ONE_TWO = 0.5;
+export const TWO_THREE = 0.67;
+export const FIVE_SIX = 0.83;
+
+export const COLOR_POSITION = ['first', 'second'];
+
+export const COLOR_HISTORY = 10;
+export const COLOR_ORDER = 2;
+export const MAX_DEC_RANGE = 255;
+export const OPACITY_POS_ALPHA = 3;
+export const HEX_BASE = 16;
+export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
