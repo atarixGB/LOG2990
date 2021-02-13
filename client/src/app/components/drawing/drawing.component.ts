@@ -48,7 +48,16 @@ export class DrawingComponent implements AfterViewInit {
         if (this.isCorner) {
             this.baseCanvas.nativeElement.style.borderStyle = 'dotted';
             this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
-            this.resizer(event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().left, event.clientY);
+            let currentDrawing: ImageData = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
+            if (this.resizer === this.bottomCenter) {
+                this.resizer(event.clientY);
+            } else {
+                console.log('else');
+                this.resizer(event.clientX - this.baseCanvas.nativeElement.getBoundingClientRect().left, event.clientY);
+            }
+            setTimeout(() => {
+                this.baseCtx.putImageData(currentDrawing, 0, 0);
+            }, 0);
         }
     }
 
@@ -65,9 +74,11 @@ export class DrawingComponent implements AfterViewInit {
         this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
         this.toolManagerService.getCurrentTool().onMouseUp(event);
 
-        this.isCorner = false;
-        this.baseCanvas.nativeElement.style.borderStyle = 'solid';
-        this.previewCanvas.nativeElement.style.borderStyle = 'solid';
+        if (this.isCorner) {
+            this.isCorner = false;
+            this.baseCanvas.nativeElement.style.borderStyle = 'solid';
+            this.previewCanvas.nativeElement.style.borderStyle = 'solid';
+        }
     }
 
     @HostListener('click', ['$event'])
@@ -95,6 +106,7 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     onCornerClick(event: MouseEvent, resizer: (x?: number, y?: number) => void): void {
+        console.log('onCornerCLick');
         this.isCorner = true;
         this.resizer = resizer;
 
@@ -104,21 +116,20 @@ export class DrawingComponent implements AfterViewInit {
 
     rightCenter(mousePositionX: number): void {
         console.log('right center');
-        if (mousePositionX > MIN_WIDTH) {
+        if (mousePositionX >= MIN_WIDTH) {
             this.canvasSize.x = mousePositionX;
         }
     }
 
     bottomCenter(mousePositionY: number): void {
         console.log('bottom center');
-        if (mousePositionY > MIN_HEIGHT) {
+        if (mousePositionY >= MIN_HEIGHT) {
             this.canvasSize.y = mousePositionY;
         }
     }
 
     bottomRight(mousePositionX: number, mousePositionY: number): void {
-        console.log('bottom right');
-        if (mousePositionY > MIN_HEIGHT && mousePositionX > MIN_WIDTH) {
+        if (mousePositionY >= MIN_HEIGHT && mousePositionX >= MIN_WIDTH) {
             this.canvasSize.x = mousePositionX;
             this.canvasSize.y = mousePositionY;
         }
