@@ -1,3 +1,4 @@
+import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_HEIGHT, MIN_WIDTH, ToolList } from '@app/constants';
@@ -133,6 +134,45 @@ export class DrawingComponent implements AfterViewInit {
             this.canvasSize.x = mousePositionX;
             this.canvasSize.y = mousePositionY;
         }
+    }
+
+    // dragStarted(event: CdkDragStart, resizeX: boolean, resizeY: boolean): void {
+    //     console.log('DragStarted');
+    //     this.resizeX = resizeX;
+    //     this.resizeY = resizeY;
+    // }
+
+    dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
+        console.log('DragMoved');
+        //this.baseCanvas.nativeElement.style.borderStyle = 'dotted';
+        this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
+        // let currentDrawing: ImageData = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
+
+        if (resizeX) {
+            console.log('resize x', event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left);
+            this.previewCanvas.nativeElement.width = event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left;
+        }
+
+        if (resizeY) {
+            console.log('resize y');
+            this.previewCanvas.nativeElement.height = event.pointerPosition.y;
+        }
+        // setTimeout(() => {
+        //     this.baseCtx.putImageData(currentDrawing, 0, 0);
+        // }, 0);
+    }
+
+    dragEnded(event: CdkDragEnd): void {
+        console.log('DragReleased', event.distance.x);
+        console.log('position x', this.canvasSize.x + event.distance.x);
+        // if (this.resizeX) {
+        this.canvasSize.x = this.canvasSize.x + event.distance.x;
+        this.canvasSize.y = this.canvasSize.y + event.distance.y;
+        // }
+
+        // if (this.resizeY) {
+        //     this.canvasSize.y = this.mousePosition.y;
+        // }
     }
 
     get width(): number {
