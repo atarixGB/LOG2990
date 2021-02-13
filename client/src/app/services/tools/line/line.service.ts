@@ -40,9 +40,7 @@ export class LineService extends Tool {
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
-
         this.coordinates.push(this.mouseDownCoord);
-        console.log('click :', this.coordinates[this.coordinates.length - 1]);
 
         if (this.junctionType === TypeOfJunctions.CIRCLE) {
             this.drawingService.baseCtx.lineWidth = this.lineWidth;
@@ -52,7 +50,19 @@ export class LineService extends Tool {
             this.drawingService.baseCtx.fill();
         }
 
-        this.pathData.push(this.mouseDownCoord);
+        // Handle automatic junction when drawing constrained-angle line
+        if (this.hasPressedShiftKey) {
+            const point: Vec2 | undefined = this.calculatePosition(this.mouseCoord, this.basePoint);
+            if (point) {
+                let newStartPoint: Vec2 = {
+                    x: point.x,
+                    y: point.y,
+                };
+                this.coordinates.push(newStartPoint);
+            }
+        } else {
+            this.pathData.push(this.mouseDownCoord);
+        }
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
@@ -73,7 +83,7 @@ export class LineService extends Tool {
             this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, event);
         }
 
-        if (this.pathData != undefined) {
+        if (this.pathData) {
             this.lastCanvasImages.push(
                 this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
             );
@@ -87,7 +97,6 @@ export class LineService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.pathData.push(mousePosition);
-
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
             if (this.hasPressedShiftKey) {
@@ -128,9 +137,9 @@ export class LineService extends Tool {
 
     // Equation of a line: 0 = ax + by + c
     // Distance from a point A to a line L :  distance(A,L) =  abs(ax + by + c) / sqrt(a^2 + b^2)
-    private getDistanceBetweenPointAndLine(point: Vec2, line: number[]): number {
-        const numerator = Math.abs(line[0] * point.x + line[1] * point.y + line[2]);
-        const denominator = Math.sqrt(line[0] * line[0] + line[1] * line[1]);
+    private getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
+        const numerator: number = Math.abs(lines[0] * point.x + lines[1] * point.y + lines[2]);
+        const denominator: number = Math.sqrt(lines[0] * lines[0] + lines[1] * lines[1]);
         return numerator / denominator;
     }
 
@@ -141,10 +150,9 @@ export class LineService extends Tool {
             [1, 0, -basePoint.x], // x axis
             [0, 1, -basePoint.y], // y axis
         ];
-        const distance = lineList.map((line) => this.getDistanceBetweenPointAndLine(currentPoint, line));
-        const maxDistance = Math.min(...distance);
-        const maxIndex = distance.indexOf(maxDistance);
-        console.log('closest line: ', lineList[maxIndex]);
+        const distance: number[] = lineList.map((line) => this.getDistanceBetweenPointAndLine(currentPoint, line));
+        const maxDistance: number = Math.min(...distance);
+        const maxIndex: number = distance.indexOf(maxDistance);
         return lineList[maxIndex];
     }
 
@@ -152,7 +160,7 @@ export class LineService extends Tool {
     //    ax + by = e
     //    cx + dy = f
     private solveLinearEquationsSystem(a: number, b: number, c: number, d: number, e: number, f: number): Vec2 {
-        const determinant = a * d - b * c;
+        const determinant: number = a * d - b * c;
         const point: Vec2 = {
             x: (d * e - b * f) / determinant,
             y: (a * f - c * e) / determinant,
@@ -161,7 +169,14 @@ export class LineService extends Tool {
     }
 
     private getProjectionOnClosestLine(point: Vec2, line: number[]): Vec2 {
-        const projection = this.solveLinearEquationsSystem(line[0], line[1], -line[1], line[0], -line[2], line[0] * point.y - line[1] * point.x);
+        const projection: Vec2 = this.solveLinearEquationsSystem(
+            line[0],
+            line[1],
+            -line[1],
+            line[0],
+            -line[2],
+            line[0] * point.y - line[1] * point.x,
+        );
         return projection;
     }
 
