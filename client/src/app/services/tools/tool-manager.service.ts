@@ -12,10 +12,14 @@ import { RectangleService } from './rectangle/rectangle.service';
     providedIn: 'root',
 })
 export class ToolManagerService {
-    private currentTool: Tool;
-    private currentToolEnum: ToolList;
-    mousePosition: Vec2;
     toolList: ToolList;
+    currentTool: Tool | undefined;
+    currentToolEnum: ToolList | undefined;
+
+    serviceBindings: Map<ToolList, Tool>;
+    keyBindings: Map<string, Tool>;
+
+    mousePosition: Vec2;
 
     constructor(
         private pencilService: PencilService,
@@ -26,113 +30,43 @@ export class ToolManagerService {
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
+
+        this.serviceBindings = new Map<ToolList, Tool>();
+        this.serviceBindings
+            .set(ToolList.Pencil, this.pencilService)
+            .set(ToolList.Ellipse, this.ellipseService)
+            .set(ToolList.Rectangle, this.rectangleService)
+            .set(ToolList.Eraser, this.eraserService)
+            .set(ToolList.Line, this.lineService);
+
+        this.keyBindings = new Map<string, Tool>();
+        this.keyBindings
+            .set('c', this.pencilService)
+            .set('1', this.rectangleService)
+            .set('2', this.ellipseService)
+            .set('l', this.lineService)
+            .set('e', this.eraserService);
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
-        switch (event.key) {
-            case 'c':
-                this.currentTool = this.pencilService;
-                this.currentToolEnum = ToolList.Pencil;
-                break;
-
-            case 'a':
-                // TODO aerosol
-                break;
-
-            case '1':
-                this.currentTool = this.rectangleService;
-                this.currentToolEnum = ToolList.Rectangle;
-                break;
-
-            case '2':
-                this.currentTool = this.ellipseService;
-                this.currentToolEnum = ToolList.Ellipse;
-                break;
-
-            case '3':
-                // TODO Polygone
-                break;
-
-            case 'l':
-                this.currentTool = this.lineService;
-                this.currentToolEnum = ToolList.Line;
-                break;
-
-            case 't':
-                // TODO outil texte
-                break;
-
-            case 'b':
-                // TODO sceau de peinture
-                break;
-
-            case 'e':
-                this.currentTool = this.eraserService;
-                this.currentToolEnum = ToolList.Eraser;
-                break;
-            case 'd':
-                // TODO etampe
-                break;
-
-            case 'i':
-                // TODO pipette
-                break;
-
-            // case 'r':
-            //     // TODO rectangle de selection
-            //     break;
-            // case 's':
-            //     // TODO ellipse de selection
-            //     break;
-            case 'v':
-                // TODO lasso polygonal
-                break;
-
-            case 'Shift':
-                this.currentTool.mouseCoord = this.mousePosition;
-                this.currentTool.handleKeyDown(event);
-                break;
+        if (this.currentTool != undefined && event.key === 'Shift') {
+            this.currentTool.mouseCoord = this.mousePosition;
+            this.currentTool.handleKeyDown(event);
+        } else {
+            this.switchToolWithKeys(event.key);
         }
     }
 
-    getCurrentTool(): Tool {
-        return this.currentTool;
-    }
-
-    getCurrentToolEnum(): ToolList {
-        return this.currentToolEnum;
-    }
-
-    setCurrentTool(tool: ToolList): void {
-        this.switchTool(tool);
+    switchToolWithKeys(keyShortcut: string): void {
+        if (this.keyBindings.has(keyShortcut)) {
+            this.currentTool = this.keyBindings.get(keyShortcut);
+        }
     }
 
     switchTool(tool: ToolList): void {
-        switch (tool) {
-            case ToolList.Pencil:
-                this.currentTool = this.pencilService;
-                this.currentToolEnum = ToolList.Pencil;
-                break;
-
-            case ToolList.Line:
-                this.currentTool = this.lineService;
-                this.currentToolEnum = ToolList.Line;
-                break;
-
-            case ToolList.Rectangle:
-                this.currentTool = this.rectangleService;
-                this.currentToolEnum = ToolList.Rectangle;
-                break;
-
-            case ToolList.Ellipse:
-                this.currentTool = this.ellipseService;
-                this.currentToolEnum = ToolList.Ellipse;
-                break;
-
-            case ToolList.Eraser:
-                this.currentTool = this.eraserService;
-                this.currentToolEnum = ToolList.Eraser;
-                break;
+        if (this.serviceBindings.has(tool)) {
+            this.currentTool = this.serviceBindings.get(tool);
+            this.currentToolEnum = tool;
         }
     }
 }
