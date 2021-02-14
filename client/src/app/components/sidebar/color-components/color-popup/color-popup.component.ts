@@ -41,7 +41,7 @@ export class ColorPopupComponent {
             this.colorManager.updateRGBAColor(ColorOrder.primaryColor, cloneColor, false);
         } else if (event.button === 2) {
             this.colorHistory.splice(this.colorHistory.indexOf(colorElement), 1);
-            this.colorManager.updateRGBAColor(ColorOrder.primaryColor, cloneColor, false);
+            this.colorManager.updateRGBAColor(ColorOrder.secondaryColor, cloneColor, false);
         }
     }
 
