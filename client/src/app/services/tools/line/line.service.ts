@@ -40,7 +40,7 @@ export class LineService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.coordinates.push(this.mouseDownCoord);
-        const point: Vec2 | undefined = this.calculatePosition(this.mouseCoord, this.basePoint);
+        const point: Vec2 | undefined = this.calculatePosition(this.mouseDownCoord, this.basePoint);
 
         if (this.hasPressedShiftKey) {
             // Handle automatic junction when drawing constrained-angle lines
