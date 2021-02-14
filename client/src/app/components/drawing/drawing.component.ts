@@ -22,6 +22,7 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.currentTool.mouseCoord = position;
         }
     }
+
     private mousePosition: Vec2;
 
     private baseCtx: CanvasRenderingContext2D;
@@ -29,14 +30,9 @@ export class DrawingComponent implements AfterViewInit {
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
     private isResizing: boolean;
+    private currentDrawing: ImageData;
 
-    dragPosition = { x: 0, y: 0 };
-
-    changePosition() {
-        this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
-        console.log('x :', this.dragPosition.x);
-        console.log('y :', this.dragPosition.y);
-    }
+    public dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
@@ -70,12 +66,11 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseUp(event);
         }
-        this.isResizing = false;
     }
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
+        if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.onMouseClick(event);
         }
     }
@@ -103,8 +98,6 @@ export class DrawingComponent implements AfterViewInit {
         }
     }
 
-    private currentDrawing: ImageData;
-
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
         this.isResizing = true;
 
@@ -122,8 +115,9 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        let newWidth: number = this.canvasSize.x + event.distance.x;
-        let newHeight: number = this.canvasSize.y + event.distance.y;
+        this.isResizing = false;
+        const newWidth: number = this.canvasSize.x + event.distance.x;
+        const newHeight: number = this.canvasSize.y + event.distance.y;
 
         this.previewCanvas.nativeElement.style.borderStyle = 'solid';
 
@@ -142,6 +136,10 @@ export class DrawingComponent implements AfterViewInit {
         setTimeout(() => {
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
         }, 0);
+    }
+
+    changePosition() {
+        this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
     }
 
     get width(): number {
