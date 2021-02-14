@@ -12,7 +12,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
-import { DrawingSurfaceComponent } from './components/drawing-surface/drawing-surface.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
@@ -24,7 +23,7 @@ import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
-
+import { WorkingAreaComponent } from './components/working-area/working-area.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -37,7 +36,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         PencilConfigComponent,
         EraserConfigComponent,
         LineConfigComponent,
-        DrawingSurfaceComponent,
+        WorkingAreaComponent,
         EllipseConfigComponent,
         RectangleConfigComponent,
     ],

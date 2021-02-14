@@ -1,6 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { DrawingSurfaceComponent } from './drawing-surface.component';
+import { DrawingSurfaceComponent } from './working-area.component';
 
 describe('DrawingSurfaceComponent', () => {
     let component: DrawingSurfaceComponent;

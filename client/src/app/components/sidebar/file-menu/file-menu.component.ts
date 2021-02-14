@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
     styleUrls: ['./file-menu.component.scss'],
 })
 export class FileMenuComponent {
-    // createNewSketch(): void {}
+    constructor() {}
+    openConfirmModal(): void {
+        console.log('open a dialog');
+    }
 }
