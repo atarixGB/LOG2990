@@ -3,6 +3,9 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { TypeStyle } from 'src/app/interfaces-enums/type-style';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -17,13 +20,16 @@ export enum MouseButton {
 })
 export class RectangleService extends Tool {
     private pathData: Vec2[];
-    isFilled: boolean;
     lineWidth: number;
+    fillValue: boolean;
+    strokeValue: boolean;
+    selectType: TypeStyle;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService,private colorManager: ColorManagerService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
-        this.isFilled = false;
+        this.strokeValue = false;
+        this.fillValue = false;
         this.clearPath();
     }
     private clearPath(): void {
@@ -34,7 +40,6 @@ export class RectangleService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
@@ -68,7 +73,7 @@ export class RectangleService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.rect(firstPoint.x, firstPoint.y, length, width);
 
-        if (this.isFilled) {
+        if (this.fillValue) {
             ctx.fill();
         } else {
             ctx.stroke();

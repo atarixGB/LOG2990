@@ -135,10 +135,11 @@ export class EllipseService extends Tool {
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let upperRight: [number, number];
+        
         upperRight = [path[0].x, path[0].y];
         const width = path[path.length - 1].x - upperRight[0];
         const height = path[path.length - 1].y - upperRight[1];
-
+        ctx.lineWidth=DEFAULT_LINE_THICKNESS;
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], width, height);
     }
