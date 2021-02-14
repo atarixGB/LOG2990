@@ -45,6 +45,7 @@ export class ColorSliderComponent implements AfterViewInit {
 
     upgradeColorCoord(coord: Vec2): void {
         const colorPixel = this.colorSliderContext.getImageData(coord.x, coord.y, 1, 1).data;
+
         if (colorPixel) {
             this.colorManager.updatePixelColor(this.colorOrder, colorPixel);
         }

@@ -1,3 +1,4 @@
+import { RGBA } from 'src/app/interfaces-enums/rgba';
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
@@ -47,3 +48,19 @@ export const MAX_DEC_RANGE = 255;
 export const OPACITY_POS_ALPHA = 3;
 export const HEX_BASE = 16;
 export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
+export const FIRST_CASE = 75;
+export const SECOND_AND_THIRD_CASE = 25;
+export const LAST_CASE = 255;
+export const CASES_ARRAY = [FIRST_CASE, SECOND_AND_THIRD_CASE, SECOND_AND_THIRD_CASE, LAST_CASE];
+
+export const FIRSTCOLORTEST: RGBA = {
+    Dec: { Red: 255, Green: 255, Blue: 255, Alpha: 1 },
+    Hex: { Red: 'ff', Green: 'ff', Blue: 'ff' },
+    inString: 'rgba(255, 255, 255, 1)',
+};
+export const SECONDCOLORTEST: RGBA = {
+    Dec: { Red: 255, Green: 255, Blue: 255, Alpha: 1 },
+    Hex: { Red: 'ff', Green: 'ff', Blue: 'ff' },
+    inString: 'rgba(255, 255, 255, 1)',
+};
+export const COLOR_WIN_WIDTH = '500px';
