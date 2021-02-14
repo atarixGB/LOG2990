@@ -3,11 +3,17 @@ import { ToolList } from '@app/constants';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({
-    selector: 'app-sidebar',
-    templateUrl: './sidebar.component.html',
-    styleUrls: ['./sidebar.component.scss'],
+    selector: 'app-config-panel',
+    templateUrl: './config-panel.component.html',
+    styleUrls: ['./config-panel.component.scss'],
 })
-export class SidebarComponent {
+export class ConfigPanelComponent {
     ToolList: typeof ToolList = ToolList;
+    isOpened: boolean = true;
+
     constructor(public toolManagerService: ToolManagerService) {}
+
+    toggleConfigPanel(): void {
+        this.isOpened = !this.isOpened;
+    }
 }

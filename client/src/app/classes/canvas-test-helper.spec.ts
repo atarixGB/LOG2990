@@ -1,12 +1,5 @@
-nimport;
-{
-    TestBed;
-}
-from;
-('@angular/core/testing');
+import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { TestBed } from ;
-'@angular/core/testing';
 
 // tslint:disable:no-string-literal
 describe('CanvasTestHelper', () => {
