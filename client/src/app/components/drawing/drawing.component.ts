@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -21,13 +20,14 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.currentTool.mouseCoord = position;
         }
     }
-    private mousePosition: Vec2;
+    @Input() canvaHeight: number;
+    @Input() canvaWidth: number;
 
+    private mousePosition: Vec2;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
+    canvasSize: Vec2;
 
-    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
@@ -36,6 +36,9 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        /*         this.canvasSize.x = this.canvaWidth;
+        this.canvasSize.y = this.canvaHeight; */
+        console.log('ici');
     }
 
     @HostListener('document:mousemove', ['$event'])
@@ -90,13 +93,5 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.mousePosition = this.mousePosition;
             this.toolManagerService.handleHotKeysShortcut(event);
         }
-    }
-
-    get width(): number {
-        return this.canvasSize.x;
-    }
-
-    get height(): number {
-        return this.canvasSize.y;
     }
 }
