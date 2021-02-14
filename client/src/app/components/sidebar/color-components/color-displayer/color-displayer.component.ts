@@ -13,13 +13,13 @@ export class ColorDisplayerComponent {
     secondaryColor: RGBA;
 
     constructor(private colorManager: ColorManagerService) {
-        this.primaryColor = this.colorManager.selectColor[ColorOrder.primaryColor];
-        this.secondaryColor = this.colorManager.selectColor[ColorOrder.secondaryColor];
+        this.primaryColor = this.colorManager.selectedColor[ColorOrder.primaryColor];
+        this.secondaryColor = this.colorManager.selectedColor[ColorOrder.secondaryColor];
     }
 
     exchangeColorOrder(): void {
-        const primary = this.colorManager.selectColor[ColorOrder.primaryColor];
-        const secondary = this.colorManager.selectColor[ColorOrder.secondaryColor];
+        const primary = this.colorManager.selectedColor[ColorOrder.primaryColor];
+        const secondary = this.colorManager.selectedColor[ColorOrder.secondaryColor];
 
         const tempForSwitch = JSON.parse(JSON.stringify(primary));
 

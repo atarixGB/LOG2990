@@ -46,13 +46,13 @@ export class ColorSliderComponent implements AfterViewInit {
     upgradeColorCoord(coord: Vec2): void {
         const colorPixel = this.colorSliderContext.getImageData(coord.x, coord.y, 1, 1).data;
         if (colorPixel) {
-            this.colorManager.upgradePixelColor(this.colorOrder, colorPixel);
+            this.colorManager.updatePixelColor(this.colorOrder, colorPixel);
         }
     }
 
     mouseDownFromGradient(event: MouseEvent): void {
         const coord: Vec2 = { x: event.offsetX, y: event.offsetY };
         this.upgradeColorCoord(coord);
-        this.shouldUgradeGrad.emit(this.colorManager.selectColor[this.colorOrder].inString);
+        this.shouldUgradeGrad.emit(this.colorManager.selectedColor[this.colorOrder].inString);
     }
 }

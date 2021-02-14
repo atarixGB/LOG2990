@@ -1,9 +1,1 @@
-<canvas
-  #canvas
-  class="color-palette"
-  width="200"
-  height="200"
-  (mousedown)="onMouseDown($event)"
-  (mousemove)="onMouseMove($event)"
->
-</canvas>
+<canvas #mainColorGradient class="gradient" (mousedown)="mouseDownFromGradient($event)" width="200" height="200"></canvas>

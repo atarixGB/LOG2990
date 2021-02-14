@@ -61,7 +61,7 @@ export class AlphaSliderComponent implements OnChanges, AfterViewInit {
     updateColorWithCoordinates(coordinates: Vec2): void {
         const colorPixel = this.colorSliderContext.getImageData(coordinates.x, coordinates.y, 1, 1).data;
         if (colorPixel) {
-            this.colorManager.upgradePixelColor(this.colorOrder, colorPixel);
+            this.colorManager.updatePixelColor(this.colorOrder, colorPixel);
         }
     }
 

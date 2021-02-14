@@ -1,9 +1,6 @@
-.color-palette:hover {
-    cursor: pointer;
-}
-
-:host {
-    width: 200px;
-    height: 200px;
-    display: block;
+.gradient {
+    cursor: crosshair;
+    outline-style: solid;
+    outline-width: medium;
+    outline-color: black;
 }

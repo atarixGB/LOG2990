@@ -1,7 +1,8 @@
-// Code used for this section is from an External Source
-// Lukas Marx (2018) Creating a Color Picker Component with Angular
-// Available at : https://github.com/LukasMarx/angular-color-picker
-import { Component } from '@angular/core';
+import { Component,ElementRef,ViewChild } from '@angular/core';
+import{COLOR_POSITION} from '@app/constants';
+import { Vec2 } from 'src/app/classes/vec2';
+import{ColorOrder} from 'src/app/interfaces-enums/color-order';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 @Component({
     selector: 'app-color-picker',

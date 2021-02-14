@@ -1,133 +1,67 @@
 // Code used for this section is from an External Source
 // Lukas Marx (2018) Creating a Color Picker Component with Angular
 // Available at : https://github.com/LukasMarx/angular-color-picker
-import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Vec2 } from 'src/app/classes/vec2';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 
-const RADIUS = 10;
-const START_ANGLE = 0;
-const LINE_WIDTH = 5;
+const WIDTH = 200;
+const HEIGHT = 200;
 @Component({
     selector: 'app-color-palette',
     templateUrl: './color-palette.component.html',
     styleUrls: ['./color-palette.component.scss'],
 })
 export class ColorPaletteComponent implements AfterViewInit, OnChanges {
-    @Input()
-    hue: string;
+    @ViewChild('mainColorGradient', { static: false }) mainColorGradientSelectionCanvas: ElementRef;
+    colorGradientContext: CanvasRenderingContext2D;
+    @Input() shouldUpdateGradient: string;
+    @Output() shouldUpdateForAlpha: EventEmitter<string> = new EventEmitter();
 
-    @Output()
-    color: EventEmitter<string> = new EventEmitter(true);
-
-    @ViewChild('canvas', { static: false })
-    canvas: ElementRef;
-
-    context: CanvasRenderingContext2D;
-
-    private mousedown: boolean = false;
-
-    primarySelectedPosition: { x: number; y: number };
-    secondarySelectedPosition: { x: number; y: number };
-
-    ngAfterViewInit(): void {
-        this.draw();
-    }
-
-    draw(): void {
-        if (!this.context) {
-            this.context = this.canvas.nativeElement.getContext('2d');
-        }
-        const width = this.canvas.nativeElement.width;
-        const height = this.canvas.nativeElement.height;
-
-        this.context.fillStyle = this.hue || 'rgba(255,255,255,1)';
-        this.context.fillRect(0, 0, width, height);
-
-        const whiteGrad = this.context.createLinearGradient(0, 0, width, 0);
-        whiteGrad.addColorStop(0, 'rgba(255,255,255,1)');
-        whiteGrad.addColorStop(1, 'rgba(255,255,255,0)');
-
-        this.context.fillStyle = whiteGrad;
-        this.context.fillRect(0, 0, width, height);
-
-        const blackGrad = this.context.createLinearGradient(0, 0, 0, height);
-        blackGrad.addColorStop(0, 'rgba(0,0,0,0)');
-        blackGrad.addColorStop(1, 'rgba(0,0,0,1)');
-
-        this.context.fillStyle = blackGrad;
-        this.context.fillRect(0, 0, width, height);
-
-        if (this.primarySelectedPosition) {
-            this.context.strokeStyle = 'white';
-            this.context.fillStyle = 'white';
-            this.context.beginPath();
-            this.context.arc(this.primarySelectedPosition.x, this.primarySelectedPosition.y, RADIUS, START_ANGLE, 2 * Math.PI);
-            this.context.lineWidth = LINE_WIDTH;
-            this.context.stroke();
-        }
-
-        if (this.secondarySelectedPosition) {
-            this.context.strokeStyle = 'white';
-            this.context.fillStyle = 'white';
-            this.context.beginPath();
-            this.context.arc(this.secondarySelectedPosition.x, this.secondarySelectedPosition.y, RADIUS, START_ANGLE, 2 * Math.PI);
-            this.context.lineWidth = LINE_WIDTH;
-            this.context.stroke();
-        }
-    }
+    constructor(@Inject(MAT_DIALOG_DATA) public colorOrder: ColorOrder,
+                private colorManager: ColorManagerService) { }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.hue) {
-            this.draw();
-            const pos = this.primarySelectedPosition;
-            if (pos) {
-                this.color.emit(this.getColorAtPosition(pos.x, pos.y));
-            }
-        }
-        if (changes.hue) {
-            this.draw();
-            const pos = this.secondarySelectedPosition;
-            if (pos) {
-                this.color.emit(this.getColorAtPosition(pos.x, pos.y));
-            }
-        }
-        // change the transparency with the opacity given and display the color
-        if (changes.opacity) {
-            this.context.globalAlpha = +'opacity';
-            this.draw();
-            const pos = this.primarySelectedPosition;
-            if (pos) {
-                this.color.emit(this.getColorAtPosition(pos.x, pos.y));
-            }
+        if (!changes.shouldUpdateGradient.isFirstChange()) {
+            this.createMainGradientDisplayer();
         }
     }
 
-    @HostListener('window:mouseup', ['$event'])
-    onMouseUp(evt: MouseEvent): void {
-        this.mousedown = false;
+    ngAfterViewInit(): void {
+        this.createMainGradientDisplayer();
     }
 
-    onMouseDown(evt: MouseEvent): void {
-        this.mousedown = true;
-        this.primarySelectedPosition = { x: evt.offsetX, y: evt.offsetY };
-        this.draw();
-        this.color.emit(this.getColorAtPosition(evt.offsetX, evt.offsetY));
+    createMainGradientDisplayer(): void {
+        this.colorGradientContext = this.mainColorGradientSelectionCanvas.nativeElement.getContext('2d');
+        const gradientToBottom = this.colorGradientContext.createLinearGradient(0, 0, 0, HEIGHT);
+        gradientToBottom.addColorStop(0, 'rgba(0,0,0,0');
+        gradientToBottom.addColorStop(1, 'rgba(0,0,0,1)');
+        const gradientToRight = this.colorGradientContext.createLinearGradient(0, 0, WIDTH, 0);
+        gradientToRight.addColorStop(0, 'rgba(255,255,255,1)');
+        gradientToRight.addColorStop(1, 'rgba(255,255,255,0)');
+        this.colorGradientContext.beginPath();
+        this.colorGradientContext.rect(0, 0, WIDTH, HEIGHT);
+        this.colorGradientContext.fillStyle = this.colorManager.selectedColor[this.colorOrder].inString;
+        this.colorGradientContext.fill();
+        this.colorGradientContext.fillStyle = gradientToRight;
+        this.colorGradientContext.fill();
+        this.colorGradientContext.fillStyle = gradientToBottom;
+        this.colorGradientContext.fill();
+        this.colorGradientContext.closePath();
     }
 
-    onMouseMove(evt: MouseEvent): void {
-        if (this.mousedown) {
-            this.primarySelectedPosition = { x: evt.offsetX, y: evt.offsetY };
-            this.draw();
-            this.emitColor(evt.offsetX, evt.offsetY);
+    updateColorWithCoordinates(coordinates: Vec2): void {
+        const colorPixel = this.colorGradientContext.getImageData(coordinates.x, coordinates.y, 1, 1).data;
+        if (colorPixel) {
+            this.colorManager.updatePixelColor(this.colorOrder, colorPixel);
         }
     }
 
-    emitColor(x: number, y: number): void {
-        const rgbaColor = this.getColorAtPosition(x, y);
-        this.color.emit(rgbaColor);
-    }
-
-    getColorAtPosition(x: number, y: number): string {
-        const imageData = this.context.getImageData(x, y, 1, 1).data;
-        return 'rgba(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ',1)';
+    mouseDownFromGradient(event: MouseEvent): void {
+        const coordinates: Vec2 = { x: event.offsetX, y: event.offsetY };
+        this.updateColorWithCoordinates(coordinates);
+        this.shouldUpdateForAlpha.emit(this.colorManager.selectedColor[this.colorOrder].inString);
     }
 }
