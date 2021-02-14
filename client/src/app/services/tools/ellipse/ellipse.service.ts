@@ -202,11 +202,26 @@ export class EllipseService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
-        this.changeType();
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
-        if (this.fillValue) {
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
             ctx.fill();
-        } else {
+            ctx.stroke();
+        }
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
             ctx.stroke();
         }
     }
