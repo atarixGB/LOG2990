@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH, ToolList } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -18,7 +18,9 @@ export class DrawingComponent implements AfterViewInit {
     @Input()
     set mousePositionChanged(position: Vec2) {
         this.mousePosition = position;
-        this.toolManagerService.getCurrentTool().mouseCoord = position;
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.mouseCoord = position;
+        }
     }
     private mousePosition: Vec2;
 
@@ -39,50 +41,56 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-        this.toolManagerService.getCurrentTool().onMouseMove(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.onMouseMove(event);
+        }
     }
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        console.log('dans drawing: ' + this.mousePosition.x);
-        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-        this.toolManagerService.getCurrentTool().onMouseDown(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.onMouseDown(event);
+        }
     }
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-        this.toolManagerService.getCurrentTool().onMouseUp(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.onMouseUp(event);
+        }
     }
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().onMouseClick(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.onMouseClick(event);
+        }
     }
 
     @HostListener('dblclick', ['$event'])
     onMousonDoubleClick(event: MouseEvent): void {
-        this.toolManagerService.getCurrentTool().onMouseDoubleClick(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.onMouseDoubleClick(event);
+        }
     }
-
-    // @HostListener('keydown', ['$event'])
-    // onKeyDown(event: KeyboardEvent): void {
-    //     this.toolManagerService.getCurrentTool().onKeyDown(event);
-    // }
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.toolManagerService.getCurrentToolEnum() === ToolList.Ellipse) {
-            this.toolManagerService.getCurrentTool().mouseCoord = this.mousePosition;
-            this.toolManagerService.getCurrentTool().handleKeyUp(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.handleKeyUp(event);
         }
     }
 
     @HostListener('keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.mousePosition = this.mousePosition;
-        this.toolManagerService.handleHotKeysShortcut(event);
+        if (this.toolManagerService.currentTool != undefined) {
+            this.toolManagerService.mousePosition = this.mousePosition;
+            this.toolManagerService.handleHotKeysShortcut(event);
+        }
     }
 
     get width(): number {

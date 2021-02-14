@@ -20,16 +20,17 @@ export enum MouseButton {
 })
 export class RectangleService extends Tool {
     private pathData: Vec2[];
-    lineWidth: number;
+    private isRectangle: boolean;
     fillValue: boolean;
+    lineWidth: number;
     strokeValue: boolean;
     selectType: TypeStyle;
 
-    constructor(drawingService: DrawingService,private colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
-        this.strokeValue = false;
         this.fillValue = false;
+        this.isRectangle = true;
         this.clearPath();
     }
     private clearPath(): void {
@@ -45,12 +46,13 @@ export class RectangleService extends Tool {
         }
     }
     onMouseUp(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawRectangle(this.drawingService.baseCtx, this.pathData);
-        }
         this.mouseDown = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (this.isRectangle) this.drawRectangle(this.drawingService.baseCtx, this.pathData);
+        else {
+            this.drawSquare(this.drawingService.baseCtx, this.pathData);
+            this.isRectangle = true;
+        }
         this.clearPath();
     }
 
@@ -61,7 +63,40 @@ export class RectangleService extends Tool {
 
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            if (this.isRectangle) this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+            else this.drawSquare(this.drawingService.previewCtx, this.pathData);
+        }
+    }
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Shift' && this.mouseDown) {
+            this.isRectangle = false;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawSquare(this.drawingService.previewCtx, this.pathData);
+        }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Shift' && this.mouseDown) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+            this.isRectangle = true;
+        }
+    }
+
+    changeType(): void {
+        switch (this.selectType) {
+            case TypeStyle.stroke:
+                this.fillValue = false;
+                this.strokeValue = true;
+                break;
+            case TypeStyle.fill:
+                this.fillValue = true;
+                this.strokeValue = false;
+                break;
+            case TypeStyle.strokeFill:
+                this.fillValue = true;
+                this.strokeValue = true;
+                break;
         }
     }
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
@@ -72,11 +107,80 @@ export class RectangleService extends Tool {
         const length = finalPoint.x - firstPoint.x;
         ctx.lineWidth = this.lineWidth;
         ctx.rect(firstPoint.x, firstPoint.y, length, width);
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
-        if (this.fillValue) {
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
             ctx.fill();
-        } else {
             ctx.stroke();
         }
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
+            ctx.stroke();
+        }
+        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
+        if (this.isRectangle) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.rect(firstPoint.x, firstPoint.y, length, width);
+            ctx.stroke();
+        }
+    }
+
+    private drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        const width = path[path.length - 1].x - path[0].x;
+        const height = path[path.length - 1].y - path[0].y;
+        const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
+
+        let upperRight: [number, number];
+        upperRight = [path[0].x, path[0].y];
+
+        if (width <= 0 && height >= 0) {
+            // go down-left
+            upperRight = [path[0].x - shortestSide, path[0].y];
+        } else if (height <= 0 && width >= 0) {
+            // go up-right
+            upperRight = [path[0].x, path[0].y - shortestSide];
+        } else if (height <= 0 && width <= 0) {
+            // up-left
+            upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
+        } else {
+            // go down-right
+            upperRight = [path[0].x, path[0].y];
+        }
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
+
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
+            ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
     }
 }
