@@ -6,12 +6,14 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
+import { ConfigPanelComponent } from './components/config-panel/config-panel.component';
 import { DrawingSurfaceComponent } from './components/drawing-surface/drawing-surface.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
@@ -40,6 +42,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         DrawingSurfaceComponent,
         EllipseConfigComponent,
         RectangleConfigComponent,
+        ConfigPanelComponent,
     ],
     imports: [
         BrowserModule,
@@ -55,6 +58,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         FormsModule,
         MatSelectModule,
         BrowserAnimationsModule,
+        MatSidenavModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
