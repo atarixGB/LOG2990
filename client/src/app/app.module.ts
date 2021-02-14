@@ -23,7 +23,6 @@ import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
-import { WorkingAreaComponent } from './components/working-area/working-area.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -36,7 +35,6 @@ import { WorkingAreaComponent } from './components/working-area/working-area.com
         PencilConfigComponent,
         EraserConfigComponent,
         LineConfigComponent,
-        WorkingAreaComponent,
         EllipseConfigComponent,
         RectangleConfigComponent,
     ],

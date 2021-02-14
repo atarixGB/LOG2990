@@ -50,7 +50,6 @@ export class ToolManagerService {
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
         if (this.currentTool != undefined && event.key === 'Shift') {
-            this.currentTool.mouseCoord = this.mousePosition;
             this.currentTool.handleKeyDown(event);
         } else {
             this.switchToolWithKeys(event.key);

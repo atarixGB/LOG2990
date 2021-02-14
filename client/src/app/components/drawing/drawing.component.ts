@@ -13,17 +13,17 @@ export class DrawingComponent implements AfterViewInit {
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
 
-    @Input()
+    /*    @Input()
     set mousePositionChanged(position: Vec2) {
         this.mousePosition = position;
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.mouseCoord = position;
         }
-    }
+    } */
     @Input() canvaHeight: number;
     @Input() canvaWidth: number;
 
-    private mousePosition: Vec2;
+    // private mousePosition: Vec2;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     canvasSize: Vec2;
@@ -44,7 +44,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseMove(event);
         }
     }
@@ -52,7 +52,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
         }
     }
@@ -60,7 +60,7 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseUp(event);
         }
     }
@@ -82,15 +82,16 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+            // this.toolManagerService.currentTool.mouseCoord = {x:event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.handleKeyUp(event);
         }
     }
 
-    @HostListener('keydown', ['$event'])
+    @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.mousePosition = this.mousePosition;
+            console.log('keyDOwn');
+            // this.toolManagerService.mousePosition = this.mousePosition;
             this.toolManagerService.handleHotKeysShortcut(event);
         }
     }
