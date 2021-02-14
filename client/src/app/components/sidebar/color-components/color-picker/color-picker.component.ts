@@ -35,8 +35,8 @@ export class ColorPickerComponent {
     }
 
     private updateContextMenu(event: MouseEvent): void {
-        //preventDefault indicates that if the event is not treated explicitly,
-        //its default action should not be considered
+        // preventDefault indicates that if the event is not treated explicitly,
+        // its default action should not be considered
         event.preventDefault();
     }
 
@@ -51,10 +51,10 @@ export class ColorPickerComponent {
         event.preventDefault();
         this.coord = { x: event.offsetX, y: event.offsetY };
         if (event.button === 0) {
-            //Left button clicked
+            // Left button clicked
             this.colorPicker(this.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
         } else if (event.button === 2) {
-            //Right button clicked
+            // Right button clicked
             this.colorPicker(this.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
         }
     }

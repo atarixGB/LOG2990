@@ -11,8 +11,6 @@ export class EllipseConfigComponent {
 
     constructor(ellipseService: EllipseService) {
         this.ellipseService = ellipseService;
-        selectType: TypeStyle;
-        returnType: TypeStyle;
     }
 
     updateLineWidth(value: number): number {

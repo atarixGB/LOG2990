@@ -30,6 +30,7 @@ export class EllipseService extends Tool {
         super(drawingService);
         this.isEllipse = true;
         this.fillValue = false;
+        this.strokeValue = false;
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.clearPath();
     }
@@ -37,7 +38,6 @@ export class EllipseService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
@@ -138,11 +138,11 @@ export class EllipseService extends Tool {
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let upperRight: [number, number];
-        
+
         upperRight = [path[0].x, path[0].y];
         const width = path[path.length - 1].x - upperRight[0];
         const height = path[path.length - 1].y - upperRight[1];
-        ctx.lineWidth=DEFAULT_LINE_THICKNESS;
+        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], width, height);
     }
@@ -219,7 +219,6 @@ export class EllipseService extends Tool {
         if (event.key === 'Shift' && this.mouseDown) {
             this.isEllipse = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.changeType();
             this.drawCircle(this.drawingService.previewCtx, this.pathData);
             this.drawSquare(this.drawingService.previewCtx, this.pathData);
         }
@@ -229,7 +228,6 @@ export class EllipseService extends Tool {
         if (event.key === 'Shift' && this.mouseDown) {
             this.isEllipse = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.changeType();
             this.drawEllipse(this.drawingService.previewCtx, this.pathData);
             this.drawRectangle(this.drawingService.previewCtx, this.pathData);
         }
