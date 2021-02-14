@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -18,6 +19,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
+import { ConfigPanelComponent } from './components/config-panel/config-panel.component';
 import { DrawingSurfaceComponent } from './components/drawing-surface/drawing-surface.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
@@ -58,6 +60,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         EllipseConfigComponent,
         RectangleConfigComponent,
         ColorPopupComponent,
+        ConfigPanelComponent,
     ],
     imports: [
         BrowserModule,
@@ -80,6 +83,8 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         MatButtonToggleModule,
         MatSlideToggleModule,
         MatSnackBarModule,
+        BrowserAnimationsModule,
+        MatSidenavModule,
     ],
     entryComponents: [ColorPopupComponent, ColorPickerComponent],
     providers: [],
