@@ -4,8 +4,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Input, OnChanges, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Vec2 } from 'src/app/classes/vec2';
-import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 const WIDTH = 200;
 const HEIGHT = 200;
@@ -20,8 +20,7 @@ export class ColorPaletteComponent implements AfterViewInit, OnChanges {
     @Input() shouldUpdateGradient: string;
     @Output() shouldUpdateForAlpha: EventEmitter<string> = new EventEmitter();
 
-    constructor(@Inject(MAT_DIALOG_DATA) public colorOrder: ColorOrder,
-                private colorManager: ColorManagerService) { }
+    constructor(@Inject(MAT_DIALOG_DATA) public colorOrder: ColorOrder, private colorManager: ColorManagerService) {}
 
     ngOnChanges(changes: SimpleChanges): void {
         if (!changes.shouldUpdateGradient.isFirstChange()) {

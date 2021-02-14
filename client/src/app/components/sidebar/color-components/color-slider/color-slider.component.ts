@@ -18,7 +18,7 @@ export class ColorSliderComponent implements AfterViewInit {
     colorSliderCanvas: ElementRef;
     colorSliderContext: CanvasRenderingContext2D;
 
-    @Output() shouldUgradeGrad: EventEmitter<string> = new EventEmitter();
+    @Output() shouldUpdateGradient: EventEmitter<string> = new EventEmitter();
 
     constructor(@Inject(MAT_DIALOG_DATA) public colorOrder: ColorOrder, private colorManager: ColorManagerService) {}
 
@@ -53,6 +53,6 @@ export class ColorSliderComponent implements AfterViewInit {
     mouseDownFromGradient(event: MouseEvent): void {
         const coord: Vec2 = { x: event.offsetX, y: event.offsetY };
         this.upgradeColorCoord(coord);
-        this.shouldUgradeGrad.emit(this.colorManager.selectedColor[this.colorOrder].inString);
+        this.shouldUpdateGradient.emit(this.colorManager.selectedColor[this.colorOrder].inString);
     }
 }

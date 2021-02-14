@@ -29,7 +29,7 @@ export enum ToolList {
     Rectangle = 3,
     Ellipse = 4,
 }
-export const COLOR_WIN_WIDTH = '500px';
+export const COLOR_WINDOW_WIDTH = '500px';
 
 export const WIDTH = 20;
 export const HEIGHT = 200;

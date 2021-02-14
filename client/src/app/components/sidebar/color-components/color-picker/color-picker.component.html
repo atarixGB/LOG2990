@@ -1,25 +1,4 @@
-<div class="color-wrapper">
-    <app-color-palette [hue]="hue" (color)="color = $event"></app-color-palette>
-    <app-color-slider (color)="hue = $event" style="margin-left: 16px"></app-color-slider>
-    
-</div>
-
-    <div class="color-order">
-    <div class="input-wrapper">
-        <p>couleur principale</p>
-        <div class="color-div" [ngStyle]="{ 'background-color': color || 'white' }"></div>
-        <app-color-opacity></app-color-opacity>
-    </div>
-    
-    <div class="color-swapper"><app-color-displayer></app-color-displayer></div> 
-    <div class="input-wrapper-secondary">
-        <p>couleur secondaire</p>
-        <div class="color-div2" [ngStyle]="{ 'background-color': color || 'black' }"></div>
-        <app-color-opacity></app-color-opacity>
-    </div>
-    
-   
-
-    
-
-
+<canvas
+    #htmlCanvas
+    hidden
+></canvas>

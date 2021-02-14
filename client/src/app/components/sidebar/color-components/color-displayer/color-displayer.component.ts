@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { COLOR_WINDOW_WIDTH } from '@app/constants';
+import { ColorPopupComponent } from 'src/app/components/sidebar/color-components/color-popup/color-popup.component';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -12,9 +15,19 @@ export class ColorDisplayerComponent {
     primaryColor: RGBA;
     secondaryColor: RGBA;
 
-    constructor(private colorManager: ColorManagerService) {
+    ColorOrder: typeof ColorOrder = ColorOrder;
+
+    constructor(public dialog: MatDialog, private colorManager: ColorManagerService) {
         this.primaryColor = this.colorManager.selectedColor[ColorOrder.primaryColor];
         this.secondaryColor = this.colorManager.selectedColor[ColorOrder.secondaryColor];
+    }
+
+    openColorPicker(colorOrder: ColorOrder): void {
+        const window = this.dialog.open(ColorPopupComponent, {
+            width: COLOR_WINDOW_WIDTH,
+            data: colorOrder,
+        });
+        window.afterClosed().subscribe;
     }
 
     exchangeColorOrder(): void {

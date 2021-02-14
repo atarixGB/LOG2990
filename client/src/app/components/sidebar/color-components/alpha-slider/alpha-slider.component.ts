@@ -22,8 +22,8 @@ export class AlphaSliderComponent implements OnChanges, AfterViewInit {
     colorSliderContext: CanvasRenderingContext2D;
 
     private gradientToBottom: CanvasGradient;
-    @Input() shouldUpdateGrad: string;
-    @Input() shouldUpdateAlpha: string;
+    @Input() shouldUpdateGradient: string;
+    @Input() shouldUpdateForAlpha: string;
 
     constructor(@Inject(MAT_DIALOG_DATA) public colorOrder: ColorOrder, private colorManager: ColorManagerService) {}
 
