@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
+import { mouseEventLClick, mouseEventRClick } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from './pencil-service';
 
@@ -32,12 +33,6 @@ describe('PencilService', () => {
         // tslint:disable:no-string-literal
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
-
-        mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 0,
-        } as MouseEvent;
     });
 
     it('should be created', () => {
@@ -46,21 +41,16 @@ describe('PencilService', () => {
 
     it(' mouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
-        service.onMouseDown(mouseEvent);
+        service.onMouseDown(mouseEventLClick);
         expect(service.mouseDownCoord).toEqual(expectedResult);
     });
 
     it(' mouseDown should set mouseDown property to true on left click', () => {
-        service.onMouseDown(mouseEvent);
+        service.onMouseDown(mouseEventLClick);
         expect(service.mouseDown).toEqual(true);
     });
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
-        const mouseEventRClick = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 1, // TODO: Avoir ceci dans un enum accessible
-        } as MouseEvent;
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
     });
@@ -101,10 +91,8 @@ describe('PencilService', () => {
 
     // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
-        mouseEvent = { offsetX: 0, offsetY: 0, button: 0 } as MouseEvent;
-        service.onMouseDown(mouseEvent);
-        mouseEvent = { offsetX: 1, offsetY: 0, button: 0 } as MouseEvent;
-        service.onMouseUp(mouseEvent);
+        service.onMouseDown(mouseEventLClick);
+        service.onMouseUp(mouseEventRClick);
 
         // Premier pixel seulement
         const imageData: ImageData = baseCtxStub.getImageData(0, 0, 1, 1);

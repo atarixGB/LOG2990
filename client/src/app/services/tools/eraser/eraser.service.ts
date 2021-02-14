@@ -1,17 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MIN_ERASER_THICKNESS } from '@app/constants';
+import { MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -136,20 +127,29 @@ export class EraserService extends Tool {
     private updateCursor(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
         this.drawingService.cursorCtx.clearRect(0, 0, this.drawingService.getCanvasWidth(), this.drawingService.getCanvasHeight());
 
-        ctx.beginPath();
-        ctx.fillStyle = 'white';
-        ctx.fillRect(
-            this.getPositionFromMouse(event).x - this.eraserThickness / 2,
-            this.getPositionFromMouse(event).y - this.eraserThickness / 2,
-            this.eraserThickness,
-            this.eraserThickness,
-        );
-        ctx.strokeStyle = 'black';
-        ctx.strokeRect(
-            this.getPositionFromMouse(event).x - this.eraserThickness / 2,
-            this.getPositionFromMouse(event).y - this.eraserThickness / 2,
-            this.eraserThickness,
-            this.eraserThickness,
-        );
+        if (
+            this.getPositionFromMouse(event).x < 0 ||
+            this.getPositionFromMouse(event).x > this.drawingService.getCanvasWidth() ||
+            this.getPositionFromMouse(event).y < 0 ||
+            this.getPositionFromMouse(event).y > this.drawingService.getCanvasHeight()
+        ) {
+            this.drawingService.cursorCtx.clearRect(0, 0, this.drawingService.getCanvasWidth(), this.drawingService.getCanvasHeight());
+        } else {
+            ctx.beginPath();
+            ctx.fillStyle = 'white';
+            ctx.fillRect(
+                this.getPositionFromMouse(event).x - this.eraserThickness / 2,
+                this.getPositionFromMouse(event).y - this.eraserThickness / 2,
+                this.eraserThickness,
+                this.eraserThickness,
+            );
+            ctx.strokeStyle = 'black';
+            ctx.strokeRect(
+                this.getPositionFromMouse(event).x - this.eraserThickness / 2,
+                this.getPositionFromMouse(event).y - this.eraserThickness / 2,
+                this.eraserThickness,
+                this.eraserThickness,
+            );
+        }
     }
 }

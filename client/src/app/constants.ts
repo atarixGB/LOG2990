@@ -29,3 +29,15 @@ export enum ToolList {
     Rectangle = 3,
     Ellipse = 4,
 }
+
+export const mouseEventLClick = {
+    offsetX: 25,
+    offsetY: 25,
+    button: 0,
+} as MouseEvent;
+
+export const mouseEventRClick = {
+    offsetX: 25,
+    offsetY: 25,
+    button: 1,
+} as MouseEvent;
