@@ -17,10 +17,15 @@ h3 {
     display: block;
     right: 0;
     float: right;
+    background-color: rgb(236, 0, 0);
+}
+
+::ng-deep .mat-select-value {
+    color: rgb(247, 247, 247);
 }
 
 .minimized-panel {
-    background-color: rgb(65, 65, 65);
+    background-color: rgba(255, 7, 7, 0.582);
     color: rgb(247, 247, 247);
     position: fixed;
     bottom: 0;
