@@ -1,4 +1,4 @@
-import { RGBA } from 'src/app/interfaces-enums/rgba';
+import { RGBA } from '@app/interfaces-enums/rgba';
 // TODO : Avoir un fichier séparé pour les constantes ?
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
@@ -13,8 +13,8 @@ export enum MouseButton {
 }
 
 export enum TypeOfJunctions {
-    REGULAR = 0,
-    CIRCLE = 1,
+    Regular = 0,
+    Circle = 1,
 }
 
 export const DEFAULT_LINE_THICKNESS = 1;

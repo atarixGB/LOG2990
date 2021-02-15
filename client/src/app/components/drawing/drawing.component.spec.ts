@@ -46,18 +46,6 @@ describe('DrawingComponent', () => {
         expect(width).toEqual(DEFAULT_WIDTH);
     });
 
-<<<<<<< HEAD
-    it('should get stubTool', () => {
-        // const currentTool = component.toolManagerService.getCurrentTool();
-        //   expect(currentTool).toEqual(toolStub);
-    });
-=======
-    // it('should get stubTool', () => {
-    //     const currentTool = component.toolManagerService.currentToolEnum;
-    //     expect(currentTool).toEqual(toolStub);
-    // });
->>>>>>> f75c279a91148cb12007ea8b8359377a4b161e94
-
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolStub, 'onMouseMove').and.callThrough();

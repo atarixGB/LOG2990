@@ -56,6 +56,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         AlphaSliderComponent,
         EraserConfigComponent,
         LineConfigComponent,
+        PencilConfigComponent,
         DrawingSurfaceComponent,
         EllipseConfigComponent,
         RectangleConfigComponent,
