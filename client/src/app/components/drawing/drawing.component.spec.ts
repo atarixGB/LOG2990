@@ -1,35 +1,31 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Tool } from '@app/classes/tool';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PencilService } from '@app/services/tools/pencil/pencil-service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
-
-class ToolStub extends Tool {}
-
-// TODO : Déplacer dans un fichier accessible à tous
-const DEFAULT_WIDTH = 1000;
-const DEFAULT_HEIGHT = 800;
 
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
-    let toolStub: ToolStub;
     let drawingStub: DrawingService;
+    let toolManagerSpy: ToolManagerService;
 
     beforeEach(async(() => {
-        toolStub = new ToolStub({} as DrawingService);
         drawingStub = new DrawingService();
+        toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['switchTool']);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
             providers: [
-                { provide: PencilService, useValue: toolStub },
                 { provide: DrawingService, useValue: drawingStub },
+                { provide: ToolManagerService, useValue: toolManagerSpy },
             ],
         }).compileComponents();
     }));
 
     beforeEach(() => {
+        toolManagerSpy = TestBed.inject(ToolManagerService);
+
         fixture = TestBed.createComponent(DrawingComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

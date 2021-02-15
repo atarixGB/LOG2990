@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -78,6 +79,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         MatFormFieldModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        DragDropModule,
         MatSliderModule,
         MatSelectModule,
         MatInputModule,

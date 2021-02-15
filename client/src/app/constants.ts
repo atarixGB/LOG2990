@@ -1,8 +1,9 @@
 import { RGBA } from '@app/interfaces-enums/rgba';
 // TODO : Avoir un fichier séparé pour les constantes ?
+// Canvas constants
 export const DEFAULT_WIDTH = 1000;
 export const DEFAULT_HEIGHT = 800;
-// TODO : Déplacer ça dans un fichier séparé accessible par tous
+export const MIN_SIZE = 250;
 
 export enum MouseButton {
     Left = 0,
