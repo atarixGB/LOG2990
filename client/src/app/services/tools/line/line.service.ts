@@ -112,12 +112,8 @@ export class LineService extends Tool {
                 this.hasPressedShiftKey = true;
                 break;
             case 'Backspace':
-                if (this.hasDblClick) {
-                    this.hasDblClick = false;
-                } else {
-                    // We use the second last index to get the canvas state just before last stroked line
-                    this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
-                }
+                // We use the second last index to get the canvas state just before last stroked line
+                this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
                 break;
         }
     }
