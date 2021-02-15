@@ -27,8 +27,8 @@ describe('LineService', () => {
         service = TestBed.inject(LineService);
         drawingServiceSpy = spyOn<any>(service, 'drawLine').and.callThrough();
 
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service['drawingService'].previewCtx = previewCtxStub;
+        service.drawingService.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service.drawingService.previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 25,
@@ -56,7 +56,7 @@ describe('LineService', () => {
             offsetY: 25,
             button: 0,
         } as MouseEvent;
-        //spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
+        // spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
         service.onMouseClick(mouseEvent);
         console.log(service.mouseDownCoord);
         expect(service.mouseDownCoord).toEqual(leftClickMouseEvent);

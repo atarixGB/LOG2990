@@ -111,7 +111,6 @@ export class LineService extends Tool {
                 break;
             case 'Backspace':
                 if (this.hasDblClick) {
-                    this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length - 3], 0, 0);
                     this.hasDblClick = false;
                 } else {
                     // We use the second last index to get the canvas state just before last stroked line

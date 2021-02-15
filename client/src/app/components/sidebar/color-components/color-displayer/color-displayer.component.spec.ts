@@ -13,6 +13,7 @@ import { ColorPopupComponent } from 'src/app/components/sidebar/color-components
 import { ColorSliderComponent } from 'src/app/components/sidebar/color-components/color-slider/color-slider.component';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorDisplayerComponent } from './color-displayer.component';
+
 fdescribe('ColorDisplayerComponent', () => {
     let component: ColorDisplayerComponent;
     let fixture: ComponentFixture<ColorDisplayerComponent>;
