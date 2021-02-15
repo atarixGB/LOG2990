@@ -29,7 +29,6 @@ export class DrawingComponent implements AfterViewInit {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    private isResizing: boolean;
     private currentDrawing: ImageData;
 
     public dragPosition: Vec2 = { x: 0, y: 0 };
@@ -46,7 +45,9 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        const element = event.target as HTMLElement;
+
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseMove(event);
         }
@@ -54,7 +55,9 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
+        const element = event.target as HTMLElement;
+
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseDown(event);
         }
@@ -62,7 +65,8 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        const element = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseUp(event);
         }
@@ -70,7 +74,9 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        const element = event.target as HTMLElement;
+
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.onMouseClick(event);
         }
     }
@@ -99,8 +105,6 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
-        this.isResizing = true;
-
         this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
 
         this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
@@ -115,7 +119,6 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        this.isResizing = false;
         const newWidth: number = this.canvasSize.x + event.distance.x;
         const newHeight: number = this.canvasSize.y + event.distance.y;
 
