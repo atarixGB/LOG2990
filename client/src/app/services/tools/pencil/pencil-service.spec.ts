@@ -15,6 +15,7 @@ describe('PencilService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawLineSpy: jasmine.Spy<any>;
+    let drawPointSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
@@ -28,6 +29,7 @@ describe('PencilService', () => {
 
         service = TestBed.inject(PencilService);
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawPointSpy = spyOn<any>(service, 'drawPoint').and.callThrough();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -87,6 +89,29 @@ describe('PencilService', () => {
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('Mouse click should just draw point', () => {
+        service.onMouseClick(mouseEventLClick);
+
+        expect(drawPointSpy).toHaveBeenCalled();
+    });
+
+    it('Mouse click should not be called if mouse is moving', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseMove = true;
+
+        service.onMouseClick(mouseEvent);
+        expect(drawPointSpy).not.toHaveBeenCalled();
+    });
+
+    it('Draw Point should fill a circle', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseMove = false;
+
+        service.onMouseClick(mouseEvent);
+        expect(drawPointSpy).toHaveBeenCalled();
+        expect(drawServiceSpy.baseCtx.fill).toHaveBeenCalled();
     });
 
     // Exemple de test d'intégration qui est quand même utile

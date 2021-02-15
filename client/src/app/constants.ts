@@ -31,13 +31,13 @@ export enum ToolList {
 }
 
 export const mouseEventLClick = {
-    offsetX: 25,
-    offsetY: 25,
+    x: 25,
+    y: 25,
     button: 0,
 } as MouseEvent;
 
 export const mouseEventRClick = {
-    offsetX: 25,
-    offsetY: 25,
+    x: 25,
+    y: 25,
     button: 1,
 } as MouseEvent;
