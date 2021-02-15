@@ -26,6 +26,7 @@ fdescribe('LineService', () => {
 
         service = TestBed.inject(LineService);
         drawingServiceSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawingServiceSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
@@ -37,11 +38,11 @@ fdescribe('LineService', () => {
         } as MouseEvent;
     });
 
-    fit('should be created', () => {
+    it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
-    fit('should have a DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS and a regular junction type on start', () => {
+    it('should have a DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS and a regular junction type on start', () => {
         const junctionRadius = service.junctionRadius;
         const lineWidth = service.lineWidth;
         const junctionType = service.junctionType;
@@ -50,25 +51,22 @@ fdescribe('LineService', () => {
         expect(junctionType).toEqual(TypeOfJunctions.Regular);
     });
 
-    fit('should set mouseDownCoord to correct position when onMouseClick is called', () => {
-        const leftClickMouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
-            button: 0,
-        } as MouseEvent;
-        spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
-        service.onMouseClick(mouseEvent);
-        console.log(service.mouseDownCoord);
-        expect(service.mouseDownCoord).toEqual(leftClickMouseEvent);
-    });
-
     it('should set mouseDown property to true on left click', () => {
         service.onMouseClick(mouseEvent);
         expect(service.mouseDown).toEqual(true);
     });
 
-    fit('should set mouseDown to false when onMouseDoubleClick is called', () => {
+    it('should set mouseDown to false when onMouseDoubleClick is called', () => {
         service.onMouseDoubleClick(mouseEvent);
         expect(service.mouseDown).toEqual(false);
+    });
+
+    it('onMouseMove should call drawLine if mouse was already down', () => {
+        service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+
+        service.onMouseMove(mouseEvent);
+        expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawingServiceSpy).toHaveBeenCalled();
     });
 });

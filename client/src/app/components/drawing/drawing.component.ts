@@ -1,6 +1,7 @@
+import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from '@app/constants';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_SIZE } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
@@ -21,13 +22,18 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.currentTool.mouseCoord = position;
         }
     }
+
     private mousePosition: Vec2;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
 
-    // TODO : Refactoring is need to manage multiple tools and get the current tool selected by the user
+    private isResizing: boolean;
+    private currentDrawing: ImageData;
+
+    public dragPosition: Vec2 = { x: 0, y: 0 };
+
     constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
 
     ngAfterViewInit(): void {
@@ -48,7 +54,7 @@ export class DrawingComponent implements AfterViewInit {
 
     @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
             this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.onMouseDown(event);
         }
@@ -90,6 +96,50 @@ export class DrawingComponent implements AfterViewInit {
             this.toolManagerService.mousePosition = this.mousePosition;
             this.toolManagerService.handleHotKeysShortcut(event);
         }
+    }
+
+    dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
+        this.isResizing = true;
+
+        this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
+
+        this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
+
+        if (resizeX && event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left > MIN_SIZE) {
+            this.previewCanvas.nativeElement.width = event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left;
+        }
+
+        if (resizeY && event.pointerPosition.y > MIN_SIZE) {
+            this.previewCanvas.nativeElement.height = event.pointerPosition.y;
+        }
+    }
+
+    dragEnded(event: CdkDragEnd): void {
+        this.isResizing = false;
+        const newWidth: number = this.canvasSize.x + event.distance.x;
+        const newHeight: number = this.canvasSize.y + event.distance.y;
+
+        this.previewCanvas.nativeElement.style.borderStyle = 'solid';
+
+        if (newWidth >= MIN_SIZE) {
+            this.canvasSize.x = newWidth;
+        } else {
+            this.canvasSize.x = MIN_SIZE;
+        }
+
+        if (newHeight >= MIN_SIZE) {
+            this.canvasSize.y = newHeight;
+        } else {
+            this.canvasSize.y = MIN_SIZE;
+        }
+
+        setTimeout(() => {
+            this.baseCtx.putImageData(this.currentDrawing, 0, 0);
+        }, 0);
+    }
+
+    changePosition() {
+        this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
     }
 
     get width(): number {

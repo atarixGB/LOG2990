@@ -1,3 +1,8 @@
+// Canvas constants
+export const DEFAULT_WIDTH = 1000;
+export const DEFAULT_HEIGHT = 800;
+export const MIN_SIZE = 250;
+
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -16,8 +21,6 @@ export const MIN_ERASER_THICKNESS = 5;
 
 export const DEFAULT_ERASER_COLOR = '#FFF';
 export const DEFAULT_JUNCTION_RADIUS = 2;
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
 
 export enum ToolList {
     Pencil = 0,
