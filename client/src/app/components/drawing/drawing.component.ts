@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
@@ -12,18 +12,7 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
-
-    /*    @Input()
-    set mousePositionChanged(position: Vec2) {
-        this.mousePosition = position;
-        if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = position;
-        }
-    } */
-    @Input() canvaHeight: number;
-    @Input() canvaWidth: number;
-
-    // private mousePosition: Vec2;
+    @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     canvasSize: Vec2;
@@ -36,9 +25,8 @@ export class DrawingComponent implements AfterViewInit {
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-        /*         this.canvasSize.x = this.canvaWidth;
-        this.canvasSize.y = this.canvaHeight; */
-        console.log('ici');
+        this.workingArea.nativeElement.style.width = '85vw';
+        this.workingArea.nativeElement.style.height = '100vh';
     }
 
     @HostListener('document:mousemove', ['$event'])
@@ -49,8 +37,8 @@ export class DrawingComponent implements AfterViewInit {
         }
     }
 
-    @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
+        console.log('ici');
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
@@ -82,7 +70,6 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            // this.toolManagerService.currentTool.mouseCoord = {x:event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.handleKeyUp(event);
         }
     }
@@ -91,7 +78,6 @@ export class DrawingComponent implements AfterViewInit {
     handleKeyDown(event: KeyboardEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
             console.log('keyDOwn');
-            // this.toolManagerService.mousePosition = this.mousePosition;
             this.toolManagerService.handleHotKeysShortcut(event);
         }
     }

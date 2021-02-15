@@ -1,4 +1,4 @@
-<div id="working-area" [style.width.vw]="85" [style.height.vh]="100">
+<div id="workingArea" #workingArea (mousedown)="onMouseDown($event)">
     <div id="canvas-container">
         <canvas id="canvas" #baseCanvas [attr.width]="250" [attr.height]="250"></canvas>
         <canvas id="previewLayer" #previewCanvas [attr.width]="250" [attr.height]="250"></canvas>
