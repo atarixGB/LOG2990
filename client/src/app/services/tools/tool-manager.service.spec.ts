@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
+import { PencilService } from './pencil/pencil-service';
 import { ToolManagerService } from './tool-manager.service';
 
-describe('ToolManagerService', () => {
+fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
 
     beforeEach(() => {
@@ -12,4 +13,10 @@ describe('ToolManagerService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
+    it('should be pencilService by default', () => {
+        expect(service.currentTool instanceof PencilService).toBeTrue();
+    });
+
+    it('should handle hot keys shortcut', () => {});
 });
