@@ -1,4 +1,4 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { MIN_HEIGHT, MIN_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -17,7 +17,7 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
 
-    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {
+    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService, private cdr: ChangeDetectorRef) {
         this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
     }
 
@@ -38,6 +38,7 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
         if (this.canvasSize.x < MIN_WIDTH || this.canvasSize.y < MIN_HEIGHT) {
             this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
         }
+        this.cdr.detectChanges();
     }
 
     onMouseMove(event: MouseEvent): void {
