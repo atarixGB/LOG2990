@@ -3,6 +3,8 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 const SECOND_LAST_INDEX = -2;
 const NEGATIVE_LINE_SLOPE = -1;
@@ -16,7 +18,6 @@ export class LineService extends Tool {
     private coordinates: Vec2[];
 
     private hasPressedShiftKey: boolean;
-    private hasDblClick: boolean;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
@@ -25,7 +26,7 @@ export class LineService extends Tool {
     junctionType: TypeOfJunctions;
     junctionRadius: number;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
@@ -34,7 +35,6 @@ export class LineService extends Tool {
         this.lastCanvasImages = [];
         this.pathData = [];
         this.hasPressedShiftKey = false;
-        this.hasDblClick = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -58,7 +58,6 @@ export class LineService extends Tool {
     onMouseDoubleClick(event: MouseEvent): void {
         this.clearPath();
         this.mouseDown = false;
-        this.hasDblClick = true;
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -110,12 +109,8 @@ export class LineService extends Tool {
                 this.hasPressedShiftKey = true;
                 break;
             case 'Backspace':
-                if (this.hasDblClick) {
-                    this.hasDblClick = false;
-                } else {
-                    // We use the second last index to get the canvas state just before last stroked line
-                    this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
-                }
+                // We use the second last index to get the canvas state just before last stroked line
+                this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
                 break;
         }
     }
@@ -184,7 +179,9 @@ export class LineService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         ctx.lineWidth = this.lineWidth;
+        ctx.strokeStyle = color;
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
@@ -197,6 +194,8 @@ export class LineService extends Tool {
 
         const point: Vec2 | undefined = this.calculatePosition(mousePosition, this.basePoint);
         ctx.lineWidth = this.lineWidth;
+        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        ctx.strokeStyle = color;
         ctx.beginPath();
         if (point) {
             ctx.moveTo(this.basePoint.x, this.basePoint.y);
@@ -206,6 +205,8 @@ export class LineService extends Tool {
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, position: Vec2): void {
+        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        ctx.fillStyle = color;
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.arc(position.x, position.y, this.junctionRadius, 0, 2 * Math.PI);
