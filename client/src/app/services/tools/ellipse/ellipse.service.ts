@@ -32,6 +32,8 @@ export class EllipseService extends Tool {
         this.fillValue = false;
         this.strokeValue = false;
         this.lineWidth = DEFAULT_LINE_THICKNESS;
+        this.selectType = TypeStyle.stroke;
+        this.changeType();
         this.clearPath();
     }
     onMouseDown(event: MouseEvent): void {

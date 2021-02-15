@@ -32,6 +32,8 @@ export class RectangleService extends Tool {
         this.fillValue = false;
         this.strokeValue = false;
         this.isRectangle = true;
+        this.selectType = TypeStyle.stroke;
+        this.changeType();
         this.clearPath();
     }
     private clearPath(): void {
