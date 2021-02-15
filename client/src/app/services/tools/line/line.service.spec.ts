@@ -28,8 +28,8 @@ describe('LineService', () => {
         drawingServiceSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         drawingServiceSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
-        service.drawingService.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service.drawingService.previewCtx = previewCtxStub;
+        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 25,

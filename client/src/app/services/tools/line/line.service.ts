@@ -18,7 +18,6 @@ export class LineService extends Tool {
     private coordinates: Vec2[];
 
     private hasPressedShiftKey: boolean;
-    private hasDblClick: boolean;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
@@ -36,7 +35,6 @@ export class LineService extends Tool {
         this.lastCanvasImages = [];
         this.pathData = [];
         this.hasPressedShiftKey = false;
-        this.hasDblClick = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -60,7 +58,6 @@ export class LineService extends Tool {
     onMouseDoubleClick(event: MouseEvent): void {
         this.clearPath();
         this.mouseDown = false;
-        this.hasDblClick = true;
     }
 
     onMouseUp(event: MouseEvent): void {
