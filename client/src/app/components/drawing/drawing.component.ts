@@ -32,12 +32,12 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
             if (clear) {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
             }
         });
     }
 
     ngOnDestroy() {
-        // unsubscribe to ensure no memory leaks
         this.subscription.unsubscribe();
     }
 
@@ -45,7 +45,6 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
         this.workingArea.nativeElement.style.width = '85vw';
         this.workingArea.nativeElement.style.height = '100vh';
 
-        console.log(this.workingArea.nativeElement.offsetWidth);
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
