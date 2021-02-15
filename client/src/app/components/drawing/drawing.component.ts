@@ -1,8 +1,9 @@
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
-import { MIN_HEIGHT, MIN_WIDTH } from '@app/constants';
+import { MIN_SIZE } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
@@ -12,7 +13,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
+export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
@@ -30,7 +31,7 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDest
         private newDrawingService: NewDrawingService,
         public dialog: MatDialog,
     ) {
-        this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
+        this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
 
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
             if (isCleanRequest) {
@@ -44,6 +45,10 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDest
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
     }
+    private isResizing: boolean;
+    private currentDrawing: ImageData;
+
+    public dragPosition: Vec2 = { x: 0, y: 0 };
 
     ngAfterViewInit(): void {
         this.workingArea.nativeElement.style.width = '85vw';
@@ -54,12 +59,10 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDest
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
-    }
-
-    ngAfterViewChecked(): void {
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
-        if (this.canvasSize.x < MIN_WIDTH || this.canvasSize.y < MIN_HEIGHT) {
-            this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
+
+        if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
+            this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
         this.cdr.detectChanges();
     }
@@ -72,9 +75,10 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDest
     }
 
     onMouseDown(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
+            console.log(this.toolManagerService.currentTool.mouseCoord.x);
         }
     }
 
@@ -115,6 +119,52 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDest
         if (event.ctrlKey && event.code === 'KeyO') {
             this.dialog.open(NewDrawModalComponent, {});
         }
+    }
+
+    dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
+        this.isResizing = true;
+
+        this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
+
+        this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
+
+        if (resizeX && event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left > MIN_SIZE) {
+            this.previewCanvas.nativeElement.width = event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left;
+        }
+
+        if (resizeY && event.pointerPosition.y > MIN_SIZE) {
+            this.previewCanvas.nativeElement.height = event.pointerPosition.y;
+        }
+    }
+
+    dragEnded(event: CdkDragEnd): void {
+        console.log('drag ended');
+        this.isResizing = false;
+        const newWidth: number = this.canvasSize.x + event.distance.x;
+        const newHeight: number = this.canvasSize.y + event.distance.y;
+
+        this.previewCanvas.nativeElement.style.borderStyle = 'solid';
+
+        if (newWidth >= MIN_SIZE) {
+            this.canvasSize.x = newWidth;
+        } else {
+            this.canvasSize.x = MIN_SIZE;
+        }
+
+        if (newHeight >= MIN_SIZE) {
+            this.canvasSize.y = newHeight;
+        } else {
+            this.canvasSize.y = MIN_SIZE;
+        }
+
+        console.log(this.canvasSize.x + ', ' + this.canvasSize.y);
+        setTimeout(() => {
+            this.baseCtx.putImageData(this.currentDrawing, 0, 0);
+        }, 0);
+    }
+
+    changePosition() {
+        this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
     }
 
     get width(): number {

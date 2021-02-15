@@ -8,7 +8,6 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    constructor(public toolManagerService: ToolManagerService) {}
-
     ToolList: typeof ToolList = ToolList;
+    constructor(public toolManagerService: ToolManagerService) {}
 }
