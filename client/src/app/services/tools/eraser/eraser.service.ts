@@ -24,7 +24,7 @@ export class EraserService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.updateCursor(this.drawingService.cursorCtx, event);
+        this.updateCursor(this.drawingService.cursorCtx, this.getPositionFromMouse(event));
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
@@ -35,7 +35,7 @@ export class EraserService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        this.updateCursor(this.drawingService.cursorCtx, event);
+        this.updateCursor(this.drawingService.cursorCtx, this.getPositionFromMouse(event));
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
@@ -47,7 +47,7 @@ export class EraserService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.updateCursor(this.drawingService.cursorCtx, event);
+        this.updateCursor(this.drawingService.cursorCtx, this.getPositionFromMouse(event));
         if (this.mouseDown) {
             this.mouseMove = true;
             const mousePosition = this.getPositionFromMouse(event);
@@ -60,7 +60,7 @@ export class EraserService extends Tool {
     }
 
     onMouseClick(event: MouseEvent): void {
-        this.updateCursor(this.drawingService.cursorCtx, event);
+        this.updateCursor(this.drawingService.cursorCtx, this.getPositionFromMouse(event));
         if (!this.mouseMove) {
             this.clearPath();
             this.mouseDownCoord = this.getPositionFromMouse(event);
@@ -126,23 +126,13 @@ export class EraserService extends Tool {
         return y;
     }
 
-    private updateCursor(ctx: CanvasRenderingContext2D, event: MouseEvent): void {
+    private updateCursor(ctx: CanvasRenderingContext2D, event: Vec2): void {
         this.drawingService.cursorCtx.clearRect(0, 0, this.drawingService.getCanvasWidth(), this.drawingService.getCanvasHeight());
 
         ctx.beginPath();
         ctx.fillStyle = 'white';
-        ctx.fillRect(
-            this.centerX(this.getPositionFromMouse(event).x),
-            this.centerY(this.getPositionFromMouse(event).y),
-            this.eraserThickness,
-            this.eraserThickness,
-        );
+        ctx.fillRect(this.centerX(event.x), this.centerY(event.y), this.eraserThickness, this.eraserThickness);
         ctx.strokeStyle = 'black';
-        ctx.strokeRect(
-            this.centerX(this.getPositionFromMouse(event).x),
-            this.centerY(this.getPositionFromMouse(event).y),
-            this.eraserThickness,
-            this.eraserThickness,
-        );
+        ctx.strokeRect(this.centerX(event.x), this.centerY(event.y), this.eraserThickness, this.eraserThickness);
     }
 }
