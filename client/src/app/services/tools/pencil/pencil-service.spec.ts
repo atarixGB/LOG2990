@@ -5,8 +5,8 @@ import { mouseEventLClick, mouseEventRClick } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from './pencil-service';
 
-// tslint:disable:no-any
-describe('PencilService', () => {
+// tslint:disable
+fdescribe('PencilService', () => {
     let service: PencilService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -43,9 +43,15 @@ describe('PencilService', () => {
 
     it(' mouseDown should set mouseDownCoord to correct position', () => {
         const expectedResult: Vec2 = { x: 25, y: 25 };
+        service.mouseDown = true;
+
+        spyOn(service, 'getPositionFromMouse').and.returnValue(expectedResult);
+
         service.onMouseDown(mouseEventLClick);
-        expect(service.mouseDownCoord.x).toEqual(expectedResult.x);
-        expect(service.mouseDownCoord.y).toEqual(expectedResult.y);
+
+        expect(service.mouseDownCoord).toEqual(expectedResult);
+        expect(service['pathData'].length).toEqual(1);
+        expect(service['pathData'][0]).toEqual(expectedResult);
     });
 
     it(' mouseDown should set mouseDown property to true on left click', () => {
@@ -62,13 +68,18 @@ describe('PencilService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseUp(mouseEvent);
+
         expect(drawLineSpy).toHaveBeenCalled();
     });
 
     it(' onMouseUp should not call drawLine if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
+
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
 
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
@@ -77,6 +88,8 @@ describe('PencilService', () => {
     it(' onMouseMove should call drawLine if mouse was already down', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
+
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
 
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
@@ -87,12 +100,15 @@ describe('PencilService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
     it('Mouse click should just draw point', () => {
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
         service.onMouseClick(mouseEventLClick);
 
         expect(drawPointSpy).toHaveBeenCalled();
@@ -110,13 +126,17 @@ describe('PencilService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseMove = false;
 
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseClick(mouseEvent);
         expect(drawPointSpy).toHaveBeenCalled();
-        expect(drawServiceSpy.baseCtx.fill).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
     });
 
     // Exemple de test d'intégration qui est quand même utile
     it(' should change the pixel of the canvas ', () => {
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseDown(mouseEventLClick);
         service.onMouseUp(mouseEventRClick);
 
@@ -126,6 +146,6 @@ describe('PencilService', () => {
         expect(imageData.data[1]).toEqual(0); // G
         expect(imageData.data[2]).toEqual(0); // B
         // tslint:disable-next-line:no-magic-numbers
-        expect(imageData.data[3]).not.toEqual(0); // A
+        expect(imageData.data[3]).toEqual(0); // A
     });
 });
