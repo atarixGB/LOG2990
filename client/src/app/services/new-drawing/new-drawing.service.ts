@@ -4,13 +4,13 @@ import { Observable, Subject } from 'rxjs';
     providedIn: 'root',
 })
 export class NewDrawingService {
-    private sendCleaner = new Subject<boolean>();
+    private clean: Subject<boolean> = new Subject<boolean>();
 
-    clearCanva(): void {
-        this.sendCleaner.next(true);
+    requestCleaning(): void {
+        this.clean.next(true);
     }
 
-    getClear(): Observable<boolean> {
-        return this.sendCleaner.asObservable();
+    getCleanStatus(): Observable<boolean> {
+        return this.clean.asObservable();
     }
 }

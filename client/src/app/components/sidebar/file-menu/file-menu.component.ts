@@ -9,7 +9,7 @@ import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-m
 export class FileMenuComponent {
     constructor(public dialog: MatDialog) {}
 
-    openNewDrawModal() {
+    handleCreateDraw(): void {
         this.dialog.open(NewDrawModalComponent, {});
     }
 }

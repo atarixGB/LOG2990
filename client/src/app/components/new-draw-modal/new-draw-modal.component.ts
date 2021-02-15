@@ -7,10 +7,9 @@ import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service
     styleUrls: ['./new-draw-modal.component.scss'],
 })
 export class NewDrawModalComponent {
-    constructor(private newDrawingService: NewDrawingService, public dialogRef: MatDialogRef<NewDrawModalComponent>) {}
-
+    constructor(public dialogRef: MatDialogRef<NewDrawModalComponent>, private newDrawService: NewDrawingService) {}
     handleConfirm(): void {
-        this.newDrawingService.clearCanva();
+        this.newDrawService.requestCleaning();
         this.dialogRef.close();
     }
 }

@@ -1,5 +1,7 @@
-import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
+import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { MIN_HEIGHT, MIN_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
@@ -10,11 +12,12 @@ import { Subscription } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, AfterViewChecked {
+export class DrawingComponent implements AfterViewInit, AfterViewChecked, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
+
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
@@ -25,11 +28,12 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
         private toolManagerService: ToolManagerService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
+        public dialog: MatDialog,
     ) {
         this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
 
-        this.subscription = this.newDrawingService.getClear().subscribe((clear) => {
-            if (clear) {
+        this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
+            if (isCleanRequest) {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
@@ -37,7 +41,7 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
         });
     }
 
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this.subscription.unsubscribe();
     }
 
@@ -52,7 +56,7 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
     }
 
-    ngAfterViewChecked() {
+    ngAfterViewChecked(): void {
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_WIDTH || this.canvasSize.y < MIN_HEIGHT) {
             this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
@@ -104,8 +108,12 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.handleHotKeysShortcut(event);
+        }
+        if (event.ctrlKey && event.code === 'KeyO') {
+            this.dialog.open(NewDrawModalComponent, {});
         }
     }
 
