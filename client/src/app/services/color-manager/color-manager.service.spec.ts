@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { FIRSTCOLORTEST } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from './color-manager.service';
-import{FIRSTCOLORTEST} from 'src/app/constants'
 
 // tslint:disable:no-magic-numbers
 fdescribe('ColorManagerService', () => {
     let colorManagerService: ColorManagerService;
-    
+
     beforeEach(() => TestBed.configureTestingModule({}));
     beforeEach(() => {
         colorManagerService = TestBed.inject(ColorManagerService);
@@ -122,5 +122,4 @@ fdescribe('ColorManagerService', () => {
         expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Hex.Blue).toBe('c0');
         expect(colorManagerService.selectedColor[ColorOrder.primaryColor].inString).toBe('rgba(197,145,192,0.2)');
     });
-
 });
