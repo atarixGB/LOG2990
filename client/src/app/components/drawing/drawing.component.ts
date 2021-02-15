@@ -29,7 +29,6 @@ export class DrawingComponent implements AfterViewInit {
         this.workingArea.nativeElement.style.height = '100vh';
     }
 
-    @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
@@ -38,14 +37,12 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     onMouseDown(event: MouseEvent): void {
-        console.log('ici');
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
         }
     }
 
-    @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
