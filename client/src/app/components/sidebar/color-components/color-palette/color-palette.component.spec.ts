@@ -7,7 +7,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPaletteComponent } from './color-palette.component';
 
-describe('ColorPaletteComponent', () => {
+fdescribe('ColorPaletteComponent', () => {
     let component: ColorPaletteComponent;
     let fixture: ComponentFixture<ColorPaletteComponent>;
     let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
@@ -50,10 +50,11 @@ describe('ColorPaletteComponent', () => {
         expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(1);
     });
 
-    it('should not update gradient with color pickedeeee', () => {
+    it('should not update gradient with color picked', () => {
         component.updateColorWithCoordinates({ x: 1, y: 1 });
         expect(colorManagerSpy.updatePixelColor).toHaveBeenCalled();
     });
+
     it('should update main gradient if color is updated', () => {
         spyOn(component, 'createMainGradientDisplayer').and.callThrough();
         component.ngOnChanges({

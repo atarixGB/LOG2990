@@ -48,6 +48,8 @@ export const MAX_DEC_RANGE = 255;
 export const OPACITY_POS_ALPHA = 3;
 export const HEX_BASE = 16;
 export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
+
+// in the following we find testing constants
 export const FIRST_CASE = 75;
 export const SECOND_AND_THIRD_CASE = 25;
 export const LAST_CASE = 255;

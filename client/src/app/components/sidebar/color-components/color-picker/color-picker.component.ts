@@ -16,7 +16,7 @@ export class ColorPickerComponent {
     coord: Vec2;
     colorOrder: ColorOrder;
     arrayColorPixel: Uint8ClampedArray;
-    private eventListeners: EventListeners;
+    eventListeners: EventListeners;
 
     constructor(private colorManager: ColorManagerService) {
         this.eventListeners = {} as EventListeners;

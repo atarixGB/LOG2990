@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 
 // tslint:disable:no-any
-fdescribe('LineService', () => {
+describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -56,7 +56,7 @@ fdescribe('LineService', () => {
             offsetY: 25,
             button: 0,
         } as MouseEvent;
-        spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
+        //spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
         service.onMouseClick(mouseEvent);
         console.log(service.mouseDownCoord);
         expect(service.mouseDownCoord).toEqual(leftClickMouseEvent);

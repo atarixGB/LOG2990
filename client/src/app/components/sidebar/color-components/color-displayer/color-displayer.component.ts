@@ -27,7 +27,7 @@ export class ColorDisplayerComponent {
             width: COLOR_WINDOW_WIDTH,
             data: colorOrder,
         });
-        window.close();
+        window.afterClosed();
     }
 
     exchangeColorOrder(): void {
