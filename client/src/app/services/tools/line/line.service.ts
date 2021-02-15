@@ -32,6 +32,7 @@ export class LineService extends Tool {
         this.junctionType = TypeOfJunctions.Regular;
         this.coordinates = [];
         this.lastCanvasImages = [];
+        this.pathData = [];
         this.hasPressedShiftKey = false;
         this.hasDblClick = false;
     }

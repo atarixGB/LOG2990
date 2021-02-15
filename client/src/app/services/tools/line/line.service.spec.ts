@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
+import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 
@@ -52,19 +51,24 @@ fdescribe('LineService', () => {
     });
 
     fit('should set mouseDownCoord to correct position when onMouseClick is called', () => {
-        const expected: Vec2 = { x: 25, y: 25 };
+        const leftClickMouseEvent = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
+        spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
         service.onMouseClick(mouseEvent);
-        expect(service.mouseDownCoord).toEqual(expected);
+        console.log(service.mouseDownCoord);
+        expect(service.mouseDownCoord).toEqual(leftClickMouseEvent);
+    });
+
+    it('should set mouseDown property to true on left click', () => {
+        service.onMouseClick(mouseEvent);
+        expect(service.mouseDown).toEqual(true);
     });
 
     fit('should set mouseDown to false when onMouseDoubleClick is called', () => {
         service.onMouseDoubleClick(mouseEvent);
         expect(service.mouseDown).toEqual(false);
-    });
-
-    fit('should returns mouse position when onMouseClick is called', () => {
-        const expectedMouseEvent = { x: 100, y: 100, button: MouseButton.Left } as MouseEvent;
-        service.onMouseClick(mouseEvent);
-        expect(service.mouseCoord).toEqual({ x: expectedMouseEvent.x, y: expectedMouseEvent.y });
     });
 });
