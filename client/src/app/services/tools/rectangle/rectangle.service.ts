@@ -30,6 +30,7 @@ export class RectangleService extends Tool {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.fillValue = false;
+        this.strokeValue = false;
         this.isRectangle = true;
         this.clearPath();
     }
@@ -158,6 +159,9 @@ export class RectangleService extends Tool {
             // go down-right
             upperRight = [path[0].x, path[0].y];
         }
+
+        ctx.beginPath();
+        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
         const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
@@ -180,7 +184,5 @@ export class RectangleService extends Tool {
             ctx.fill();
             ctx.stroke();
         }
-        ctx.beginPath();
-        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
     }
 }

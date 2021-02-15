@@ -1,5 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+<<<<<<< HEAD
+=======
+
+>>>>>>> f75c279a91148cb12007ea8b8359377a4b161e94
 // tslint:disable:no-string-literal
 describe('CanvasTestHelper', () => {
     let canvasTestHelper: CanvasTestHelper;

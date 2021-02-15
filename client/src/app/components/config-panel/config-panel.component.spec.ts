@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ColorPopupComponent } from './color-popup.component';
+import { ConfigPanelComponent } from './config-panel.component';
 
-describe('ColorPopupComponent', () => {
-    let component: ColorPopupComponent;
-    let fixture: ComponentFixture<ColorPopupComponent>;
+describe('ConfigPanelComponent', () => {
+    let component: ConfigPanelComponent;
+    let fixture: ComponentFixture<ConfigPanelComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [ColorPopupComponent],
+            declarations: [ConfigPanelComponent],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(ColorPopupComponent);
+        fixture = TestBed.createComponent(ConfigPanelComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

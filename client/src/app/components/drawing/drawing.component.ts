@@ -13,7 +13,6 @@ export class DrawingComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
-    
 
     @Input()
     set mousePositionChanged(position: Vec2) {

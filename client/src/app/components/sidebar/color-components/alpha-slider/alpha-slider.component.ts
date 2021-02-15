@@ -1,7 +1,7 @@
 // Code used for this section is from an External Source
 // Lukas Marx (2018) Creating a Color Picker Component with Angular
 // Available at : https://github.com/LukasMarx/angular-color-picker
-//constructed on the base of the color slider component
+// constructed on the base of the color slider component
 import { AfterViewInit, Component, ElementRef, Inject, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Vec2 } from 'src/app/classes/vec2';
