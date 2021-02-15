@@ -42,14 +42,6 @@ describe('DrawingComponent', () => {
         expect(width).toEqual(DEFAULT_WIDTH);
     });
 
-<<<<<<< HEAD
-    // it('should get stubTool', () => {
-    //     const currentTool = component.currentTool;
-    //     expect(currentTool).toEqual(toolStub);
-    // });
-
-=======
->>>>>>> 5c18606b4e14cdb5dd8f72d5f08181f7f9bce6b3
     it(" should call the tool's mouse move when receiving a mouse move event", () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolStub, 'onMouseMove').and.callThrough();

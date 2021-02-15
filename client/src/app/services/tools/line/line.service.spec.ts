@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 
 // tslint:disable:no-any
-fdescribe('LineService', () => {
+describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -28,8 +28,8 @@ fdescribe('LineService', () => {
         drawingServiceSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         drawingServiceSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
-        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service['drawingService'].previewCtx = previewCtxStub;
+        service.drawingService.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service.drawingService.previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 25,
@@ -49,6 +49,18 @@ fdescribe('LineService', () => {
         expect(junctionRadius).toEqual(DEFAULT_JUNCTION_RADIUS);
         expect(lineWidth).toEqual(DEFAULT_LINE_THICKNESS);
         expect(junctionType).toEqual(TypeOfJunctions.Regular);
+    });
+
+    fit('should set mouseDownCoord to correct position when onMouseClick is called', () => {
+        const leftClickMouseEvent = {
+            offsetX: 25,
+            offsetY: 25,
+            button: 0,
+        } as MouseEvent;
+        // spyOn(service.mouseDownCoord, 'getPositionFromMouse').and.returnValue(leftClickMouseEvent);
+        service.onMouseClick(mouseEvent);
+        console.log(service.mouseDownCoord);
+        expect(service.mouseDownCoord).toEqual(leftClickMouseEvent);
     });
 
     it('should set mouseDown property to true on left click', () => {

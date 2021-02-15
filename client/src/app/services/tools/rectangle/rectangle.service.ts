@@ -3,6 +3,9 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { TypeStyle } from 'src/app/interfaces-enums/type-style';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -18,13 +21,16 @@ export enum MouseButton {
 export class RectangleService extends Tool {
     private pathData: Vec2[];
     private isRectangle: boolean;
-    isFilled: boolean;
+    fillValue: boolean;
     lineWidth: number;
+    strokeValue: boolean;
+    selectType: TypeStyle;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
-        this.isFilled = false;
+        this.fillValue = false;
+        this.strokeValue = false;
         this.isRectangle = true;
         this.clearPath();
     }
@@ -77,6 +83,23 @@ export class RectangleService extends Tool {
             this.isRectangle = true;
         }
     }
+
+    changeType(): void {
+        switch (this.selectType) {
+            case TypeStyle.stroke:
+                this.fillValue = false;
+                this.strokeValue = true;
+                break;
+            case TypeStyle.fill:
+                this.fillValue = true;
+                this.strokeValue = false;
+                break;
+            case TypeStyle.strokeFill:
+                this.fillValue = true;
+                this.strokeValue = true;
+                break;
+        }
+    }
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         const firstPoint = path[0];
@@ -85,10 +108,26 @@ export class RectangleService extends Tool {
         const length = finalPoint.x - firstPoint.x;
         ctx.lineWidth = this.lineWidth;
         ctx.rect(firstPoint.x, firstPoint.y, length, width);
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
-        if (this.isFilled) {
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
             ctx.fill();
-        } else {
+            ctx.stroke();
+        }
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
             ctx.stroke();
         }
         ctx.lineWidth = DEFAULT_LINE_THICKNESS;
@@ -120,7 +159,30 @@ export class RectangleService extends Tool {
             // go down-right
             upperRight = [path[0].x, path[0].y];
         }
+
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
+
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
+            ctx.stroke();
+        }
     }
 }
