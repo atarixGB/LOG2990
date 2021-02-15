@@ -14,7 +14,7 @@ import { ColorSliderComponent } from 'src/app/components/sidebar/color-component
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorDisplayerComponent } from './color-displayer.component';
 
-fdescribe('ColorDisplayerComponent', () => {
+describe('ColorDisplayerComponent', () => {
     let component: ColorDisplayerComponent;
     let fixture: ComponentFixture<ColorDisplayerComponent>;
 

@@ -12,7 +12,8 @@ import { ColorSliderComponent } from 'src/app/components/sidebar/color-component
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPopupComponent } from './color-popup.component';
-fdescribe('ColorPopupComponent', () => {
+
+describe('ColorPopupComponent', () => {
     let component: ColorPopupComponent;
     let fixture: ComponentFixture<ColorPopupComponent>;
     let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
