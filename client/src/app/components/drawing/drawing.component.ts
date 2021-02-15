@@ -2,7 +2,9 @@ import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementR
 import { Vec2 } from '@app/classes/vec2';
 import { MIN_HEIGHT, MIN_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -16,9 +18,27 @@ export class DrawingComponent implements AfterViewInit, AfterViewChecked {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
+    subscription: Subscription;
 
-    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService, private cdr: ChangeDetectorRef) {
+    constructor(
+        private drawingService: DrawingService,
+        private toolManagerService: ToolManagerService,
+        private cdr: ChangeDetectorRef,
+        private newDrawingService: NewDrawingService,
+    ) {
         this.canvasSize = { x: MIN_WIDTH, y: MIN_HEIGHT };
+
+        this.subscription = this.newDrawingService.getClear().subscribe((clear) => {
+            if (clear) {
+                this.drawingService.baseCtx.beginPath();
+                this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        // unsubscribe to ensure no memory leaks
+        this.subscription.unsubscribe();
     }
 
     ngAfterViewInit(): void {

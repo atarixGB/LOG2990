@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-
+import { MatDialog } from '@angular/material/dialog';
+import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 @Component({
     selector: 'app-file-menu',
     templateUrl: './file-menu.component.html',
     styleUrls: ['./file-menu.component.scss'],
 })
 export class FileMenuComponent {
-    constructor() {}
-    openConfirmModal(): void {
-        console.log('open a dialog');
+    constructor(public dialog: MatDialog) {}
+
+    openNewDrawModal() {
+        this.dialog.open(NewDrawModalComponent, {});
     }
 }

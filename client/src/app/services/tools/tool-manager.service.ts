@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser.service';
@@ -18,8 +17,6 @@ export class ToolManagerService {
 
     serviceBindings: Map<ToolList, Tool>;
     keyBindings: Map<string, Tool>;
-
-    mousePosition: Vec2;
 
     constructor(
         private pencilService: PencilService,
