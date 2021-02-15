@@ -7,17 +7,14 @@ canvas {
     background-color: #ffffff;
 }
 
-#canvas {
-    z-index: 0;
-}
-
 #drawCanvas {
     z-index: 1;
 }
 
 #canvas-container {
     position: relative;
-    left: 0px;
+    left: 0;
+    top: 0;
 }
 
 #workingArea {

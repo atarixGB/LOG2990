@@ -66,3 +66,6 @@ export const SECONDCOLORTEST: RGBA = {
     inString: 'rgba(255, 255, 255, 1)',
 };
 export const COLOR_WIN_WIDTH = '500px';
+
+export const WORKING_AREA_WIDTH = '85vw';
+export const WORKING_AREA_LENGHT = '100vh';

@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
-import { MIN_SIZE } from '@app/constants';
+import { MIN_SIZE, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
@@ -51,14 +51,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     public dragPosition: Vec2 = { x: 0, y: 0 };
 
     ngAfterViewInit(): void {
-        this.workingArea.nativeElement.style.width = '85vw';
-        this.workingArea.nativeElement.style.height = '100vh';
+        this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
+        this.workingArea.nativeElement.style.height = WORKING_AREA_LENGHT;
 
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
 
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
@@ -78,7 +79,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
-            console.log(this.toolManagerService.currentTool.mouseCoord.x);
         }
     }
 
@@ -138,7 +138,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        console.log('drag ended');
         this.isResizing = false;
         const newWidth: number = this.canvasSize.x + event.distance.x;
         const newHeight: number = this.canvasSize.y + event.distance.y;
@@ -156,8 +155,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
-
-        console.log(this.canvasSize.x + ', ' + this.canvasSize.y);
         setTimeout(() => {
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
         }, 0);
