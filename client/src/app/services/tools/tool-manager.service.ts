@@ -49,7 +49,7 @@ export class ToolManagerService {
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
-        if (this.currentTool != undefined && event.key === 'Shift') {
+        if (this.currentTool != undefined && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
             this.currentTool.mouseCoord = this.mousePosition;
             this.currentTool.handleKeyDown(event);
         } else {

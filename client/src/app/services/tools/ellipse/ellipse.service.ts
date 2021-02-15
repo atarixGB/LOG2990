@@ -3,6 +3,9 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { TypeStyle } from 'src/app/interfaces-enums/type-style';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 export enum MouseButton {
     Left = 0,
@@ -19,12 +22,15 @@ export class EllipseService extends Tool {
     private pathData: Vec2[];
     private isEllipse: boolean;
     lineWidth: number;
-    isFilled: boolean;
+    fillValue: boolean;
+    strokeValue: boolean;
+    selectType: TypeStyle;
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
         this.isEllipse = true;
-        this.isFilled = false;
+        this.fillValue = false;
+        this.strokeValue = false;
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.clearPath();
     }
@@ -32,7 +38,6 @@ export class EllipseService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
@@ -66,7 +71,22 @@ export class EllipseService extends Tool {
             }
         }
     }
-
+    changeType(): void {
+        switch (this.selectType) {
+            case TypeStyle.stroke:
+                this.fillValue = false;
+                this.strokeValue = true;
+                break;
+            case TypeStyle.fill:
+                this.fillValue = true;
+                this.strokeValue = false;
+                break;
+            case TypeStyle.strokeFill:
+                this.fillValue = true;
+                this.strokeValue = true;
+                break;
+        }
+    }
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let xRadius = (path[path.length - 1].x - path[0].x) / 2;
         let yRadius = (path[path.length - 1].y - path[0].y) / 2;
@@ -92,20 +112,37 @@ export class EllipseService extends Tool {
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
 
-        if (this.isFilled) {
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
+
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
             ctx.fill();
-        } else {
             ctx.stroke();
         }
-        // test idea : radius is negative ? Look at the documentation
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
+            ctx.stroke();
+        }
     }
 
     private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let upperRight: [number, number];
+
         upperRight = [path[0].x, path[0].y];
         const width = path[path.length - 1].x - upperRight[0];
         const height = path[path.length - 1].y - upperRight[1];
-
+        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], width, height);
     }
@@ -165,10 +202,26 @@ export class EllipseService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
+        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
-        if (this.isFilled) {
+        if (this.strokeValue) {
+            ctx.strokeStyle = contouring;
+            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
             ctx.fill();
-        } else {
+            ctx.stroke();
+        }
+        if (this.fillValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
+
+            ctx.fill();
+            ctx.stroke();
+        }
+        if (this.fillValue && this.strokeValue) {
+            ctx.fillStyle = filling;
+            ctx.strokeStyle = contouring;
+            ctx.fill();
             ctx.stroke();
         }
     }
