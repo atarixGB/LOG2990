@@ -42,7 +42,7 @@ describe('DrawingComponent', () => {
     //     expect(width).toEqual(DEFAULT_WIDTH);
     // });
 
-    fit(" should call the tool's mouse move when receiving a mouse move event", () => {
+    it(" should call the tool's mouse move when receiving a mouse move event", () => {
         const event = {} as MouseEvent;
         const mouseEventSpy = spyOn(toolStub, 'onMouseMove').and.callThrough();
         component.onMouseMove(event);
