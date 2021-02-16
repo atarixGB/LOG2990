@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-import { Shape } from '../shape/shape';
+import { ShapeService } from '../shape/shape.service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class RectangleService extends Shape {
+export class RectangleService extends ShapeService {
     constructor(protected drawingService: DrawingService, colorManager: ColorManagerService) {
         super(drawingService, colorManager);
     }

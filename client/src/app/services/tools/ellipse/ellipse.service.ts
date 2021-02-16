@@ -2,18 +2,17 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-import { Shape } from '../shape/shape';
+import { ShapeService } from '../shape/shape.service';
 
 @Injectable({
     providedIn: 'root',
 })
-export class EllipseService extends Shape {
+export class EllipseService extends ShapeService {
     constructor(protected drawingService: DrawingService, colorManager: ColorManagerService) {
         super(drawingService, colorManager);
     }
 
     drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        console.log('dans ellipse');
         if (!this.isShiftShape) {
             this.drawRectangle(this.drawingService.previewCtx, this.pathData);
             this.drawEllipse(this.drawingService.previewCtx, this.pathData);

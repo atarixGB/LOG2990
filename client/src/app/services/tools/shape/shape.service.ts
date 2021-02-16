@@ -7,7 +7,7 @@ import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { TypeStyle } from 'src/app/interfaces-enums/type-style';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
-export abstract class Shape extends Tool {
+export abstract class ShapeService extends Tool {
     protected pathData: Vec2[];
     protected fillValue: boolean;
     public lineWidth: number;
@@ -155,5 +155,9 @@ export abstract class Shape extends Tool {
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
         this.updateBorder(ctx);
+    }
+
+    helloWorld(): String {
+        return 'Hello World';
     }
 }
