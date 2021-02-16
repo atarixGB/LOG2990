@@ -10,9 +10,9 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
 export abstract class ShapeService extends Tool {
     protected pathData: Vec2[];
     protected fillValue: boolean;
-    public lineWidth: number;
+    lineWidth: number;
     protected strokeValue: boolean;
-    public selectType: TypeStyle;
+    selectType: TypeStyle;
     protected isShiftShape: boolean;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
@@ -56,7 +56,7 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {}
+    onMouseUp(event: MouseEvent): void;
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
@@ -155,9 +155,5 @@ export abstract class ShapeService extends Tool {
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
         this.updateBorder(ctx);
-    }
-
-    helloWorld(): String {
-        return 'Hello World';
     }
 }

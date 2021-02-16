@@ -4,7 +4,7 @@ import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, TypeOfJunctions } from
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 
-// tslint:disable:no-any
+//tslint:disable
 describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
