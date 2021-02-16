@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LineConfigComponent } from './line-config.component';
 
-fdescribe('LineConfigComponent', () => {
+describe('LineConfigComponent', () => {
     let component: LineConfigComponent;
     let fixture: ComponentFixture<LineConfigComponent>;
 
