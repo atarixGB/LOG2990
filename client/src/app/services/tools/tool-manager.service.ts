@@ -46,7 +46,11 @@ export class ToolManagerService {
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
+        console.log('lol', event.key);
+        console.log(this.currentTool);
+
         if (this.currentTool != undefined && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
+            console.log('key:', event.key);
             this.currentTool.handleKeyDown(event);
         } else {
             this.switchToolWithKeys(event.key);

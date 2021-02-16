@@ -28,8 +28,8 @@ describe('LineService', () => {
         drawingServiceSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         drawingServiceSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
-        service.drawingService.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service.drawingService.previewCtx = previewCtxStub;
+        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 25,
@@ -51,7 +51,7 @@ describe('LineService', () => {
         expect(junctionType).toEqual(TypeOfJunctions.Regular);
     });
 
-    fit('should set mouseDownCoord to correct position when onMouseClick is called', () => {
+    it('should set mouseDownCoord to correct position when onMouseClick is called', () => {
         const leftClickMouseEvent = {
             offsetX: 25,
             offsetY: 25,
