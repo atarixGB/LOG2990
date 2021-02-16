@@ -12,7 +12,7 @@ import { ColorPaletteComponent } from '../color-palette/color-palette.component'
 import { ColorSliderComponent } from '../color-slider/color-slider.component';
 import { ColorPopupComponent } from './color-popup.component';
 
-describe('ColorPopupComponent', () => {
+fdescribe('ColorPopupComponent', () => {
     let component: ColorPopupComponent;
     let fixture: ComponentFixture<ColorPopupComponent>;
     let colorManagerSpy: ColorManagerService;
