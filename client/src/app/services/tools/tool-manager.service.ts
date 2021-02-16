@@ -17,6 +17,7 @@ export class ToolManagerService {
 
     serviceBindings: Map<ToolList, Tool>;
     keyBindings: Map<string, Tool>;
+    enumBindings: Map<Tool | undefined, ToolList>;
 
     constructor(
         private pencilService: PencilService,
@@ -43,6 +44,14 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService);
+
+        this.enumBindings = new Map<Tool | undefined, ToolList>();
+        this.enumBindings
+            .set(this.pencilService, ToolList.Pencil)
+            .set(this.ellipseService, ToolList.Ellipse)
+            .set(this.rectangleService, ToolList.Rectangle)
+            .set(this.eraserService, ToolList.Eraser)
+            .set(this.lineService, ToolList.Line);
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
@@ -60,6 +69,7 @@ export class ToolManagerService {
     switchToolWithKeys(keyShortcut: string): void {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.keyBindings.get(keyShortcut);
+            this.currentToolEnum = this.enumBindings.get(this.currentTool);
         }
     }
 
