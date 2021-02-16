@@ -1,13 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 import { PencilService } from './pencil/pencil-service';
+import { RectangleService } from './rectangle/rectangle.service';
 import { ToolManagerService } from './tool-manager.service';
 
-describe('ToolManagerService', () => {
+import SpyObj = jasmine.SpyObj;
+
+fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
+    let RectangleServiceSpy: SpyObj<RectangleService>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ToolManagerService);
+        RectangleServiceSpy = jasmine.createSpyObj('RectangleService', [
+            'handleKeyDown',
+            'onMouseMove',
+            'onMouseDown',
+            'onMouseUp',
+            'onMouseClick',
+            'onMouseDoubleClick',
+            'handleKeyUp',
+        ]);
     });
 
     it('should be created', () => {
@@ -18,5 +31,111 @@ describe('ToolManagerService', () => {
         expect(service.currentTool instanceof PencilService).toBeTrue();
     });
 
-    // it('should handle hot keys shortcut', () => {});
+    it('should call mouse move of current tool if tool is not undefine', () => {
+        service.currentTool = RectangleServiceSpy;
+        const event = {} as MouseEvent;
+        const mouseCoord = { x: 25, y: 25 };
+        service.onMouseMove(event, mouseCoord);
+        expect(RectangleServiceSpy.onMouseMove).toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseMove).toHaveBeenCalledWith(event);
+        expect(RectangleServiceSpy.mouseCoord).toEqual(mouseCoord);
+    });
+
+    it('should not call mouse move of current tool if tool is undefine', () => {
+        service.currentTool = undefined;
+        const event = {} as MouseEvent;
+        const mouseCoord = { x: 25, y: 25 };
+        service.onMouseMove(event, mouseCoord);
+        expect(RectangleServiceSpy.onMouseMove).not.toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseMove).not.toHaveBeenCalledWith(event);
+        expect(RectangleServiceSpy.mouseCoord).not.toEqual(mouseCoord);
+    });
+
+    it('should call mouse down of current tool if tool is not undefine', () => {
+        service.currentTool = RectangleServiceSpy;
+        const event = {} as MouseEvent;
+        const mouseCoord = { x: 25, y: 25 };
+        service.onMouseDown(event, mouseCoord);
+        expect(RectangleServiceSpy.onMouseDown).toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseDown).toHaveBeenCalledWith(event);
+        expect(RectangleServiceSpy.mouseCoord).toEqual(mouseCoord);
+    });
+
+    it('should not call mouse down of current tool if tool is undefine', () => {
+        service.currentTool = undefined;
+        const event = {} as MouseEvent;
+        const mouseCoord = { x: 25, y: 25 };
+        service.onMouseDown(event, mouseCoord);
+        expect(RectangleServiceSpy.onMouseDown).not.toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseDown).not.toHaveBeenCalledWith(event);
+        expect(RectangleServiceSpy.mouseCoord).not.toEqual(mouseCoord);
+    });
+
+    it('should call mouse up of current tool if tool is not undefine', () => {
+        service.currentTool = RectangleServiceSpy;
+        const event = {} as MouseEvent;
+        const mouseCoord = { x: 25, y: 25 };
+        service.onMouseUp(event, mouseCoord);
+        expect(RectangleServiceSpy.onMouseUp).toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseUp).toHaveBeenCalledWith(event);
+        expect(RectangleServiceSpy.mouseCoord).toEqual(mouseCoord);
+    });
+
+    it('should not call mouse up of current tool if tool is undefine', () => {
+        service.currentTool = undefined;
+        const event = {} as MouseEvent;
+        const mouseCoord = { x: 25, y: 25 };
+        service.onMouseUp(event, mouseCoord);
+        expect(RectangleServiceSpy.onMouseUp).not.toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseUp).not.toHaveBeenCalledWith(event);
+        expect(RectangleServiceSpy.mouseCoord).not.toEqual(mouseCoord);
+    });
+
+    it('should call mouse click of current tool if tool is not undefine', () => {
+        service.currentTool = RectangleServiceSpy;
+        const event = {} as MouseEvent;
+        service.onMouseClick(event);
+        expect(RectangleServiceSpy.onMouseClick).toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseClick).toHaveBeenCalledWith(event);
+    });
+
+    it('should not call mouse click of current tool if tool is undefine', () => {
+        service.currentTool = undefined;
+        const event = {} as MouseEvent;
+        service.onMouseClick(event);
+        expect(RectangleServiceSpy.onMouseClick).not.toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseClick).not.toHaveBeenCalledWith(event);
+    });
+
+    it('should call mouse double click of current tool if tool is not undefine', () => {
+        service.currentTool = RectangleServiceSpy;
+        const event = {} as MouseEvent;
+        service.onMouseDoubleClick(event);
+        expect(RectangleServiceSpy.onMouseDoubleClick).toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseDoubleClick).toHaveBeenCalledWith(event);
+    });
+
+    it('should not call mouse double click of current tool if tool is undefine', () => {
+        service.currentTool = undefined;
+        const event = {} as MouseEvent;
+        service.onMouseDoubleClick(event);
+        expect(RectangleServiceSpy.onMouseDoubleClick).not.toHaveBeenCalled();
+        expect(RectangleServiceSpy.onMouseDoubleClick).not.toHaveBeenCalledWith(event);
+    });
+
+    it('should call handle key up of current tool if tool is not undefine', () => {
+        service.currentTool = RectangleServiceSpy;
+        const event = {} as KeyboardEvent;
+        service.handleKeyUp(event);
+        expect(RectangleServiceSpy.handleKeyUp).toHaveBeenCalled();
+        expect(RectangleServiceSpy.handleKeyUp).toHaveBeenCalledWith(event);
+    });
+
+    it('should not call mouse double click of current tool if tool is undefine', () => {
+        service.currentTool = undefined;
+        const event = {} as KeyboardEvent;
+        service.handleKeyUp(event);
+        expect(RectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
+        expect(RectangleServiceSpy.handleKeyUp).not.toHaveBeenCalledWith(event);
+    });
 });

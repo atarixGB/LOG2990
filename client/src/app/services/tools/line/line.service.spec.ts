@@ -51,7 +51,7 @@ describe('LineService', () => {
         expect(junctionType).toEqual(TypeOfJunctions.Regular);
     });
 
-    fit('should set mouseDownCoord to correct position when onMouseClick is called', () => {
+    it('should set mouseDownCoord to correct position when onMouseClick is called', () => {
         const leftClickMouseEvent = {
             offsetX: 25,
             offsetY: 25,

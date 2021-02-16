@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser.service';
@@ -63,6 +64,45 @@ export class ToolManagerService {
         if (this.serviceBindings.has(tool)) {
             this.currentTool = this.serviceBindings.get(tool);
             this.currentToolEnum = tool;
+        }
+    }
+
+    onMouseMove(event: MouseEvent, mouseCoord: Vec2): void {
+        if (this.currentTool != undefined) {
+            this.currentTool.mouseCoord = mouseCoord;
+            this.currentTool.onMouseMove(event);
+        }
+    }
+
+    onMouseDown(event: MouseEvent, mouseCoord: Vec2): void {
+        if (this.currentTool != undefined) {
+            this.currentTool.mouseCoord = mouseCoord;
+            this.currentTool.onMouseDown(event);
+        }
+    }
+
+    onMouseUp(event: MouseEvent, mouseCoord: Vec2): void {
+        if (this.currentTool != undefined) {
+            this.currentTool.mouseCoord = mouseCoord;
+            this.currentTool.onMouseUp(event);
+        }
+    }
+
+    onMouseClick(event: MouseEvent): void {
+        if (this.currentTool != undefined) {
+            this.currentTool.onMouseClick(event);
+        }
+    }
+
+    onMouseDoubleClick(event: MouseEvent): void {
+        if (this.currentTool != undefined) {
+            this.currentTool.onMouseDoubleClick(event);
+        }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+        if (this.currentTool != undefined) {
+            this.currentTool.handleKeyUp(event);
         }
     }
 }
