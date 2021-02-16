@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle.service';
 
 // tslint:disable
-fdescribe('RectangleService', () => {
+describe('RectangleService', () => {
     let service: RectangleService;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
