@@ -21,7 +21,7 @@ describe('EllipseConfigComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    fit('should update ellipse line width', () => {
+    it('should update ellipse line width', () => {
         let expectedResult = 5;
 
         expect(component.updateLineWidth(expectedResult)).toEqual(expectedResult);
