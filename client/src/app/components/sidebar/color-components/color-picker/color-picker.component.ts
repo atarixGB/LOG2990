@@ -22,6 +22,9 @@ export class ColorPickerComponent {
         this.eventListeners = {} as EventListeners;
     }
 
+    ngOnInit(): void {
+        this.initExtend();
+    }
     protected initExtend(): void {
         this.eventListeners.mouseDown = ($event) => this.onMouseDown($event);
         this.eventListeners.contextMenu = ($event) => this.onContextMenu($event);

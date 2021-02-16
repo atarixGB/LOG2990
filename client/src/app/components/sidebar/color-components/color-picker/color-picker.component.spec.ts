@@ -4,7 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { COLOR_POSITION } from '@app/constants';
 import { ColorDisplayerComponent } from 'src/app/components/sidebar/color-components/color-displayer/color-displayer.component';
-import { CASES_ARRAY, FIRSTCOLORTEST, SECONDCOLORTEST } from 'src/app/constants';
+import { FIRSTCOLORTEST, SECONDCOLORTEST } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -12,6 +12,18 @@ import { ColorPickerComponent } from './color-picker.component';
 
 class EventMock {
     button = 2;
+    preventDefault() {
+        return false;
+    }
+}
+class SecondEventMock {
+    button = 0;
+    preventDefault() {
+        return false;
+    }
+}
+class ThirdEventMock {
+    button = 1;
     preventDefault() {
         return false;
     }
@@ -46,17 +58,20 @@ fdescribe('ColorPickerComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-
+    
+    //lui il est correct (pour créer l'instance OK)
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should create listeners when opened', () => {
+
+    fit('should create listeners when opened', () => {
         const mouseEvent = new MouseEvent('mousedown');
         const mouseEventButton = new MouseEvent('click', { button: 2 });
-        component.eventListeners.mouseDown(mouseEvent);
-        component.eventListeners.contextMenu(mouseEventButton);
-        expect(component.eventListeners.changedMouseDown).toBeTruthy();
+         component['eventListeners'].mouseDown(mouseEvent);
+        component['eventListeners'].contextMenu(mouseEventButton);
+        component.ngOnInit();
+        expect(component['eventListeners'].changedMouseDown).toBeTruthy();
     });
 
     it('should prevent context menu from opening', () => {
@@ -65,56 +80,45 @@ fdescribe('ColorPickerComponent', () => {
         expect(clickSpy.preventDefault).toHaveBeenCalledTimes(1);
     });
 
-    it('should change main color when left button of mouse down', () => {
-        const mouseEvent = new MouseEvent('click', { button: 0 });
-        const coordinates = { x: 1, y: 1 };
-        component.coord = coordinates;
-        const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
-        component.context = contextSpy;
-        const pixels: Uint8ClampedArray = new Uint8ClampedArray(CASES_ARRAY);
-        const colorPixel: ImageData = new ImageData(pixels, 1, 1);
-        contextSpy.getImageData.and.returnValue(colorPixel);
-        component.arrayColorPixel = pixels;
-        component.eventListeners.mouseDown(mouseEvent);
-        expect(colorManagerSpy.updatePixelColor).toHaveBeenCalled();
-    });
-
-    fit('should change secondary color when right button of mouse down', () => {
-        //   const mouseEvent = new MouseEvent('click', { button: 2 });
-        // const coordinates = { x: 1, y: 1 };
-        //   component.coord = coordinates;
-        //const pixels: Uint8ClampedArray = new Uint8ClampedArray(CASES_ARRAY);
+   
+    
+    //lui il est correct aussi
+    it('should change secondary color when right button of mouse down', () => {
         const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
         let eventMock = new EventMock();
-        //    const preventDefaultSpy = spyOn<any>(mouseEvent, 'preventDefault').and.stub();
-        //const colorPixel: ImageData = new ImageData(pixels, 1, 1);
         component['onMouseDown'](eventMock as any);
-        // expect(preventDefaultSpy).toHaveBeenCalled();
         expect(colorPickerSpy).toHaveBeenCalledWith(component.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
     });
-
-    it('should not change when wrong button of mouse down', () => {
-        const mouseEvent = new MouseEvent('click', { button: 1 });
-        const coordinates = { x: 1, y: 1 };
-        component.coord = coordinates;
-        const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
-        component.context = contextSpy;
-        const pixels: Uint8ClampedArray = new Uint8ClampedArray(CASES_ARRAY);
-        const colorPixel: ImageData = new ImageData(pixels, 1, 1);
-        contextSpy.getImageData.and.returnValue(colorPixel);
-        component.arrayColorPixel = pixels;
-        component.eventListeners.mouseDown(mouseEvent);
-        expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(0);
+        //lui correct
+    it('should change primary color when left button of mouse down', () => {
+        const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
+        let eventMock = new SecondEventMock();
+        component['onMouseDown'](eventMock as any);
+        expect(colorPickerSpy).toHaveBeenCalledWith(component.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
     });
-
+    //lui correct
+    it('should not change when wrong button of mouse down', () => {
+        const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
+        let eventMock = new ThirdEventMock();
+        component['onMouseDown'](eventMock as any);
+        expect(colorPickerSpy).toHaveBeenCalledTimes(0);
+    });
+    //lui correct (pour tester la methode colorPicker)
     it('should not change when colorPixels does not exist', () => {
-        const mouseEvent = new MouseEvent('click', { button: 2 });
-        const coordinates = { x: 1, y: 1 };
-        component.coord = coordinates;
         const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
         component.context = contextSpy;
         contextSpy.getImageData.and.returnValue({ data: undefined });
-        component.eventListeners.mouseDown(mouseEvent);
         expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(0);
+        //this.arrayColorPixel = false => expect expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(0);
+    });
+
+    
+    it('should change when colorPixels exists', () => {
+        const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
+        component.context = contextSpy;
+        let data= new ImageData(25,25);
+        component.arrayColorPixel=contextSpy.getImageData.and.returnValue(data);
+        expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(1);
+        //this.arrayColorPixel = false => expect expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(0);
     });
 });

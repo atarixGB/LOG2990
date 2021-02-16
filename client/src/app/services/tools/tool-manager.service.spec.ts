@@ -18,5 +18,5 @@ describe('ToolManagerService', () => {
         expect(service.currentTool instanceof PencilService).toBeTrue();
     });
 
-    it('should handle hot keys shortcut', () => {});
+    // it('should handle hot keys shortcut', () => {});
 });

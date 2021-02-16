@@ -21,10 +21,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './components/app/app.component';
 import { ConfigPanelComponent } from './components/config-panel/config-panel.component';
-import { DrawingSurfaceComponent } from './components/drawing-surface/drawing-surface.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
+import { NewDrawModalComponent } from './components/new-draw-modal/new-draw-modal.component';
 import { AlphaSliderComponent } from './components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorDisplayerComponent } from './components/sidebar/color-components/color-displayer/color-displayer.component';
 import { ColorPaletteComponent } from './components/sidebar/color-components/color-palette/color-palette.component';
@@ -39,7 +39,6 @@ import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
-
 @NgModule({
     declarations: [
         AppComponent,
@@ -57,8 +56,9 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         AlphaSliderComponent,
         EraserConfigComponent,
         LineConfigComponent,
+
         PencilConfigComponent,
-        DrawingSurfaceComponent,
+        NewDrawModalComponent,
         EllipseConfigComponent,
         RectangleConfigComponent,
         ColorPopupComponent,
@@ -68,7 +68,6 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
-        BrowserAnimationsModule,
         MatDialogModule,
         MatIconModule,
         MatButtonModule,
