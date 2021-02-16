@@ -213,14 +213,6 @@ describe('LineService', () => {
         expect(drawConstrainedLineSpy).toHaveBeenCalled();
     });
 
-    // handleKeyDown
-    // it('handleKeyDown should prevent default behaviour when key is pressed', () => {
-    //     const keyEvent = new KeyboardEvent('keyup', { key: 'Shift' });
-    //     const preventDefaultSpy = spyOn(keyEvent, 'preventDefault');
-    //     service.handleKeyUp(keyEvent);
-    //     expect(preventDefaultSpy).toHaveBeenCalled();
-    // });
-
     it('handleKeyDown should set mouseDown to false when Escape key is pressed', () => {
         let escapeKeyEvent = { key: 'Escape' } as KeyboardEvent;
         service.handleKeyUp(escapeKeyEvent);
@@ -234,7 +226,7 @@ describe('LineService', () => {
         service.handleKeyUp(shiftKeyEvent);
         expect(service['hasPressedShiftKey']).toBeFalsy();
     });
-    //dde
+
     it('handleKeyDown should call putImageData when Backspace key is pressed', () => {
         // service['lastCanvasImages'] = [{} as ImageData];
         let backspaceKeyEvent = { key: 'Backspace', preventDefault(): void {} } as KeyboardEvent;
