@@ -71,12 +71,12 @@ fdescribe('LineService', () => {
     // onMouseClick
     it('should set mouseDown property to true on left click', () => {
         service.onMouseClick(leftMouseEvent);
-        expect(service.mouseDown).toEqual(true);
+        expect(service.mouseDown).toBeTruthy();
     });
 
     it('should set mouseDown property to false on right click', () => {
         service.onMouseClick(rightMouseEvent);
-        expect(service.mouseDown).toEqual(false);
+        expect(service.mouseDown).toBeFalsy();
     });
 
     it('should set mouseDownCoord to correct position when onMouseClick is called', () => {
@@ -99,24 +99,26 @@ fdescribe('LineService', () => {
 
     it('should add closest point from line in coordinates array if shift key is pressed', () => {
         service['hasPressedShiftKey'] = true;
-        let calculatePositionSpy = spyOn<any>(service, 'calculatePosition').and.stub();
+        let calculatePositionSpy = spyOn<any>(service, 'calculatePosition').and.returnValue({ x: 25, y: 25 });
         service.onMouseClick(leftMouseEvent);
 
-        expect(service['coordinates'].length).toEqual(1);
+        expect(service['coordinates'].length).toEqual(2);
         expect(calculatePositionSpy).toHaveBeenCalled();
     });
 
-    it('should add closest point from line in coordinates array if shift key is pressed', () => {
-        const mockMousePosition: Vec2 = { x: 25, y: 25 };
+    it('onMouseClick should drawPoint on base contexte if junction type is Circle', () => {
+        const mockMousePosition: Vec2 | undefined = { x: 25, y: 25 };
         service['hasPressedShiftKey'] = true;
         service['closestPoint'] = mockMousePosition;
-        service.junctionType = TypeOfJunctions.Circle;
+        const isCircle = service.junctionType === TypeOfJunctions.Circle;
 
-        drawPointSpy = spyOn<any>(service, 'drawPoint').and.stub();
-        let calculatePositionSpy = spyOn<any>(service, 'calculatePosition').and.stub();
+        drawPointSpy = spyOn<any>(service, 'drawPoint').and.callThrough();
+        let calculatePositionSpy = spyOn<any>(service, 'calculatePosition').and.callThrough();
 
+        service.onMouseClick(leftMouseEvent);
         expect(calculatePositionSpy).toHaveBeenCalled();
-        expect(drawPointSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, mockMousePosition);
+        expect(drawPointSpy).toHaveBeenCalled();
+        expect(isCircle).toBeTruthy();
     });
 
     // onMouseDoucleClick
@@ -126,7 +128,7 @@ fdescribe('LineService', () => {
     });
 
     it('should clear path data when onMouseDoubleClick is called', () => {
-        let clearPathSpy = spyOn<any>(service, 'clearPath').and.stub();
+        let clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
         service.onMouseDoubleClick(leftMouseEvent);
         expect(clearPathSpy).toHaveBeenCalled();
         expect(service['pathData'].length).toEqual(0);
@@ -153,20 +155,20 @@ fdescribe('LineService', () => {
         service.mouseDown = true;
         service['hasPressedShiftKey'] = true;
 
-        drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
+        drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
         service.onMouseUp(leftMouseEvent);
         expect(drawConstrainedLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, service['coordinates'], leftMouseEvent);
     });
 
     it('should call getCanvasState when onMouseUp is called', () => {
-        let getCanvasStateSpy = spyOn<any>(service, 'getCanvasState').and.stub();
+        let getCanvasStateSpy = spyOn<any>(service, 'getCanvasState').and.callThrough();
         service.onMouseUp(leftMouseEvent);
         expect(getCanvasStateSpy).toHaveBeenCalled();
     });
 
     it('should clear path when onMouseUp is called', () => {
-        let clearPathSpy = spyOn<any>(service, 'clearPath').and.stub();
+        let clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
         service.onMouseUp(leftMouseEvent);
         expect(clearPathSpy).toHaveBeenCalled();
         expect(service['pathData'].length).toEqual(0);
@@ -189,27 +191,27 @@ fdescribe('LineService', () => {
         service.mouseDown = true;
         service['hasPressedShiftKey'] = true;
 
-        drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
+        drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
         service.onMouseMove(leftMouseEvent);
         expect(drawConstrainedLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, service['coordinates'], leftMouseEvent);
     });
 
     // handleKeyDown
-    fit('handleKeyDown should prevent default behaviour when key is pressed', () => {
+    it('handleKeyDown should prevent default behaviour when key is pressed', () => {
         const keyEvent = new KeyboardEvent('keyup', { key: 'Shift' });
         const preventDefaultSpy = spyOn(keyEvent, 'preventDefault');
         service.handleKeyUp(keyEvent);
         expect(preventDefaultSpy).toHaveBeenCalled();
     });
 
-    fit('handleKeyDown should set mouseDown to false when Escape key is pressed', () => {
+    it('handleKeyDown should set mouseDown to false when Escape key is pressed', () => {
         let escapeKeyEvent = { key: 'Escape' } as KeyboardEvent;
         service.handleKeyUp(escapeKeyEvent);
         expect(service.mouseDown).toBeFalsy();
     });
 
-    fit('handleKeyDown should set hasPressedShiftKey to true when Shift key is pressed', () => {
+    it('handleKeyDown should set hasPressedShiftKey to true when Shift key is pressed', () => {
         const shiftKeyEvent = new KeyboardEvent('keyup', {
             key: 'Shift',
         });
@@ -217,7 +219,7 @@ fdescribe('LineService', () => {
         expect(service['hasPressedShiftKey']).toBeTruthy();
     });
 
-    fit('handleKeyDown should call putImageData when Backspace key is pressed', () => {
+    it('handleKeyDown should call putImageData when Backspace key is pressed', () => {
         let backspaceKeyEvent = { key: 'Backspace' } as KeyboardEvent;
         service.handleKeyUp(backspaceKeyEvent);
         let putImageDataSpy = spyOn<any>(drawServiceSpy.baseCtx, 'putImageData').and.callThrough();
@@ -225,7 +227,7 @@ fdescribe('LineService', () => {
     });
 
     // handleKeyUp
-    fit('handleKeyUp should set hasPressedShiftKey to false', () => {
+    it('handleKeyUp should set hasPressedShiftKey to false', () => {
         const shiftKeyEvent = new KeyboardEvent('keyup', {
             key: 'Shift',
         });

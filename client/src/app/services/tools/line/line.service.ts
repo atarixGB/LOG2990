@@ -92,9 +92,7 @@ export class LineService extends Tool {
 
     handleKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        const keyPressed = event.key;
-
-        switch (keyPressed) {
+        switch (event.key) {
             case 'Escape':
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.mouseDown = false;
