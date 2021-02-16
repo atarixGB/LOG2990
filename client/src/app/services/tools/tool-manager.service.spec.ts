@@ -6,14 +6,14 @@ import { ToolManagerService } from './tool-manager.service';
 
 import SpyObj = jasmine.SpyObj;
 
-fdescribe('ToolManagerService', () => {
+//tslint:disable
+describe('ToolManagerService', () => {
     let service: ToolManagerService;
     let RectangleServiceSpy: SpyObj<RectangleService>;
-    // let lineServiceStub: LineService;
+
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ToolManagerService);
-        // lineServiceStub = new LineService();
         RectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['handleKeyDown']);
     });
 
