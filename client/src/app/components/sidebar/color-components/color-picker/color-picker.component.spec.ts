@@ -29,7 +29,7 @@ class ThirdEventMock {
     }
 }
 
-fdescribe('ColorPickerComponent', () => {
+describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerComponent>;
     let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
@@ -65,7 +65,7 @@ fdescribe('ColorPickerComponent', () => {
     });
 
 
-    fit('should create listeners when opened', () => {
+    it('should create listeners when opened', () => {
         const mouseEvent = new MouseEvent('mousedown');
         const mouseEventButton = new MouseEvent('click', { button: 2 });
          component['eventListeners'].mouseDown(mouseEvent);
@@ -76,7 +76,7 @@ fdescribe('ColorPickerComponent', () => {
 
     it('should prevent context menu from opening', () => {
         const clickSpy = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
-        component.eventListeners.contextMenu(clickSpy);
+        component['eventListeners'].contextMenu(clickSpy);
         expect(clickSpy.preventDefault).toHaveBeenCalledTimes(1);
     });
 
