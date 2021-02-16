@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { ToolList } from '@app/constants';
 import { PencilService } from './pencil/pencil-service';
 import { RectangleService } from './rectangle/rectangle.service';
 import { ToolManagerService } from './tool-manager.service';
@@ -9,12 +10,11 @@ fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
     let RectangleServiceSpy: SpyObj<RectangleService>;
     // let lineServiceStub: LineService;
-
     beforeEach(() => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(ToolManagerService);
         // lineServiceStub = new LineService();
-        RectangleServiceSpy = jasmine.createSpyObj('Rectangle', ['handleKeyDown']);
+        RectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['handleKeyDown']);
     });
 
     it('should be created', () => {
@@ -39,7 +39,7 @@ fdescribe('ToolManagerService', () => {
         expect(switchToolWithKeysSpy).not.toHaveBeenCalled();
     });
 
-    fit('should not handle hot keys shortcut if tool defined and incorrect KeyboardEvent', () => {
+    it('should not handle hot keys shortcut if tool defined and incorrect KeyboardEvent', () => {
         service.currentTool = RectangleServiceSpy;
         const keyMock = { key: 'undefined' } as KeyboardEvent;
 
@@ -63,5 +63,43 @@ fdescribe('ToolManagerService', () => {
         expect(RectangleServiceSpy.handleKeyDown).not.toHaveBeenCalled();
         expect(RectangleServiceSpy.handleKeyDown).not.toHaveBeenCalledWith(keyMock);
         expect(switchToolWithKeysSpy).toHaveBeenCalled();
+    });
+
+    it('switchToolWithKeys should switch tool if valid keyShortcut', () => {
+        let shortcut = 'c';
+        service.currentTool = RectangleServiceSpy;
+
+        service.switchToolWithKeys(shortcut);
+
+        expect(service.currentTool).toBeInstanceOf(PencilService);
+    });
+
+    it('switchToolWithKeys should switch tool if valid keyShortcut', () => {
+        let shortcut = 'y';
+        service.currentTool = RectangleServiceSpy;
+
+        service.switchToolWithKeys(shortcut);
+
+        expect(service.currentTool).not.toBeInstanceOf(RectangleService);
+    });
+
+    it('switchTool should switch tool if valid tool', () => {
+        let newTool = ToolList.Rectangle;
+        service.currentTool = undefined;
+
+        service.switchTool(newTool);
+
+        expect(service.currentTool).toBeInstanceOf(RectangleService);
+    });
+
+    it('switchTool should not switch tool if invalid tool', () => {
+        service.currentTool = RectangleServiceSpy;
+
+        let getSpy = spyOn(service.serviceBindings, 'get');
+
+        service.switchTool(5);
+
+        expect(getSpy).not.toHaveBeenCalled();
+        expect(service.currentTool).toEqual(RectangleServiceSpy);
     });
 });
