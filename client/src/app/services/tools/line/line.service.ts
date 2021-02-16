@@ -18,6 +18,7 @@ export class LineService extends Tool {
     private coordinates: Vec2[];
 
     private hasPressedShiftKey: boolean;
+    private closestPoint: Vec2 | undefined;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
@@ -41,13 +42,13 @@ export class LineService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.coordinates.push(this.mouseDownCoord);
-        const point: Vec2 | undefined = this.calculatePosition(this.mouseDownCoord, this.basePoint);
 
         if (this.hasPressedShiftKey) {
             // Handle automatic junction when drawing constrained-angle lines
-            if (point) {
-                this.coordinates.push(point);
-                if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, point);
+            this.closestPoint = this.calculatePosition(this.mouseDownCoord, this.basePoint);
+            if (this.closestPoint) {
+                this.coordinates.push(this.closestPoint);
+                if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, this.closestPoint);
             }
         } else {
             this.pathData.push(this.mouseDownCoord);
@@ -192,14 +193,14 @@ export class LineService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         this.basePoint = path[path.length - 1];
 
-        const point: Vec2 | undefined = this.calculatePosition(mousePosition, this.basePoint);
+        this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
         ctx.lineWidth = this.lineWidth;
         const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         ctx.strokeStyle = color;
         ctx.beginPath();
-        if (point) {
+        if (this.closestPoint) {
             ctx.moveTo(this.basePoint.x, this.basePoint.y);
-            ctx.lineTo(point.x, point.y);
+            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
             ctx.stroke();
         }
     }
