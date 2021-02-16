@@ -1,15 +1,14 @@
 //import { inject } from 'inversify';
+//import { Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageComponent } from './main-page.component';
-import { By } from '@angular/platform-browser';
 
-
-fdescribe('MainPageComponent', () => {
+describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
-    
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -28,26 +27,21 @@ fdescribe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    fit("should have as title 'Poly-Dessin'", () => {
+    it("should have as title 'Poly-Dessin'", () => {
         expect(component.title).toEqual('Poly-Dessin');
         const title = fixture.debugElement.query(By.css('h1')).nativeElement;
         expect(title.innerHTML).toBe('Poly-Dessin');
     });
 
-    // fit('should be redirected to editor page when button clicked', async(inject([Location], (location: Location) => {
-
+    // fit('should be redirected to editor page when button clicked', () => {
     //     fixture.detectChanges();
-
-    //     let buttonElements = fixture.debugElement.queryAll(By.css('button'));   // fetch all the elements with button tag.
+    //     const location: Location = TestBed.inject(Location);
+    //     let buttonElements = fixture.debugElement.queryAll(By.css('button')); // fetch all the elements with button tag.
 
     //     buttonElements[0].nativeElement.click();
 
     //     fixture.detectChanges();
-    //     fixture.whenStable().then(
-    //         () => {
-    //             expect(location.pathname).toBe(['/editor']);     // check if url is routed to editor page after back button is clicked
-    //         }
-    //     );
-    // })));
-   
+    //     expect(location.path()).toBe('/editor'); // check if url is routed to editor page after back button is clicked
+        
+    // });
 });
