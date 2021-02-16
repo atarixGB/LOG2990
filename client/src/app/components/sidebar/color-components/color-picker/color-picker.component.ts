@@ -26,7 +26,7 @@ export class ColorPickerComponent {
         this.eventListeners.mouseDown = ($event) => this.onMouseDown($event);
         this.eventListeners.contextMenu = ($event) => this.onContextMenu($event);
         this.eventListeners.changedMouseDown = true;
-        this.eventListeners.changedContextMenu = true;
+        // this.eventListeners.changedContextMenu = true;
     }
 
     private onContextMenu(event: MouseEvent): boolean {

@@ -6,13 +6,13 @@ import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants';
 import { RGBA } from '@app/interfaces-enums/rgba';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { AlphaSliderComponent } from 'src/app/components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorPaletteComponent } from 'src/app/components/sidebar/color-components/color-palette/color-palette.component';
 import { ColorSliderComponent } from 'src/app/components/sidebar/color-components/color-slider/color-slider.component';
-import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPopupComponent } from './color-popup.component';
-fdescribe('ColorPopupComponent', () => {
+describe('ColorPopupComponent', () => {
     let component: ColorPopupComponent;
     let fixture: ComponentFixture<ColorPopupComponent>;
     let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
