@@ -67,24 +67,24 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
+        const ELEMENT = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseMove(event);
         }
     }
 
     onMouseDown(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
+        const ELEMENT = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
+        const ELEMENT = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseUp(event);
         }
@@ -92,9 +92,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
+        const ELEMENT = event.target as HTMLElement;
 
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
             this.toolManagerService.currentTool.onMouseClick(event);
         }
     }
@@ -139,19 +139,19 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        const newWidth: number = this.canvasSize.x + event.distance.x;
-        const newHeight: number = this.canvasSize.y + event.distance.y;
+        const NEW_WIDTH: number = this.canvasSize.x + event.distance.x;
+        const NEW_HEIGHT: number = this.canvasSize.y + event.distance.y;
 
         this.previewCanvas.nativeElement.style.borderStyle = 'solid';
 
-        if (newWidth >= MIN_SIZE) {
-            this.canvasSize.x = newWidth;
+        if (NEW_WIDTH >= MIN_SIZE) {
+            this.canvasSize.x = NEW_WIDTH;
         } else {
             this.canvasSize.x = MIN_SIZE;
         }
 
-        if (newHeight >= MIN_SIZE) {
-            this.canvasSize.y = newHeight;
+        if (NEW_HEIGHT >= MIN_SIZE) {
+            this.canvasSize.y = NEW_HEIGHT;
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
