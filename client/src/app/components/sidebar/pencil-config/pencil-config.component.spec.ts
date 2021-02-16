@@ -24,8 +24,8 @@ describe('PencilConfigComponent', () => {
     });
 
     it('should format label', () => {
-        let param = 8;
-        let expectedResult = '8px';
+        const param = 8;
+        const expectedResult = '8px';
         expect(component.formatLabel(param)).toEqual(expectedResult);
     });
 });

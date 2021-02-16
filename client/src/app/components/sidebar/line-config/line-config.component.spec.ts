@@ -18,7 +18,7 @@ describe('LineConfigComponent', () => {
     });
 
     it('should update line width', () => {
-        let expectedResult = 7;
+        const expectedResult = 7;
         expect(component.updateLineWidth(expectedResult)).toEqual(expectedResult);
     });
 });

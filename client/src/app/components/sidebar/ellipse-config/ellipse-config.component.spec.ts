@@ -22,7 +22,7 @@ describe('EllipseConfigComponent', () => {
     });
 
     it('should update ellipse line width', () => {
-        let expectedResult = 5;
+        const expectedResult = 5;
 
         expect(component.updateLineWidth(expectedResult)).toEqual(expectedResult);
     });

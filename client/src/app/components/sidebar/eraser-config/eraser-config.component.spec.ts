@@ -22,8 +22,8 @@ describe('PencilConfigComponent', () => {
     });
 
     it('should recreate format label', () => {
-        let expectedResult = '5px';
-        let param = 5;
+        const expectedResult = '5px';
+        const param = 5;
         expect(component.formatLabel(param)).toEqual(expectedResult);
     });
 });

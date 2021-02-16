@@ -22,7 +22,7 @@ describe('RectangleConfigComponent', () => {
     });
 
     it('should update Line width', () => {
-        let expectedResult = 77;
+        const expectedResult = 77;
         expect(component.updateLineWidth(expectedResult)).toEqual(expectedResult);
     });
 });
