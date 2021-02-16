@@ -24,7 +24,7 @@ describe('ColorPopupComponent', () => {
 
         TestBed.configureTestingModule({
             imports: [MatFormFieldModule, MatInputModule, FormsModule, BrowserAnimationsModule],
-            declarations: [ColorPopupComponent, ColorPaletteComponent, ColorSliderComponent, AlphaSliderComponent],
+            declarations: [ColorPopupComponent, ColorPaletteComponent, ColorSliderComponent, AlphaSliderComponent, ColorManagerService],
             providers: [
                 { provide: MatDialogRef, useValue: mockDialogRef },
                 { provide: MAT_DIALOG_DATA, useValue: ColorOrder.primaryColor },
@@ -78,6 +78,6 @@ describe('ColorPopupComponent', () => {
     it('should prevent default action for right click', () => {
         const clickSpy = jasmine.createSpyObj('MouseEvent', ['preventDefault']);
         component.contextMenu(clickSpy);
-        expect(clickSpy.preventDefault).toHaveBeenCalledTimes(1);
+        expect(clickSpy.preventDefault).toHaveBeenCalled();
     });
 });
