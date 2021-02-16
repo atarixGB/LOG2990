@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { mouseEventLClick, mouseEventRClick } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -11,19 +10,20 @@ fdescribe('EraserService', () => {
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let toolServiceSpy: jasmine.SpyObj<Tool>;
+    //let toolServiceSpy: jasmine.SpyObj<Tool>;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let cursorCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawLineSpy: jasmine.Spy<any>;
     let drawPointSpy: jasmine.Spy<any>;
-    let centerXSpy: jasmine.Spy<any>;
-    let centerYSpy: jasmine.Spy<any>;
+    let interpolationSpy: jasmine.Spy<any>;
+    //let centerXSpy: jasmine.Spy<any>;
+    //let centerYSpy: jasmine.Spy<any>;
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'getCanvasWidth', 'getCanvasHeight']);
-        toolServiceSpy = jasmine.createSpyObj('Tool', ['getPositionFromMouse']);
+        //toolServiceSpy = jasmine.createSpyObj('Tool', ['getPositionFromMouse']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -36,8 +36,9 @@ fdescribe('EraserService', () => {
         service = TestBed.inject(EraserService);
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         drawPointSpy = spyOn<any>(service, 'drawPoint').and.callThrough();
-        centerXSpy = spyOn<any>(service, 'centerX').and.callThrough();
-        centerYSpy = spyOn<any>(service, 'centerY').and.callThrough();
+        interpolationSpy = spyOn<any>(service, 'interpolationNewPoint').and.callThrough();
+        //centerXSpy = spyOn<any>(service, 'centerX').and.stub();
+        //centerYSpy = spyOn<any>(service, 'centerY').and.stub();
 
         // Configuration du spy du service
         // tslint:disable:no-string-literal
@@ -50,30 +51,26 @@ fdescribe('EraserService', () => {
         expect(service).toBeTruthy();
     });
 
-    fit(' mouseDown should set mouseDownCoord to centered position', () => {
-        const expectedResult: Vec2 = { x: 22.5, y: 22.5 };
-        service.eraserThickness = 5;
+    it(' mouseDown should set mouseDownCoord to correct position', () => {
+        const expectedResult: Vec2 = { x: 25, y: 25 };
         service.mouseDown = true;
+
         spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 25, y: 25 });
         service.onMouseDown(mouseEventLClick);
 
-        expect(toolServiceSpy.getPositionFromMouse).toHaveBeenCalled();
-        expect(centerXSpy).toHaveBeenCalled();
-        expect(centerYSpy).toHaveBeenCalled();
-
-        console.log('Expected', expectedResult.x);
-        console.log('Actual', service.mouseDownCoord.x);
-
-        expect(service.mouseDownCoord.x).toEqual(expectedResult.x);
-        expect(service.mouseDownCoord.y).toEqual(expectedResult.y);
+        expect(service.mouseDownCoord).toEqual(expectedResult);
+        expect(service['pathData'].length).toEqual(1);
+        expect(service['pathData'][0]).toEqual(expectedResult);
     });
 
     it(' mouseDown should set mouseDown property to true on left click', () => {
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: mouseEventLClick.x, y: mouseEventLClick.y });
         service.onMouseDown(mouseEventLClick);
         expect(service.mouseDown).toEqual(true);
     });
 
     it(' mouseDown should set mouseDown property to false on right click', () => {
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: mouseEventLClick.x, y: mouseEventLClick.y });
         service.onMouseDown(mouseEventRClick);
         expect(service.mouseDown).toEqual(false);
     });
@@ -82,6 +79,8 @@ fdescribe('EraserService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).toHaveBeenCalled();
     });
@@ -89,6 +88,8 @@ fdescribe('EraserService', () => {
     it(' onMouseUp should not call drawLine if mouse was not already down', () => {
         service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
+
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
 
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
@@ -99,6 +100,8 @@ fdescribe('EraserService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = true;
 
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
@@ -108,9 +111,86 @@ fdescribe('EraserService', () => {
         service.mouseDownCoord = { x: 0, y: 0 };
         service.mouseDown = false;
 
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
         expect(drawLineSpy).not.toHaveBeenCalled();
+    });
+
+    it('Mouse click should just draw point', () => {
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+        service.onMouseClick(mouseEventLClick);
+
+        expect(drawPointSpy).toHaveBeenCalled();
+    });
+
+    it('Mouse click should not be called if mouse is moving', () => {
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
+        service.mouseMove = true;
+
+        service.onMouseClick(mouseEvent);
+        expect(drawPointSpy).not.toHaveBeenCalled();
+    });
+
+    it('Draw Line should Interpolate if previousPointX < nextX', () => {
+        const previous: Vec2 = { x: 0, y: 0 };
+        const next: Vec2 = { x: 5, y: 5 };
+
+        service['pathData'].push(previous);
+        service['pathData'].push(next);
+
+        service.drawLine(baseCtxStub, service['pathData']);
+
+        expect(service['pathData'].length).toEqual(2);
+        expect(service['pathData'][0]).toEqual(previous);
+        expect(service['pathData'][1]).toEqual(next);
+        expect(interpolationSpy).toHaveBeenCalledTimes(5);
+    });
+
+    it('Draw Line should Interpolate if previousPointX > nextX', () => {
+        const previous: Vec2 = { x: 5, y: 5 };
+        const next: Vec2 = { x: 0, y: 0 };
+
+        service['pathData'].push(previous);
+        service['pathData'].push(next);
+
+        service.drawLine(baseCtxStub, service['pathData']);
+
+        expect(service['pathData'].length).toEqual(2);
+        expect(service['pathData'][0]).toEqual(previous);
+        expect(service['pathData'][1]).toEqual(next);
+        expect(interpolationSpy).toHaveBeenCalledTimes(5);
+    });
+
+    it('Draw Line should clear if previousPointX = nextX and previousY < nextY', () => {
+        const previous: Vec2 = { x: 0, y: 0 };
+        const next: Vec2 = { x: 0, y: 5 };
+
+        service['pathData'].push(previous);
+        service['pathData'].push(next);
+
+        service.drawLine(baseCtxStub, service['pathData']);
+
+        expect(service['pathData'].length).toEqual(2);
+        expect(service['pathData'][0]).toEqual(previous);
+        expect(service['pathData'][1]).toEqual(next);
+        expect(interpolationSpy).toHaveBeenCalledTimes(0);
+    });
+
+    it('Draw Line should clear if previousPointX = nextX and previousY < nextY', () => {
+        const previous: Vec2 = { x: 0, y: 5 };
+        const next: Vec2 = { x: 0, y: 0 };
+
+        service['pathData'].push(previous);
+        service['pathData'].push(next);
+
+        service.drawLine(baseCtxStub, service['pathData']);
+
+        expect(service['pathData'].length).toEqual(2);
+        expect(service['pathData'][0]).toEqual(previous);
+        expect(service['pathData'][1]).toEqual(next);
+        expect(interpolationSpy).toHaveBeenCalledTimes(0);
     });
 
     /** 

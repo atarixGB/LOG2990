@@ -70,7 +70,7 @@ export class EraserService extends Tool {
         this.mouseMove = false;
     }
 
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let previousPointX = path[0].x;
         let previousPointY = path[0].y;
         let interpolation = 0;
@@ -83,12 +83,16 @@ export class EraserService extends Tool {
 
             if (previousPointX < point.x) {
                 for (let x = previousPointX; x < point.x; x++) {
-                    interpolationY = interpolation * x + (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
+                    interpolationY =
+                        this.interpolationNewPoint(x, interpolation) +
+                        (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
                     ctx.clearRect(this.centerX(x), this.centerY(interpolationY), this.eraserThickness, this.eraserThickness);
                 }
             } else if (previousPointX > point.x) {
                 for (let x = point.x; x < previousPointX; x++) {
-                    interpolationY = interpolation * x + (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
+                    interpolationY =
+                        this.interpolationNewPoint(x, interpolation) +
+                        (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
                     ctx.clearRect(this.centerX(x), this.centerY(interpolationY), this.eraserThickness, this.eraserThickness);
                 }
             } else if (previousPointY < point.y) {
@@ -112,6 +116,10 @@ export class EraserService extends Tool {
 
     private clearPath(): void {
         this.pathData = [];
+    }
+
+    private interpolationNewPoint(X: number, interpolation: number): number {
+        return interpolation * X;
     }
 
     private centerX(x: number): number {
