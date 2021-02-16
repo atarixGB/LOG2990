@@ -6,7 +6,7 @@ import { mouseEventLClick, mouseEventRClick } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
 
-describe('EraserService', () => {
+fdescribe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -17,6 +17,7 @@ describe('EraserService', () => {
     let cursorCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let drawLineSpy: jasmine.Spy<any>;
+    let drawPointSpy: jasmine.Spy<any>;
     let centerXSpy: jasmine.Spy<any>;
     let centerYSpy: jasmine.Spy<any>;
 
@@ -34,6 +35,7 @@ describe('EraserService', () => {
 
         service = TestBed.inject(EraserService);
         drawLineSpy = spyOn<any>(service, 'drawLine').and.callThrough();
+        drawPointSpy = spyOn<any>(service, 'drawPoint').and.callThrough();
         centerXSpy = spyOn<any>(service, 'centerX').and.callThrough();
         centerYSpy = spyOn<any>(service, 'centerY').and.callThrough();
 
@@ -48,10 +50,11 @@ describe('EraserService', () => {
         expect(service).toBeTruthy();
     });
 
-    it(' mouseDown should set mouseDownCoord to centered position', () => {
+    fit(' mouseDown should set mouseDownCoord to centered position', () => {
         const expectedResult: Vec2 = { x: 22.5, y: 22.5 };
         service.eraserThickness = 5;
         service.mouseDown = true;
+        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 25, y: 25 });
         service.onMouseDown(mouseEventLClick);
 
         expect(toolServiceSpy.getPositionFromMouse).toHaveBeenCalled();
@@ -89,6 +92,7 @@ describe('EraserService', () => {
 
         service.onMouseUp(mouseEvent);
         expect(drawLineSpy).not.toHaveBeenCalled();
+        expect(drawPointSpy).not.toHaveBeenCalled();
     });
 
     it(' onMouseMove should call drawLine if mouse was already down', () => {
