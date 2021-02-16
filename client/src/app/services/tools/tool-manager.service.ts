@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
-import { EraserService } from './eraser.service';
+import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 import { RectangleService } from './rectangle/rectangle.service';
@@ -18,6 +18,7 @@ export class ToolManagerService {
 
     serviceBindings: Map<ToolList, Tool>;
     keyBindings: Map<string, Tool>;
+    enumBindings: Map<Tool | undefined, ToolList>;
 
     constructor(
         private pencilService: PencilService,
@@ -44,6 +45,14 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService);
+
+        this.enumBindings = new Map<Tool | undefined, ToolList>();
+        this.enumBindings
+            .set(this.pencilService, ToolList.Pencil)
+            .set(this.ellipseService, ToolList.Ellipse)
+            .set(this.rectangleService, ToolList.Rectangle)
+            .set(this.eraserService, ToolList.Eraser)
+            .set(this.lineService, ToolList.Line);
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
@@ -57,6 +66,7 @@ export class ToolManagerService {
     switchToolWithKeys(keyShortcut: string): void {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.keyBindings.get(keyShortcut);
+            this.currentToolEnum = this.enumBindings.get(this.currentTool);
         }
     }
 

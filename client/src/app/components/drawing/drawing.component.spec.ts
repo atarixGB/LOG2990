@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
 
-//ts-lint:disable
+//tslint:disable
 describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
@@ -28,9 +28,13 @@ describe('DrawingComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    //     teste si moitie de work area
+    //     it('should have a default WIDTH and HEIGHT', () => {
+    //         const height = component.height;
+    //         const width = component.width;
+    //         expect(height).toEqual(DEFAULT_HEIGHT);
+    //         expect(width).toEqual(DEFAULT_WIDTH);
+    //     });
 
     // teste si moitie de work area
     // fit('canvas should have a WIDTH and HEIGHT of half the dimensions of the working area', () => {

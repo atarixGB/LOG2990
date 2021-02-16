@@ -3,11 +3,12 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
-import { MIN_SIZE, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
+import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { Subscription } from 'rxjs';
+
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -15,16 +16,17 @@ import { Subscription } from 'rxjs';
 })
 export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
+    private cursorCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
     private currentDrawing: ImageData;
-    dragPosition: Vec2 = { x: 0, y: 0 };
     private subscription: Subscription;
+    dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(
         private drawingService: DrawingService,
@@ -54,8 +56,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.cursorCtx = this.cursorCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
@@ -72,6 +76,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     onMouseMove(event: MouseEvent): void {
         const ELEMENT = event.target as HTMLElement;
+
+        if (this.toolManagerService.currentToolEnum === ToolList.Eraser) {
+            this.drawingService.cursorCtx = this.cursorCtx;
+        } else {
+            this.cursorCtx.clearRect(0, 0, this.cursorCanvas.nativeElement.width, this.cursorCanvas.nativeElement.height);
+        }
+
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
         }
