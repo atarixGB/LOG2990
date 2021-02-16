@@ -1,26 +1,20 @@
+//import { inject } from 'inversify';
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IndexService } from '@app/services/index/index.service';
-import { of } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
+import { By } from '@angular/platform-browser';
 
-import SpyObj = jasmine.SpyObj;
 
-describe('MainPageComponent', () => {
+fdescribe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
-    let indexServiceSpy: SpyObj<IndexService>;
+    
 
     beforeEach(async(() => {
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
-        indexServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
-        indexServiceSpy.basicPost.and.returnValue(of());
-
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
         }).compileComponents();
     }));
 
@@ -34,17 +28,26 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should have as title 'Poly-Dessin'", () => {
+    fit("should have as title 'Poly-Dessin'", () => {
         expect(component.title).toEqual('Poly-Dessin');
+        const title = fixture.debugElement.query(By.css('h1')).nativeElement;
+        expect(title.innerHTML).toBe('Poly-Dessin');
     });
 
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(indexServiceSpy.basicGet).toHaveBeenCalled();
-    });
+    // fit('should be redirected to editor page when button clicked', async(inject([Location], (location: Location) => {
 
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(indexServiceSpy.basicPost).toHaveBeenCalled();
-    });
+    //     fixture.detectChanges();
+
+    //     let buttonElements = fixture.debugElement.queryAll(By.css('button'));   // fetch all the elements with button tag.
+
+    //     buttonElements[0].nativeElement.click();
+
+    //     fixture.detectChanges();
+    //     fixture.whenStable().then(
+    //         () => {
+    //             expect(location.pathname).toBe(['/editor']);     // check if url is routed to editor page after back button is clicked
+    //         }
+    //     );
+    // })));
+   
 });
