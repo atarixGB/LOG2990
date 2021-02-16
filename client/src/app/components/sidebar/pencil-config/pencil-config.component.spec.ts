@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatSlider } from '@angular/material/slider';
 import { PencilConfigComponent } from './pencil-config.component';
 
 describe('PencilConfigComponent', () => {
@@ -8,7 +8,8 @@ describe('PencilConfigComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [PencilConfigComponent],
+            declarations: [PencilConfigComponent, MatSlider],
+            // imports: [mo]
         }).compileComponents();
     }));
 

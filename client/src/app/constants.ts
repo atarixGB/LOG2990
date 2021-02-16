@@ -30,6 +30,18 @@ export enum ToolList {
     Rectangle = 3,
     Ellipse = 4,
 }
+
+export const mouseEventLClick = {
+    x: 25,
+    y: 25,
+    button: 0,
+} as MouseEvent;
+
+export const mouseEventRClick = {
+    x: 25,
+    y: 25,
+    button: 1,
+} as MouseEvent;
 export const COLOR_WINDOW_WIDTH = '500px';
 
 export const WIDTH = 20;
