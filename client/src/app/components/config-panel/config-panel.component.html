@@ -9,8 +9,10 @@
     <app-eraser-config *ngIf="toolManagerService.currentToolEnum === ToolList.Eraser"></app-eraser-config>
     <app-rectangle-config *ngIf="toolManagerService.currentToolEnum === ToolList.Rectangle"> </app-rectangle-config>
     <app-ellipse-config *ngIf="toolManagerService.currentToolEnum === ToolList.Ellipse"></app-ellipse-config>
-    <h3 *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser">Choix de couleur</h3>
-    <app-color-displayer *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser"></app-color-displayer>
+    <div *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser">
+      <h3>Choix de couleur</h3>
+      <app-color-displayer></app-color-displayer>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

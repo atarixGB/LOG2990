@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { EraserService } from './eraser.service';
 
-describe('EraserService', () => {
-    let service: EraserService;
+import { NewDrawingService } from './new-drawing.service';
+
+describe('NewDrawingService', () => {
+    let service: NewDrawingService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(EraserService);
+        service = TestBed.inject(NewDrawingService);
     });
 
     it('should be created', () => {

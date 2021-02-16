@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
-import { EraserService } from './eraser.service';
+import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 import { RectangleService } from './rectangle/rectangle.service';
@@ -18,8 +17,6 @@ export class ToolManagerService {
 
     serviceBindings: Map<ToolList, Tool>;
     keyBindings: Map<string, Tool>;
-
-    mousePosition: Vec2;
 
     constructor(
         private pencilService: PencilService,
@@ -50,7 +47,6 @@ export class ToolManagerService {
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
         if (this.currentTool != undefined && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
-            this.currentTool.mouseCoord = this.mousePosition;
             this.currentTool.handleKeyDown(event);
         } else {
             this.switchToolWithKeys(event.key);
