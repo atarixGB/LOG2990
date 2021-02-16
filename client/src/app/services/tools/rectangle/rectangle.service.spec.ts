@@ -9,6 +9,7 @@ fdescribe('RectangleService', () => {
     let service: RectangleService;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let mouseEvent: MouseEvent;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -36,6 +37,12 @@ fdescribe('RectangleService', () => {
             { x: 10, y: 10 },
             { x: 100, y: 100 },
         ];
+
+        mouseEvent = {
+            offsetX: 10,
+            offsetY: 10,
+            button: 0,
+        } as MouseEvent;
     });
 
     it('should be created', () => {
@@ -54,5 +61,36 @@ fdescribe('RectangleService', () => {
         drawSquareSpy = spyOn<any>(service, 'drawSquare').and.stub();
         service.drawShape(previewCtxStub, mockPathData);
         expect(drawSquareSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should set mouseDown to false', () => {
+        service.onMouseUp(mouseEvent);
+        expect(service.mouseDown).toBeFalsy();
+    });
+
+    it('onMouseUp should clear canvas on preview context', () => {
+        service.onMouseUp(mouseEvent);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should call drawRectangle if isShiftShape is false', () => {
+        service['isShiftShape'] = false;
+        drawRectangleSpy = spyOn<any>(service, 'drawSquare').and.stub();
+        service.onMouseUp(mouseEvent);
+        expect(drawRectangleSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should call drawSquare if isShiftShape is true', () => {
+        service['isShiftShape'] = true;
+        drawSquareSpy = spyOn<any>(service, 'drawSquare').and.stub();
+        service.onMouseUp(mouseEvent);
+        expect(drawSquareSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp should clear path', () => {
+        let clearPathSpy = spyOn<any>(service, 'clearPath').and.stub();
+        service.onMouseUp(mouseEvent);
+        expect(clearPathSpy).toHaveBeenCalled();
+        expect(service['pathData'].length).toEqual(0);
     });
 });

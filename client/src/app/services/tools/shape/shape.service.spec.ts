@@ -3,7 +3,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ShapeService } from './shape.service';
 
-fdescribe('Shape', () => {
+describe('Shape', () => {
     let service: ShapeService;
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -16,7 +16,7 @@ fdescribe('Shape', () => {
         expect(service).toBeTruthy();
     });
 
-    fit('says hello world', () => {
+    it('says hello world', () => {
         expect(service.helloWorld()).toEqual('Hello World');
     });
 });
