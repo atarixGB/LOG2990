@@ -9,14 +9,6 @@ export class DrawingService {
     cursorCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
 
-    getCanvasWidth(): number {
-        return this.canvas.width;
-    }
-
-    getCanvasHeight(): number {
-        return this.canvas.height;
-    }
-
     clearCanvas(context: CanvasRenderingContext2D): void {
         console.log('clear canvas');
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
