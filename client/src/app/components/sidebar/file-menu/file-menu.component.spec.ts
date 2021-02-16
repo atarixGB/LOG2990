@@ -1,10 +1,9 @@
-import { MatIconModule } from '@angular/material/icon';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { FileMenuComponent } from './file-menu.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
-
+import { FileMenuComponent } from './file-menu.component';
 
 describe('FileMenuComponent', () => {
     let component: FileMenuComponent;
@@ -15,9 +14,9 @@ describe('FileMenuComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            //declarations: [FileMenuComponent],
-            declarations: [ FileMenuComponent,NewDrawModalComponent],
-            imports: [MatIconModule, MatDialogModule,MatGridListModule],
+            // declarations: [FileMenuComponent],
+            declarations: [FileMenuComponent, NewDrawModalComponent],
+            imports: [MatIconModule, MatDialogModule, MatGridListModule],
             providers: [{ provide: MatDialog, useValue: dialogSpy }],
         }).compileComponents();
     }));

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { COLOR_POSITION } from '@app/constants';
 import { Vec2 } from 'src/app/classes/vec2';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
@@ -10,7 +10,7 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
     templateUrl: './color-picker.component.html',
     styleUrls: ['./color-picker.component.scss'],
 })
-export class ColorPickerComponent {
+export class ColorPickerComponent implements OnInit {
     @ViewChild('htmlCanvas', { static: false }) htmlCanvas: ElementRef;
     context: CanvasRenderingContext2D;
     coord: Vec2;
