@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 
 // tslint:disable
-fdescribe('LineService', () => {
+describe('LineService', () => {
     let service: LineService;
     let leftMouseEvent: MouseEvent;
     let rightMouseEvent: MouseEvent;
