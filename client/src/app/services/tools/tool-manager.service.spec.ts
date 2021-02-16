@@ -7,7 +7,7 @@ import { ToolManagerService } from './tool-manager.service';
 import SpyObj = jasmine.SpyObj;
 
 //tslint:disable
-describe('ToolManagerService', () => {
+fdescribe('ToolManagerService', () => {
     let service: ToolManagerService;
     let RectangleServiceSpy: SpyObj<RectangleService>;
 
@@ -71,6 +71,7 @@ describe('ToolManagerService', () => {
 
         service.switchToolWithKeys(shortcut);
 
+        expect(service.currentToolEnum).toEqual(ToolList.Pencil);
         expect(service.currentTool).toBeInstanceOf(PencilService);
     });
 
@@ -80,6 +81,7 @@ describe('ToolManagerService', () => {
 
         service.switchToolWithKeys(shortcut);
 
+        expect(service.currentToolEnum).not.toEqual(ToolList.Rectangle);
         expect(service.currentTool).not.toBeInstanceOf(RectangleService);
     });
 
@@ -89,17 +91,20 @@ describe('ToolManagerService', () => {
 
         service.switchTool(newTool);
 
+        expect(service.currentToolEnum).toEqual(ToolList.Rectangle);
         expect(service.currentTool).toBeInstanceOf(RectangleService);
     });
 
     it('switchTool should not switch tool if invalid tool', () => {
         service.currentTool = RectangleServiceSpy;
+        service.currentToolEnum = ToolList.Rectangle;
 
         let getSpy = spyOn(service.serviceBindings, 'get');
 
         service.switchTool(5);
 
         expect(getSpy).not.toHaveBeenCalled();
+        expect(service.currentToolEnum).toEqual(ToolList.Rectangle);
         expect(service.currentTool).toEqual(RectangleServiceSpy);
     });
 });
