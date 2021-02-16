@@ -69,7 +69,6 @@ describe('ColorPickerComponent', () => {
         const mouseEventButton = new MouseEvent('click', { button: 2 });
         component['eventListeners'].mouseDown(mouseEvent);
         component['eventListeners'].contextMenu(mouseEventButton);
-
         expect(component['eventListeners'].changedMouseDown).toBeTruthy();
     });
 
