@@ -75,9 +75,9 @@ fdescribe('RectangleService', () => {
 
     it('onMouseUp should call drawRectangle if isShiftShape is false', () => {
         service['isShiftShape'] = false;
-
+        drawRectangleSpy = spyOn<any>(service, 'drawRectangle');
         service.onMouseUp(mouseEvent);
-        expect(drawSquareSpy).toHaveBeenCalled();
+        expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should call drawSquare if isShiftShape is true', () => {
