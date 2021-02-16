@@ -9,10 +9,12 @@ import { LineService } from './line.service';
 fdescribe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
+    let pathData: Vec2[];
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let drawLineSpy: jasmine.Spy<any>;
-
+    let drawConstrainedLineSpy: jasmine.Spy<any>;
+    let getPositionFromMouseSpy: jasmine.Spy<any>;
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
 
@@ -27,15 +29,20 @@ fdescribe('LineService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
         service = TestBed.inject(LineService);
-
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
+        service['drawingService'].canvas = canvasTestHelper.canvas;
 
         mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
+            x: 25,
+            y: 25,
             button: 0,
         } as MouseEvent;
+
+        pathData = [
+            { x: 10, y: 10 },
+            { x: 25, y: 25 },
+        ] as Vec2[];
     });
 
     it('should be created', () => {
@@ -80,14 +87,43 @@ fdescribe('LineService', () => {
         expect(service['pathData'].length).toEqual(0);
     });
 
-    fit('should called drawLine when onMouseUp is called', () => {
+    // On mouseUp
+    it('should call drawLine when onMouseUp is called and shift key is not pressed', () => {
         const mockMousePosition: Vec2 = { x: 25, y: 25 };
-        spyOn(service, 'getPositionFromMouse').and.returnValue(mockMousePosition);
+        service['pathData'] = pathData;
         service.mouseDown = true;
         service['hasPressedShiftKey'] = false;
-        drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
+
+        getPositionFromMouseSpy = spyOn(service, 'getPositionFromMouse').and.returnValue(mockMousePosition);
+        drawLineSpy = spyOn<any>(service, 'drawLine').and.stub().and.callThrough();
 
         service.onMouseUp(mouseEvent);
-        expect(drawLineSpy).toHaveBeenCalledWith(baseCtxStub, service['pathData']);
+
+        expect(getPositionFromMouseSpy).toHaveBeenCalledWith(mouseEvent);
+        expect(drawLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, pathData);
+    });
+
+    it('should call drawConstrainedLine when onMouseUp is called and shift key is pressed', () => {
+        service['coordinates'] = pathData;
+        service.mouseDown = true;
+        service['hasPressedShiftKey'] = true;
+
+        drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
+
+        service.onMouseUp(mouseEvent);
+        expect(drawConstrainedLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, service['coordinates'], mouseEvent);
+    });
+
+    it('should call getCanvasState when onMouseUp is called', () => {
+        let getCanvasStateSpy = spyOn<any>(service, 'getCanvasState').and.stub();
+        service.onMouseUp(mouseEvent);
+        expect(getCanvasStateSpy).toHaveBeenCalled();
+    });
+
+    it('should clear path when onMouseUp is called', () => {
+        let clearPathSpy = spyOn<any>(service, 'clearPath').and.stub();
+        service.onMouseUp(mouseEvent);
+        expect(clearPathSpy).toHaveBeenCalled();
+        expect(service['pathData'].length).toEqual(0);
     });
 });

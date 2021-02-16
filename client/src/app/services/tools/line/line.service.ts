@@ -62,24 +62,15 @@ export class LineService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-
-        if (this.mouseDown && !this.hasPressedShiftKey) {
-            console.log('here');
-            console.log(mousePosition);
-            this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+        if (this.mouseDown) {
+            if (!this.hasPressedShiftKey) {
+                this.pathData.push(mousePosition);
+                this.drawLine(this.drawingService.baseCtx, this.pathData);
+            } else {
+                this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, event);
+            }
         }
-
-        if (this.hasPressedShiftKey) {
-            this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, event);
-        }
-
-        if (this.pathData) {
-            this.lastCanvasImages.push(
-                this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
-            );
-        }
-
+        this.getCanvasState();
         this.mouseDown = false;
         this.clearPath();
     }
@@ -123,6 +114,13 @@ export class LineService extends Tool {
         }
     }
 
+    private getCanvasState(): void {
+        if (this.pathData) {
+            this.lastCanvasImages.push(
+                this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
+            );
+        }
+    }
     // Equation of a line: 0 = ax + by + c
     // Distance from a point A to a line L :  distance(A,L) =  abs(ax + by + c) / sqrt(a^2 + b^2)
     private getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
