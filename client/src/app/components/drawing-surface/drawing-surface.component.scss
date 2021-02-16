@@ -1,4 +1,10 @@
 .drawing-container {
-    height: 100vh;
-    width: 85vw;
+    height: 100%;
+    width: 100%;
+}
+
+.drawing {
+    position: absolute;
+    height: 100%;
+    width: 100%;
 }

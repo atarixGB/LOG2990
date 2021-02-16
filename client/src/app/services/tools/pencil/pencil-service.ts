@@ -3,6 +3,8 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_LINE_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ColorOrder } from 'src/app/interfaces-enums/color-order';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
@@ -16,7 +18,7 @@ export class PencilService extends Tool {
 
     private pathData: Vec2[];
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
         this.clearPath();
         this.pencilThickness = DEFAULT_LINE_THICKNESS;
@@ -70,12 +72,16 @@ export class PencilService extends Tool {
             ctx.lineTo(point.x, point.y);
             ctx.lineWidth = this.pencilThickness;
         }
+        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        ctx.strokeStyle = color;
         ctx.stroke();
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.arc(path[0].x, path[0].y, this.pencilThickness, 0, 2 * Math.PI, true);
+        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        ctx.fillStyle = color;
         ctx.fill();
     }
 

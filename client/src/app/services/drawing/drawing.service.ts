@@ -18,6 +18,7 @@ export class DrawingService {
     }
 
     clearCanvas(context: CanvasRenderingContext2D): void {
+        console.log('clear canvas');
         context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 }
