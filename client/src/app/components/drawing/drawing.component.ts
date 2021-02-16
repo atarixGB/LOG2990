@@ -22,7 +22,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
-    subscription: Subscription;
+    private currentDrawing: ImageData;
+    dragPosition: Vec2 = { x: 0, y: 0 };
+    private subscription: Subscription;
 
     constructor(
         private drawingService: DrawingService,
@@ -45,10 +47,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
     }
-    private isResizing: boolean;
-    private currentDrawing: ImageData;
-
-    public dragPosition: Vec2 = { x: 0, y: 0 };
 
     ngAfterViewInit(): void {
         this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
@@ -69,21 +67,24 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        const element = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseMove(event);
         }
     }
 
     onMouseDown(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined && !this.isResizing) {
+        const element = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        const element = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseUp(event);
         }
@@ -91,7 +92,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        if (this.toolManagerService.currentTool != undefined) {
+        const element = event.target as HTMLElement;
+
+        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
             this.toolManagerService.currentTool.onMouseClick(event);
         }
     }
@@ -122,8 +125,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
-        this.isResizing = true;
-
         this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
 
         this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
@@ -138,7 +139,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        this.isResizing = false;
         const newWidth: number = this.canvasSize.x + event.distance.x;
         const newHeight: number = this.canvasSize.y + event.distance.y;
 
@@ -160,7 +160,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         }, 0);
     }
 
-    changePosition() {
+    changePosition(): void {
         this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
     }
 
