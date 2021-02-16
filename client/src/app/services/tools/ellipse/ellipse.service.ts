@@ -3,17 +3,10 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MouseButton } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { TypeStyle } from 'src/app/interfaces-enums/type-style';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-
-export enum MouseButton {
-    Left = 0,
-    Middle = 1,
-    Right = 2,
-    Back = 3,
-    Forward = 4,
-}
 
 @Injectable({
     providedIn: 'root',
