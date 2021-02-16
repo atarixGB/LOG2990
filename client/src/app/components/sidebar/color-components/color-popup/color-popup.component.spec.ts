@@ -4,25 +4,27 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants';
-import { RGBA } from '@app/interfaces-enums/rgba';
+import { FIRSTCOLORTEST } from '@app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-import { AlphaSliderComponent } from 'src/app/components/sidebar/color-components/alpha-slider/alpha-slider.component';
-import { ColorPaletteComponent } from 'src/app/components/sidebar/color-components/color-palette/color-palette.component';
-import { ColorSliderComponent } from 'src/app/components/sidebar/color-components/color-slider/color-slider.component';
+import { AlphaSliderComponent } from '../alpha-slider/alpha-slider.component';
+import { ColorPaletteComponent } from '../color-palette/color-palette.component';
+import { ColorSliderComponent } from '../color-slider/color-slider.component';
 import { ColorPopupComponent } from './color-popup.component';
+
 describe('ColorPopupComponent', () => {
     let component: ColorPopupComponent;
     let fixture: ComponentFixture<ColorPopupComponent>;
-    let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
+    let colorManagerSpy: ColorManagerService;
     const mockDialogRef = {
         close: jasmine.createSpy('close'),
     };
     beforeEach(async(() => {
+        colorManagerSpy = new ColorManagerService();
+
         TestBed.configureTestingModule({
             imports: [MatFormFieldModule, MatInputModule, FormsModule, BrowserAnimationsModule],
-            declarations: [ColorPopupComponent, AlphaSliderComponent, ColorSliderComponent, ColorPaletteComponent],
+            declarations: [ColorPopupComponent, ColorPaletteComponent, ColorSliderComponent, AlphaSliderComponent],
             providers: [
                 { provide: MatDialogRef, useValue: mockDialogRef },
                 { provide: MAT_DIALOG_DATA, useValue: ColorOrder.primaryColor },
@@ -30,17 +32,7 @@ describe('ColorPopupComponent', () => {
             ],
         }).compileComponents();
     }));
-    beforeEach(() => {
-        colorManagerSpy = jasmine.createSpyObj('ColorManagerService', [
-            'this.colorManager.updateWithHex',
-            'updateColorWithPixel',
-            'getColorStringAlpha',
-        ]);
-        colorManagerSpy.selectedColor = new Array<RGBA>();
-        colorManagerSpy.selectedColor[ColorOrder.primaryColor] = FIRSTCOLORTEST;
-        colorManagerSpy.selectedColor[ColorOrder.secondaryColor] = SECONDCOLORTEST;
-        colorManagerSpy.getColorStringAlpha.and.returnValue('rgba(255,255,255,1)');
-    });
+
     beforeEach(() => {
         fixture = TestBed.createComponent(ColorPopupComponent);
         component = fixture.componentInstance;
@@ -56,26 +48,32 @@ describe('ColorPopupComponent', () => {
         expect(mockDialogRef.close).toHaveBeenCalledTimes(1);
     });
     it('should update hex', () => {
+        let a = spyOn(colorManagerSpy, 'updateWithHex').and.stub();
         component.updateHex();
-        expect(colorManagerSpy.updateWithHex).toHaveBeenCalledTimes(1);
+        expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, 'ff', '0', '0');
     });
     it('should update history when clicked left', () => {
         const buttonType = new MouseEvent('click', { buttons: 1 });
-        component.colorHistory = [FIRSTCOLORTEST, SECONDCOLORTEST];
+        let a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
+
         component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
-        expect(colorManagerSpy.updateRGBAColor).toHaveBeenCalledTimes(1);
+        expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, FIRSTCOLORTEST, false);
+        //             expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, FIRSTCOLORTEST, false);
     });
     it('should update history when clicked right', () => {
+        //charge
         const buttonType = new MouseEvent('click', { buttons: 2 });
-        component.colorHistory = [FIRSTCOLORTEST, SECONDCOLORTEST];
+        let a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
+
         component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
-        expect(colorManagerSpy.updateRGBAColor).toHaveBeenCalledTimes(1);
+        expect(a).toHaveBeenCalledWith(ColorOrder.secondaryColor, FIRSTCOLORTEST, false);
     });
     it('should not update history when clicked 3', () => {
         const buttonType = new MouseEvent('click', { buttons: 3 });
-        component.colorHistory = [FIRSTCOLORTEST, SECONDCOLORTEST];
+        let a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
+
         component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
-        expect(colorManagerSpy.updateRGBAColor).toHaveBeenCalledTimes(0);
+        expect(a).not.toHaveBeenCalledWith(ColorOrder.secondaryColor, FIRSTCOLORTEST, false);
     });
     it('should prevent default action for right click', () => {
         const clickSpy = jasmine.createSpyObj('MouseEvent', ['preventDefault']);

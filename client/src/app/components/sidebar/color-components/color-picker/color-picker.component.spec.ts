@@ -29,7 +29,7 @@ class ThirdEventMock {
     }
 }
 
-fdescribe('ColorPickerComponent', () => {
+describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerComponent>;
     let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
@@ -58,7 +58,7 @@ fdescribe('ColorPickerComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-    
+
     //lui il est correct (pour créer l'instance OK)
     it('should create', () => {
         expect(component).toBeTruthy();
@@ -80,8 +80,8 @@ fdescribe('ColorPickerComponent', () => {
         expect(clickSpy.preventDefault).toHaveBeenCalledTimes(1);
     });
 
-   
-    
+
+
     //lui il est correct aussi
     it('should change secondary color when right button of mouse down', () => {
         const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
@@ -112,7 +112,7 @@ fdescribe('ColorPickerComponent', () => {
         //this.arrayColorPixel = false => expect expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(0);
     });
 
-    
+
     it('should change when colorPixels exists', () => {
         const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
         component.context = contextSpy;
