@@ -139,6 +139,8 @@ fdescribe('ToolManagerService', () => {
         service.handleKeyUp(event);
         expect(RectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
         expect(RectangleServiceSpy.handleKeyUp).not.toHaveBeenCalledWith(event);
+    });
+
     it('should handle hot keys shortcut if tool defined and correct KeyboardEvent', () => {
         service.currentTool = RectangleServiceSpy;
         const keyMock = { key: 'Shift' } as KeyboardEvent;
