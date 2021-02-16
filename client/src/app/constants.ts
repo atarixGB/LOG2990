@@ -1,8 +1,7 @@
 import { RGBA } from '@app/interfaces-enums/rgba';
-// TODO : Avoir un fichier séparé pour les constantes ?
+
 // Canvas constants
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
+
 export const MIN_SIZE = 250;
 
 export enum MouseButton {
@@ -79,3 +78,6 @@ export const SECONDCOLORTEST: RGBA = {
     inString: 'rgba(255, 255, 255, 1)',
 };
 export const COLOR_WIN_WIDTH = '500px';
+
+export const WORKING_AREA_WIDTH = '85vw';
+export const WORKING_AREA_LENGHT = '100vh';
