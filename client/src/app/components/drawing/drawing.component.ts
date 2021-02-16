@@ -112,7 +112,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     }
 
     @HostListener('dblclick', ['$event'])
-    onMousonDoubleClick(event: MouseEvent): void {
+    onMouseDoubleClick(event: MouseEvent): void {
         this.toolManagerService.onMouseDoubleClick(event);
     }
 
@@ -123,7 +123,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
+        //event.preventDefault();
 
         this.toolManagerService.handleHotKeysShortcut(event);
 
