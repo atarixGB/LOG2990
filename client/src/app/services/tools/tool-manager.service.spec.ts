@@ -7,7 +7,7 @@ import { ToolManagerService } from './tool-manager.service';
 import SpyObj = jasmine.SpyObj;
 
 //tslint:disable
-fdescribe('ToolManagerService', () => {
+describe('ToolManagerService', () => {
     let service: ToolManagerService;
     let RectangleServiceSpy: SpyObj<RectangleService>;
 
