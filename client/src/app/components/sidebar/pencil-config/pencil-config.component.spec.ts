@@ -9,7 +9,7 @@ describe('PencilConfigComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [PencilConfigComponent, MatSlider],
-            //imports: [mo]
+            // imports: [mo]
         }).compileComponents();
     }));
 

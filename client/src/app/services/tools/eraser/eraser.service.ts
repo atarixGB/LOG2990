@@ -123,13 +123,13 @@ export class EraserService extends Tool {
     }
 
     private centerX(x: number): number {
-        let adjustment = this.eraserThickness / 2;
+        const adjustment = this.eraserThickness / 2;
         x = x - adjustment;
         return x;
     }
 
     private centerY(y: number): number {
-        let adjustment = this.eraserThickness / 2;
+        const adjustment = this.eraserThickness / 2;
         y = y - adjustment;
         return y;
     }
