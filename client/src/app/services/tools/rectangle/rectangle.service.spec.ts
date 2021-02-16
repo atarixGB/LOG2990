@@ -19,7 +19,7 @@ fdescribe('RectangleService', () => {
     let mockPathData: Vec2[];
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -32,12 +32,12 @@ fdescribe('RectangleService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
-
+        drawSquareSpy = spyOn<any>(service, 'drawSquare');
         mockPathData = [
             { x: 10, y: 10 },
             { x: 100, y: 100 },
         ];
-
+        service['pathData'] = mockPathData;
         mouseEvent = {
             offsetX: 10,
             offsetY: 10,
@@ -58,7 +58,6 @@ fdescribe('RectangleService', () => {
 
     it('drawShape should call drawSquare is isShiftShape is true', () => {
         service['isShiftShape'] = true;
-        drawSquareSpy = spyOn<any>(service, 'drawSquare').and.stub();
         service.drawShape(previewCtxStub, mockPathData);
         expect(drawSquareSpy).toHaveBeenCalled();
     });
@@ -72,25 +71,24 @@ fdescribe('RectangleService', () => {
         service.onMouseUp(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
+    ///
 
     it('onMouseUp should call drawRectangle if isShiftShape is false', () => {
         service['isShiftShape'] = false;
-        drawRectangleSpy = spyOn<any>(service, 'drawSquare').and.stub();
+
         service.onMouseUp(mouseEvent);
-        expect(drawRectangleSpy).toHaveBeenCalled();
+        expect(drawSquareSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should call drawSquare if isShiftShape is true', () => {
         service['isShiftShape'] = true;
-        drawSquareSpy = spyOn<any>(service, 'drawSquare').and.stub();
         service.onMouseUp(mouseEvent);
         expect(drawSquareSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should clear path', () => {
-        let clearPathSpy = spyOn<any>(service, 'clearPath').and.stub();
+        let clearPathSpy = spyOn<any>(service, 'clearPath');
         service.onMouseUp(mouseEvent);
         expect(clearPathSpy).toHaveBeenCalled();
-        expect(service['pathData'].length).toEqual(0);
     });
 });

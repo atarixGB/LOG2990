@@ -20,11 +20,15 @@ export class RectangleService extends ShapeService {
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (!this.isShiftShape) this.drawRectangle(this.drawingService.baseCtx, this.pathData);
-        else {
+
+        if (!this.isShiftShape) {
+            this.drawRectangle(this.drawingService.baseCtx, this.pathData);
+            
+        } else {
             this.drawSquare(this.drawingService.baseCtx, this.pathData);
             this.isShiftShape = false;
         }
+
         this.clearPath();
     }
 }
