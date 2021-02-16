@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { PencilService } from './pencil/pencil-service';
 import { ToolManagerService } from './tool-manager.service';
 
-fdescribe('ToolManagerService', () => {
+describe('ToolManagerService', () => {
     let service: ToolManagerService;
 
     beforeEach(() => {
@@ -18,5 +18,5 @@ fdescribe('ToolManagerService', () => {
         expect(service.currentTool instanceof PencilService).toBeTrue();
     });
 
-    it('should handle hot keys shortcut', () => {});
+    // it('should handle hot keys shortcut', () => {});
 });

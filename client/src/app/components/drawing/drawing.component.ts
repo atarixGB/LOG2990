@@ -1,82 +1,100 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { AfterViewInit, Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH, MIN_SIZE } from '@app/constants';
+import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
+import { MIN_SIZE, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-
+import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit {
+export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     // On utilise ce canvas pour dessiner sans affecter le dessin final
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
-
-    @Input()
-    set mousePositionChanged(position: Vec2) {
-        this.mousePosition = position;
-        if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = position;
-        }
-    }
-
-    private mousePosition: Vec2;
+    @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
 
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2 = { x: DEFAULT_WIDTH, y: DEFAULT_HEIGHT };
-
+    private canvasSize: Vec2;
     private currentDrawing: ImageData;
+    dragPosition: Vec2 = { x: 0, y: 0 };
+    private subscription: Subscription;
 
-    public dragPosition: Vec2 = { x: 0, y: 0 };
+    constructor(
+        private drawingService: DrawingService,
+        private toolManagerService: ToolManagerService,
+        private cdr: ChangeDetectorRef,
+        private newDrawingService: NewDrawingService,
+        public dialog: MatDialog,
+    ) {
+        this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
 
-    constructor(private drawingService: DrawingService, private toolManagerService: ToolManagerService) {}
+        this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
+            if (isCleanRequest) {
+                this.drawingService.baseCtx.beginPath();
+                this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
+    }
 
     ngAfterViewInit(): void {
+        this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
+        this.workingArea.nativeElement.style.height = WORKING_AREA_LENGHT;
+
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+
+        this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
+
+        if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
+            this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
+        }
+        this.cdr.detectChanges();
     }
 
-    @HostListener('document:mousemove', ['$event'])
     onMouseMove(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
-
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+        const ELEMENT = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
+            this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseMove(event);
         }
     }
 
-    @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
-
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+        const ELEMENT = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
+            this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseDown(event);
         }
     }
 
-    @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
+        const ELEMENT = event.target as HTMLElement;
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
+            this.toolManagerService.currentTool.mouseCoord = { x: event.offsetX, y: event.offsetY };
             this.toolManagerService.currentTool.onMouseUp(event);
         }
     }
 
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
-        const element = event.target as HTMLElement;
+        const ELEMENT = event.target as HTMLElement;
 
-        if (this.toolManagerService.currentTool != undefined && !element.className.includes('box')) {
+        if (this.toolManagerService.currentTool != undefined && !ELEMENT.className.includes('box')) {
             this.toolManagerService.currentTool.onMouseClick(event);
         }
     }
@@ -91,16 +109,18 @@ export class DrawingComponent implements AfterViewInit {
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.currentTool.mouseCoord = this.mousePosition;
             this.toolManagerService.currentTool.handleKeyUp(event);
         }
     }
 
-    @HostListener('keydown', ['$event'])
+    @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
+        event.preventDefault();
         if (this.toolManagerService.currentTool != undefined) {
-            this.toolManagerService.mousePosition = this.mousePosition;
             this.toolManagerService.handleHotKeysShortcut(event);
+        }
+        if (event.ctrlKey && event.code === 'KeyO') {
+            this.dialog.open(NewDrawModalComponent, {});
         }
     }
 
@@ -119,29 +139,28 @@ export class DrawingComponent implements AfterViewInit {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        const newWidth: number = this.canvasSize.x + event.distance.x;
-        const newHeight: number = this.canvasSize.y + event.distance.y;
+        const NEW_WIDTH: number = this.canvasSize.x + event.distance.x;
+        const NEW_HEIGHT: number = this.canvasSize.y + event.distance.y;
 
         this.previewCanvas.nativeElement.style.borderStyle = 'solid';
 
-        if (newWidth >= MIN_SIZE) {
-            this.canvasSize.x = newWidth;
+        if (NEW_WIDTH >= MIN_SIZE) {
+            this.canvasSize.x = NEW_WIDTH;
         } else {
             this.canvasSize.x = MIN_SIZE;
         }
 
-        if (newHeight >= MIN_SIZE) {
-            this.canvasSize.y = newHeight;
+        if (NEW_HEIGHT >= MIN_SIZE) {
+            this.canvasSize.y = NEW_HEIGHT;
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
-
         setTimeout(() => {
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
         }, 0);
     }
 
-    changePosition() {
+    changePosition(): void {
         this.dragPosition = { x: this.dragPosition.x, y: this.dragPosition.y };
     }
 

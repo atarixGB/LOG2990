@@ -59,9 +59,7 @@ export class EllipseService extends Tool {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
-            console.log(mousePosition);
             this.pathData.push(mousePosition);
-
             // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             if (this.isEllipse) {
@@ -159,25 +157,20 @@ export class EllipseService extends Tool {
 
         if (width <= 0 && height >= 0) {
             // go down-left
-            console.log('lower-left');
             upperRight = [path[0].x - shortestSide, path[0].y];
         } else if (height <= 0 && width >= 0) {
             // go up-right
-            console.log('upper-right');
             upperRight = [path[0].x, path[0].y - shortestSide];
         } else if (height <= 0 && width <= 0) {
             // up-left
-            console.log('upper-left');
             upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
         } else {
             // go down-right
-            console.log('lower-right');
             upperRight = [path[0].x, path[0].y];
         }
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
-        console.log('shortestSide : ' + shortestSide);
     }
 
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {

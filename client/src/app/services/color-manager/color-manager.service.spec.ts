@@ -4,7 +4,7 @@ import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from './color-manager.service';
 
 // tslint:disable:no-magic-numbers
-fdescribe('ColorManagerService', () => {
+describe('ColorManagerService', () => {
     let colorManagerService: ColorManagerService;
 
     beforeEach(() => TestBed.configureTestingModule({}));

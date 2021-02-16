@@ -9,7 +9,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPickerComponent } from './color-picker.component';
 
-fdescribe('ColorPickerComponent', () => {
+describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerComponent>;
     let colorManagerSpy: jasmine.SpyObj<ColorManagerService>;
