@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DrawingSurfaceComponent } from './drawing-surface.component';
+import { NewDrawModalComponent } from './new-draw-modal.component';
 
-describe('DrawingSurfaceComponent', () => {
-    let component: DrawingSurfaceComponent;
-    let fixture: ComponentFixture<DrawingSurfaceComponent>;
+describe('NewDrawModalComponent', () => {
+    let component: NewDrawModalComponent;
+    let fixture: ComponentFixture<NewDrawModalComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [DrawingSurfaceComponent],
+            declarations: [NewDrawModalComponent],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(DrawingSurfaceComponent);
+        fixture = TestBed.createComponent(NewDrawModalComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

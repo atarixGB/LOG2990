@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch ng serve & Chrome",
+            "request": "launch",
+            "type": "pwa-chrome",
+            "preLaunchTask": "npm:stat",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}/client"
+        },
+
+        {
             "name": "Debug server (Attach)",
             "port": 9229,
             "request": "attach",

@@ -1,6 +1,7 @@
+import { RGBA } from '@app/interfaces-enums/rgba';
+
 // Canvas constants
-export const DEFAULT_WIDTH = 1000;
-export const DEFAULT_HEIGHT = 800;
+
 export const MIN_SIZE = 250;
 
 export enum MouseButton {
@@ -12,8 +13,8 @@ export enum MouseButton {
 }
 
 export enum TypeOfJunctions {
-    REGULAR = 0,
-    CIRCLE = 1,
+    Regular = 0,
+    Circle = 1,
 }
 
 export const DEFAULT_LINE_THICKNESS = 1;
@@ -29,3 +30,42 @@ export enum ToolList {
     Rectangle = 3,
     Ellipse = 4,
 }
+export const COLOR_WINDOW_WIDTH = '500px';
+
+export const WIDTH = 20;
+export const HEIGHT = 200;
+export const ONE_SIX = 0.17;
+export const ONE_THREE = 0.33;
+export const ONE_TWO = 0.5;
+export const TWO_THREE = 0.67;
+export const FIVE_SIX = 0.83;
+
+export const COLOR_POSITION = ['first', 'second'];
+
+export const COLOR_HISTORY = 10;
+export const COLOR_ORDER = 2;
+export const MAX_DEC_RANGE = 255;
+export const OPACITY_POS_ALPHA = 3;
+export const HEX_BASE = 16;
+export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
+
+// in the following we find testing constants
+export const FIRST_CASE = 75;
+export const SECOND_AND_THIRD_CASE = 25;
+export const LAST_CASE = 255;
+export const CASES_ARRAY = [FIRST_CASE, SECOND_AND_THIRD_CASE, SECOND_AND_THIRD_CASE, LAST_CASE];
+
+export const FIRSTCOLORTEST: RGBA = {
+    Dec: { Red: 255, Green: 255, Blue: 255, Alpha: 1 },
+    Hex: { Red: 'ff', Green: 'ff', Blue: 'ff' },
+    inString: 'rgba(255, 255, 255, 1)',
+};
+export const SECONDCOLORTEST: RGBA = {
+    Dec: { Red: 255, Green: 255, Blue: 255, Alpha: 1 },
+    Hex: { Red: 'ff', Green: 'ff', Blue: 'ff' },
+    inString: 'rgba(255, 255, 255, 1)',
+};
+export const COLOR_WIN_WIDTH = '500px';
+
+export const WORKING_AREA_WIDTH = '85vw';
+export const WORKING_AREA_LENGHT = '100vh';
