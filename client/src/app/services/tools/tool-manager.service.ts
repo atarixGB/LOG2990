@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { ToolList } from '@app/constants';
 import { EllipseService } from './ellipse/ellipse.service';
-import { EraserService } from './eraser.service';
+import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 import { RectangleService } from './rectangle/rectangle.service';
