@@ -1,85 +1,39 @@
 import { Injectable } from '@angular/core';
-import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_LINE_THICKNESS } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from 'src/app/constants';
-import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-import { TypeStyle } from 'src/app/interfaces-enums/type-style';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
+import { Shape } from '../shape/shape';
 
 @Injectable({
     providedIn: 'root',
 })
-export class EllipseService extends Tool {
-    private pathData: Vec2[];
-    private isEllipse: boolean;
-    lineWidth: number;
-    fillValue: boolean;
-    strokeValue: boolean;
-    selectType: TypeStyle;
-
-    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
-        super(drawingService);
-        this.isEllipse = true;
-        this.fillValue = false;
-        this.strokeValue = false;
-        this.lineWidth = DEFAULT_LINE_THICKNESS;
-        this.selectType = TypeStyle.stroke;
-        this.changeType();
-        this.clearPath();
+export class EllipseService extends Shape {
+    constructor(protected drawingService: DrawingService, colorManager: ColorManagerService) {
+        super(drawingService, colorManager);
     }
-    onMouseDown(event: MouseEvent): void {
-        this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            this.clearPath();
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.pathData.push(this.mouseDownCoord);
+
+    drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        console.log('dans ellipse');
+        if (!this.isShiftShape) {
+            this.drawRectangle(this.drawingService.previewCtx, this.pathData);
+            this.drawEllipse(this.drawingService.previewCtx, this.pathData);
+        } else {
+            this.drawCircle(this.drawingService.previewCtx, this.pathData);
+            this.drawSquare(this.drawingService.previewCtx, this.pathData);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (this.isEllipse) this.drawEllipse(this.drawingService.baseCtx, this.pathData);
+        if (!this.isShiftShape) this.drawEllipse(this.drawingService.baseCtx, this.pathData);
         else {
             this.drawCircle(this.drawingService.baseCtx, this.pathData);
-            this.isEllipse = true;
+            this.isShiftShape = false;
         }
         this.clearPath();
     }
 
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            if (this.isEllipse) {
-                this.drawEllipse(this.drawingService.previewCtx, this.pathData);
-                this.drawRectangle(this.drawingService.previewCtx, this.pathData);
-            } else {
-                this.drawCircle(this.drawingService.previewCtx, this.pathData);
-                this.drawSquare(this.drawingService.previewCtx, this.pathData);
-            }
-        }
-    }
-    changeType(): void {
-        switch (this.selectType) {
-            case TypeStyle.stroke:
-                this.fillValue = false;
-                this.strokeValue = true;
-                break;
-            case TypeStyle.fill:
-                this.fillValue = true;
-                this.strokeValue = false;
-                break;
-            case TypeStyle.strokeFill:
-                this.fillValue = true;
-                this.strokeValue = true;
-                break;
-        }
-    }
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         let xRadius = (path[path.length - 1].x - path[0].x) / 2;
         let yRadius = (path[path.length - 1].y - path[0].y) / 2;
@@ -104,66 +58,7 @@ export class EllipseService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
-
-        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
-        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
-
-        if (this.strokeValue) {
-            ctx.strokeStyle = contouring;
-            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
-            ctx.fill();
-            ctx.stroke();
-        }
-        if (this.fillValue) {
-            ctx.fillStyle = filling;
-            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
-
-            ctx.fill();
-            ctx.stroke();
-        }
-        if (this.fillValue && this.strokeValue) {
-            ctx.fillStyle = filling;
-            ctx.strokeStyle = contouring;
-            ctx.fill();
-            ctx.stroke();
-        }
-    }
-
-    private drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let upperRight: [number, number];
-
-        upperRight = [path[0].x, path[0].y];
-        const width = path[path.length - 1].x - upperRight[0];
-        const height = path[path.length - 1].y - upperRight[1];
-        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
-        ctx.beginPath();
-        ctx.strokeRect(upperRight[0], upperRight[1], width, height);
-    }
-
-    private drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const width = path[path.length - 1].x - path[0].x;
-        const height = path[path.length - 1].y - path[0].y;
-        const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
-
-        let upperRight: [number, number];
-        upperRight = [path[0].x, path[0].y];
-
-        if (width <= 0 && height >= 0) {
-            // go down-left
-            upperRight = [path[0].x - shortestSide, path[0].y];
-        } else if (height <= 0 && width >= 0) {
-            // go up-right
-            upperRight = [path[0].x, path[0].y - shortestSide];
-        } else if (height <= 0 && width <= 0) {
-            // up-left
-            upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
-        } else {
-            // go down-right
-            upperRight = [path[0].x, path[0].y];
-        }
-        ctx.lineWidth = this.lineWidth;
-        ctx.beginPath();
-        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
+        this.updateBorder(ctx);
     }
 
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
@@ -190,49 +85,6 @@ export class EllipseService extends Tool {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
-        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
-        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
-
-        if (this.strokeValue) {
-            ctx.strokeStyle = contouring;
-            ctx.fillStyle = 'rgba(255, 0, 0, 0)';
-            ctx.fill();
-            ctx.stroke();
-        }
-        if (this.fillValue) {
-            ctx.fillStyle = filling;
-            ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
-
-            ctx.fill();
-            ctx.stroke();
-        }
-        if (this.fillValue && this.strokeValue) {
-            ctx.fillStyle = filling;
-            ctx.strokeStyle = contouring;
-            ctx.fill();
-            ctx.stroke();
-        }
-    }
-
-    private clearPath(): void {
-        this.pathData = [];
-    }
-
-    handleKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Shift' && this.mouseDown) {
-            this.isEllipse = false;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawCircle(this.drawingService.previewCtx, this.pathData);
-            this.drawSquare(this.drawingService.previewCtx, this.pathData);
-        }
-    }
-
-    handleKeyUp(event: KeyboardEvent): void {
-        if (event.key === 'Shift' && this.mouseDown) {
-            this.isEllipse = true;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawEllipse(this.drawingService.previewCtx, this.pathData);
-            this.drawRectangle(this.drawingService.previewCtx, this.pathData);
-        }
+        this.updateBorder(ctx);
     }
 }

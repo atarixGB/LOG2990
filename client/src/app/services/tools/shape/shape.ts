@@ -95,9 +95,9 @@ export abstract class Shape extends Tool {
         const length = finalPoint.x - firstPoint.x;
         ctx.lineWidth = this.lineWidth;
         ctx.rect(firstPoint.x, firstPoint.y, length, width);
+        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
 
         this.updateBorder(ctx);
-        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
         if (!this.isShiftShape) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.rect(firstPoint.x, firstPoint.y, length, width);
@@ -105,7 +105,7 @@ export abstract class Shape extends Tool {
         }
     }
 
-    private updateBorder(ctx: CanvasRenderingContext2D): void {
+    protected updateBorder(ctx: CanvasRenderingContext2D): void {
         const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
