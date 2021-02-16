@@ -64,6 +64,8 @@ export class LineService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
 
         if (this.mouseDown && !this.hasPressedShiftKey) {
+            console.log('here');
+            console.log(mousePosition);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
