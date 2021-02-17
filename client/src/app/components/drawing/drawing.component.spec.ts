@@ -1,6 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
@@ -11,6 +12,7 @@ fdescribe('DrawingComponent', () => {
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
+    // let dialogSpy: jasmine.SpyObj<MatDialogModule>;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
@@ -23,9 +25,11 @@ fdescribe('DrawingComponent', () => {
             'handleKeyUp',
             'handleHotKeysShortcut',
         ]);
+
+        // (dialogSpy = jasmine.createSpyObj('MatDialogModule', ['open'])),
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
-            imports: [MatDialogModule, DragDropModule],
+            imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule],
             providers: [
                 { provide: DrawingService, useValue: drawingStub },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
@@ -38,14 +42,6 @@ fdescribe('DrawingComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-
-    // teste si moitie de work area
-    // fit('canvas should have a WIDTH and HEIGHT of half the dimensions of the working area', () => {
-    //     const height = component.workingArea.nativeElement.offsetHeight;
-    //     const width = component.workingArea.nativeElement.offsetHeight;
-    //     expect(component.height).toEqual(height / 2);
-    //     expect(component.width).toEqual(width / 2);
-    // });
 
     it(" should call the tool's manager mouse move when receiving a mouse move event if not resizing", () => {
         const event = {
@@ -155,8 +151,8 @@ fdescribe('DrawingComponent', () => {
         expect(toolManagerSpy.handleKeyUp).toHaveBeenCalledWith(event);
     });
 
-    fit(" should call the tool's manager mouse handle key down when receiving a key down event", () => {
-        const event = {} as KeyboardEvent;
+    it(" should call the tool's manager mouse handle key down when receiving a key down event", () => {
+        const event = new KeyboardEvent('keydown', { key: 'o', ctrlKey: true });
         component.handleKeyDown(event);
         expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalled();
         expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalledWith(event);

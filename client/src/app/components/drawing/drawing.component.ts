@@ -26,6 +26,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private canvasSize: Vec2;
     private currentDrawing: ImageData;
     private subscription: Subscription;
+    private positionX: number;
+    private positionY: number;
     dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(
@@ -123,26 +125,26 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        //event.preventDefault();
-
         this.toolManagerService.handleHotKeysShortcut(event);
-
-        if (event.ctrlKey && event.code === 'KeyO') {
+        if (event.ctrlKey && event.key === 'o') {
+            event.preventDefault();
             this.dialog.open(NewDrawModalComponent, {});
         }
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
         this.previewCanvas.nativeElement.style.borderStyle = 'dotted';
+        this.positionX = event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left;
+        this.positionY = event.pointerPosition.y;
 
         this.currentDrawing = this.baseCtx.getImageData(0, 0, this.canvasSize.x, this.canvasSize.y);
 
-        if (resizeX && event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left > MIN_SIZE) {
-            this.previewCanvas.nativeElement.width = event.pointerPosition.x - this.baseCanvas.nativeElement.getBoundingClientRect().left;
+        if (resizeX && this.positionX > MIN_SIZE) {
+            this.previewCanvas.nativeElement.width = this.positionX;
         }
 
-        if (resizeY && event.pointerPosition.y > MIN_SIZE) {
-            this.previewCanvas.nativeElement.height = event.pointerPosition.y;
+        if (resizeY && this.positionY > MIN_SIZE) {
+            this.previewCanvas.nativeElement.height = this.positionY;
         }
     }
 
