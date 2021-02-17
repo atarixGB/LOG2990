@@ -44,8 +44,6 @@ describe('ColorPaletteComponent', () => {
     });
 
     it('should update gradient with color picked', () => {
-        // const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
-
         component.updateColorWithCoordinates({ x: 1, y: 1 });
         expect(colorManagerSpy.updatePixelColor).toHaveBeenCalledTimes(1);
     });

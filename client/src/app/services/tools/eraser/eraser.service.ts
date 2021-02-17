@@ -135,8 +135,7 @@ export class EraserService extends Tool {
     }
 
     private updateCursor(ctx: CanvasRenderingContext2D, event: Vec2): void {
-        this.drawingService.cursorCtx.clearRect(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
-
+        this.drawingService.clearCanvas(ctx);
         ctx.beginPath();
         ctx.fillStyle = 'white';
         ctx.fillRect(this.centerX(event.x), this.centerY(event.y), this.eraserThickness, this.eraserThickness);

@@ -1,26 +1,18 @@
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IndexService } from '@app/services/index/index.service';
-import { of } from 'rxjs';
 import { MainPageComponent } from './main-page.component';
 
-import SpyObj = jasmine.SpyObj;
-
+//tslint:disable
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
-    let indexServiceSpy: SpyObj<IndexService>;
 
     beforeEach(async(() => {
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
-        indexServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
-        indexServiceSpy.basicPost.and.returnValue(of());
-
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
         }).compileComponents();
     }));
 
@@ -36,15 +28,7 @@ describe('MainPageComponent', () => {
 
     it("should have as title 'Poly-Dessin'", () => {
         expect(component.title).toEqual('Poly-Dessin');
-    });
-
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(indexServiceSpy.basicGet).toHaveBeenCalled();
-    });
-
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(indexServiceSpy.basicPost).toHaveBeenCalled();
+        const title = fixture.debugElement.query(By.css('h1')).nativeElement;
+        expect(title.innerHTML).toBe('Poly-Dessin');
     });
 });

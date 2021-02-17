@@ -9,7 +9,6 @@ describe('PencilConfigComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [PencilConfigComponent, MatSlider],
-            // imports: [mo]
         }).compileComponents();
     }));
 
@@ -21,5 +20,11 @@ describe('PencilConfigComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should format label', () => {
+        const param = 8;
+        const expectedResult = '8px';
+        expect(component.formatLabel(param)).toEqual(expectedResult);
     });
 });

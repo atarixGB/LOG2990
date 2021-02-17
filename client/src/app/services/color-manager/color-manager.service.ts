@@ -9,7 +9,6 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
     providedIn: 'root',
 })
 export class ColorManagerService {
-    // 2 arrays of the interface RGBA
     selectedColor: RGBA[];
     lastColors: RGBA[];
 
@@ -72,7 +71,6 @@ export class ColorManagerService {
         this.selectedColor[colorOrder].Hex.Blue = colorPixel[2].toString(HEX_BASE);
         this.updateColorString(colorOrder);
         if (this.selectedColor[colorOrder].Dec.Alpha === 1) {
-            // do not add to history if color changed by alpha
             this.updateColorLasts(colorOrder, true);
         }
     }

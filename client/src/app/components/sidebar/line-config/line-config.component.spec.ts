@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LineConfigComponent } from './line-config.component';
 
+//tslint:disable
 describe('LineConfigComponent', () => {
     let component: LineConfigComponent;
     let fixture: ComponentFixture<LineConfigComponent>;
@@ -18,7 +18,8 @@ describe('LineConfigComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('should update line width', () => {
+        const expectedResult = 7;
+        expect(component.updateLineWidth(expectedResult)).toEqual(expectedResult);
     });
 });
