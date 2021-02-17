@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { EllipseConfigComponent } from './ellipse-config.component';
 
 describe('EllipseConfigComponent', () => {
@@ -20,5 +19,11 @@ describe('EllipseConfigComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should update ellipse line width', () => {
+        const expectedResult = 5;
+
+        expect(component.updateLineWidth(expectedResult)).toEqual(expectedResult);
     });
 });

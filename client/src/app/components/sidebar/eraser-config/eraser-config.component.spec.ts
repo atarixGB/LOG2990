@@ -20,4 +20,10 @@ describe('PencilConfigComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should recreate format label', () => {
+        const expectedResult = '5px';
+        const param = 5;
+        expect(component.formatLabel(param)).toEqual(expectedResult);
+    });
 });
