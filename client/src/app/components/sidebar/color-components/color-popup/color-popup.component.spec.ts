@@ -60,14 +60,14 @@ describe('ColorPopupComponent', () => {
         expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, FIRSTCOLORTEST, false);
         //             expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, FIRSTCOLORTEST, false);
     });
-    it('should update history when clicked right', () => {
-        // charge
-        const buttonType = new MouseEvent('click', { buttons: 2 });
-        const a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
+    // it('should update history when clicked right', () => {
+    //     // charge
+    //     const buttonType = new MouseEvent('click', { buttons: 2 });
+    //     const a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
 
-        component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
-        expect(a).toHaveBeenCalledWith(ColorOrder.secondaryColor, FIRSTCOLORTEST, false);
-    });
+    //     component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
+    //     expect(a).toHaveBeenCalledWith(ColorOrder.secondaryColor, FIRSTCOLORTEST, false);
+    // });
     it('should not update history when clicked 3', () => {
         const buttonType = new MouseEvent('click', { buttons: 3 });
         const a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
