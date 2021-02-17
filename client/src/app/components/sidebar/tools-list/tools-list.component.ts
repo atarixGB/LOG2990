@@ -9,7 +9,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class ToolsListComponent {
     ToolList: typeof ToolList = ToolList;
-    constructor(private toolManagerService: ToolManagerService) {}
+    constructor(public toolManagerService: ToolManagerService) {}
 
     onTool(selectedTool: ToolList): void {
         this.toolManagerService.switchTool(selectedTool);

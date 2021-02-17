@@ -4,7 +4,7 @@ import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, TypeOfJunctions } from
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from './line.service';
 
-// tslint:disable:no-any
+// tslint:disable
 describe('LineService', () => {
     let service: LineService;
     let mouseEvent: MouseEvent;
@@ -28,8 +28,8 @@ describe('LineService', () => {
         drawingServiceSpy = spyOn<any>(service, 'drawLine').and.callThrough();
         drawingServiceSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
-        service.drawingService.baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
-        service.drawingService.previewCtx = previewCtxStub;
+        service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
+        service['drawingService'].previewCtx = previewCtxStub;
 
         mouseEvent = {
             offsetX: 25,
