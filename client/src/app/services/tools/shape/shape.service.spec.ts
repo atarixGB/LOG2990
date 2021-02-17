@@ -15,5 +15,4 @@ describe('Shape', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
-
 });

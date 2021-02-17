@@ -15,7 +15,6 @@ describe('RectangleService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
     let drawRectangleSpy: jasmine.Spy<any>;
     let drawSquareSpy: jasmine.Spy<any>;
-
     let mockPathData: Vec2[];
 
     beforeEach(() => {

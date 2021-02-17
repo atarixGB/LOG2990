@@ -23,7 +23,6 @@ export class RectangleService extends ShapeService {
 
         if (!this.isShiftShape) {
             this.drawRectangle(this.drawingService.baseCtx, this.pathData);
-            
         } else {
             this.drawSquare(this.drawingService.baseCtx, this.pathData);
             this.isShiftShape = false;
