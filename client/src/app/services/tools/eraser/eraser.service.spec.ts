@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
 
 //tslint:disable
-describe('EraserService', () => {
+fdescribe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;
@@ -46,6 +46,7 @@ describe('EraserService', () => {
     });
 
     it(' mouseDown should set mouseDownCoord to correct position', () => {
+        service.eraserThickness = 10;
         const expectedResult: Vec2 = { x: 25, y: 25 };
         service.mouseDown = true;
 
@@ -80,8 +81,8 @@ describe('EraserService', () => {
     });
 
     it(' onMouseUp should not call drawLine if mouse was not already down', () => {
-        service.mouseDown = false;
         service.mouseDownCoord = { x: 0, y: 0 };
+        service.mouseDown = false;
 
         spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
 
@@ -99,17 +100,6 @@ describe('EraserService', () => {
         service.onMouseMove(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
         expect(drawLineSpy).toHaveBeenCalled();
-    });
-
-    it(' onMouseMove should not call drawLine if mouse was not already down', () => {
-        service.mouseDownCoord = { x: 0, y: 0 };
-        service.mouseDown = false;
-
-        spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 0, y: 0 });
-
-        service.onMouseMove(mouseEvent);
-        expect(drawServiceSpy.clearCanvas).not.toHaveBeenCalled();
-        expect(drawLineSpy).not.toHaveBeenCalled();
     });
 
     it('Mouse click should just draw point', () => {
