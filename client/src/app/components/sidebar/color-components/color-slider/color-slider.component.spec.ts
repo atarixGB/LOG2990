@@ -5,6 +5,7 @@ import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorSliderComponent } from './color-slider.component';
+
 describe('ColorSliderComponent', () => {
     let component: ColorSliderComponent;
     let fixture: ComponentFixture<ColorSliderComponent>;

@@ -18,6 +18,7 @@ export class LineService extends Tool {
     private coordinates: Vec2[];
 
     private hasPressedShiftKey: boolean;
+    private closestPoint: Vec2 | undefined;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
@@ -41,13 +42,13 @@ export class LineService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.coordinates.push(this.mouseDownCoord);
-        const point: Vec2 | undefined = this.calculatePosition(this.mouseDownCoord, this.basePoint);
 
         if (this.hasPressedShiftKey) {
             // Handle automatic junction when drawing constrained-angle lines
-            if (point) {
-                this.coordinates.push(point);
-                if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, point);
+            this.closestPoint = this.calculatePosition(this.mouseDownCoord, this.basePoint);
+            if (this.closestPoint) {
+                this.coordinates.push(this.closestPoint);
+                if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, this.closestPoint);
             }
         } else {
             this.pathData.push(this.mouseDownCoord);
@@ -62,22 +63,15 @@ export class LineService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
-
-        if (this.mouseDown && !this.hasPressedShiftKey) {
-            this.pathData.push(mousePosition);
-            this.drawLine(this.drawingService.baseCtx, this.pathData);
+        if (this.mouseDown) {
+            if (!this.hasPressedShiftKey) {
+                this.pathData.push(mousePosition);
+                this.drawLine(this.drawingService.baseCtx, this.pathData);
+            } else {
+                this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, event);
+            }
         }
-
-        if (this.hasPressedShiftKey) {
-            this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, event);
-        }
-
-        if (this.pathData) {
-            this.lastCanvasImages.push(
-                this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
-            );
-        }
-
+        this.getCanvasState();
         this.mouseDown = false;
         this.clearPath();
     }
@@ -98,9 +92,7 @@ export class LineService extends Tool {
 
     handleKeyDown(event: KeyboardEvent): void {
         event.preventDefault();
-        const keyPressed = event.key;
-
-        switch (keyPressed) {
+        switch (event.key) {
             case 'Escape':
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 this.mouseDown = false;
@@ -121,6 +113,13 @@ export class LineService extends Tool {
         }
     }
 
+    private getCanvasState(): void {
+        if (this.pathData) {
+            this.lastCanvasImages.push(
+                this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
+            );
+        }
+    }
     // Equation of a line: 0 = ax + by + c
     // Distance from a point A to a line L :  distance(A,L) =  abs(ax + by + c) / sqrt(a^2 + b^2)
     private getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
@@ -192,14 +191,14 @@ export class LineService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         this.basePoint = path[path.length - 1];
 
-        const point: Vec2 | undefined = this.calculatePosition(mousePosition, this.basePoint);
+        this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
         ctx.lineWidth = this.lineWidth;
         const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         ctx.strokeStyle = color;
         ctx.beginPath();
-        if (point) {
+        if (this.closestPoint) {
             ctx.moveTo(this.basePoint.x, this.basePoint.y);
-            ctx.lineTo(point.x, point.y);
+            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
             ctx.stroke();
         }
     }
