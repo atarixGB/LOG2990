@@ -6,6 +6,7 @@ import { By } from '@angular/platform-browser';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageComponent } from './main-page.component';
 
+//tslint:disable
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
@@ -32,5 +33,4 @@ describe('MainPageComponent', () => {
         const title = fixture.debugElement.query(By.css('h1')).nativeElement;
         expect(title.innerHTML).toBe('Poly-Dessin');
     });
-
 });
