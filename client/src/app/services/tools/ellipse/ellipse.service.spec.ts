@@ -74,7 +74,16 @@ describe('EllipseService', () => {
         expect(drawCircleSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp shoud set mouseDown property to false', () => {
+    it('onMouseUp should call drawEllipse if is shiftShape is false', () => {
+        service['isShiftShape'] = false;
+
+        drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub();
+        service.onMouseUp(mouseEvent);
+
+        expect(drawEllipseSpy).toHaveBeenCalled();
+    });
+
+    it('onMouseUp shoud set mouseDown property to false if not already', () => {
         service.onMouseUp(mouseEvent);
         expect(service.mouseDown).toBeFalsy();
     });
@@ -82,7 +91,7 @@ describe('EllipseService', () => {
     it('onMouseUp should call drawCircle on base context if Shift key is pressed', () => {
         service['isShiftShape'] = true;
         drawCircleSpy = spyOn<any>(service, 'drawCircle').and.stub();
-        service.drawShape(baseCtxStub, mockPathData);
+        service.onMouseUp(mouseEvent);
         expect(drawCircleSpy).toHaveBeenCalled();
     });
 
