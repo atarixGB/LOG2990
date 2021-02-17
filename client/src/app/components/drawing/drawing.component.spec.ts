@@ -7,7 +7,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
 
 //tslint:disable
-fdescribe('DrawingComponent', () => {
+describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
