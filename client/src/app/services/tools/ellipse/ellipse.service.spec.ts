@@ -110,11 +110,8 @@ describe('EllipseService', () => {
             { x: 4, y: 6 },
             { x: 0, y: 0 },
         ];
-        // xradius = -2  (<0)
-        // yradius = -3  (<0)s
 
         service['drawEllipse'](baseCtxSpy, path);
-        // yradius = 3, xradius = 2, origin = [2,3]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -135,11 +132,8 @@ describe('EllipseService', () => {
             { x: 4, y: 6 },
             { x: 0, y: 10 },
         ];
-        // xradius = -2  (<0)
-        // yradius = 2   (>0)
 
         service['drawEllipse'](baseCtxSpy, path);
-        // yradius = 2, xradius = 2, origin = [2,8]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -160,11 +154,8 @@ describe('EllipseService', () => {
             { x: 6, y: 4 },
             { x: 10, y: 0 },
         ];
-        // xradius = 2  (>0)
-        // yradius = -2   (<0)
 
         service['drawEllipse'](baseCtxSpy, path);
-        // yradius = 2, xradius = 2, origin = [8,2]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -185,11 +176,8 @@ describe('EllipseService', () => {
             { x: 0, y: 0 },
             { x: 4, y: 4 },
         ];
-        // xradius = 2  (>0)
-        // yradius = 2  (>0)
 
         service['drawEllipse'](baseCtxSpy, path);
-        // yradius = 2, xradius = 2, origin = [2,2]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -209,12 +197,8 @@ describe('EllipseService', () => {
             { x: 2, y: 0 },
             { x: 0, y: 4 },
         ];
-        // width  = -2  (<0)
-        // height =  4  (>0)
-        // radius =  1
 
         service['drawCircle'](baseCtxSpy, path);
-        // origin = [1,1]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
@@ -234,12 +218,8 @@ describe('EllipseService', () => {
             { x: 0, y: 2 },
             { x: 4, y: 0 },
         ];
-        // width  = 4  (>0)
-        // height = -2   (<0)
-        // radius =  1
 
         service['drawCircle'](baseCtxSpy, path);
-        // origin = [1,1]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
@@ -259,12 +239,8 @@ describe('EllipseService', () => {
             { x: 2, y: 2 },
             { x: 0, y: 0 },
         ];
-        // width  = -2   (<0)
-        // height = -2   (<0)
-        // radius =  1
 
         service['drawCircle'](baseCtxSpy, path);
-        // origin = [1,1]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
@@ -284,12 +260,8 @@ describe('EllipseService', () => {
             { x: 2, y: 2 },
             { x: 6, y: 6 },
         ];
-        // width  = 4   (<0)
-        // height = 4   (<0)
-        // radius =  2
 
         service['drawCircle'](baseCtxSpy, path);
-        // origin = [4,4]
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);

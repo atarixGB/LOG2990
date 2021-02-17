@@ -1,5 +1,3 @@
-// import { inject } from 'inversify';
-// import { Location } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';

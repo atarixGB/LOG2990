@@ -14,7 +14,6 @@ describe('FileMenuComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            // declarations: [FileMenuComponent],
             declarations: [FileMenuComponent, NewDrawModalComponent],
             imports: [MatIconModule, MatDialogModule, MatGridListModule],
             providers: [{ provide: MatDialog, useValue: dialogSpy }],

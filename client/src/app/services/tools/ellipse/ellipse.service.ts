@@ -38,20 +38,16 @@ export class EllipseService extends ShapeService {
         let yRadius = (path[path.length - 1].y - path[0].y) / 2;
         let origin: [number, number];
         if (xRadius < 0 && yRadius < 0) {
-            // Go right-up
             yRadius = Math.abs(yRadius);
             xRadius = Math.abs(xRadius);
             origin = [path[0].x - xRadius, path[0].y - yRadius];
         } else if (xRadius < 0) {
-            // Go right-down
             xRadius = Math.abs(xRadius);
             origin = [path[0].x - xRadius, path[0].y + yRadius];
         } else if (yRadius < 0) {
-            // Go left-up
             yRadius = Math.abs(yRadius);
             origin = [path[0].x + xRadius, path[0].y - yRadius];
         } else {
-            // Go left-down
             origin = [path[0].x + xRadius, path[0].y + yRadius];
         }
         ctx.lineWidth = this.lineWidth;
@@ -69,16 +65,12 @@ export class EllipseService extends ShapeService {
         const radius = Math.abs(width) < Math.abs(height) ? Math.abs(width) / 2 : Math.abs(height) / 2;
 
         if (width <= 0 && height >= 0) {
-            // go down-left
             origin = [path[0].x - radius, path[0].y + radius];
         } else if (height <= 0 && width >= 0) {
-            // go up-right
             origin = [path[0].x + radius, path[0].y - radius];
         } else if (height <= 0 && width <= 0) {
-            // up-left
             origin = [path[0].x - radius, path[0].y - radius];
         } else {
-            // go down-right
             origin = [path[0].x + radius, path[0].y + radius];
         }
         ctx.lineWidth = this.lineWidth;

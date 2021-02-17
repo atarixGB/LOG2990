@@ -4,7 +4,6 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { EditorComponent } from './editor.component';
 //tslint:disable
 describe('EditorComponent', () => {
-    //let component: EditorComponent;
     let fixture: ComponentFixture<EditorComponent>;
 
     beforeEach(async(() => {
@@ -15,11 +14,6 @@ describe('EditorComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(EditorComponent);
-        //component = fixture.componentInstance;
         fixture.detectChanges();
     });
-
-    // it('should create', () => {
-    //     expect(component).toBeTruthy();
-    // });
 });

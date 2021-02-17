@@ -16,7 +16,6 @@ describe('LineService', () => {
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let drawLineSpy: jasmine.Spy<any>;
     let drawConstrainedLineSpy: jasmine.Spy<any>;
-    // let drawPointSpy: jasmine.Spy<any>;
     let getPositionFromMouseSpy: jasmine.Spy<any>;
 
     let baseCtxSpy: CanvasRenderingContext2D;
@@ -83,7 +82,6 @@ describe('LineService', () => {
         expect(junctionType).toEqual(TypeOfJunctions.Regular);
     });
 
-    // onMouseClick
     it('should set mouseDown property to true on left click', () => {
         service.onMouseClick(leftMouseEvent);
         expect(service.mouseDown).toBeTruthy();
@@ -120,8 +118,6 @@ describe('LineService', () => {
         expect(service['coordinates'].length).toEqual(2);
         expect(calculatePositionSpy).toHaveBeenCalled();
     });
-    //
-    //fonctionne
     it('onMouseClick should drawPoint on base contexte if junction type is Circle', () => {
         const mockMousePosition: Vec2 | undefined = { x: 25, y: 25 };
         service['hasPressedShiftKey'] = true;
@@ -136,7 +132,6 @@ describe('LineService', () => {
         expect(isCircle).toBeFalsy();
     });
 
-    // onMouseDoucleClick
     it('should set mouseDown to false when onMouseDoubleClick is called', () => {
         service.onMouseDoubleClick(leftMouseEvent);
         expect(service.mouseDown).toEqual(false);
@@ -149,7 +144,6 @@ describe('LineService', () => {
         expect(service['pathData'].length).toEqual(0);
     });
 
-    // onMouseUp
     it('should call drawLine on base context when onMouseUp is called and shift key is not pressed', () => {
         const mockMousePosition: Vec2 = { x: 25, y: 25 };
         service['pathData'] = pathData;
@@ -189,7 +183,6 @@ describe('LineService', () => {
         expect(service['pathData'].length).toEqual(0);
     });
 
-    // onMouseMove
     it('should call drawLine on preview context when onMouseMove is called and shift key is not pressed', () => {
         service.mouseDown = true;
         service['hasPressedShiftKey'] = false;
@@ -234,7 +227,6 @@ describe('LineService', () => {
         expect(baseCtxSpy.putImageData).toHaveBeenCalled();
     });
 
-    // handleKeyUp
     it('handleKeyUp should set hasPressedShiftKey to false', () => {
         const shiftKeyEvent = new KeyboardEvent('keyup', {
             key: 'Shift',

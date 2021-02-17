@@ -12,7 +12,6 @@ describe('DrawingComponent', () => {
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
-    // let dialogSpy: jasmine.SpyObj<MatDialogModule>;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
@@ -26,7 +25,6 @@ describe('DrawingComponent', () => {
             'handleHotKeysShortcut',
         ]);
 
-        // (dialogSpy = jasmine.createSpyObj('MatDialogModule', ['open'])),
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
             imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule],

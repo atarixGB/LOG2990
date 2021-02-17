@@ -65,7 +65,6 @@ export abstract class ShapeService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawShape(this.drawingService.baseCtx, this.pathData);
         }
@@ -141,16 +140,12 @@ export abstract class ShapeService extends Tool {
         upperRight = [path[0].x, path[0].y];
 
         if (width <= 0 && height >= 0) {
-            // go down-left
             upperRight = [path[0].x - shortestSide, path[0].y];
         } else if (height <= 0 && width >= 0) {
-            // go up-right
             upperRight = [path[0].x, path[0].y - shortestSide];
         } else if (height <= 0 && width <= 0) {
-            // up-left
             upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
         } else {
-            // go down-right
             upperRight = [path[0].x, path[0].y];
         }
 
