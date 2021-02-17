@@ -7,7 +7,7 @@ import { ToolsListComponent } from './tools-list.component';
 
 // tslint:disable
 
-fdescribe('ToolsListComponent', () => {
+describe('ToolsListComponent', () => {
     let component: ToolsListComponent;
     let fixture: ComponentFixture<ToolsListComponent>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;

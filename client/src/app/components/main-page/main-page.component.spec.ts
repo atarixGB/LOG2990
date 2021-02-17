@@ -33,15 +33,4 @@ describe('MainPageComponent', () => {
         expect(title.innerHTML).toBe('Poly-Dessin');
     });
 
-    // fit('should be redirected to editor page when button clicked', () => {
-    //     fixture.detectChanges();
-    //     const location: Location = TestBed.inject(Location);
-    //     let buttonElements = fixture.debugElement.queryAll(By.css('button')); // fetch all the elements with button tag.
-
-    //     buttonElements[0].nativeElement.click();
-
-    //     fixture.detectChanges();
-    //     expect(location.path()).toBe('/editor'); // check if url is routed to editor page after back button is clicked
-
-    // });
 });
