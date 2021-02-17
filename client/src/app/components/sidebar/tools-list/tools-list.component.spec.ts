@@ -1,26 +1,21 @@
+import { MatIconModule } from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ToolList } from '@app/constants';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { ToolsListComponent } from './tools-list.component';
 
+
 // tslint:disable
-class EventMock {
-    button = 2;
-    preventDefault() {
-        return false;
-    }
-}
-describe('ToolsListComponent', () => {
+
+fdescribe('ToolsListComponent', () => {
     let component: ToolsListComponent;
     let fixture: ComponentFixture<ToolsListComponent>;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
-    let testToolList: ToolList = {
-        Pencil: 0,
-        Eraser: 1,
-        Line: 2,
-        Rectangle: 3,
-        Ellipse: 4,
-    };
+    let pencil:ToolList.Pencil;
+    // let ellipse:ToolList.Ellipse;
+    // let eraser:ToolList.Pencil;
+    // let line:ToolList.Pencil;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -34,11 +29,19 @@ describe('ToolsListComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    fit('should create', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should select tool clicked',()=>{
+    // it('should select tool clicked',()=>{
+    //     const buttonType = new MouseEvent('click', { buttons: 1 });
+    //     
+    //     const operation= spyOn(toolManagerSpy,'switchTool').and.stub()
+    //     expect(operation).toHaveBeenCalledWith(testToolList);
+    // })
 
+    it('should select pencil',()=>{
+        const operation= spyOn(toolManagerSpy,'switchTool').and.stub()
+        expect(operation).toHaveBeenCalledWith(pencil);
     })
 });
