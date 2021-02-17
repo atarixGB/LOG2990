@@ -56,7 +56,7 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void;
+    onMouseUp(event: MouseEvent): void {}
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {

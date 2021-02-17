@@ -20,7 +20,7 @@ fdescribe('EllipseService', () => {
     let mockPathData: Vec2[];
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
 
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
@@ -38,7 +38,7 @@ fdescribe('EllipseService', () => {
             { x: 10, y: 10 },
             { x: 100, y: 100 },
         ];
-
+        service['pathData'] = mockPathData;
         mouseEvent = {
             offsetX: 10,
             offsetY: 10,
@@ -77,7 +77,7 @@ fdescribe('EllipseService', () => {
 
     // to fix
     it('onMouseUp should call drawCircle on base context if Shift key is pressed', () => {
-        service['isShiftShape'] = false;
+        service['isShiftShape'] = true;
         drawCircleSpy = spyOn<any>(service, 'drawCircle').and.stub();
         service.drawShape(baseCtxStub, mockPathData);
         expect(drawCircleSpy).toHaveBeenCalled();
