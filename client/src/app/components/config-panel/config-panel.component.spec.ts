@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConfigPanelComponent } from './config-panel.component';
 
-describe('ConfigPanelComponent', () => {
+fdescribe('ConfigPanelComponent', () => {
     let component: ConfigPanelComponent;
     let fixture: ComponentFixture<ConfigPanelComponent>;
 

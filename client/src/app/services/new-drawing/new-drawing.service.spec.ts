@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { NewDrawingService } from './new-drawing.service';
 
-
-fdescribe('NewDrawingService', () => {
+//tslint:disable
+describe('NewDrawingService', () => {
     let service: NewDrawingService;
 
     beforeEach(() => {
