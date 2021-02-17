@@ -43,13 +43,12 @@ describe('DrawingComponent', () => {
     //     expect(width).toEqual(DEFAULT_WIDTH);
     // });
 
-    // it(" should call the tool's mouse move when receiving a mouse move event", () => {
-    //     const event = {} as MouseEvent;
-    //     const mouseEventSpy = spyOn(toolStub, 'onMouseMove').and.callThrough();
-    //     component.onMouseMove(event);
-    //     expect(mouseEventSpy).toHaveBeenCalled();
-    //     expect(mouseEventSpy).toHaveBeenCalledWith(event);
-    // });
+    it(" should call the tool's manager mouse handle key down when receiving a key down event", () => {
+        const event = {} as KeyboardEvent;
+        component.handleKeyDown(event);
+        expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalled();
+        expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalledWith(event);
+    });
 
     // it(" should call the tool's mouse down when receiving a mouse down event", () => {
     //     const event = {} as MouseEvent;

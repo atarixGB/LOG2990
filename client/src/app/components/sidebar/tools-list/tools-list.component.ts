@@ -12,6 +12,7 @@ export class ToolsListComponent {
     constructor(private toolManagerService: ToolManagerService) {}
 
     onTool(selectedTool: ToolList): void {
+        
         this.toolManagerService.switchTool(selectedTool);
     }
 }

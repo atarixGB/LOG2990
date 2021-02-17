@@ -126,7 +126,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        event.preventDefault();
+        // event.preventDefault();
         if (this.toolManagerService.currentTool != undefined) {
             this.toolManagerService.handleHotKeysShortcut(event);
         }
