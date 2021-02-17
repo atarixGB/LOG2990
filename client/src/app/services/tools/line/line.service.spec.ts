@@ -29,7 +29,6 @@ describe('LineService', () => {
             providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
-        //baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxSpy = jasmine.createSpyObj('CanvasRendringContext', [
             'putImageData',
             'beginPath',
@@ -129,7 +128,7 @@ describe('LineService', () => {
         service['closestPoint'] = mockMousePosition;
         const isCircle = service.junctionType === TypeOfJunctions.Circle;
 
-        // drawPointSpy = spyOn<any>(service, 'drawPoint').and.callThrough();
+        
         let calculatePositionSpy = spyOn<any>(service, 'calculatePosition').and.callThrough();
 
         service.onMouseClick(leftMouseEvent);
@@ -228,7 +227,7 @@ describe('LineService', () => {
     });
 
     it('handleKeyDown should call putImageData when Backspace key is pressed', () => {
-        // service['lastCanvasImages'] = [{} as ImageData];
+       
         let backspaceKeyEvent = { key: 'Backspace', preventDefault(): void {} } as KeyboardEvent;
         service.handleKeyDown(backspaceKeyEvent);
 
