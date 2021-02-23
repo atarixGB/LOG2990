@@ -5,7 +5,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { TypeStyle } from 'src/app/interfaces-enums/type-style';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-
 export abstract class ShapeService extends Tool {
     protected pathData: Vec2[];
     protected fillValue: boolean;
@@ -14,6 +13,7 @@ export abstract class ShapeService extends Tool {
     selectType: TypeStyle;
     protected isShiftShape: boolean;
     protected size: Vec2;
+    protected origin: Vec2;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -64,7 +64,7 @@ export abstract class ShapeService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.previewCtx, this.pathData);
+            this.drawShape(this.drawingService.previewCtx);
         }
     }
 
@@ -72,7 +72,7 @@ export abstract class ShapeService extends Tool {
         if (event.key === 'Shift' && this.mouseDown) {
             this.isShiftShape = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.previewCtx, this.pathData);
+            this.drawShape(this.drawingService.previewCtx);
         }
     }
 
@@ -81,32 +81,14 @@ export abstract class ShapeService extends Tool {
             this.isShiftShape = false;
             if (this.mouseDown) {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                this.drawShape(this.drawingService.previewCtx, this.pathData);
+                this.drawShape(this.drawingService.previewCtx);
             }
         }
     }
 
-    abstract drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void;
+    abstract drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void;
 
-    protected drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], isBorder: boolean): void {
-        ctx.beginPath();
-        const firstPoint = path[0];
-        const finalPoint = path[this.pathData.length - 1];
-        const width = finalPoint.y - firstPoint.y;
-        const length = finalPoint.x - firstPoint.x;
-        ctx.lineWidth = this.lineWidth;
-
-        ctx.rect(firstPoint.x, firstPoint.y, length, width);
-        if (isBorder) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            ctx.rect(firstPoint.x, firstPoint.y, length, width);
-            ctx.stroke();
-        } else {
-            this.updateBorderType(ctx);
-        }
-    }
-
-    protected updateBorderType(ctx: CanvasRenderingContext2D, isBorder?: boolean): void {
+    protected updateBorderType(ctx: CanvasRenderingContext2D): void {
         const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
@@ -148,35 +130,6 @@ export abstract class ShapeService extends Tool {
     abstract upperLeft(path: Vec2[]): void;
     abstract upperRight(path: Vec2[]): void;
     abstract lowerRight(path: Vec2[]): void;
-
-    protected drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[], isBorder: boolean): void {
-        const width = path[path.length - 1].x - path[0].x;
-        const height = path[path.length - 1].y - path[0].y;
-        const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
-
-        let upperRight: [number, number];
-        upperRight = [path[0].x, path[0].y];
-
-        if (width <= 0 && height >= 0) {
-            upperRight = [path[0].x - shortestSide, path[0].y];
-        } else if (height <= 0 && width >= 0) {
-            upperRight = [path[0].x, path[0].y - shortestSide];
-        } else if (height <= 0 && width <= 0) {
-            upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
-        } else {
-            upperRight = [path[0].x, path[0].y];
-        }
-
-        ctx.beginPath();
-        ctx.rect(upperRight[0], upperRight[1], shortestSide, shortestSide);
-        if (isBorder) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            ctx.rect(upperRight[0], upperRight[1], shortestSide, shortestSide);
-            ctx.stroke();
-        } else {
-            this.updateBorderType(ctx);
-        }
-    }
 
     protected computeSize(): void {
         if (this.pathData.length > 0) {
