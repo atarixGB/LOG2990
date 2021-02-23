@@ -31,14 +31,17 @@ export abstract class ShapeService extends Tool {
             case TypeStyle.stroke:
                 this.fillValue = false;
                 this.strokeValue = true;
+                console.log('dans stroke');
                 break;
             case TypeStyle.fill:
                 this.fillValue = true;
                 this.strokeValue = false;
+                console.log('dans fill');
                 break;
             case TypeStyle.strokeFill:
                 this.fillValue = true;
                 this.strokeValue = true;
+                console.log('dans stroke-fill');
                 break;
         }
     }
@@ -56,9 +59,7 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
-        return;
-    }
+    abstract onMouseUp(event: MouseEvent): void;
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
@@ -66,7 +67,7 @@ export abstract class ShapeService extends Tool {
             this.pathData.push(mousePosition);
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.baseCtx, this.pathData);
+            this.drawShape(this.drawingService.previewCtx, this.pathData);
         }
     }
 
@@ -79,34 +80,37 @@ export abstract class ShapeService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        if (event.key === 'Shift' && this.mouseDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (event.key === 'Shift') {
             this.isShiftShape = false;
-            this.drawShape(this.drawingService.previewCtx, this.pathData);
+            if (this.mouseDown) {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawShape(this.drawingService.previewCtx, this.pathData);
+            }
         }
     }
 
     abstract drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void;
 
-    protected drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    protected drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[], isBorder: boolean): void {
         ctx.beginPath();
         const firstPoint = path[0];
         const finalPoint = path[this.pathData.length - 1];
         const width = finalPoint.y - firstPoint.y;
         const length = finalPoint.x - firstPoint.x;
         ctx.lineWidth = this.lineWidth;
-        ctx.rect(firstPoint.x, firstPoint.y, length, width);
-        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
 
-        this.updateBorder(ctx);
-        if (!this.isShiftShape) {
+        ctx.rect(firstPoint.x, firstPoint.y, length, width);
+        if (isBorder) {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.rect(firstPoint.x, firstPoint.y, length, width);
             ctx.stroke();
+            console.log('ici');
+        } else {
+            this.updateBorderType(ctx);
         }
     }
 
-    protected updateBorder(ctx: CanvasRenderingContext2D): void {
+    protected updateBorderType(ctx: CanvasRenderingContext2D, isBorder?: boolean): void {
         const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
@@ -119,7 +123,6 @@ export abstract class ShapeService extends Tool {
         if (this.fillValue) {
             ctx.fillStyle = filling;
             ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
-
             ctx.fill();
             ctx.stroke();
         }
@@ -131,7 +134,7 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    protected drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+    protected drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[], isBorder: boolean): void {
         const width = path[path.length - 1].x - path[0].x;
         const height = path[path.length - 1].y - path[0].y;
         const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
@@ -150,7 +153,13 @@ export abstract class ShapeService extends Tool {
         }
 
         ctx.beginPath();
-        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
-        this.updateBorder(ctx);
+        ctx.rect(upperRight[0], upperRight[1], shortestSide, shortestSide);
+        if (isBorder) {
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            ctx.rect(upperRight[0], upperRight[1], shortestSide, shortestSide);
+            ctx.stroke();
+        } else {
+            this.updateBorderType(ctx);
+        }
     }
 }

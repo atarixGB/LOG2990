@@ -13,8 +13,8 @@ export class RectangleService extends ShapeService {
     }
 
     drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        if (!this.isShiftShape) this.drawRectangle(this.drawingService.previewCtx, this.pathData);
-        else this.drawSquare(this.drawingService.previewCtx, this.pathData);
+        if (!this.isShiftShape) this.drawRectangle(this.drawingService.previewCtx, this.pathData, false);
+        else this.drawSquare(this.drawingService.previewCtx, this.pathData, false);
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -22,9 +22,9 @@ export class RectangleService extends ShapeService {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
         if (!this.isShiftShape) {
-            this.drawRectangle(this.drawingService.baseCtx, this.pathData);
+            this.drawRectangle(this.drawingService.baseCtx, this.pathData, false);
         } else {
-            this.drawSquare(this.drawingService.baseCtx, this.pathData);
+            this.drawSquare(this.drawingService.baseCtx, this.pathData, false);
             this.isShiftShape = false;
         }
 

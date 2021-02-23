@@ -14,11 +14,11 @@ export class EllipseService extends ShapeService {
 
     drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         if (!this.isShiftShape) {
-            this.drawRectangle(this.drawingService.previewCtx, this.pathData);
-            this.drawEllipse(this.drawingService.previewCtx, this.pathData);
+            this.drawRectangle(ctx, this.pathData, true);
+            this.drawEllipse(ctx, this.pathData);
         } else {
-            this.drawCircle(this.drawingService.previewCtx, this.pathData);
-            this.drawSquare(this.drawingService.previewCtx, this.pathData);
+            this.drawSquare(ctx, this.pathData, true);
+            this.drawCircle(ctx, this.pathData);
         }
     }
 
@@ -53,7 +53,7 @@ export class EllipseService extends ShapeService {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
-        this.updateBorder(ctx);
+        this.updateBorderType(ctx);
     }
 
     drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
@@ -76,6 +76,6 @@ export class EllipseService extends ShapeService {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
-        this.updateBorder(ctx);
+        this.updateBorderType(ctx);
     }
 }
