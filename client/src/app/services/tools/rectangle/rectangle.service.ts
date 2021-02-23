@@ -80,7 +80,7 @@ export class RectangleService extends ShapeService {
         }
     }
 
-    setPath(path: Vec2[]) {
+    setPath(path: Vec2[]): void {
         this.pathData = path;
     }
 }
