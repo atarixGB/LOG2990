@@ -30,4 +30,17 @@ export class RectangleService extends ShapeService {
 
         this.clearPath();
     }
+
+    lowerLeft(path: Vec2[]): void {
+        //TODO
+    }
+    upperLeft(path: Vec2[]): void {
+        //TODO
+    }
+    upperRight(path: Vec2[]): void {
+        //TODO
+    }
+    lowerRight(path: Vec2[]): void {
+        //TODO
+    }
 }

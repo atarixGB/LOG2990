@@ -8,11 +8,17 @@ import { ShapeService } from 'src/app/services/tools/shape/shape.service';
     providedIn: 'root',
 })
 export class EllipseService extends ShapeService {
+    private origin: Vec2;
+    private radius: number;
     constructor(protected drawingService: DrawingService, colorManager: ColorManagerService) {
         super(drawingService, colorManager);
     }
 
     drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
+        this.computeSize();
+        this.findMouseDirection();
+        this.radius = Math.abs(this.size.x) < Math.abs(this.size.y) ? Math.abs(this.size.x) / 2 : Math.abs(this.size.y) / 2;
+
         if (!this.isShiftShape) {
             this.drawRectangle(ctx, this.pathData, true);
             this.drawEllipse(ctx, this.pathData);
@@ -34,48 +40,48 @@ export class EllipseService extends ShapeService {
     }
 
     private drawEllipse(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let xRadius = (path[path.length - 1].x - path[0].x) / 2;
-        let yRadius = (path[path.length - 1].y - path[0].y) / 2;
-        let origin: [number, number];
-        if (xRadius < 0 && yRadius < 0) {
-            yRadius = Math.abs(yRadius);
-            xRadius = Math.abs(xRadius);
-            origin = [path[0].x - xRadius, path[0].y - yRadius];
-        } else if (xRadius < 0) {
-            xRadius = Math.abs(xRadius);
-            origin = [path[0].x - xRadius, path[0].y + yRadius];
-        } else if (yRadius < 0) {
-            yRadius = Math.abs(yRadius);
-            origin = [path[0].x + xRadius, path[0].y - yRadius];
-        } else {
-            origin = [path[0].x + xRadius, path[0].y + yRadius];
-        }
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
-        ctx.ellipse(origin[0], origin[1], xRadius, yRadius, 0, 2 * Math.PI, 0);
+        ctx.ellipse(this.origin.x, this.origin.y, this.size.x / 2, this.size.y / 2, 0, 2 * Math.PI, 0);
         this.updateBorderType(ctx);
     }
 
-    drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        let origin: [number, number];
-        origin = [0, 0];
-
-        const width = path[path.length - 1].x - path[0].x;
-        const height = path[path.length - 1].y - path[0].y;
-        const radius = Math.abs(width) < Math.abs(height) ? Math.abs(width) / 2 : Math.abs(height) / 2;
-
-        if (width <= 0 && height >= 0) {
-            origin = [path[0].x - radius, path[0].y + radius];
-        } else if (height <= 0 && width >= 0) {
-            origin = [path[0].x + radius, path[0].y - radius];
-        } else if (height <= 0 && width <= 0) {
-            origin = [path[0].x - radius, path[0].y - radius];
-        } else {
-            origin = [path[0].x + radius, path[0].y + radius];
-        }
+    private drawCircle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
-        ctx.ellipse(origin[0], origin[1], radius, radius, 0, 2 * Math.PI, 0);
+        ctx.ellipse(this.origin.x, this.origin.y, this.radius, this.radius, 0, 2 * Math.PI, 0);
         this.updateBorderType(ctx);
+    }
+
+    lowerLeft(): void {
+        if (this.isShiftShape) {
+            this.origin = { x: this.pathData[0].x - this.radius, y: this.pathData[0].y + this.radius };
+        } else {
+            this.origin = { x: this.pathData[0].x - this.size.x / 2, y: this.pathData[0].y + this.size.y / 2 };
+        }
+    }
+
+    upperRight(): void {
+        if (this.isShiftShape) {
+            this.origin = { x: this.pathData[0].x + this.radius, y: this.pathData[0].y - this.radius };
+        } else {
+            this.origin = { x: this.pathData[0].x + this.size.x / 2, y: this.pathData[0].y - this.size.y / 2 };
+        }
+    }
+
+    upperLeft(): void {
+        if (this.isShiftShape) {
+            this.origin = { x: this.pathData[0].x - this.radius, y: this.pathData[0].y - this.radius };
+        } else {
+            this.origin = { x: this.pathData[0].x - this.size.x / 2, y: this.pathData[0].y - this.size.y / 2 };
+        }
+    }
+
+    lowerRight(): void {
+        if (this.isShiftShape) {
+            this.origin = { x: this.pathData[0].x + this.radius, y: this.pathData[0].y + this.radius };
+        } else {
+            this.origin = { x: this.pathData[0].x + this.size.x / 2, y: this.pathData[0].y + this.size.y / 2 };
+        }
     }
 }

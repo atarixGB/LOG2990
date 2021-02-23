@@ -1,8 +1,7 @@
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_LINE_THICKNESS } from '@app/constants';
+import { DEFAULT_LINE_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { TypeStyle } from 'src/app/interfaces-enums/type-style';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -14,6 +13,7 @@ export abstract class ShapeService extends Tool {
     protected strokeValue: boolean;
     selectType: TypeStyle;
     protected isShiftShape: boolean;
+    protected size: Vec2;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -24,6 +24,7 @@ export abstract class ShapeService extends Tool {
         this.changeType();
         this.clearPath();
         this.isShiftShape = false;
+        this.size = { x: 0, y: 0 };
     }
 
     changeType(): void {
@@ -31,17 +32,14 @@ export abstract class ShapeService extends Tool {
             case TypeStyle.stroke:
                 this.fillValue = false;
                 this.strokeValue = true;
-                console.log('dans stroke');
                 break;
             case TypeStyle.fill:
                 this.fillValue = true;
                 this.strokeValue = false;
-                console.log('dans fill');
                 break;
             case TypeStyle.strokeFill:
                 this.fillValue = true;
                 this.strokeValue = true;
-                console.log('dans stroke-fill');
                 break;
         }
     }
@@ -65,7 +63,6 @@ export abstract class ShapeService extends Tool {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawShape(this.drawingService.previewCtx, this.pathData);
         }
@@ -104,7 +101,6 @@ export abstract class ShapeService extends Tool {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.rect(firstPoint.x, firstPoint.y, length, width);
             ctx.stroke();
-            console.log('ici');
         } else {
             this.updateBorderType(ctx);
         }
@@ -134,6 +130,25 @@ export abstract class ShapeService extends Tool {
         }
     }
 
+    protected findMouseDirection(): void {
+        const width = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
+        const height = this.pathData[this.pathData.length - 1].y - this.pathData[0].y;
+        if (width <= 0 && height >= 0) {
+            this.lowerLeft(this.pathData);
+        } else if (height <= 0 && width >= 0) {
+            this.upperRight(this.pathData);
+        } else if (height <= 0 && width <= 0) {
+            this.upperLeft(this.pathData);
+        } else {
+            this.lowerRight(this.pathData);
+        }
+    }
+
+    abstract lowerLeft(path: Vec2[]): void;
+    abstract upperLeft(path: Vec2[]): void;
+    abstract upperRight(path: Vec2[]): void;
+    abstract lowerRight(path: Vec2[]): void;
+
     protected drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[], isBorder: boolean): void {
         const width = path[path.length - 1].x - path[0].x;
         const height = path[path.length - 1].y - path[0].y;
@@ -160,6 +175,17 @@ export abstract class ShapeService extends Tool {
             ctx.stroke();
         } else {
             this.updateBorderType(ctx);
+        }
+    }
+
+    protected computeSize(): void {
+        if (this.pathData.length > 0) {
+            this.size.x = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
+            this.size.y = this.pathData[this.pathData.length - 1].y - this.pathData[0].y;
+            this.size.x = Math.abs(this.size.x);
+            this.size.y = Math.abs(this.size.y);
+        } else {
+            throw new Error('No data in path');
         }
     }
 }
