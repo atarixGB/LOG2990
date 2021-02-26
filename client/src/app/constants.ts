@@ -12,6 +12,13 @@ export enum MouseButton {
     Forward = 4,
 }
 
+export enum MouseDirection {
+    UPPER_LEFT = 0,
+    UPPER_RIGHT = 1,
+    LOWER_LEFT = 2,
+    LOWER_RIGHT = 3,
+}
+
 export enum TypeOfJunctions {
     Regular = 0,
     Circle = 1,

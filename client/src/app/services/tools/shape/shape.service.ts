@@ -1,12 +1,10 @@
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_LINE_THICKNESS } from '@app/constants';
+import { DEFAULT_LINE_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { MouseButton } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { TypeStyle } from 'src/app/interfaces-enums/type-style';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-
 export abstract class ShapeService extends Tool {
     protected pathData: Vec2[];
     protected fillValue: boolean;
@@ -14,6 +12,8 @@ export abstract class ShapeService extends Tool {
     protected strokeValue: boolean;
     selectType: TypeStyle;
     protected isShiftShape: boolean;
+    protected size: Vec2;
+    protected origin: Vec2;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -24,6 +24,7 @@ export abstract class ShapeService extends Tool {
         this.changeType();
         this.clearPath();
         this.isShiftShape = false;
+        this.size = { x: 0, y: 0 };
     }
 
     changeType(): void {
@@ -56,17 +57,14 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
-        return;
-    }
+    abstract onMouseUp(event: MouseEvent): void;
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.baseCtx, this.pathData);
+            this.drawShape(this.drawingService.previewCtx);
         }
     }
 
@@ -74,39 +72,23 @@ export abstract class ShapeService extends Tool {
         if (event.key === 'Shift' && this.mouseDown) {
             this.isShiftShape = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.previewCtx, this.pathData);
+            this.drawShape(this.drawingService.previewCtx);
         }
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        if (event.key === 'Shift' && this.mouseDown) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        if (event.key === 'Shift') {
             this.isShiftShape = false;
-            this.drawShape(this.drawingService.previewCtx, this.pathData);
+            if (this.mouseDown) {
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.drawShape(this.drawingService.previewCtx);
+            }
         }
     }
 
-    abstract drawShape(ctx: CanvasRenderingContext2D, path: Vec2[]): void;
+    abstract drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void;
 
-    protected drawRectangle(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.beginPath();
-        const firstPoint = path[0];
-        const finalPoint = path[this.pathData.length - 1];
-        const width = finalPoint.y - firstPoint.y;
-        const length = finalPoint.x - firstPoint.x;
-        ctx.lineWidth = this.lineWidth;
-        ctx.rect(firstPoint.x, firstPoint.y, length, width);
-        ctx.lineWidth = DEFAULT_LINE_THICKNESS;
-
-        this.updateBorder(ctx);
-        if (!this.isShiftShape) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            ctx.rect(firstPoint.x, firstPoint.y, length, width);
-            ctx.stroke();
-        }
-    }
-
-    protected updateBorder(ctx: CanvasRenderingContext2D): void {
+    protected updateBorderType(ctx: CanvasRenderingContext2D): void {
         const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
         const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
 
@@ -119,7 +101,6 @@ export abstract class ShapeService extends Tool {
         if (this.fillValue) {
             ctx.fillStyle = filling;
             ctx.strokeStyle = 'rgba(255, 0, 0, 0)';
-
             ctx.fill();
             ctx.stroke();
         }
@@ -131,26 +112,33 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    protected drawSquare(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const width = path[path.length - 1].x - path[0].x;
-        const height = path[path.length - 1].y - path[0].y;
-        const shortestSide = Math.abs(width) < Math.abs(height) ? Math.abs(width) : Math.abs(height);
-
-        let upperRight: [number, number];
-        upperRight = [path[0].x, path[0].y];
-
+    protected findMouseDirection(): void {
+        const width = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
+        const height = this.pathData[this.pathData.length - 1].y - this.pathData[0].y;
         if (width <= 0 && height >= 0) {
-            upperRight = [path[0].x - shortestSide, path[0].y];
+            this.lowerLeft(this.pathData);
         } else if (height <= 0 && width >= 0) {
-            upperRight = [path[0].x, path[0].y - shortestSide];
+            this.upperRight(this.pathData);
         } else if (height <= 0 && width <= 0) {
-            upperRight = [path[0].x - shortestSide, path[0].y - shortestSide];
+            this.upperLeft(this.pathData);
         } else {
-            upperRight = [path[0].x, path[0].y];
+            this.lowerRight(this.pathData);
         }
+    }
 
-        ctx.beginPath();
-        ctx.strokeRect(upperRight[0], upperRight[1], shortestSide, shortestSide);
-        this.updateBorder(ctx);
+    abstract lowerLeft(path: Vec2[]): void;
+    abstract upperLeft(path: Vec2[]): void;
+    abstract upperRight(path: Vec2[]): void;
+    abstract lowerRight(path: Vec2[]): void;
+
+    protected computeSize(): void {
+        if (this.pathData.length > 0) {
+            this.size.x = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
+            this.size.y = this.pathData[this.pathData.length - 1].y - this.pathData[0].y;
+            this.size.x = Math.abs(this.size.x);
+            this.size.y = Math.abs(this.size.y);
+        } else {
+            throw new Error('No data in path');
+        }
     }
 }
