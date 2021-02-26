@@ -18,7 +18,6 @@ export class ToolManagerService {
 
     serviceBindings: Map<ToolList, Tool>;
     keyBindings: Map<string, Tool>;
-    enumBindings: Map<Tool | undefined, ToolList>;
 
     constructor(
         private pencilService: PencilService,
@@ -45,18 +44,17 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService);
+    }
 
-        this.enumBindings = new Map<Tool | undefined, ToolList>();
-        this.enumBindings
-            .set(this.pencilService, ToolList.Pencil)
-            .set(this.ellipseService, ToolList.Ellipse)
-            .set(this.rectangleService, ToolList.Rectangle)
-            .set(this.eraserService, ToolList.Eraser)
-            .set(this.lineService, ToolList.Line);
+    private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {
+        for (const [key, value] of map.entries()) {
+            if (value === searchValue) return key;
+        }
+        return undefined;
     }
 
     handleHotKeysShortcut(event: KeyboardEvent): void {
-        if (this.currentTool != undefined && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
+        if (this.currentTool && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
             this.currentTool.handleKeyDown(event);
         } else {
             this.switchToolWithKeys(event.key);
@@ -66,7 +64,7 @@ export class ToolManagerService {
     switchToolWithKeys(keyShortcut: string): void {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.keyBindings.get(keyShortcut);
-            this.currentToolEnum = this.enumBindings.get(this.currentTool);
+            this.currentToolEnum = this.getEnumFromMap(this.serviceBindings, this.currentTool);
         }
     }
 
@@ -78,40 +76,40 @@ export class ToolManagerService {
     }
 
     onMouseMove(event: MouseEvent, mouseCoord: Vec2): void {
-        if (this.currentTool != undefined) {
+        if (this.currentTool) {
             this.currentTool.mouseCoord = mouseCoord;
             this.currentTool.onMouseMove(event);
         }
     }
 
     onMouseDown(event: MouseEvent, mouseCoord: Vec2): void {
-        if (this.currentTool != undefined) {
+        if (this.currentTool) {
             this.currentTool.mouseCoord = mouseCoord;
             this.currentTool.onMouseDown(event);
         }
     }
 
     onMouseUp(event: MouseEvent, mouseCoord: Vec2): void {
-        if (this.currentTool != undefined) {
+        if (this.currentTool) {
             this.currentTool.mouseCoord = mouseCoord;
             this.currentTool.onMouseUp(event);
         }
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (this.currentTool != undefined) {
+        if (this.currentTool) {
             this.currentTool.onMouseClick(event);
         }
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
-        if (this.currentTool != undefined) {
+        if (this.currentTool) {
             this.currentTool.onMouseDoubleClick(event);
         }
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.currentTool != undefined) {
+        if (this.currentTool) {
             this.currentTool.handleKeyUp(event);
         }
     }
