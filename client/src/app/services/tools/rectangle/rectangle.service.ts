@@ -51,6 +51,7 @@ export class RectangleService extends ShapeService {
     drawRectangle(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void {
         const width = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
         const length = this.pathData[this.pathData.length - 1].y - this.pathData[0].y;
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.rect(this.pathData[0].x, this.pathData[0].y, width, length);
 
@@ -67,7 +68,7 @@ export class RectangleService extends ShapeService {
         this.computeSize();
         this.findMouseDirection();
         this.shortestSide = Math.abs(this.size.x) < Math.abs(this.size.y) ? Math.abs(this.size.x) : Math.abs(this.size.y);
-
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.rect(this.origin.x, this.origin.y, this.shortestSide, this.shortestSide);
 
