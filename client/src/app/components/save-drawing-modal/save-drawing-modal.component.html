@@ -1,28 +1,40 @@
 <div class="modal-container">
-  <h1 mat-dialog-title>Sauvegarde d'un dessin</h1>
-  <div mat-dialog-content>Veuillez choisir un nom de sauvegarde pour votre dessin.</div>
+    <h1 mat-dialog-title>Sauvegarde d'un dessin</h1>
+    <div mat-dialog-content>Veuillez choisir un nom de sauvegarde pour votre dessin.</div>
 
-  <mat-form-field>
-    <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="drawingTitle" [minlength]="this.minLength"
-      [maxlength]="this.maxLength" required />
-    <mat-icon matSuffix [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help</mat-icon>
-  </mat-form-field>
+    <mat-form-field>
+        <input
+            matInput
+            placeholder="Titre du dessin"
+            type="text"
+            [(ngModel)]="drawingTitle"
+            [minlength]="this.minLength"
+            [maxlength]="this.maxLength"
+            required
+        />
+        <mat-icon matSuffix [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help</mat-icon>
+    </mat-form-field>
 
-  <div mat-dialog-content>Vous pouvez attribuer jusqu'à 5 étiquettes. Séparer leur nom avec un espace.
-    Laissez le champ vide si vous ne voulez pas ajouter d'étiquettes.</div>
-  <mat-form-field>
-    <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagsInput" [maxlength]="this.maxLengthTagField" />
-    <mat-icon matSuffix [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help</mat-icon>
-  </mat-form-field>
+    <div mat-dialog-content>
+        Vous pouvez attribuer jusqu'à 5 étiquettes. Cliquer sur l'icône "+" pour en ajouter. Laissez le champ vide si vous ne voulez pas ajouter
+        d'étiquettes.
+    </div>
+    <mat-form-field>
+        <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagsInput" [minlength]="0" [maxlength]="this.maxLength" />
+        <mat-icon matSuffix [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help</mat-icon>
+    </mat-form-field>
+    <button class="add-btn" mat-mini-fab color="primary">
+        <mat-icon>add</mat-icon>
+    </button>
 
-  <div class="infos">
-    <h4 mat-dialog-content>Votre dessin sera sauvegardé avec les informations suivantes :</h4>
-    <p mat-dialog-content><span class="bold">Titre:</span> {{ this.drawingTitle }}</p>
-    <p mat-dialog-content><span class="bold">Étiquette(s):</span> {{ this.tagsInput }}</p>
-  </div>
+    <div class="infos">
+        <h4 mat-dialog-content>Votre dessin sera sauvegardé avec les informations suivantes :</h4>
+        <p mat-dialog-content><span class="bold">Titre:</span> {{ this.drawingTitle }}</p>
+        <p mat-dialog-content><span class="bold">Étiquette(s):</span> {{ this.tagsInput }}</p>
+    </div>
 
-  <div mat-dialog-actions>
-    <button mat-button mat-dialog-close>Annuler</button>
-    <button mat-button (click)="sendServerTest()">Sauvegarder</button>
-  </div>
+    <div mat-dialog-actions>
+        <button mat-button mat-dialog-close>Annuler</button>
+        <button mat-button (click)="sendServerTest()">Sauvegarder</button>
+    </div>
 </div>
