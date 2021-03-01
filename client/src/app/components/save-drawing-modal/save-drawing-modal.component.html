@@ -20,18 +20,21 @@
         d'étiquettes.
     </div>
     <mat-form-field>
-        <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagsInput" [minlength]="0" [maxlength]="this.maxLength" />
+        <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagInput" [minlength]="0" [maxlength]="this.maxLength" />
         <mat-icon matSuffix [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help</mat-icon>
     </mat-form-field>
-    <button class="add-btn" mat-mini-fab color="primary">
+    <button class="add-btn" mat-mini-fab color="primary" (click)="this.addTag()">
         <mat-icon>add</mat-icon>
     </button>
 
     <div class="infos">
         <h4 mat-dialog-content>Votre dessin sera sauvegardé avec les informations suivantes :</h4>
         <p mat-dialog-content><span class="bold">Titre:</span> {{ this.drawingTitle }}</p>
-        <p mat-dialog-content><span class="bold">Étiquette(s):</span> {{ this.tagsInput }}</p>
+        <p mat-dialog-content><span class="bold">Étiquette(s):</span></p>
     </div>
+    <ul>
+        <li *ngFor="let tag of tags">{{ tag }}</li>
+    </ul>
 
     <div mat-dialog-actions>
         <button mat-button mat-dialog-close>Annuler</button>

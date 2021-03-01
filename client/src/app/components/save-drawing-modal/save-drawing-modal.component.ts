@@ -19,7 +19,8 @@ export class SaveDrawingModalComponent {
     minLength: number;
     maxLength: number;
     drawingTitle: string;
-    tagsInput: string;
+    tagInput: string;
+    tags: string[];
 
     constructor(
         public matDialogRef: MatDialogRef<SaveDrawingModalComponent>,
@@ -29,11 +30,12 @@ export class SaveDrawingModalComponent {
         this.minLength = MIN_INPUT_SIZE;
         this.maxLength = MAX_INPUT_SIZE;
         this.drawingTitle = '';
-        this.tagsInput = '';
+        this.tagInput = '';
+        this.tags = [];
     }
 
     sendServerTest(): void {
-        const tags: string[] = this.parseTags(this.tagsInput);
+        const tags: string[] = this.parseTags(this.tagInput);
         const inputAreValid: boolean = this.validateString(this.drawingTitle) && this.validateTags(tags);
 
         if (inputAreValid) {
@@ -48,6 +50,13 @@ export class SaveDrawingModalComponent {
             alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
         } else {
             alert('pas ok'); // temporaire
+        }
+    }
+
+    addTag(): void {
+        if (this.tagInput) {
+            this.tags.push(this.tagInput);
+            this.tagInput = '';
         }
     }
 
