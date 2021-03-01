@@ -25,6 +25,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawModalComponent } from './components/new-draw-modal/new-draw-modal.component';
+import { SaveDrawingModalComponent } from './components/save-drawing-modal/save-drawing-modal.component';
 import { AlphaSliderComponent } from './components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorDisplayerComponent } from './components/sidebar/color-components/color-displayer/color-displayer.component';
 import { ColorPaletteComponent } from './components/sidebar/color-components/color-palette/color-palette.component';
@@ -62,6 +63,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         RectangleConfigComponent,
         ColorPopupComponent,
         ConfigPanelComponent,
+        SaveDrawingModalComponent,
     ],
     imports: [
         BrowserModule,

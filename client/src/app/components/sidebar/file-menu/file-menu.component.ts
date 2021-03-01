@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
+import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { IndexService } from '@app/services/index/index.service';
-import { Message } from '@common/communication/message';
 import { BehaviorSubject } from 'rxjs';
 @Component({
     selector: 'app-file-menu',
@@ -18,12 +18,7 @@ export class FileMenuComponent {
         this.dialog.open(NewDrawModalComponent, {});
     }
 
-    sendServerTest(): void {
-        const message: Message = {
-            title: 'YOO',
-            body: 'Buddy',
-        };
-
-        this.indexService.basicPost(message).subscribe();
+    handleSaveDrawing(): void {
+        this.dialog.open(SaveDrawingModalComponent, {});
     }
 }

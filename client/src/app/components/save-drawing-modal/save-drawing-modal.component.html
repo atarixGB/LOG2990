@@ -1,0 +1,18 @@
+<div class="modal-container">
+    <h1 mat-dialog-title>Sauvegarde d'un dessin</h1>
+    <div mat-dialog-content>Veuillez choisir un nom de sauvegarde pour votre dessin.</div>
+
+    <mat-form-field>
+        <input matInput placeholder="Titre du dessin" type="text" [formControl] required />
+        <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
+    </mat-form-field>
+    <div mat-dialog-content>Laissez le champ vide si vous ne voulez pas attribuer d'étiquettes.</div>
+    <mat-form-field>
+        <input matInput placeholder="Étiquettes" />
+        <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
+    </mat-form-field>
+    <div mat-dialog-actions>
+        <button mat-button mat-dialog-close>Annuler</button>
+        <button mat-button (click)="sendServerTest()">Sauvegarder</button>
+    </div>
+</div>
