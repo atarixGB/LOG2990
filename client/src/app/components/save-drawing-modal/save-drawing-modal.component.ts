@@ -10,15 +10,29 @@ import { Message } from '@common/communication/message';
 })
 export class SaveDrawingModalComponent {
     drawingTitle: string;
+    tagsInput: string;
 
     constructor(public matDialogRef: MatDialogRef<SaveDrawingModalComponent>, private indexService: IndexService) {}
 
     sendServerTest(): void {
         const message: Message = {
-            title: 'YOO',
-            body: 'Buddy',
+            title: this.drawingTitle,
+            labels: this.parseTags(this.tagsInput),
+            body: 'Image data here',
         };
 
         this.indexService.basicPost(message).subscribe();
+        this.matDialogRef.close();
+
+        // TODO: Display message to user to confirm that drawing has been saved.
+    }
+
+    validateDrawingTitle(): boolean {
+        // TODO
+        return false;
+    }
+
+    parseTags(tags: string): string[] {
+        return tags.split(' ');
     }
 }

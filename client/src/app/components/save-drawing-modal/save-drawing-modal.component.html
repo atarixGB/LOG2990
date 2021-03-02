@@ -1,18 +1,25 @@
 <div class="modal-container">
-    <h1 mat-dialog-title>Sauvegarde d'un dessin</h1>
-    <div mat-dialog-content>Veuillez choisir un nom de sauvegarde pour votre dessin.</div>
+  <h1 mat-dialog-title>Sauvegarde d'un dessin</h1>
+  <div mat-dialog-content>Veuillez choisir un nom de sauvegarde pour votre dessin.</div>
 
-    <mat-form-field>
-        <input matInput placeholder="Titre du dessin" type="text" [formControl] required />
-        <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
-    </mat-form-field>
-    <div mat-dialog-content>Laissez le champ vide si vous ne voulez pas attribuer d'étiquettes.</div>
-    <mat-form-field>
-        <input matInput placeholder="Étiquettes" />
-        <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
-    </mat-form-field>
-    <div mat-dialog-actions>
-        <button mat-button mat-dialog-close>Annuler</button>
-        <button mat-button (click)="sendServerTest()">Sauvegarder</button>
-    </div>
+  <mat-form-field>
+    <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]='drawingTitle' required />
+    <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
+  </mat-form-field>
+  <mat-icon
+    matTooltip="Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au maximum de 255 caractères."
+    matTooltipPosition="right">help</mat-icon>
+  <div mat-dialog-content>Vous pouvez lui attribuer des
+    étiquettes (tags). Séparer leur nom avec un espace. Laissez le champ vide si vous ne voulez pas d'étiquettes.</div>
+  <mat-form-field>
+    <input matInput placeholder="Étiquettes" [(ngModel)]="tagsInput" />
+    <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
+  </mat-form-field>
+  <mat-icon
+    matTooltip="Le titre doit contenir seulement des caractères alphanumériques. Les caractères spéciaux sont invalides."
+    matTooltipPosition="right">help</mat-icon>
+  <div mat-dialog-actions>
+    <button mat-button mat-dialog-close>Annuler</button>
+    <button mat-button (click)="sendServerTest()">Sauvegarder</button>
+  </div>
 </div>
