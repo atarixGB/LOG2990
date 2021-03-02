@@ -34,21 +34,10 @@ export class ExportModalComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
-        this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.exportService.baseCtx = this.baseCtx;
+        this.exportService.canvas = this.baseCanvas.nativeElement;
     }
-
-    imagePrevisualization(): void {
-        let image = new Image();
-        image.src = this.exportService.currentDrawing;
-
-        image.onload = () => {
-            this.baseCtx.drawImage(image, 0, 0, 400, 250);
-        }
-    }
-
 
     exportDrawing(): void{
       const image = new Image();

@@ -6,6 +6,8 @@ import { DrawingService } from '../drawing/drawing.service';
   providedIn: 'root'
 })
 export class ExportService {
+  baseCtx: CanvasRenderingContext2D;
+  canvas: HTMLCanvasElement;
 
   imageFormat: ImageFormat;
   filter: Filters;
@@ -15,10 +17,15 @@ export class ExportService {
     this.currentDrawing = '';
   }
 
-  getCanvasDrawing(): void{
-    console.log(this.currentDrawing);
-    
+  imagePrevisualization(): void{
     this.currentDrawing = this.drawingService.canvas.toDataURL();
+
+    let image = new Image();
+    image.src = this.currentDrawing;
+
+    image.onload = () => {
+      this.baseCtx.drawImage(image, 0, 0, 400, 250);
+    }
   }
 
   exportDrawing(): void{
