@@ -24,6 +24,20 @@ export enum TypeOfJunctions {
     Circle = 1,
 }
 
+export enum ImageFormat {
+    Png = 0,
+    Jpg = 1,
+}
+
+export enum Filters {
+    None = 0,
+    Blur = 1,
+    Brightness = 2,
+    Contrast = 3,
+    DropShadow = 4,
+    Grayscale = 5,
+}
+
 export const DEFAULT_LINE_THICKNESS = 1;
 export const MIN_ERASER_THICKNESS = 5;
 

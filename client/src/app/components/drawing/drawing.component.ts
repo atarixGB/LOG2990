@@ -20,6 +20,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
 
+    dragPosition: Vec2 = { x: 0, y: 0 };
+    
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
@@ -28,7 +30,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private subscription: Subscription;
     private positionX: number;
     private positionY: number;
-    dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(
         private drawingService: DrawingService,
