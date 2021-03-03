@@ -7,6 +7,7 @@ export class DateService {
     async currentTime(): Promise<Message> {
         return {
             title: 'Time',
+            labels: [],
             body: new Date().toString(),
         };
     }

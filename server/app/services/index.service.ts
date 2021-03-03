@@ -14,6 +14,7 @@ export class IndexService {
     about(): Message {
         return {
             title: 'Basic Server About Page',
+            labels: [],
             body: 'Try calling helloWorld to get the time',
         };
     }
@@ -24,6 +25,7 @@ export class IndexService {
             .then((timeMessage: Message) => {
                 return {
                     title: 'Hello world',
+                    labels: [],
                     body: 'Time is ' + timeMessage.body,
                 };
             })
@@ -32,6 +34,7 @@ export class IndexService {
 
                 return {
                     title: 'Error',
+                    labels: [],
                     body: error as string,
                 };
             });

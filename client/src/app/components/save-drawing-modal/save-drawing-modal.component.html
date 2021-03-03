@@ -7,16 +7,16 @@
     <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
   </mat-form-field>
   <mat-icon
-    matTooltip="Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au maximum de 255 caractères."
+    matTooltip="Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au maximum de 15 caractères."
     matTooltipPosition="right">help</mat-icon>
   <div mat-dialog-content>Vous pouvez lui attribuer des
-    étiquettes (tags). Séparer leur nom avec un espace. Laissez le champ vide si vous ne voulez pas d'étiquettes.</div>
+    étiquettes. Séparer leur nom avec un espace. Laissez le champ vide si vous ne voulez pas d'étiquettes.</div>
   <mat-form-field>
     <input matInput placeholder="Étiquettes" [(ngModel)]="tagsInput" />
     <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
   </mat-form-field>
   <mat-icon
-    matTooltip="Le titre doit contenir seulement des caractères alphanumériques. Les caractères spéciaux sont invalides."
+    matTooltip="Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au maximum de 15 caractères."
     matTooltipPosition="right">help</mat-icon>
   <div mat-dialog-actions>
     <button mat-button mat-dialog-close>Annuler</button>

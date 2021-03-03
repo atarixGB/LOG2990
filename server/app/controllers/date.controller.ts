@@ -60,6 +60,7 @@ export class DateController {
                 .catch((reason: unknown) => {
                     const errorMessage: Message = {
                         title: 'Error',
+                        labels: [],
                         body: reason as string,
                     };
                     res.json(errorMessage);
