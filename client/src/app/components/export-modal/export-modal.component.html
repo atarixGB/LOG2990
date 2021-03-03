@@ -7,7 +7,7 @@
             matInput
             placeholder="Titre du dessin"
             type="text"
-            [(ngModel)]="drawingTitle"
+            [(ngModel)]="exportService.drawingTitle"
             required
         />
         <mat-icon matSuffix class="help-btn" [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help </mat-icon>
@@ -16,9 +16,9 @@
     <br>
     <mat-form-field>
         <mat-label>Format de l'image</mat-label>
-        <mat-select [(ngModel)]="exportService.imageFormat">
-            <mat-option [value]="ImageFormat.Png">PNG</mat-option>
-            <mat-option [value]="ImageFormat.Jpg">JPG</mat-option>
+        <mat-select [(ngModel)]="exportService.currentImageFormat">
+            <mat-option value="png">PNG</mat-option>
+            <mat-option value="jpeg">JPG</mat-option>
         </mat-select>
     </mat-form-field>
 
@@ -48,7 +48,7 @@
 
     <div mat-dialog-actions>
         <button mat-button mat-dialog-close>Annuler</button>
-        <button mat-button (click)="exportDrawing()">Exporter</button>
+        <button mat-button (click)="exportService.exportDrawing()">Exporter</button>
     </div>
 </div>
 

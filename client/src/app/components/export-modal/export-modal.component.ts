@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FiltersList, ImageFormat } from '@app/constants';
-import { DrawingService } from '@app/services/drawing/drawing.service';
+import { FiltersList } from '@app/constants';
 import { ExportService } from '@app/services/export-image/export.service'
 
 // const MIN_INPUT_SIZE = 1;
@@ -18,9 +17,6 @@ export class ExportModalComponent implements AfterViewInit {
     
     matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
     matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
-    drawingTitle: string;
-
-    ImageFormat: typeof ImageFormat = ImageFormat;
     FiltersList: typeof FiltersList = FiltersList;
 
     private baseCtx: CanvasRenderingContext2D;
@@ -28,23 +24,12 @@ export class ExportModalComponent implements AfterViewInit {
     constructor(
         public matDialogRef: MatDialogRef<ExportModalComponent>,
         public exportService: ExportService,
-        private drawingService: DrawingService,
-    ) {
-        this.drawingTitle = 'dessin';
-    }
+    ) {}
 
     ngAfterViewInit(): void {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.exportService.baseCtx = this.baseCtx;
         this.exportService.canvas = this.baseCanvas.nativeElement;
-    }
-
-    exportDrawing(): void{
-      const image = new Image();
-      image.src = this.drawingService.canvas.toDataURL("image/jpeg");
-      // temp
-      let title = this.drawingTitle;
-      console.log(title);
     }
 }
 

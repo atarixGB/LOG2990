@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ImageFormat, FiltersList } from '@app/constants';
+import { FiltersList } from '@app/constants';
 import { DrawingService } from '../drawing/drawing.service';
 
 @Injectable({
@@ -9,9 +9,10 @@ export class ExportService {
   baseCtx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
 
-  imageFormat: ImageFormat;
-  selectedFilter: FiltersList;
+  drawingTitle: string;
   currentDrawing: string;
+  currentImageFormat: string;
+  selectedFilter: FiltersList;
   currentFilter: string | undefined;
   filterIntensity: number;
   
@@ -20,7 +21,10 @@ export class ExportService {
   private image: HTMLImageElement;
   
   constructor(private drawingService: DrawingService) {
+    this.drawingTitle = 'mon-dessin'
     this.currentDrawing = '';
+    this.currentImageFormat = 'png';
+    this.selectedFilter = FiltersList.None;
     this.currentFilter = 'none';
     this.filterIntensity = 50;
 
@@ -37,7 +41,6 @@ export class ExportService {
   }
 
   imagePrevisualization(): void{
-    this.currentDrawing = this.drawingService.canvas.toDataURL();
     this.currentDrawing = this.drawingService.canvas.toDataURL();
     this.image.src = this.currentDrawing;
 
@@ -72,6 +75,10 @@ export class ExportService {
   }
 
   exportDrawing(): void{
-
+    const link = document.createElement('a');
+    this.image.src = this.canvas.toDataURL("image/" + this.currentImageFormat);
+    link.download = this.drawingTitle + '.' + this.currentImageFormat;
+    link.href = this.image.src;
+    link.click();
   }
 }
