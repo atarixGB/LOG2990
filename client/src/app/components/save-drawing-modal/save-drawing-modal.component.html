@@ -3,21 +3,19 @@
   <div mat-dialog-content>Veuillez choisir un nom de sauvegarde pour votre dessin.</div>
 
   <mat-form-field>
-    <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]='drawingTitle' required />
-    <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
+    <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="drawingTitle" [minlength]="this.minLength"
+      [maxlength]="this.maxLength" required />
   </mat-form-field>
-  <mat-icon
-    matTooltip="Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au maximum de 15 caractères."
-    matTooltipPosition="right">help</mat-icon>
-  <div mat-dialog-content>Vous pouvez lui attribuer des
-    étiquettes. Séparer leur nom avec un espace. Laissez le champ vide si vous ne voulez pas d'étiquettes.</div>
+  <mat-icon [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help
+  </mat-icon>
+  <div mat-dialog-content>Vous pouvez attribuer jusqu'à 5 étiquettes. Séparer leur nom avec un espace pour les ajouter.
+    Laissez le champ
+    vide si vous ne voulez pas d'étiquettes.</div>
   <mat-form-field>
-    <input matInput placeholder="Étiquettes" [(ngModel)]="tagsInput" />
-    <!-- <mat-error *ngIf="email.invalid">{{ getErrorMessage() }}</mat-error> -->
+    <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagsInput" [minlength]="this.minLength"
+      [maxlength]="this.maxLength" />
   </mat-form-field>
-  <mat-icon
-    matTooltip="Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au maximum de 15 caractères."
-    matTooltipPosition="right">help</mat-icon>
+  <mat-icon [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help</mat-icon>
   <div mat-dialog-actions>
     <button mat-button mat-dialog-close>Annuler</button>
     <button mat-button (click)="sendServerTest()">Sauvegarder</button>

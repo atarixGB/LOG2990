@@ -4,14 +4,18 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
 import { Message } from '@common/communication/message';
 
-const MIN_TITLE_LENGTH = 1;
-const MAX_TITLE_LENGTH = 15;
+const MIN_INPUT_SIZE = 1;
+const MAX_INPUT_SIZE = 15;
 @Component({
     selector: 'app-save-drawing-modal',
     templateUrl: './save-drawing-modal.component.html',
     styleUrls: ['./save-drawing-modal.component.scss'],
 })
 export class SaveDrawingModalComponent {
+    matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+    matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères."`;
+    minLength: number;
+    maxLength: number;
     drawingTitle: string;
     tagsInput: string;
 
@@ -20,6 +24,8 @@ export class SaveDrawingModalComponent {
         private indexService: IndexService,
         private drawingService: DrawingService,
     ) {
+        this.minLength = MIN_INPUT_SIZE;
+        this.maxLength = MAX_INPUT_SIZE;
         this.drawingTitle = '';
         this.tagsInput = '';
     }
@@ -37,7 +43,7 @@ export class SaveDrawingModalComponent {
 
             this.indexService.basicPost(message).subscribe();
             this.matDialogRef.close();
-            alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur nos serveurs !'); // temporaire
+            alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
         } else {
             alert('pas ok'); // temporaire
         }
@@ -45,13 +51,13 @@ export class SaveDrawingModalComponent {
 
     private validateString(str: string): boolean {
         const regex = /^[a-zA-Z0-9]+$/i;
-        const isValidSize = str.length >= MIN_TITLE_LENGTH && str.length <= MAX_TITLE_LENGTH;
+        const isValidSize = str.length >= MIN_INPUT_SIZE && str.length <= MAX_INPUT_SIZE;
         const isAlphanumeric = regex.test(str);
         return isValidSize && isAlphanumeric;
     }
 
     private validateTags(tags: string[]): boolean {
-        for (const tag in tags) {
+        for (const tag of tags) {
             console.log(tag, this.validateString(tag));
             if (!this.validateString(tag)) return false;
         }
@@ -59,7 +65,6 @@ export class SaveDrawingModalComponent {
     }
 
     private parseTags(str: string): string[] {
-        console.log('parseTag', str.split(' '));
         return str.split(' ');
     }
 }
