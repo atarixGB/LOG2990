@@ -5,17 +5,22 @@
   <mat-form-field>
     <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="drawingTitle" [minlength]="this.minLength"
       [maxlength]="this.maxLength" required />
+    <mat-icon matSuffix [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help</mat-icon>
   </mat-form-field>
-  <mat-icon [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help
-  </mat-icon>
-  <div mat-dialog-content>Vous pouvez attribuer jusqu'à 5 étiquettes. Séparer leur nom avec un espace pour les ajouter.
-    Laissez le champ
-    vide si vous ne voulez pas d'étiquettes.</div>
+
+  <div mat-dialog-content>Vous pouvez attribuer jusqu'à 5 étiquettes. Séparer leur nom avec un espace.
+    Laissez le champ vide si vous ne voulez pas ajouter d'étiquettes.</div>
   <mat-form-field>
-    <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagsInput" [minlength]="this.minLength"
-      [maxlength]="this.maxLength" />
+    <input matInput placeholder="Étiquettes (optionnel)" [(ngModel)]="tagsInput" [maxlength]="this.maxLengthTagField" />
+    <mat-icon matSuffix [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help</mat-icon>
   </mat-form-field>
-  <mat-icon [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help</mat-icon>
+
+  <div class="infos">
+    <h4 mat-dialog-content>Votre dessin sera sauvegardé avec les informations suivantes :</h4>
+    <p mat-dialog-content><span class="bold">Titre:</span> {{ this.drawingTitle }}</p>
+    <p mat-dialog-content><span class="bold">Étiquette(s):</span> {{ this.tagsInput }}</p>
+  </div>
+
   <div mat-dialog-actions>
     <button mat-button mat-dialog-close>Annuler</button>
     <button mat-button (click)="sendServerTest()">Sauvegarder</button>

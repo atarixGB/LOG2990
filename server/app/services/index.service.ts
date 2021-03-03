@@ -1,5 +1,6 @@
 import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
+import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { DateService } from './date.service';
@@ -10,6 +11,8 @@ export class IndexService {
     constructor(@inject(TYPES.DateService) private dateService: DateService) {
         this.clientMessages = [];
     }
+
+    fs = require('fs');
 
     about(): Message {
         return {
@@ -42,8 +45,17 @@ export class IndexService {
 
     // TODO : ceci est à titre d'exemple. À enlever pour la remise
     storeMessage(message: Message): void {
+        // console.log(message);
+        // this.clientMessages.push(message);
+        this.storeDrawing(message);
+    }
+
+    storeDrawing(message: Message): void {
         console.log(message);
-        this.clientMessages.push(message);
+        fs.writeFile('./saved-drawings/' + message.title + '.txt', message.body, (err) => {
+            if (err) throw err;
+            console.log('Bravo ca marche!');
+        });
     }
 
     getAllMessages(): Message[] {

@@ -105,7 +105,7 @@ export class IndexController {
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
             const message: Message = req.body;
-            this.indexService.storeMessage(message);
+            this.indexService.storeDrawing(message);
             res.sendStatus(HTTP_STATUS_CREATED);
         });
 
