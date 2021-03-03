@@ -9,11 +9,11 @@ export class ExportService {
   baseCtx: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
 
-  
   imageFormat: ImageFormat;
   selectedFilter: FiltersList;
   currentDrawing: string;
   currentFilter: string | undefined;
+  filterIntensity: number;
   
   filtersBindings: Map<FiltersList, string>;
   
@@ -22,6 +22,7 @@ export class ExportService {
   constructor(private drawingService: DrawingService) {
     this.currentDrawing = '';
     this.currentFilter = 'none';
+    this.filterIntensity = 50;
 
     this.image = new Image();
 
@@ -31,7 +32,7 @@ export class ExportService {
             .set(FiltersList.Blur, 'blur')
             .set(FiltersList.Brightness, 'brightness')
             .set(FiltersList.Contrast, 'contrast')
-            .set(FiltersList.DropShadow, 'drop-shadow')
+            .set(FiltersList.Invert, 'invert')
             .set(FiltersList.Grayscale, 'grayscale');
   }
 
@@ -46,8 +47,6 @@ export class ExportService {
   }
 
   applyFilter(): void{
-    console.log("dans applyfilter");
-    
     if(this.filtersBindings.has(this.selectedFilter)){
       this.currentFilter = this.filtersBindings.get(this.selectedFilter);
     }
@@ -61,9 +60,9 @@ export class ExportService {
         if(this.currentFilter === 'none') {
           this.baseCtx.filter = 'none';
         } else if (this.currentFilter === 'blur') {
-          this.baseCtx.filter = this.currentFilter + '(' + 10 + 'px)';
+          this.baseCtx.filter = this.currentFilter + '(' + this.filterIntensity + 'px)';
         } else {
-          this.baseCtx.filter = this.currentFilter + '(' + 50 + '%)';
+          this.baseCtx.filter = this.currentFilter + '(' + this.filterIntensity + '%)';
         }
         
         this.baseCtx.drawImage(this.image, 0, 0, 400, 250);

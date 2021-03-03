@@ -34,7 +34,7 @@ export enum FiltersList {
     Blur = 1,
     Brightness = 2,
     Contrast = 3,
-    DropShadow = 4,
+    Invert = 4,
     Grayscale = 5,
 }
 

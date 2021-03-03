@@ -29,10 +29,18 @@
             <mat-option [value]="FiltersList.Blur">Flou</mat-option>
             <mat-option [value]="FiltersList.Brightness">Luminosité</mat-option>
             <mat-option [value]="FiltersList.Contrast">Contraste</mat-option>
-            <mat-option [value]="FiltersList.DropShadow">Ombrage</mat-option>
+            <mat-option [value]="FiltersList.Invert">Inversion des couleurs</mat-option>
             <mat-option [value]="FiltersList.Grayscale">Nuance de gris</mat-option>
         </mat-select>
     </mat-form-field>
+
+    <div *ngIf="exportService.currentFilter !== 'none'">
+        <h4>Intensité du filtre : {{ exportService.filterIntensity }} </h4>
+        <div>
+            <mat-slider min="0" max="100" tickInterval="1000" thumbLabel (change)="exportService.applyFilter()" [(ngModel)]="exportService.filterIntensity">
+            </mat-slider>
+        </div>
+    </div>
 
     <div class="preview">
         <canvas id="canvas" #baseCanvas [attr.width]="400" [attr.height]="250"> </canvas>
