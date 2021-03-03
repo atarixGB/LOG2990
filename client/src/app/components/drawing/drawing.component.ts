@@ -8,6 +8,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { Subscription } from 'rxjs';
+import { SaveDrawingModalComponent } from '../save-drawing-modal/save-drawing-modal.component';
 
 @Component({
     selector: 'app-drawing',
@@ -129,6 +130,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         if (event.ctrlKey && event.key === 'o') {
             event.preventDefault();
             this.dialog.open(NewDrawModalComponent, {});
+        }
+        if (event.ctrlKey && event.key === 's') {
+            event.preventDefault();
+            this.dialog.open(SaveDrawingModalComponent, {});
         }
     }
 
