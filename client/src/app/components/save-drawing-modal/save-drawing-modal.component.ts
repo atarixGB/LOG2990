@@ -6,6 +6,8 @@ import { Message } from '@common/communication/message';
 
 const MIN_INPUT_SIZE = 1;
 const MAX_INPUT_SIZE = 15;
+const NB_TAGS_ALLOWED = 5;
+
 @Component({
     selector: 'app-save-drawing-modal',
     templateUrl: './save-drawing-modal.component.html',
@@ -13,9 +15,10 @@ const MAX_INPUT_SIZE = 15;
 })
 export class SaveDrawingModalComponent {
     matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
-    matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères."`;
+    matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
     minLength: number;
     maxLength: number;
+    maxLengthTagField: number;
     drawingTitle: string;
     tagsInput: string;
 
@@ -26,6 +29,7 @@ export class SaveDrawingModalComponent {
     ) {
         this.minLength = MIN_INPUT_SIZE;
         this.maxLength = MAX_INPUT_SIZE;
+        this.maxLengthTagField = NB_TAGS_ALLOWED * MAX_INPUT_SIZE + (NB_TAGS_ALLOWED - 1);
         this.drawingTitle = '';
         this.tagsInput = '';
     }
