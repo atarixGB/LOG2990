@@ -29,7 +29,7 @@ export enum ImageFormat {
     Jpg = 1,
 }
 
-export enum Filters {
+export enum FiltersList {
     None = 0,
     Blur = 1,
     Brightness = 2,

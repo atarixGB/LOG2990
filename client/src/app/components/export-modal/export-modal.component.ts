@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { Filters, ImageFormat } from '@app/constants';
+import { FiltersList, ImageFormat } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service'
 
@@ -21,7 +21,7 @@ export class ExportModalComponent implements AfterViewInit {
     drawingTitle: string;
 
     ImageFormat: typeof ImageFormat = ImageFormat;
-    Filters: typeof Filters = Filters;
+    FiltersList: typeof FiltersList = FiltersList;
 
     private baseCtx: CanvasRenderingContext2D;
 
@@ -45,7 +45,6 @@ export class ExportModalComponent implements AfterViewInit {
       // temp
       let title = this.drawingTitle;
       console.log(title);
-      
     }
 }
 

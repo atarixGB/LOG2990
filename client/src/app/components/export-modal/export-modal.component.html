@@ -24,13 +24,13 @@
 
     <mat-form-field class=filters-container>
         <mat-label>Filtres</mat-label>
-        <mat-select [(ngModel)]="exportService.filter">
-            <mat-option [value]="Filters.None">Aucun</mat-option>
-            <mat-option [value]="Filters.Blur">Flou</mat-option>
-            <mat-option [value]="Filters.Brightness">Luminosité</mat-option>
-            <mat-option [value]="Filters.Contrast">Contraste</mat-option>
-            <mat-option [value]="Filters.DropShadow">Ombrage</mat-option>
-            <mat-option [value]="Filters.Grayscale">Nuance de gris</mat-option>
+        <mat-select [(ngModel)]="exportService.selectedFilter" (selectionChange)="exportService.applyFilter()">
+            <mat-option [value]="FiltersList.None">Aucun</mat-option>
+            <mat-option [value]="FiltersList.Blur">Flou</mat-option>
+            <mat-option [value]="FiltersList.Brightness">Luminosité</mat-option>
+            <mat-option [value]="FiltersList.Contrast">Contraste</mat-option>
+            <mat-option [value]="FiltersList.DropShadow">Ombrage</mat-option>
+            <mat-option [value]="FiltersList.Grayscale">Nuance de gris</mat-option>
         </mat-select>
     </mat-form-field>
 
