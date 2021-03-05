@@ -58,7 +58,7 @@ export class SaveDrawingModalComponent {
     }
 
     addTag(): void {
-        if (this.tagInput && this.validateNumberOfTags() && this.validateString(this.tagInput)) {
+        if (this.tagInput && this.validateNumberOfTags() && this.validateString(this.tagInput) && !this.validateTagDuplicate()) {
             const trimmedTag: string = this.tagInput.trim();
             this.tags.push(trimmedTag);
             this.tagInput = '';
@@ -78,6 +78,13 @@ export class SaveDrawingModalComponent {
 
     isStringEmpty(str: string): boolean {
         return str === '';
+    }
+
+    validateTagDuplicate(): boolean {
+        for (let t in this.tags) {
+            if (this.tags[t] === this.tagInput) return true;
+        }
+        return false;
     }
 
     private validateNumberOfTags(): boolean {

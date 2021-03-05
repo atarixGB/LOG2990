@@ -126,8 +126,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        console.log('premier if');
-
         // if (event.ctrlKey && event.key === 'o') {
         //     event.preventDefault();
         //     if (this.dialog.openDialogs.length === 0) {

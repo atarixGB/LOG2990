@@ -37,6 +37,7 @@
     <div class="warning-msg" *ngIf="!this.validateString(tagInput) && !isStringEmpty(tagInput)">
         Le nom de l'étiquette <span class="underline">ne doit pas</span> comporter de caractères spéciaux ni d'espaces.
     </div>
+    <div class="warning-msg" *ngIf="validateTagDuplicate()">L'étiquette a déjà été ajoutée!</div>
 
     <div class="infos">
         <h4 class="bold" mat-dialog-content>Votre dessin sera sauvegardé avec les informations suivantes :</h4>
@@ -53,7 +54,7 @@
     </div>
 
     <div mat-dialog-actions>
-    <button mat-button mat-dialog-close>Annuler</button>
-    <button mat-button (click)="sendToServer()">Sauvegarder</button>
-  </div>
+        <button mat-button mat-dialog-close>Annuler</button>
+        <button mat-button (click)="sendToServer()">Sauvegarder</button>
+    </div>
 </div>
