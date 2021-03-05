@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { RectangleService } from './rectangle.service';
 
 // tslint:disable
@@ -11,7 +10,6 @@ fdescribe('RectangleService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let mouseEvent: MouseEvent;
-    let ellipseService: EllipseService;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -19,18 +17,12 @@ fdescribe('RectangleService', () => {
     let drawSquareSpy: jasmine.Spy<any>;
     let mockPathData: Vec2[];
 
-    class EllipseStub {
-        drawEllipse() {
-            service.drawRectangle(previewCtxStub, true);
-        }
-    }
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: EllipseService, useClass: EllipseStub },
             ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
@@ -41,8 +33,7 @@ fdescribe('RectangleService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
-        drawSquareSpy = spyOn<any>(service, 'drawSquare');
-
+        
         mockPathData = [
             { x: 10, y: 10 },
             { x: 100, y: 100 },
@@ -68,7 +59,8 @@ fdescribe('RectangleService', () => {
 
     it('drawShape should call drawSquare is isShiftShape is true', () => {
         service['isShiftShape'] = true;
-        service.drawShape(previewCtxStub, true);
+        drawSquareSpy = spyOn<any>(service, 'drawSquare');
+        service.drawShape(previewCtxStub, false);
         expect(drawSquareSpy).toHaveBeenCalled();
     });
 
@@ -91,6 +83,7 @@ fdescribe('RectangleService', () => {
 
     it('onMouseUp should call drawSquare if isShiftShape is true', () => {
         service['isShiftShape'] = true;
+        drawSquareSpy = spyOn<any>(service,'drawSquare');
         service.onMouseUp(mouseEvent);
         expect(drawSquareSpy).toHaveBeenCalled();
     });
@@ -141,10 +134,31 @@ fdescribe('RectangleService', () => {
         expect(service['origin']).toEqual({ x: 2, y: 2 });
     });
 
-    it('should draw a rectangle as a border shape', () => {
-        ellipseService.drawShape(previewCtxStub, true);
+    it("should draw a square border with shortest x", () => {
+        spyOn<any>(service, 'computeSize').and.callFake,() =>{
+            service['size'] = {x:10,y:30};
+        };
+        service.drawSquare(previewCtxStub,true);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-        expect(previewCtxStub.rect).toHaveBeenCalled();
-        expect(previewCtxStub.stroke).toHaveBeenCalled();
+    });
+
+    it("should draw a square border with shortest y", () => {
+        spyOn<any>(service, 'computeSize').and.callFake,() =>{
+            service['size'] = {x:50,y:30};
+        };
+        service.drawSquare(previewCtxStub,true);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+
+    it('should draw a rectangle as a border shape', () => {
+        service.drawRectangle(previewCtxStub,true);
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    });
+
+    it('setPath should be the one in parameter',()=>{
+        let newPath = [{x:0,y:0}, {x:1,y:1}];
+        service.setPath(newPath);
+        expect(service['pathData']).toEqual(newPath);
     });
 });
