@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from './rectangle.service';
 
 // tslint:disable
-fdescribe('RectangleService', () => {
+describe('RectangleService', () => {
     let service: RectangleService;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -17,13 +17,10 @@ fdescribe('RectangleService', () => {
     let drawSquareSpy: jasmine.Spy<any>;
     let mockPathData: Vec2[];
 
-
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
         TestBed.configureTestingModule({
-            providers: [
-                { provide: DrawingService, useValue: drawServiceSpy },
-            ],
+            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -33,7 +30,7 @@ fdescribe('RectangleService', () => {
         service['drawingService'].baseCtx = baseCtxStub; // Jasmine doesnt copy properties with underlying data
         service['drawingService'].previewCtx = previewCtxStub;
         service['drawingService'].canvas = canvasTestHelper.canvas;
-        
+
         mockPathData = [
             { x: 10, y: 10 },
             { x: 100, y: 100 },
@@ -83,7 +80,7 @@ fdescribe('RectangleService', () => {
 
     it('onMouseUp should call drawSquare if isShiftShape is true', () => {
         service['isShiftShape'] = true;
-        drawSquareSpy = spyOn<any>(service,'drawSquare');
+        drawSquareSpy = spyOn<any>(service, 'drawSquare');
         service.onMouseUp(mouseEvent);
         expect(drawSquareSpy).toHaveBeenCalled();
     });
@@ -134,31 +131,39 @@ fdescribe('RectangleService', () => {
         expect(service['origin']).toEqual({ x: 2, y: 2 });
     });
 
-    it("should draw a square border with shortest x", () => {
-        spyOn<any>(service, 'computeSize').and.callFake,() =>{
-            service['size'] = {x:10,y:30};
-        };
-        service.drawSquare(previewCtxStub,true);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    it('should draw a square border with shortest x', () => {
+        spyOn<any>(service, 'computeSize').and.stub();
+        service['size'] = { x: 10, y: 30 };
+        service.drawSquare(previewCtxStub, true);
+        expect(service['size']).toEqual({ x: 10, y: 30 });
+        expect(service['shortestSide']).toBe(10);
     });
 
-    it("should draw a square border with shortest y", () => {
-        spyOn<any>(service, 'computeSize').and.callFake,() =>{
-            service['size'] = {x:50,y:30};
-        };
-        service.drawSquare(previewCtxStub,true);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    it('should draw a square border with shortest y', () => {
+        spyOn<any>(service, 'computeSize').and.stub();
+        service['size'] = { x: 50, y: 30 };
+        service.drawSquare(previewCtxStub, true);
+        expect(service['size']).toEqual({ x: 50, y: 30 });
+        expect(service['shortestSide']).toBe(30);
     });
-
 
     it('should draw a rectangle as a border shape', () => {
-        service.drawRectangle(previewCtxStub,true);
+        service.drawRectangle(previewCtxStub, true);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
-    it('setPath should be the one in parameter',()=>{
-        let newPath = [{x:0,y:0}, {x:1,y:1}];
+    it('setPath should be the one in parameter', () => {
+        let newPath = [
+            { x: 0, y: 0 },
+            { x: 1, y: 1 },
+        ];
         service.setPath(newPath);
         expect(service['pathData']).toEqual(newPath);
+    });
+
+    it('create a square that is not a shapeBorder', () => {
+        let updateBorderSpy = spyOn<any>(service, 'updateBorderType');
+        service.drawSquare(previewCtxStub, false);
+        expect(updateBorderSpy).toHaveBeenCalled();
     });
 });
