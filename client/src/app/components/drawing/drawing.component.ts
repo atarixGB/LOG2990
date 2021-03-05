@@ -126,14 +126,28 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.handleHotKeysShortcut(event);
-        if (event.ctrlKey && event.key === 'o') {
-            event.preventDefault();
-            this.dialog.open(NewDrawModalComponent, {});
-        }
-        if (event.ctrlKey && event.key === 's') {
-            event.preventDefault();
-            this.dialog.open(SaveDrawingModalComponent, {});
+        console.log('premier if');
+
+        // if (event.ctrlKey && event.key === 'o') {
+        //     event.preventDefault();
+        //     if (this.dialog.openDialogs.length === 0) {
+        //         this.dialog.open(NewDrawModalComponent, {});
+        //     }
+        //     return;
+        // }
+        // if (event.ctrlKey && event.key === 's') {
+        //     event.preventDefault();
+        //     if (this.dialog.openDialogs.length === 0) {
+        //         this.dialog.open(SaveDrawingModalComponent, {});
+        //     }
+        //     return;
+        // }
+
+        this.modalHandler(event, NewDrawModalComponent, 'o');
+        this.modalHandler(event, SaveDrawingModalComponent, 's');
+
+        if (this.dialog.open.length < 1) {
+            this.toolManagerService.handleHotKeysShortcut(event);
         }
     }
 
@@ -186,5 +200,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    private modalHandler(event: KeyboardEvent, component: any, key: string): void {
+        if (event.ctrlKey && event.key === key) {
+            event.preventDefault();
+            if (this.dialog.openDialogs.length === 0) {
+                this.dialog.open(component, {});
+            }
+            return;
+        }
     }
 }
