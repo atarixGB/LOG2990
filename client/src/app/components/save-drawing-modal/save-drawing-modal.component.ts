@@ -6,7 +6,7 @@ import { Message } from '@common/communication/message';
 
 const MIN_INPUT_SIZE = 1;
 const MAX_INPUT_SIZE = 15;
-// const NB_TAGS_ALLOWED = 5;
+const NB_TAGS_ALLOWED = 5;
 
 @Component({
     selector: 'app-save-drawing-modal',
@@ -35,13 +35,12 @@ export class SaveDrawingModalComponent {
     }
 
     sendServerTest(): void {
-        const tags: string[] = this.parseTags(this.tagInput);
-        const inputAreValid: boolean = this.validateString(this.drawingTitle) && this.validateTags(tags);
+        const titleIsValid: boolean = this.validateString(this.drawingTitle);
 
-        if (inputAreValid) {
+        if (titleIsValid) {
             const message: Message = {
                 title: this.drawingTitle,
-                labels: tags,
+                labels: this.tags,
                 body: this.drawingService.canvas.toDataURL(),
             };
 
@@ -54,35 +53,26 @@ export class SaveDrawingModalComponent {
     }
 
     addTag(): void {
-        if (this.tagInput) {
-            let trimmedTag: string = this.tagInput.trim();
+        if (this.tagInput && this.validateNumberOfTags() && this.validateString(this.tagInput)) {
+            const trimmedTag: string = this.tagInput.trim();
             this.tags.push(trimmedTag);
             this.tagInput = '';
         }
     }
 
-    removeTag(tag: string) {
-        this.tags = this.tags.filter((currentTag) => {
-            currentTag !== tag;
-        });
+    removeTag(tag: string): void {
+        this.tags = this.tags.filter((current) => current !== tag);
     }
 
     private validateString(str: string): boolean {
-        const regex = /^[a-zA-Z0-9]+$/i;
-        const isValidSize = str.length >= MIN_INPUT_SIZE && str.length <= MAX_INPUT_SIZE;
+        const regex = /^[a-z0-9]+$/i;
         const isAlphanumeric = regex.test(str);
+        const isValidSize = str.length >= MIN_INPUT_SIZE && str.length <= MAX_INPUT_SIZE;
         return isValidSize && isAlphanumeric;
     }
 
-    private validateTags(tags: string[]): boolean {
-        for (const tag of tags) {
-            console.log(tag, this.validateString(tag));
-            if (!this.validateString(tag)) return false;
-        }
-        return true;
-    }
-
-    private parseTags(str: string): string[] {
-        return str.split(' ');
+    private validateNumberOfTags(): boolean {
+        const size = this.tags.length;
+        return size >= 0 && size < NB_TAGS_ALLOWED;
     }
 }

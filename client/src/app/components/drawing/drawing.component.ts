@@ -3,12 +3,12 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, 
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
+import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { Subscription } from 'rxjs';
-import { SaveDrawingModalComponent } from '../save-drawing-modal/save-drawing-modal.component';
 
 @Component({
     selector: 'app-drawing',

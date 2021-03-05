@@ -13,5 +13,31 @@
 }
 
 .add-btn {
-    margin-left: 15px;
+    // margin-left: 10px;
+    color: rgb(2, 187, 2);
+}
+
+.remove-btn {
+    color: rgb(255, 87, 87);
+}
+
+.help-btn {
+    cursor: help;
+}
+
+.inline-icon {
+    font-size: 20px;
+}
+
+li {
+    list-style: none;
+    display: inline-block;
+    background-color: rgb(230, 230, 230);
+    border-radius: 10px;
+    margin: 5px;
+    padding: 0 5px 0 15px;
+}
+
+li:hover {
+    background-color: rgb(182, 182, 182);
 }
