@@ -60,7 +60,7 @@ describe('EllipseService', () => {
         service['isShiftShape'] = false;
         drawRectangleSpy = spyOn<any>(service, 'drawRectangle').and.stub();
         drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub();
-        service.drawShape(previewCtxStub, mockPathData);
+        service.drawShape(previewCtxStub, false);
         expect(drawRectangleSpy).toHaveBeenCalled();
         expect(drawEllipseSpy).toHaveBeenCalled();
     });
@@ -69,7 +69,7 @@ describe('EllipseService', () => {
         service['isShiftShape'] = true;
         drawSquareSpy = spyOn<any>(service, 'drawSquare').and.stub();
         drawCircleSpy = spyOn<any>(service, 'drawCircle').and.stub();
-        service.drawShape(previewCtxStub, mockPathData);
+        service.drawShape(previewCtxStub, false);
         expect(drawSquareSpy).toHaveBeenCalled();
         expect(drawCircleSpy).toHaveBeenCalled();
     });
@@ -106,12 +106,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 4, y: 6 },
-            { x: 0, y: 0 },
-        ];
+        // let path = [
+        //     { x: 4, y: 6 },
+        //     { x: 0, y: 0 },
+        // ];
 
-        service['drawEllipse'](baseCtxSpy, path);
+        service['drawEllipse'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -128,12 +128,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 4, y: 6 },
-            { x: 0, y: 10 },
-        ];
+        // let path = [
+        //     { x: 4, y: 6 },
+        //     { x: 0, y: 10 },
+        // ];
 
-        service['drawEllipse'](baseCtxSpy, path);
+        service['drawEllipse'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -150,12 +150,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 6, y: 4 },
-            { x: 10, y: 0 },
-        ];
+        // let path = [
+        //     { x: 6, y: 4 },
+        //     { x: 10, y: 0 },
+        // ];
 
-        service['drawEllipse'](baseCtxSpy, path);
+        service['drawEllipse'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -172,12 +172,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 0, y: 0 },
-            { x: 4, y: 4 },
-        ];
+        // let path = [
+        //     { x: 0, y: 0 },
+        //     { x: 4, y: 4 },
+        // ];
 
-        service['drawEllipse'](baseCtxSpy, path);
+        service['drawEllipse'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedXradius, expectedYradius, 0, rest, 0);
@@ -193,12 +193,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 2, y: 0 },
-            { x: 0, y: 4 },
-        ];
+        // let path = [
+        //     { x: 2, y: 0 },
+        //     { x: 0, y: 4 },
+        // ];
 
-        service['drawCircle'](baseCtxSpy, path);
+        service['drawCircle'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
@@ -214,12 +214,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 0, y: 2 },
-            { x: 4, y: 0 },
-        ];
+        // let path = [
+        //     { x: 0, y: 2 },
+        //     { x: 4, y: 0 },
+        // ];
 
-        service['drawCircle'](baseCtxSpy, path);
+        service['drawCircle'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
@@ -235,12 +235,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 2, y: 2 },
-            { x: 0, y: 0 },
-        ];
+        // let path = [
+        //     { x: 2, y: 2 },
+        //     { x: 0, y: 0 },
+        // ];
 
-        service['drawCircle'](baseCtxSpy, path);
+        service['drawCircle'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
@@ -256,12 +256,12 @@ describe('EllipseService', () => {
 
         service.lineWidth = expectedWidth;
 
-        let path = [
-            { x: 2, y: 2 },
-            { x: 6, y: 6 },
-        ];
+        // let path = [
+        //     { x: 2, y: 2 },
+        //     { x: 6, y: 6 },
+        // ];
 
-        service['drawCircle'](baseCtxSpy, path);
+        service['drawCircle'](baseCtxSpy);
 
         expect(service.lineWidth).toEqual(expectedWidth);
         expect(baseCtxSpy.ellipse).toHaveBeenCalledWith(expectedOrigin0, expectedOrigin1, expectedRadius, expectedRadius, 0, rest, 0);
