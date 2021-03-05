@@ -64,11 +64,15 @@ export class SaveDrawingModalComponent {
         this.tags = this.tags.filter((current) => current !== tag);
     }
 
-    private validateString(str: string): boolean {
+    validateString(str: string): boolean {
         const regex = /^[a-z0-9]+$/i;
         const isAlphanumeric = regex.test(str);
         const isValidSize = str.length >= MIN_INPUT_SIZE && str.length <= MAX_INPUT_SIZE;
         return isValidSize && isAlphanumeric;
+    }
+
+    isStringEmpty(str: string): boolean {
+        return str === '';
     }
 
     private validateNumberOfTags(): boolean {
