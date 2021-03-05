@@ -6,7 +6,7 @@ import { Message } from '@common/communication/message';
 
 const MIN_INPUT_SIZE = 1;
 const MAX_INPUT_SIZE = 15;
-const NB_TAGS_ALLOWED = 5;
+// const NB_TAGS_ALLOWED = 5;
 
 @Component({
     selector: 'app-save-drawing-modal',
@@ -55,9 +55,16 @@ export class SaveDrawingModalComponent {
 
     addTag(): void {
         if (this.tagInput) {
-            this.tags.push(this.tagInput);
+            let trimmedTag: string = this.tagInput.trim();
+            this.tags.push(trimmedTag);
             this.tagInput = '';
         }
+    }
+
+    removeTag(tag: string) {
+        this.tags = this.tags.filter((currentTag) => {
+            currentTag !== tag;
+        });
     }
 
     private validateString(str: string): boolean {
