@@ -26,7 +26,7 @@ describe('IndexService', () => {
     });
 
     it('should return expected message (HttpClient called once)', () => {
-        const expectedMessage: Message = { body: 'Hello', title: 'World' };
+        const expectedMessage: Message = { body: 'Hello', labels: [], title: 'World' };
 
         // check the content of the mocked call
         service.basicGet().subscribe((response: Message) => {
@@ -41,7 +41,7 @@ describe('IndexService', () => {
     });
 
     it('should not return any message when sending a POST request (HttpClient called once)', () => {
-        const sentMessage: Message = { body: 'Hello', title: 'World' };
+        const sentMessage: Message = { body: 'Hello', labels: [], title: 'World' };
         // subscribe to the mocked call
         // tslint:disable-next-line: no-empty
         service.basicPost(sentMessage).subscribe(() => {}, fail);

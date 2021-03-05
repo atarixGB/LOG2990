@@ -19,8 +19,10 @@ export class SaveDrawingModalComponent {
     minLength: number;
     maxLength: number;
     drawingTitle: string;
+    titleIsValid: boolean;
     tagInput: string;
     tags: string[];
+    message: Message;
 
     constructor(
         public matDialogRef: MatDialogRef<SaveDrawingModalComponent>,
@@ -30,25 +32,28 @@ export class SaveDrawingModalComponent {
         this.minLength = MIN_INPUT_SIZE;
         this.maxLength = MAX_INPUT_SIZE;
         this.drawingTitle = '';
+        this.titleIsValid = false;
         this.tagInput = '';
         this.tags = [];
     }
 
-    sendServerTest(): void {
-        const titleIsValid: boolean = this.validateString(this.drawingTitle);
+    sendToServer(): boolean {
+        this.titleIsValid = this.validateString(this.drawingTitle);
 
-        if (titleIsValid) {
-            const message: Message = {
+        if (this.titleIsValid) {
+            this.message = {
                 title: this.drawingTitle,
                 labels: this.tags,
                 body: this.drawingService.canvas.toDataURL(),
             };
 
-            this.indexService.basicPost(message).subscribe();
+            this.indexService.basicPost(this.message).subscribe();
             this.matDialogRef.close();
             alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
+            return true;
         } else {
             alert('pas ok'); // temporaire
+            return false;
         }
     }
 
