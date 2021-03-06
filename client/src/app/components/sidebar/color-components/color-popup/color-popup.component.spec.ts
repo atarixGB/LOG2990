@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FIRSTCOLORTEST } from '@app/constants';
+import { FIRSTCOLORTEST,PRIMARYCOLORINITIAL } from '@app/constants';
 import { AlphaSliderComponent } from 'src/app/components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorPaletteComponent } from 'src/app/components/sidebar/color-components/color-palette/color-palette.component';
 import { ColorSliderComponent } from 'src/app/components/sidebar/color-components/color-slider/color-slider.component';
@@ -50,7 +50,7 @@ describe('ColorPopupComponent', () => {
     it('should update hex', () => {
         const a = spyOn(colorManagerSpy, 'updateWithHex').and.stub();
         component.updateHex();
-        expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, 'ff', '0', '0');
+        expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, PRIMARYCOLORINITIAL);
     });
     it('should update history when clicked left', () => {
         const buttonType = new MouseEvent('click', { buttons: 1 });
