@@ -81,7 +81,7 @@ export class SaveDrawingModalComponent {
     }
 
     validateTagDuplicate(): boolean {
-        for (let t in this.tags) {
+        for (const t in this.tags) {
             if (this.tags[t] === this.tagInput) return true;
         }
         return false;
