@@ -10,7 +10,7 @@ import { IndexService } from '@app/services/index/index.service';
 import { SaveDrawingModalComponent } from './save-drawing-modal.component';
 
 // tslint:disable
-describe('SaveDrawingModalComponent', () => {
+fdescribe('SaveDrawingModalComponent', () => {
     let component: SaveDrawingModalComponent;
     let fixture: ComponentFixture<SaveDrawingModalComponent>;
     let indexServiceSpy: jasmine.SpyObj<any>;
@@ -81,4 +81,11 @@ describe('SaveDrawingModalComponent', () => {
     //     expect(indexServiceSpy.basicPost).toHaveBeenCalled();
     //     expect(mockDialogRef.close).toHaveBeenCalled();
     // });
+
+    it('validateTagDuplicate should return true if tag is duplicate', () => {
+        component.tags = ['tag1', 'tag2', 'tag3'];
+        component.tagInput = 'tag3';
+        component.validateTagDuplicate();
+        expect(component.validateTagDuplicate).toBeTruthy();
+    });
 });
