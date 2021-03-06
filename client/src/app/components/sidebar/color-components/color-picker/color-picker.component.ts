@@ -43,7 +43,7 @@ export class ColorPickerComponent implements OnInit {
         event.preventDefault();
     }
 
-    private colorPicker(coord: Vec2, colorOrder: ColorOrder, primary: string): void {
+    private pickPixelColor(coord: Vec2, colorOrder: ColorOrder, primary: string): void {
         this.arrayColorPixel = this.context.getImageData(coord.x, coord.y, 1, 1).data;
         if (this.arrayColorPixel) {
             this.colorManager.updatePixelColor(colorOrder, this.arrayColorPixel);
@@ -55,10 +55,10 @@ export class ColorPickerComponent implements OnInit {
         this.coord = { x: event.offsetX, y: event.offsetY };
         if (event.button === 0) {
             // Left button clicked
-            this.colorPicker(this.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
+            this.pickPixelColor(this.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
         } else if (event.button === 2) {
             // Right button clicked
-            this.colorPicker(this.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
+            this.pickPixelColor(this.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
         }
     }
 }
