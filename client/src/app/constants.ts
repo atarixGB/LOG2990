@@ -3,7 +3,6 @@ import { RGBA } from '@app/interfaces-enums/rgba';
 // Canvas constants
 
 export const MIN_SIZE = 250;
-
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -36,6 +35,7 @@ export enum ToolList {
     Line = 2,
     Rectangle = 3,
     Ellipse = 4,
+    Spray =5,
 }
 
 export const mouseEventLClick = {
@@ -88,3 +88,14 @@ export const COLOR_WIN_WIDTH = '500px';
 
 export const WORKING_AREA_WIDTH = '85vw';
 export const WORKING_AREA_LENGHT = '100vh';
+
+// constants for spray service
+export const SPRAY_DENSITY = 40;
+export const MIN_SPRAY_WIDTH = 5;
+export const MIN_SPRAY_DOT_WIDTH = 1;
+export const MAX_SPRAY_DOT_WIDTH = 20;
+export const MIN_SPRAY_FREQUENCY = 10;
+export const MAX_SPRAY_FREQUENCY = 50;
+export const ONE_SECOND = 1000;
+
+export const TWO_DECIMAL_MULTIPLIER = 100;

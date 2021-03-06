@@ -1,3 +1,4 @@
+import { SprayService } from '@app/services/tools/spray/spray.service';
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -25,6 +26,7 @@ export class ToolManagerService {
         private eraserService: EraserService,
         private ellipseService: EllipseService,
         private rectangleService: RectangleService,
+        private sprayService:SprayService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
@@ -35,7 +37,8 @@ export class ToolManagerService {
             .set(ToolList.Ellipse, this.ellipseService)
             .set(ToolList.Rectangle, this.rectangleService)
             .set(ToolList.Eraser, this.eraserService)
-            .set(ToolList.Line, this.lineService);
+            .set(ToolList.Line, this.lineService)
+            .set(ToolList.Spray, this.sprayService);
 
         this.keyBindings = new Map<string, Tool>();
         this.keyBindings
