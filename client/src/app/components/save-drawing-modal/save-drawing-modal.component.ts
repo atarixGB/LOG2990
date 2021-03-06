@@ -52,7 +52,7 @@ export class SaveDrawingModalComponent {
             alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
             return true;
         } else {
-            alert('pas ok'); // temporaire
+            alert('Il y a une erreur avec les entrées. Veuillez revérifier le titre ou les étiquettes :)'); // temporaire
             return false;
         }
     }
