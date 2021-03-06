@@ -2,9 +2,8 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { RectangleService } from '../rectangle/rectangle.service';
-import { EllipseService } from './ellipse.service';
-
+import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
+import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 //tslint:disable
 describe('EllipseService', () => {
     let service: EllipseService;
