@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { COLOR_POSITION } from '@app/constants';
+
 import { Vec2 } from 'src/app/classes/vec2';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { EventListeners } from 'src/app/interfaces-enums/event-listeners';
@@ -40,7 +40,7 @@ export class ColorPickerComponent implements OnInit {
         event.preventDefault();
     }
 
-    private pickPixelColor(coord: Vec2, colorOrder: ColorOrder, primary: string): void {
+    private pickPixelColor(coord: Vec2, colorOrder: ColorOrder): void {
         this.arrayColorPixel = this.context.getImageData(coord.x, coord.y, 1, 1).data;
         if (this.arrayColorPixel) {
             this.colorManager.updatePixelColor(colorOrder, this.arrayColorPixel);
@@ -51,9 +51,9 @@ export class ColorPickerComponent implements OnInit {
         event.preventDefault();
         this.coord = { x: event.offsetX, y: event.offsetY };
         if (event.button === 0) {
-            this.pickPixelColor(this.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
+            this.pickPixelColor(this.coord, ColorOrder.primaryColor);
         } else if (event.button === 2) {
-            this.pickPixelColor(this.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
+            this.pickPixelColor(this.coord, ColorOrder.secondaryColor);
         }
     }
 }
