@@ -1,5 +1,3 @@
-// this service is responsible of the storage of our 10 selected colors
-// it will also handle the conversion from hex code to RGB
 import { Injectable } from '@angular/core';
 import { COLOR_HISTORY, COLOR_ORDER, HEX_BASE, HEX_VALIDATOR, MAX_DEC_RANGE, OPACITY_POS_ALPHA } from '@app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';

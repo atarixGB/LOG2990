@@ -29,7 +29,6 @@ export class ColorPickerComponent implements OnInit {
         this.eventListeners.mouseDown = ($event) => this.onMouseDown($event);
         this.eventListeners.contextMenu = ($event) => this.onContextMenu($event);
         this.eventListeners.changedMouseDown = true;
-        // this.eventListeners.changedContextMenu = true;
     }
 
     private onContextMenu(event: MouseEvent): boolean {
@@ -38,8 +37,6 @@ export class ColorPickerComponent implements OnInit {
     }
 
     private updateContextMenu(event: MouseEvent): void {
-        // preventDefault indicates that if the event is not treated explicitly,
-        // its default action should not be considered
         event.preventDefault();
     }
 
@@ -54,10 +51,8 @@ export class ColorPickerComponent implements OnInit {
         event.preventDefault();
         this.coord = { x: event.offsetX, y: event.offsetY };
         if (event.button === 0) {
-            // Left button clicked
             this.pickPixelColor(this.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
         } else if (event.button === 2) {
-            // Right button clicked
             this.pickPixelColor(this.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
         }
     }
