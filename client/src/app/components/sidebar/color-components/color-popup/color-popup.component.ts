@@ -30,7 +30,7 @@ export class ColorPopupComponent {
     }
 
     updateHex(): void {
-        this.colorManager.updateWithHex(this.data, this.selectedColor.Hex.Red, this.selectedColor.Hex.Green, this.selectedColor.Hex.Blue);
+        this.colorManager.updateWithHex(this.data, this.selectedColor);
     }
 
     mouseClickOnHistory(event: MouseEvent, colorElement: RGBA): void {

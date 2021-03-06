@@ -68,6 +68,17 @@ export const OPACITY_POS_ALPHA = 3;
 export const HEX_BASE = 16;
 export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
 
+export const PRIMARYCOLORINITIAL: RGBA = {
+    Dec: { Red: 255, Green: 0, Blue: 0, Alpha: 1 },
+    Hex: { Red: 'ff', Green: '0', Blue: '0' },
+    inString: 'rgba(255, 0, 0, 1)',
+};
+export const SECONDARYCOLORINITIAL: RGBA = {
+    Dec: { Red: 0, Green: 255, Blue: 0, Alpha: 1 },
+    Hex: { Red: '0', Green: 'ff', Blue: '0' },
+    inString: 'rgba(0, 255, 0, 1)',
+};
+
 // in the following we find testing constants
 export const FIRST_CASE = 75;
 export const SECOND_AND_THIRD_CASE = 25;
