@@ -1,8 +1,16 @@
 import { Injectable } from '@angular/core';
-import { COLOR_HISTORY, COLOR_ORDER, HEX_BASE, HEX_VALIDATOR, MAX_DEC_RANGE, OPACITY_POS_ALPHA, PRIMARYCOLORINITIAL, SECONDARYCOLORINITIAL } from '@app/constants';
+import {
+    COLOR_HISTORY,
+    COLOR_ORDER,
+    HEX_BASE,
+    HEX_VALIDATOR,
+    MAX_DEC_RANGE,
+    OPACITY_POS_ALPHA,
+    PRIMARYCOLORINITIAL,
+    SECONDARYCOLORINITIAL,
+} from '@app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
-
 
 @Injectable({
     providedIn: 'root',
@@ -10,11 +18,11 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 export class ColorManagerService {
     selectedColor: RGBA[];
     lastColors: RGBA[];
-    
+
     constructor() {
         this.lastColors = new Array<RGBA>();
         this.selectedColor = new Array<RGBA>();
-        let temp = new Array<RGBA>(); 
+        let temp = new Array<RGBA>();
         // let primaryHexInitial:RGBA;
         // let secondaryHexInitial:RGBA;
 
@@ -34,9 +42,9 @@ export class ColorManagerService {
         // secondaryHexInitial.Hex.Red='0';
         // secondaryHexInitial.Hex.Green='ff';
         // secondaryHexInitial.Hex.Blue='0';
-        
-        this.updateWithHex(ColorOrder.PrimaryColor,PRIMARYCOLORINITIAL);
-        this.updateWithHex(ColorOrder.SecondaryColor,SECONDARYCOLORINITIAL);
+
+        this.updateWithHex(ColorOrder.PrimaryColor, PRIMARYCOLORINITIAL);
+        this.updateWithHex(ColorOrder.SecondaryColor, SECONDARYCOLORINITIAL);
     }
 
     private updateColorLasts(colorOrder: ColorOrder, shouldDeleteLast: boolean): void {
@@ -85,7 +93,7 @@ export class ColorManagerService {
         }
     }
 
-    updateWithHex(colorOrder: ColorOrder, colorHex:RGBA): void {
+    updateWithHex(colorOrder: ColorOrder, colorHex: RGBA): void {
         if (HEX_VALIDATOR.test(colorHex.Hex.Red) && HEX_VALIDATOR.test(colorHex.Hex.Green) && HEX_VALIDATOR.test(colorHex.Hex.Blue)) {
             this.selectedColor[colorOrder].Dec.Red = parseInt(colorHex.Hex.Red, 16);
             this.selectedColor[colorOrder].Dec.Green = parseInt(colorHex.Hex.Green, 16);

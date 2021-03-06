@@ -1,3 +1,4 @@
+// tslint:disable
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -11,7 +12,7 @@ import { ColorSliderComponent } from 'src/app/components/sidebar/color-component
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPopupComponent } from './color-popup.component';
-// tslint:disable
+
 describe('ColorPopupComponent', () => {
     let component: ColorPopupComponent;
     let fixture: ComponentFixture<ColorPopupComponent>;
