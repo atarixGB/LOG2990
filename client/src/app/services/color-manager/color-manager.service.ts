@@ -23,8 +23,6 @@ export class ColorManagerService {
         this.lastColors = new Array<RGBA>();
         this.selectedColor = new Array<RGBA>();
         let temp = new Array<RGBA>();
-        // let primaryHexInitial:RGBA;
-        // let secondaryHexInitial:RGBA;
 
         for (let i = 0; i < COLOR_ORDER + COLOR_HISTORY; i++) {
             temp = i < COLOR_ORDER ? this.selectedColor : this.lastColors;
@@ -34,14 +32,6 @@ export class ColorManagerService {
                 inString: 'rgba(0,0,0,1)',
             });
         }
-
-        // primaryHexInitial.Hex.Red='ff';
-        // primaryHexInitial.Hex.Green='0';
-        // primaryHexInitial.Hex.Blue='0';
-
-        // secondaryHexInitial.Hex.Red='0';
-        // secondaryHexInitial.Hex.Green='ff';
-        // secondaryHexInitial.Hex.Blue='0';
 
         this.updateWithHex(ColorOrder.PrimaryColor, PRIMARYCOLORINITIAL);
         this.updateWithHex(ColorOrder.SecondaryColor, SECONDARYCOLORINITIAL);
