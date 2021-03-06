@@ -1,4 +1,5 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { ComponentType } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
@@ -143,6 +144,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
         this.modalHandler(event, NewDrawModalComponent, 'o');
         this.modalHandler(event, SaveDrawingModalComponent, 's');
+        // this.modalHandler(event, ExportModalComponent, 'e');
 
         if (this.dialog.open.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
@@ -200,7 +202,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         return this.canvasSize.y;
     }
 
-    private modalHandler(event: KeyboardEvent, component: any, key: string): void {
+    private modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
         if (event.ctrlKey && event.key === key) {
             event.preventDefault();
             if (this.dialog.openDialogs.length === 0) {
