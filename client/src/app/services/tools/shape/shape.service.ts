@@ -20,7 +20,7 @@ export abstract class ShapeService extends Tool {
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.fillValue = false;
         this.strokeValue = false;
-        this.selectType = TypeStyle.stroke;
+        this.selectType = TypeStyle.Stroke;
         this.changeType();
         this.clearPath();
         this.isShiftShape = false;
@@ -29,15 +29,15 @@ export abstract class ShapeService extends Tool {
 
     changeType(): void {
         switch (this.selectType) {
-            case TypeStyle.stroke:
+            case TypeStyle.Stroke:
                 this.fillValue = false;
                 this.strokeValue = true;
                 break;
-            case TypeStyle.fill:
+            case TypeStyle.Fill:
                 this.fillValue = true;
                 this.strokeValue = false;
                 break;
-            case TypeStyle.strokeFill:
+            case TypeStyle.StrokeFill:
                 this.fillValue = true;
                 this.strokeValue = true;
                 break;
@@ -89,8 +89,8 @@ export abstract class ShapeService extends Tool {
     abstract drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void;
 
     protected updateBorderType(ctx: CanvasRenderingContext2D): void {
-        const filling = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
-        const contouring = this.colorManager.selectedColor[ColorOrder.secondaryColor].inString;
+        const filling = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+        const contouring = this.colorManager.selectedColor[ColorOrder.SecondaryColor].inString;
 
         if (this.strokeValue) {
             ctx.strokeStyle = contouring;

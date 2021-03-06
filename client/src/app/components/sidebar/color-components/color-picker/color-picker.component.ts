@@ -51,9 +51,9 @@ export class ColorPickerComponent implements OnInit {
         event.preventDefault();
         this.coord = { x: event.offsetX, y: event.offsetY };
         if (event.button === 0) {
-            this.pickPixelColor(this.coord, ColorOrder.primaryColor);
+            this.pickPixelColor(this.coord, ColorOrder.PrimaryColor);
         } else if (event.button === 2) {
-            this.pickPixelColor(this.coord, ColorOrder.secondaryColor);
+            this.pickPixelColor(this.coord, ColorOrder.SecondaryColor);
         }
     }
 }

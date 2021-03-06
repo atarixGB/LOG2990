@@ -1,5 +1,5 @@
 export enum TypeStyle {
-    stroke = 'stroke',
-    fill = 'fill',
-    strokeFill = 'strokeFill',
+    Stroke = 'stroke',
+    Fill = 'fill',
+    StrokeFill = 'strokeFill',
 }

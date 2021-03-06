@@ -13,10 +13,10 @@ export enum MouseButton {
 }
 
 export enum MouseDirection {
-    UPPER_LEFT = 0,
-    UPPER_RIGHT = 1,
-    LOWER_LEFT = 2,
-    LOWER_RIGHT = 3,
+    UpperLeft = 0,
+    UpperRight = 1,
+    LowerLeft = 2,
+    LowerRight = 3,
 }
 
 export enum TypeOfJunctions {

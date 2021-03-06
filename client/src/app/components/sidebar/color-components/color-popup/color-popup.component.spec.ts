@@ -27,7 +27,7 @@ describe('ColorPopupComponent', () => {
             declarations: [ColorPopupComponent, ColorPaletteComponent, ColorSliderComponent, AlphaSliderComponent],
             providers: [
                 { provide: MatDialogRef, useValue: mockDialogRef },
-                { provide: MAT_DIALOG_DATA, useValue: ColorOrder.primaryColor },
+                { provide: MAT_DIALOG_DATA, useValue: ColorOrder.PrimaryColor },
                 { provide: ColorManagerService, useValue: colorManagerSpy },
             ],
         }).compileComponents();
@@ -50,21 +50,21 @@ describe('ColorPopupComponent', () => {
     it('should update hex', () => {
         const a = spyOn(colorManagerSpy, 'updateWithHex').and.stub();
         component.updateHex();
-        expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, PRIMARYCOLORINITIAL);
+        expect(a).toHaveBeenCalledWith(ColorOrder.PrimaryColor, PRIMARYCOLORINITIAL);
     });
     it('should update history when clicked left', () => {
         const buttonType = new MouseEvent('click', { buttons: 1 });
         const a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
 
         component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
-        expect(a).toHaveBeenCalledWith(ColorOrder.primaryColor, FIRSTCOLORTEST, false);
+        expect(a).toHaveBeenCalledWith(ColorOrder.PrimaryColor, FIRSTCOLORTEST, false);
     });
     it('should not update history when clicked 3', () => {
         const buttonType = new MouseEvent('click', { buttons: 3 });
         const a = spyOn(colorManagerSpy, 'updateRGBAColor').and.stub();
 
         component.mouseClickOnHistory(buttonType, FIRSTCOLORTEST);
-        expect(a).not.toHaveBeenCalledWith(ColorOrder.secondaryColor, FIRSTCOLORTEST, false);
+        expect(a).not.toHaveBeenCalledWith(ColorOrder.SecondaryColor, FIRSTCOLORTEST, false);
     });
     it('should prevent default action for right click', () => {
         const clickSpy = jasmine.createSpyObj('MouseEvent', ['preventDefault']);

@@ -35,8 +35,8 @@ export class ColorManagerService {
         // secondaryHexInitial.Hex.Green='ff';
         // secondaryHexInitial.Hex.Blue='0';
         
-        this.updateWithHex(ColorOrder.primaryColor,PRIMARYCOLORINITIAL);
-        this.updateWithHex(ColorOrder.secondaryColor,SECONDARYCOLORINITIAL);
+        this.updateWithHex(ColorOrder.PrimaryColor,PRIMARYCOLORINITIAL);
+        this.updateWithHex(ColorOrder.SecondaryColor,SECONDARYCOLORINITIAL);
     }
 
     private updateColorLasts(colorOrder: ColorOrder, shouldDeleteLast: boolean): void {
