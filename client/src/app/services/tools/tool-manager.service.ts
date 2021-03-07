@@ -1,4 +1,3 @@
-import { SprayService } from '@app/services/tools/spray/spray.service';
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -8,6 +7,7 @@ import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 import { RectangleService } from './rectangle/rectangle.service';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 
 @Injectable({
     providedIn: 'root',
@@ -46,7 +46,8 @@ export class ToolManagerService {
             .set('1', this.rectangleService)
             .set('2', this.ellipseService)
             .set('l', this.lineService)
-            .set('e', this.eraserService);
+            .set('e', this.eraserService)
+            .set('a', this.sprayService);
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {

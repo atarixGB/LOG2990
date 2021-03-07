@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { Vec2 } from 'src/app/classes/vec2';
 import {
     MAX_SPRAY_DOT_WIDTH,
@@ -14,6 +13,7 @@ import {
 } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { Spray } from 'src/app/interfaces-enums/spray-properties';
+import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 
 //code inspired by spray methods in http://perfectionkills.com/exploring-canvas-drawing-techniques/
@@ -88,25 +88,25 @@ export class SprayService extends Tool implements OnDestroy {
         }
     }
 
-    drawSpray(ctx: CanvasRenderingContext2D): void {
-        for (let i = this.density; i--; ) {
-            const angle = this.getRandomNumber(0, Math.PI * 2);
-            const radius = this.getRandomNumber(0, this.width);
+    drawSpray(sameSpray: SprayService, ctx: CanvasRenderingContext2D): void {
+        for (let i = sameSpray.density; i--; ) {
+            const angle = sameSpray.getRandomNumber(0, Math.PI * 2);
+            const radius = sameSpray.getRandomNumber(0, sameSpray.width);
             ctx.globalAlpha = Math.random();
-            ctx.strokeStyle = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
-            ctx.fillStyle = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+            ctx.strokeStyle = sameSpray.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+            ctx.fillStyle = sameSpray.colorManager.selectedColor[ColorOrder.primaryColor].inString;
             ctx.beginPath();
             ctx.arc(
-                this.mouseCoord.x + radius * Math.cos(angle),
-                this.mouseCoord.y + radius * Math.sin(angle),
-                this.getRandomNumber(1, this.dotWidth / 2),
+                sameSpray.mouseCoord.x + radius * Math.cos(angle),
+                sameSpray.mouseCoord.y + radius * Math.sin(angle),
+                sameSpray.getRandomNumber(1, sameSpray.dotWidth / 2),
                 0,
                 2 * Math.PI,
             );
             ctx.fill();
         }
-        if (!this.timeoutId) return;
-        this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, ctx);
+        if (!sameSpray.timeoutId) return;
+        sameSpray.timeoutId = setTimeout(sameSpray.drawSpray, ONE_SECOND / sameSpray.sprayFrequency, sameSpray, ctx);
     }
 
     getRandomNumber(min: number, max: number): number {
@@ -135,9 +135,5 @@ export class SprayService extends Tool implements OnDestroy {
             type: 'fill',
             imageData: this.canvasData,
         };
-    }
-
-    restoreSpray(sprayData: Spray): void {
-        this.drawingService.baseCtx.putImageData(sprayData.imageData, 0, 0);
     }
 }
