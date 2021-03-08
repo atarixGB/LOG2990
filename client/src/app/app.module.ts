@@ -23,6 +23,7 @@ import { AppComponent } from './components/app/app.component';
 import { ConfigPanelComponent } from './components/config-panel/config-panel.component';
 import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
+import { ExportModalComponent } from './components/export-modal/export-modal.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawModalComponent } from './components/new-draw-modal/new-draw-modal.component';
 import { AlphaSliderComponent } from './components/sidebar/color-components/alpha-slider/alpha-slider.component';
@@ -39,7 +40,6 @@ import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
-import { ExportModalComponent } from './components/export-modal/export-modal.component';
 @NgModule({
     declarations: [
         AppComponent,

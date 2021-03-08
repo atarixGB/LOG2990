@@ -21,7 +21,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
 
     dragPosition: Vec2 = { x: 0, y: 0 };
-    
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
