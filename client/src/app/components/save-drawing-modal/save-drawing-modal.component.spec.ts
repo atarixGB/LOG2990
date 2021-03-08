@@ -1,4 +1,4 @@
-import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,21 +6,24 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
-import { Message } from '@common/communication/message';
+import { of } from 'rxjs';
 import { SaveDrawingModalComponent } from './save-drawing-modal.component';
-
 // tslint:disable
-fdescribe('SaveDrawingModalComponent', () => {
+describe('SaveDrawingModalComponent', () => {
     let component: SaveDrawingModalComponent;
     let fixture: ComponentFixture<SaveDrawingModalComponent>;
     let indexServiceSpy: jasmine.SpyObj<any>;
-    let indexService: IndexService;
+    let drawingServiceSpy: DrawingService;
     const mockDialogRef = {
         close: jasmine.createSpy('close'),
     };
 
     beforeEach(async(() => {
+        drawingServiceSpy = new DrawingService();
+        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicPost']);
+
         TestBed.configureTestingModule({
             declarations: [SaveDrawingModalComponent],
             imports: [MatIconModule, MatDialogModule, MatInputModule, MatFormFieldModule, FormsModule, BrowserAnimationsModule, MatTooltipModule],
@@ -33,10 +36,12 @@ fdescribe('SaveDrawingModalComponent', () => {
                     provide: IndexService,
                     useValue: indexServiceSpy,
                 },
+                {
+                    provide: DrawingService,
+                    useValue: drawingServiceSpy,
+                },
             ],
         }).compileComponents();
-
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicPost']);
     }));
 
     beforeEach(() => {
@@ -49,7 +54,7 @@ fdescribe('SaveDrawingModalComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('removeTag() should remove tag in tags[] array', () => {
+    it('removeTag should remove tag in tags[] array', () => {
         const tagToRemove: string = 'testTag';
         const expectedValue: string[] = ['tag1', 'tag3'];
         component.tags = ['tag1', 'testTag', 'tag3'];
@@ -58,7 +63,7 @@ fdescribe('SaveDrawingModalComponent', () => {
         expect(component.tags.length).toEqual(expectedValue.length);
     });
 
-    it('addTag() should add tag to tags[] array', () => {
+    it('addTag should add tag to tags[] array', () => {
         const expectedValue: string[] = ['testTag'];
         component.tags = [];
         component.tagInput = 'testTag';
@@ -67,12 +72,33 @@ fdescribe('SaveDrawingModalComponent', () => {
         expect(component.tags.length).toEqual(expectedValue.length);
     });
 
-    it('sendToServer() should return true if drawing title is valid', fakeAsync((message: Message) => {
-        spyOn(indexService, 'basicPost').and.returnValue(indexService['http'].post<void>(indexService['BASE_URL'] + '/send', message));
-        expect(indexService['basicPost']).toHaveBeenCalled();
-    }));
+    it('sendToServer should close matdialog if drawing has been sent', () => {
+        component.drawingTitle = 'validTitle';
+        component.tags = ['blabla'];
 
-    it('validateTagDuplicate() should return true if tag is duplicate', () => {
+        drawingServiceSpy.canvas = document.createElement('canvas');
+        spyOn(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('Mock data url');
+        indexServiceSpy.basicPost.and.returnValue(of(null));
+        spyOn(component, 'validateString').and.returnValue(true);
+
+        component.sendToServer();
+        expect(mockDialogRef.close).toHaveBeenCalled();
+    });
+
+    it('sendToServer should not close matdialog if drawing has not been sent', () => {
+        component.drawingTitle = 'invalid@#$%^';
+        component.tags = ['blabla'];
+
+        drawingServiceSpy.canvas = document.createElement('canvas');
+        spyOn(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('Mock data url');
+        indexServiceSpy.basicPost.and.returnValue(of(null));
+        spyOn(component, 'validateString').and.returnValue(false);
+
+        component.sendToServer();
+        expect(mockDialogRef.close).not.toHaveBeenCalled();
+    });
+
+    it('validateTagDuplicate should return true if tag is duplicate', () => {
         component.tags = ['tag1', 'tag2', 'tag3'];
         component.tagInput = 'tag3';
         component.validateTagDuplicate();
