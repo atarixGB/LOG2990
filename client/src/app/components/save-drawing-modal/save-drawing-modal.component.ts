@@ -38,23 +38,22 @@ export class SaveDrawingModalComponent {
     }
 
     sendToServer(): boolean {
-        this.titleIsValid = this.validateString(this.drawingTitle);
-
-        if (this.titleIsValid) {
+        if (this.validateString(this.drawingTitle)) {
             this.message = {
                 title: this.drawingTitle,
                 labels: this.tags,
                 body: this.drawingService.canvas.toDataURL(),
             };
 
-            this.indexService.basicPost(this.message).subscribe();
-            this.matDialogRef.close();
-            alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
-            return true;
-        } else {
-            alert('Il y a une erreur avec les entrées. Veuillez revérifier le titre ou les étiquettes :)'); // temporaire
-            return false;
+            this.indexService.basicPost(this.message).subscribe(() => {
+                this.matDialogRef.close();
+                alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
+                return true;
+            });
         }
+
+        alert('Il y a une erreur avec les entrées. Veuillez revérifier le titre ou les étiquettes :)'); // temporaire
+        return false;
     }
 
     addTag(): void {

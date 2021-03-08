@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IndexService } from '@app/services/index/index.service';
+import { Message } from '@common/communication/message';
 import { SaveDrawingModalComponent } from './save-drawing-modal.component';
 
 // tslint:disable
@@ -14,6 +15,7 @@ fdescribe('SaveDrawingModalComponent', () => {
     let component: SaveDrawingModalComponent;
     let fixture: ComponentFixture<SaveDrawingModalComponent>;
     let indexServiceSpy: jasmine.SpyObj<any>;
+    let indexService: IndexService;
     const mockDialogRef = {
         close: jasmine.createSpy('close'),
     };
@@ -33,6 +35,7 @@ fdescribe('SaveDrawingModalComponent', () => {
                 },
             ],
         }).compileComponents();
+
         indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicPost']);
     }));
 
@@ -64,25 +67,12 @@ fdescribe('SaveDrawingModalComponent', () => {
         expect(component.tags.length).toEqual(expectedValue.length);
     });
 
-    // it('sendToServer() should send drawing data to server if title is valid', () => {
-    //     const validateStringSpy = spyOn<any>(component, 'validateString').and.callThrough();
-    //     const mockTitle: string = 'TitleTest';
-    //     const mockTags: string[] = ['tag1', 'tag2', 'tag3'];
+    it('sendToServer() should return true if drawing title is valid', fakeAsync((message: Message) => {
+        spyOn(indexService, 'basicPost').and.returnValue(indexService['http'].post<void>(indexService['BASE_URL'] + '/send', message));
+        expect(indexService['basicPost']).toHaveBeenCalled();
+    }));
 
-    //     component.titleIsValid = true;
-    //     component.message = {
-    //         title: mockTitle,
-    //         labels: mockTags,
-    //         body: 'test body',
-    //     };
-    //     component.sendToServer();
-
-    //     expect(validateStringSpy).toHaveBeenCalled();
-    //     expect(indexServiceSpy.basicPost).toHaveBeenCalled();
-    //     expect(mockDialogRef.close).toHaveBeenCalled();
-    // });
-
-    it('validateTagDuplicate should return true if tag is duplicate', () => {
+    it('validateTagDuplicate() should return true if tag is duplicate', () => {
         component.tags = ['tag1', 'tag2', 'tag3'];
         component.tagInput = 'tag3';
         component.validateTagDuplicate();
