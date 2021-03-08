@@ -126,26 +126,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        // if (event.ctrlKey && event.key === 'o') {
-        //     event.preventDefault();
-        //     if (this.dialog.openDialogs.length === 0) {
-        //         this.dialog.open(NewDrawModalComponent, {});
-        //     }
-        //     return;
-        // }
-        // if (event.ctrlKey && event.key === 's') {
-        //     event.preventDefault();
-        //     if (this.dialog.openDialogs.length === 0) {
-        //         this.dialog.open(SaveDrawingModalComponent, {});
-        //     }
-        //     return;
-        // }
-
         this.modalHandler(event, NewDrawModalComponent, 'o');
         this.modalHandler(event, SaveDrawingModalComponent, 's');
         // this.modalHandler(event, ExportModalComponent, 'e');
-
-        if (this.dialog.open.length < 1) {
+        if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
         }
     }
@@ -201,7 +185,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         return this.canvasSize.y;
     }
 
-    private modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
+    modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
+        console.log('modalHandler');
         if (event.ctrlKey && event.key === key) {
             event.preventDefault();
             if (this.dialog.openDialogs.length === 0) {

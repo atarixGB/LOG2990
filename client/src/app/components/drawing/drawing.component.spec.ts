@@ -7,7 +7,7 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
 
 // tslint:disable
-describe('DrawingComponent', () => {
+fdescribe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
@@ -149,12 +149,18 @@ describe('DrawingComponent', () => {
         expect(toolManagerSpy.handleKeyUp).toHaveBeenCalledWith(event);
     });
 
-    it(" should call the tool's manager mouse handle key down when receiving a key down event", () => {
+    it('should call the modalHandler when CTRL + <key> is pressed', () => {
         const event = new KeyboardEvent('keydown', { key: 'o', ctrlKey: true });
+        let handleModalSpy = spyOn<any>(component, 'modalHandler');
         component.handleKeyDown(event);
-        expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalled();
-        expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalledWith(event);
+        expect(handleModalSpy).toHaveBeenCalledTimes(2);
     });
+
+    // it('should call the handleKeyShortcut when a key is pressed and all modals are closed', () => {
+    //     const event = new KeyboardEvent('keydown', { key: 'l' });
+    //     component.handleKeyDown(event);
+    //     expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalled();
+    // });
 
     it('should return canvas width', () => {
         const CANVAS_WIDTH = 10;
