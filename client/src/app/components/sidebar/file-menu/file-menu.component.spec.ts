@@ -7,6 +7,7 @@ import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/sa
 import { IndexService } from '@app/services/index/index.service';
 import { FileMenuComponent } from './file-menu.component';
 
+// tslint:disable
 describe('FileMenuComponent', () => {
     let component: FileMenuComponent;
     let fixture: ComponentFixture<FileMenuComponent>;

@@ -185,8 +185,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         return this.canvasSize.y;
     }
 
-    modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
-        console.log('modalHandler');
+    private modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
         if (event.ctrlKey && event.key === key) {
             event.preventDefault();
             if (this.dialog.openDialogs.length === 0) {
