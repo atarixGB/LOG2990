@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CarouselComponent } from '@app/components/carousel/carousel-modal/carousel.component';
 
@@ -13,5 +13,13 @@ export class MainPageComponent {
     constructor(public dialog: MatDialog) {}
     openCarousel(): void {
         this.dialog.open(CarouselComponent);
+    }
+
+    @HostListener('document:keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.ctrlKey && event.key === 'g') {
+            event.preventDefault();
+            this.dialog.open(CarouselComponent, {});
+        }
     }
 }
