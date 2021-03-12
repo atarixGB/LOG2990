@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SprayService} from '@app/services/tools/spray/spray.service';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 
 @Component({
     selector: 'app-spray-config',

@@ -38,9 +38,9 @@ import { LineConfigComponent } from './components/sidebar/line-config/line-confi
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
-import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { SprayAttributesComponent } from './components/sidebar/spray-attributes/spray-attributes.component';
+import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
+import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 @NgModule({
     declarations: [
         AppComponent,

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SprayConfigComponent } from './spray-config.component';
 
+// tslint:disable
 describe('SprayConfigComponent', () => {
   let component: SprayConfigComponent;
   let fixture: ComponentFixture<SprayConfigComponent>;

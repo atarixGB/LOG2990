@@ -16,7 +16,7 @@ import { Spray } from 'src/app/interfaces-enums/spray-properties';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 
-//code inspired by spray methods in http://perfectionkills.com/exploring-canvas-drawing-techniques/
+// code inspired by spray methods in http://perfectionkills.com/exploring-canvas-drawing-techniques/
 
 @Injectable({
     providedIn: 'root',

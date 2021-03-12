@@ -35,7 +35,7 @@ export enum ToolList {
     Line = 2,
     Rectangle = 3,
     Ellipse = 4,
-    Spray =5,
+    Spray = 5,
 }
 
 export const mouseEventLClick = {
@@ -97,5 +97,4 @@ export const MAX_SPRAY_DOT_WIDTH = 20;
 export const MIN_SPRAY_FREQUENCY = 10;
 export const MAX_SPRAY_FREQUENCY = 50;
 export const ONE_SECOND = 1000;
-
 export const TWO_DECIMAL_MULTIPLIER = 100;
