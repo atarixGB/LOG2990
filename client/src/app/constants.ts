@@ -36,6 +36,7 @@ export enum ToolList {
     Line = 2,
     Rectangle = 3,
     Ellipse = 4,
+    Pipette = 5,
 }
 
 export const mouseEventLClick = {

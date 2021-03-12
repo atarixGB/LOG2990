@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { MouseButton } from '@app/constants';
+import { FIRSTCOLORTEST, MouseButton } from '@app/constants';
 import { RGBA } from '@app/interfaces-enums/rgba';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
@@ -8,7 +8,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
     providedIn: 'root',
 })
 export class PipetteService extends Tool {
-    public colorPixel: RGBA;
+    public colorPixel: RGBA = FIRSTCOLORTEST;
     // public colorPreview : RGBA;
 
     constructor(drawingService: DrawingService) {
