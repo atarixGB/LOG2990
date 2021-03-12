@@ -5,6 +5,7 @@ import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
 import { DateService } from './date.service';
 
+const SAVED_DRAWINGS_PATH = './saved-drawings/';
 @injectable()
 export class IndexService {
     clientMessages: Message[];
@@ -51,10 +52,11 @@ export class IndexService {
     }
 
     storeDrawing(message: Message): void {
-        console.log(message);
-        fs.writeFile('./saved-drawings/' + message.title + '.txt', message.body, (err) => {
-            if (err) throw err;
-            console.log('Bravo ca marche!');
+        const img = message.body;
+        const metadata = img.replace(/^data:image\/\w+;base64,/, '');
+        const dataBuffer = Buffer.from(metadata, 'base64');
+        fs.writeFile(SAVED_DRAWINGS_PATH + message.title + '.png', dataBuffer, (error) => {
+            if (error) throw error;
         });
     }
 
