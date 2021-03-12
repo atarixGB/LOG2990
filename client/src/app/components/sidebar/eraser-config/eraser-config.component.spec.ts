@@ -1,3 +1,5 @@
+import { FormsModule } from '@angular/forms';
+import { MatSliderModule,MatSlider } from '@angular/material/slider';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { EraserConfigComponent } from './eraser-config.component';
 
@@ -7,7 +9,8 @@ describe('PencilConfigComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [EraserConfigComponent],
+            declarations: [EraserConfigComponent,MatSlider],
+            imports:[MatSliderModule,FormsModule],
         }).compileComponents();
     }));
 

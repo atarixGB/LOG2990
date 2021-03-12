@@ -1,5 +1,7 @@
+
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RectangleConfigComponent } from './rectangle-config.component';
+
 
 describe('RectangleConfigComponent', () => {
     let component: RectangleConfigComponent;
@@ -8,6 +10,7 @@ describe('RectangleConfigComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [RectangleConfigComponent],
+            
         }).compileComponents();
     }));
 

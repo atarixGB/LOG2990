@@ -1,5 +1,10 @@
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
+import { MatSlider, MatSliderModule } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { LineConfigComponent } from './line-config.component';
+import { MatOption, MatOptionModule } from '@angular/material/core';
 
 //tslint:disable
 describe('LineConfigComponent', () => {
@@ -8,7 +13,8 @@ describe('LineConfigComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [LineConfigComponent],
+            declarations: [LineConfigComponent,MatSlider,MatSelect,MatOption],
+            imports:[FormsModule,MatSliderModule,MatSelectModule,MatOptionModule,BrowserAnimationsModule]
         }).compileComponents();
     }));
 

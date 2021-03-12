@@ -6,7 +6,7 @@ describe('EllipseConfigComponent', () => {
     let fixture: ComponentFixture<EllipseConfigComponent>;
 
     beforeEach(async(() => {
-        TestBed.configureTestingModule({
+        return TestBed.configureTestingModule({
             declarations: [EllipseConfigComponent],
         }).compileComponents();
     }));
