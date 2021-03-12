@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Message } from '@common/communication/message';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -22,17 +22,26 @@ export class IndexService {
     }
 
     basicPost(message: Message): Observable<Message> {
-        return this.http.post<Message>(this.BASE_URL + '/send', message).pipe(
-            catchError((error) => {
-                console.error('in service ERROR post method', error);
-                throw error; // throw error back to component
+        const httpOptions = {
+            headers: new HttpHeaders({
+                Accept: 'text/plain, */*',
+                'Content-Type': 'application/json',
             }),
-        );
+            responseType: 'text' as 'json', // to allow plain text response
+        };
+
+        return this.http.post<Message>(this.BASE_URL + '/send', message, httpOptions).pipe(catchError(this.handleError));
     }
 
-    // private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-    //     return (error: Error): Observable<T> => {
-    //         return of(result as T);
-    //     };
-    // }
+    private handleError(error: HttpErrorResponse): Observable<Message> {
+        let errorMessage = 'Erreur inconnue';
+        if (error.error instanceof ErrorEvent) {
+            // Client-side
+            errorMessage = `Erreur client: ${error.error.message}`;
+        } else {
+            // Server-side
+            errorMessage = `\nStatus ${error.status}\n${error.message}`;
+        }
+        return throwError(errorMessage); // throw back to client
+    }
 }
