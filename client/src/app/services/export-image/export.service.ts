@@ -13,6 +13,8 @@ const DEFAULT_INTENSITY = 50;
 export class ExportService {
     baseCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
+    resizeWidth: number;
+    resizeHeight: number;
 
     drawingTitle: string;
     currentDrawing: string;
@@ -48,13 +50,16 @@ export class ExportService {
     imagePrevisualization(): void {
         this.currentDrawing = this.drawingService.canvas.toDataURL();
         this.image.src = this.currentDrawing;
+        this.getResizedCanvas();
 
         this.image.onload = () => {
-            this.baseCtx.drawImage(this.image, PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, PREVIEW_WIDTH, PREVIEW_LENGTH);
+            this.baseCtx.drawImage(this.image, PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, this.resizeWidth, this.resizeHeight);
         };
     }
 
     applyFilter(): void {
+        this.getResizedCanvas();
+
         if (this.filtersBindings.has(this.selectedFilter)) {
             this.currentFilter = this.filtersBindings.get(this.selectedFilter);
         }
@@ -73,7 +78,7 @@ export class ExportService {
                     this.baseCtx.filter = this.currentFilter + '(' + this.filterIntensity + '%)';
                 }
 
-                this.baseCtx.drawImage(this.image, PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, PREVIEW_WIDTH, PREVIEW_LENGTH);
+                this.baseCtx.drawImage(this.image, PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, this.resizeWidth, this.resizeHeight);
             };
         }
     }
@@ -84,5 +89,23 @@ export class ExportService {
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
         link.href = this.image.src;
         link.click();
+    }
+
+    private getResizedCanvas(): void {
+        const ratio: number = this.getCanvasRatio();
+        this.resizeWidth = this.canvas.width;
+        this.resizeHeight = this.resizeWidth / ratio;
+
+        if (this.resizeHeight > this.canvas.height) {
+            this.resizeHeight = this.canvas.height;
+            this.resizeWidth = this.resizeHeight * ratio;
+        }
+    }
+
+    private getCanvasRatio(): number {
+        const width = this.drawingService.baseCtx.canvas.width;
+        const height = this.drawingService.baseCtx.canvas.height;
+        console.log('width' + width, 'height:' + height);
+        return width / height;
     }
 }
