@@ -1,6 +1,6 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Message } from '@common/communication/message';
+import { DrawingData } from '@common/communication/drawing-data';
 import { IndexService } from './index.service';
 
 // tslint: disabled
@@ -25,11 +25,11 @@ describe('IndexService', () => {
         httpMock.verify();
     });
 
-    it('should return expected message (HttpClient called once)', () => {
-        const expectedMessage: Message = { body: 'Hello', labels: [], title: 'World' };
+    it('should return expected DrawingData (HttpClient called once)', () => {
+        const expectedMessage: DrawingData = { body: 'Hello', height: 0, width: 0, labels: [], title: 'World' };
 
-        // check the content of the mocked call
-        service.basicGet().subscribe((response: Message) => {
+        // check the content of the mocked callDrawingData
+        service.basicGet().subscribe((response: DrawingData) => {
             expect(response.title).toEqual(expectedMessage.title, 'Title check');
             expect(response.body).toEqual(expectedMessage.body, 'body check');
         }, fail);
@@ -40,8 +40,8 @@ describe('IndexService', () => {
         req.flush(expectedMessage);
     });
 
-    it('should not return any message when sending a POST request (HttpClient called once)', () => {
-        const sentMessage: Message = { body: 'Hello', labels: [], title: 'World' };
+    it('should not return aDrawingDataage when sending a POST request (HttpClient called once)', () => {
+        const sentMessage: DrawingData = { body: 'Hello', labels: [], height: 0, width: 0, title: 'World' };
         // subscribe to the mocked call
         // tslint:disable-next-line: no-empty
         service.basicPost(sentMessage).subscribe(() => {}, fail);
@@ -53,7 +53,7 @@ describe('IndexService', () => {
     });
 
     it('should handle http error safely', () => {
-        service.basicGet().subscribe((response: Message) => {
+        service.basicGet().subscribe((response: DrawingData) => {
             expect(response).toBeUndefined();
         }, fail);
 

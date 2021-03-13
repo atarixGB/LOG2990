@@ -1,32 +1,40 @@
-import { Message } from '@common/communication/message';
+import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
+const IMAGE_FORMAT = 'png';
+const DATA_ENCODING = 'base64';
+const IMAGE_DATA_PREFIX = /^data:image\/\w+;base64,/;
+
 @injectable()
 export class IndexService {
-    clientMessages: Message[];
+    clientMessages: DrawingData[];
     constructor() {
         this.clientMessages = [];
     }
 
     fs = require('fs');
 
-    about(): Message {
+    about(): DrawingData {
         return {
             title: 'Serveur PolyDessin',
             labels: [],
+            height: 0,
+            width: 0,
             body: "Ce serveur permet de sauvegarder les dessins de l'application PolyDessin dans le format base64",
         };
     }
 
-    async lastDrawing(): Promise<Message> {
+    async lastDrawing(): Promise<DrawingData> {
         return this.getLastMessage()
-            .then((message: Message) => {
+            .then((message: DrawingData) => {
                 return {
                     title: message.title,
                     labels: message.labels,
+                    height: message.height,
+                    width: message.width,
                     body: message.body,
                 };
             })
@@ -36,33 +44,51 @@ export class IndexService {
                 return {
                     title: 'Error',
                     labels: [],
+                    height: 0,
+                    width: 0,
                     body: error as string,
                 };
             });
     }
 
-    // TODO : ceci est à titre d'exemple. À enlever pour la remise
-    storeMessage(message: Message): void {
-        // console.log(message);
-        // this.clientMessages.push(message);
-        this.storeDrawing(message);
-    }
-
-    storeDrawing(message: Message): void {
-        const img = message.body;
-        const metadata = img.replace(/^data:image\/\w+;base64,/, '');
-        const dataBuffer = Buffer.from(metadata, 'base64');
-        fs.writeFile(SAVED_DRAWINGS_PATH + message.title + '.png', dataBuffer, (error) => {
+    storeDrawing(drawingData: DrawingData): void {
+        const dataBuffer = this.parseImageData(drawingData);
+        fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
             if (error) throw error;
-            this.clientMessages.push(message);
+            this.clientMessages.push(drawingData);
         });
     }
 
-    async getLastMessage(): Promise<Message> {
+    async getLastMessage(): Promise<DrawingData> {
         return this.clientMessages[this.clientMessages.length - 1];
     }
 
-    getAllMessages(): Message[] {
+    parseImageData(drawingData: DrawingData): Buffer {
+        const metadata = drawingData.body.replace(IMAGE_DATA_PREFIX, '');
+        const dataBuffer = Buffer.from(metadata, DATA_ENCODING);
+        return dataBuffer;
+    }
+
+    // TEMPORAIRE
+    getAllDrawings(): DrawingData[] {
+        fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
+            if (error) throw error;
+
+            files.forEach((file) => {
+                console.log(file);
+            });
+        });
         return this.clientMessages;
+    }
+
+    validateString(str: string): boolean {
+        const regex = /^[a-z0-9]+$/i;
+        const isAlphanumeric = regex.test(str);
+        const isValidSize = str.length >= 0 && str.length <= 15;
+        return isValidSize && isAlphanumeric;
+    }
+
+    validateRequestBody(body: string): boolean {
+        return IMAGE_DATA_PREFIX.test(body);
     }
 }

@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Message } from '@common/communication/message';
+import { DrawingData } from '@common/communication/drawing-data';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -12,16 +12,11 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    basicGet(): Observable<Message> {
-        return this.http.get<Message>(this.BASE_URL).pipe(
-            catchError((error) => {
-                console.log('in service ERROR get method', error);
-                throw error;
-            }),
-        );
+    basicGet(): Observable<DrawingData> {
+        return this.http.get<DrawingData>(this.BASE_URL);
     }
 
-    basicPost(message: Message): Observable<Message> {
+    basicPost(message: DrawingData): Observable<DrawingData> {
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain, */*',
@@ -30,10 +25,10 @@ export class IndexService {
             responseType: 'text' as 'json', // to allow plain text response
         };
 
-        return this.http.post<Message>(this.BASE_URL + '/send', message, httpOptions).pipe(catchError(this.handleError));
+        return this.http.post<DrawingData>(this.BASE_URL + '/send', message, httpOptions).pipe(catchError(this.handleError));
     }
 
-    private handleError(error: HttpErrorResponse): Observable<Message> {
+    private handleError(error: HttpErrorResponse): Observable<DrawingData> {
         let errorMessage = 'Erreur inconnue';
         if (error.error instanceof ErrorEvent) {
             // Client-side

@@ -1,5 +1,5 @@
 import { TYPES } from '@app/types';
-import { Message } from '@common/communication/message';
+import { DrawingData } from '@common/communication/drawing-data';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 import { IndexService } from '../services/index.service';
@@ -58,7 +58,7 @@ export class IndexController {
          */
         this.router.get('/lastDrawing', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
-            const time: Message = await this.indexService.lastDrawing();
+            const time: DrawingData = await this.indexService.lastDrawing();
             res.json(time);
         });
 
@@ -105,7 +105,7 @@ export class IndexController {
          *         description: Created
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
-            const message: Message = req.body;
+            const message: DrawingData = req.body;
             this.indexService.storeDrawing(message);
             res.sendStatus(HTTP_STATUS_CREATED);
         });
@@ -130,7 +130,7 @@ export class IndexController {
          *             $ref: '#/definitions/Message'
          */
         this.router.get('/all', (req: Request, res: Response, next: NextFunction) => {
-            res.json(this.indexService.getAllMessages());
+            res.json(this.indexService.getAllDrawings());
         });
     }
 }
