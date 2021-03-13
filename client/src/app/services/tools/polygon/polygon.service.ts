@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ToolShape } from '@app/classes/tool-shape';
 import { Vec2 } from '@app/classes/vec2';
+import { DASH_SEGMENT_FIRST, DASH_SEGMENT_SECONDARY, DEFAULT_LINE_THICKNESS, DOUBLE_MATH, MIN_SIDE, TypeStyle } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { DEFAULT_LINE_THICKNESS, DOUBLE_MATH, MIN_SIDE, TypeStyle } from './../../../constants';
 
 @Injectable({
     providedIn: 'root',
@@ -50,7 +50,7 @@ export class PolygonService extends ToolShape {
         this.drawingService.previewCtx.beginPath();
         this.drawingService.previewCtx.strokeStyle = 'black';
         this.drawingService.previewCtx.lineWidth = DEFAULT_LINE_THICKNESS;
-        this.drawingService.previewCtx.setLineDash([1, 3]);
+        this.drawingService.previewCtx.setLineDash([DASH_SEGMENT_FIRST, DASH_SEGMENT_SECONDARY]);
         this.drawingService.previewCtx.ellipse(
             this.pointCircleCenter.x,
             this.pointCircleCenter.y,
@@ -92,7 +92,6 @@ export class PolygonService extends ToolShape {
                 ctx.fill();
                 ctx.closePath();
             } else {
-                ctx.fill();
                 ctx.stroke();
                 ctx.closePath();
             }

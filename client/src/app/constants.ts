@@ -96,6 +96,8 @@ export enum TypeStyle {
     fill = 'fill',
     strokeFill = 'strokeFill',
 }
+export const DASH_SEGMENT_FIRST = 1;
+export const DASH_SEGMENT_SECONDARY = 3;
 export const DOUBLE_MATH = 2;
 // constants for spray service
 export const SPRAY_DENSITY = 40;
