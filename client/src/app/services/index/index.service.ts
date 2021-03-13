@@ -12,11 +12,13 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    basicGet(): Observable<DrawingData> {
-        return this.http.get<DrawingData>(this.BASE_URL + '/all');
+    basicGet(): Observable<DrawingData | string[]> {
+        const url = (this.BASE_URL + '/getAllDrawings') as string;
+        return this.http.get<DrawingData | string[]>(url).pipe(catchError(this.handleError));
     }
 
-    basicPost(message: DrawingData): Observable<DrawingData> {
+    basicPost(message: DrawingData): Observable<DrawingData | string[]> {
+        const url: string = (this.BASE_URL + '/send') as string;
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain, */*',
@@ -25,17 +27,17 @@ export class IndexService {
             responseType: 'text' as 'json', // to allow plain text response
         };
 
-        return this.http.post<DrawingData>(this.BASE_URL + '/send', message, httpOptions).pipe(catchError(this.handleError));
+        return this.http.post<DrawingData | string[]>(url, message, httpOptions).pipe(catchError(this.handleError));
     }
 
-    private handleError(error: HttpErrorResponse): Observable<DrawingData> {
+    private handleError(error: HttpErrorResponse): Observable<DrawingData | string[]> {
         let errorMessage = 'Erreur inconnue';
         if (error.error instanceof ErrorEvent) {
             // Client-side
-            errorMessage = `Erreur client: ${error.error.message}`;
+            errorMessage = `Erreur: ${error.error.message}`;
         } else {
             // Server-side
-            errorMessage = `\nStatus ${error.status}\n${error.message}`;
+            errorMessage = `\Erreur ${error.status}\n${error.message}`;
         }
         return throwError(errorMessage); // throw back to client
     }

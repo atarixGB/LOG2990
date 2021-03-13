@@ -13,8 +13,15 @@ export class SidebarComponent {
     constructor(public toolManagerService: ToolManagerService, public indexService: IndexService) {}
 
     getDrawings(): void {
-        this.indexService.basicGet().subscribe((data) => {
-            console.log(data);
-        });
+        this.indexService.basicGet().subscribe(
+            (data) => {
+                // Do what you want with the data here
+            },
+            (error) => {
+                alert(
+                    `Votre requête pour récupérer le dessin sélectionné n'a pas pu être acheminé vers le serveur de PolyDessin. Veuillez réessayer.\n${error}`,
+                );
+            },
+        );
     }
 }

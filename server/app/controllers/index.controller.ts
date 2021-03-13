@@ -43,7 +43,7 @@ export class IndexController {
          *
          * /api/index/lastDrawing:
          *   get:
-         *     description: Retourne le dernier dessin envoyé sur le serveur
+         *     description: Retourne le dernier dessin envoyé sur le serveur de la session courante
          *     tags:
          *       - Index
          *       - Message
@@ -78,7 +78,6 @@ export class IndexController {
          *           $ref: '#/definitions/Message'
          */
         this.router.get('/about', (req: Request, res: Response, next: NextFunction) => {
-            // Send the request to the service and send the response
             res.json(this.indexService.about());
         });
 
@@ -113,9 +112,9 @@ export class IndexController {
         /**
          * @swagger
          *
-         * /api/index/all:
+         * /api/index/getAllDrawings:
          *   get:
-         *     description: Return all messages
+         *     description: Retourne une liste de toutes les images sauvegardées sur le serveur
          *     tags:
          *       - Index
          *       - Message
@@ -123,14 +122,14 @@ export class IndexController {
          *      - application/json
          *     responses:
          *       200:
-         *         description: messages
          *         schema:
          *           type: array
          *           items:
          *             $ref: '#/definitions/Message'
          */
-        this.router.get('/all', (req: Request, res: Response, next: NextFunction) => {
-            res.json(this.indexService.getAllDrawings());
+        this.router.get('/getAllDrawings', (req: Request, res: Response, next: NextFunction) => {
+            console.log('Mise à jour:', this.indexService.getAllDrawingsPath());
+            res.json(this.indexService.getAllDrawingsPath());
         });
     }
 }
