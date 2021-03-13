@@ -4,11 +4,10 @@
     justify-content: space-between;
     align-items: center;
     min-height: 100vh;
-    height: auto;
-    background-image: linear-gradient(to right, rgb(241, 18, 92), orange, yellow, rgb(57, 253, 57), rgb(0, 225, 255), rgb(192, 151, 221), violet);
-    border: black;
-    border-style: solid;
-    border-width: 10px;
+   
+    background-image: url('/assets/background-picture.jpg');
+    background-size:cover ;
+
 }
 
 .button {
@@ -43,7 +42,8 @@ button[disabled] {
     justify-content: center;
     text-align: center;
     font-family: fantasy;
-    font-size: 60px;
+    font-size: 120px;
+    margin-top: 100px;
 }
 
 .footer-item {

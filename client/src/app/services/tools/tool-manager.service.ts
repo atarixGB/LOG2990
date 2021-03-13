@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
 import { PipetteService } from './pipette/pipette.service';
+import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';
 
 @Injectable({
@@ -27,6 +29,8 @@ export class ToolManagerService {
         private ellipseService: EllipseService,
         private rectangleService: RectangleService,
         private pipetteService: PipetteService,
+        private polygonService: PolygonService,
+        private sprayService: SprayService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
@@ -36,9 +40,11 @@ export class ToolManagerService {
             .set(ToolList.Pencil, this.pencilService)
             .set(ToolList.Ellipse, this.ellipseService)
             .set(ToolList.Rectangle, this.rectangleService)
+            .set(ToolList.Polygon, this.polygonService)
             .set(ToolList.Eraser, this.eraserService)
             .set(ToolList.Line, this.lineService)
-            .set(ToolList.Pipette, this.pipetteService);
+            .set(ToolList.Pipette, this.pipetteService)
+            .set(ToolList.Spray, this.sprayService);
 
         this.keyBindings = new Map<string, Tool>();
         this.keyBindings
@@ -47,7 +53,9 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService)
-            .set('i', this.pipetteService);
+            .set('i', this.pipetteService)
+            .set('3', this.polygonService)
+            .set('a', this.sprayService);
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {

@@ -1,18 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SidebarComponent } from './sidebar.component';
 
-describe('SidebarComponent', () => {
-    let component: SidebarComponent;
-    let fixture: ComponentFixture<SidebarComponent>;
+import { PolygonConfigComponent } from './polygon-config.component';
+
+describe('PolygonConfigComponent', () => {
+    let component: PolygonConfigComponent;
+    let fixture: ComponentFixture<PolygonConfigComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [SidebarComponent],
+            declarations: [PolygonConfigComponent],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(SidebarComponent);
+        fixture = TestBed.createComponent(PolygonConfigComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

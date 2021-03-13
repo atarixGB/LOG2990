@@ -59,6 +59,30 @@
             </button>
         </mat-grid-tile>
 
+        
+        <mat-grid-tile>
+            <button
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Spray }"
+                mat-icon-button
+                matTooltip="Aérosol (A)"
+                matTooltipPosition="above"
+                (click)="onTool(ToolList.Spray)"
+            >
+                <mat-icon>blur_on</mat-icon>
+            </button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <button
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Polygon }"
+                mat-icon-button
+                matTooltip="Polygon (P)"
+                matTooltipPosition="above"
+                (click)="onTool(ToolList.Polygon)"
+            >
+                <mat-icon>change_history</mat-icon>
+            </button>
+        </mat-grid-tile>
+
         <mat-grid-tile>
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Pipette }"
