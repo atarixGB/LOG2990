@@ -1,8 +1,7 @@
-
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RectangleConfigComponent } from './rectangle-config.component';
 
-
+// tslint:disable
 describe('RectangleConfigComponent', () => {
     let component: RectangleConfigComponent;
     let fixture: ComponentFixture<RectangleConfigComponent>;
@@ -10,7 +9,6 @@ describe('RectangleConfigComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [RectangleConfigComponent],
-            
         }).compileComponents();
     }));
 

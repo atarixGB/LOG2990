@@ -1,5 +1,5 @@
-import { FormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { MatSlider } from '@angular/material/slider';
 import { PencilConfigComponent } from './pencil-config.component';
 
@@ -10,7 +10,7 @@ describe('PencilConfigComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [PencilConfigComponent, MatSlider],
-            imports:[FormsModule],
+            imports: [FormsModule],
         }).compileComponents();
     }));
 

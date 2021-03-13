@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { EllipseConfigComponent } from './ellipse-config.component';
 
+// tslint:disable
 describe('EllipseConfigComponent', () => {
     let component: EllipseConfigComponent;
     let fixture: ComponentFixture<EllipseConfigComponent>;
