@@ -71,6 +71,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         PolygonConfigComponent,
         SprayConfigComponent,
         SprayAttributesComponent,
+        CarouselComponent,
     ],
     imports: [
         BrowserModule,
