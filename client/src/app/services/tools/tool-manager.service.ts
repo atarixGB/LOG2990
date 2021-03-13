@@ -7,6 +7,7 @@ import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PencilService } from './pencil/pencil-service';
+import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';
 
 @Injectable({
@@ -26,6 +27,7 @@ export class ToolManagerService {
         private eraserService: EraserService,
         private ellipseService: EllipseService,
         private rectangleService: RectangleService,
+        private polygonService: PolygonService,
         private sprayService: SprayService,
     ) {
         this.currentTool = this.pencilService;
@@ -36,6 +38,7 @@ export class ToolManagerService {
             .set(ToolList.Pencil, this.pencilService)
             .set(ToolList.Ellipse, this.ellipseService)
             .set(ToolList.Rectangle, this.rectangleService)
+            .set(ToolList.Polygon, this.polygonService)
             .set(ToolList.Eraser, this.eraserService)
             .set(ToolList.Line, this.lineService)
             .set(ToolList.Spray, this.sprayService);
@@ -47,6 +50,7 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService)
+            .set('3', this.polygonService)
             .set('a', this.sprayService);
     }
 
