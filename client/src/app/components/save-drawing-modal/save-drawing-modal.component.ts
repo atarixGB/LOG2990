@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
-import { Message } from '@common/communication/message';
+import { DrawingData } from '@common/communication/drawing-data';
 
 const MIN_INPUT_SIZE = 1;
 const MAX_INPUT_SIZE = 15;
 const NB_TAGS_ALLOWED = 5;
+const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
 
 @Component({
     selector: 'app-save-drawing-modal',
@@ -22,7 +23,7 @@ export class SaveDrawingModalComponent {
     titleIsValid: boolean;
     tagInput: string;
     tags: string[];
-    message: Message;
+    message: DrawingData;
 
     constructor(
         public matDialogRef: MatDialogRef<SaveDrawingModalComponent>,
@@ -45,6 +46,8 @@ export class SaveDrawingModalComponent {
         this.message = {
             title: this.drawingTitle,
             labels: this.tags,
+            height: this.drawingService.baseCtx.canvas.height,
+            width: this.drawingService.baseCtx.canvas.width,
             body: this.drawingService.canvas.toDataURL(),
         };
 
@@ -73,8 +76,7 @@ export class SaveDrawingModalComponent {
     }
 
     validateString(str: string): boolean {
-        const regex = /^[a-z0-9]+$/i;
-        const isAlphanumeric = regex.test(str);
+        const isAlphanumeric = ALPHANUMERIC_REGEX.test(str);
         const isValidSize = str.length >= MIN_INPUT_SIZE && str.length <= MAX_INPUT_SIZE;
         return isValidSize && isAlphanumeric;
     }
