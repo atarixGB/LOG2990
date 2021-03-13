@@ -33,7 +33,7 @@ export class IndexController {
          * @swagger
          * tags:
          *   - name: Index
-         *     description: Default cadriciel endpoint
+         *     description: Gestion des requêtes concernant les dessins sauvegardés
          *   - name: Message
          *     description: Messages functions
          */
@@ -41,22 +41,24 @@ export class IndexController {
         /**
          * @swagger
          *
-         * /api/index:
+         * /api/index/lastDrawing:
          *   get:
-         *     description: Return current time with hello world
+         *     description: Retourne le dernier dessin envoyé sur le serveur
          *     tags:
          *       - Index
+         *       - Message
          *     produces:
          *       - application/json
          *     responses:
          *       200:
+         *         description: Succès de la requête
          *         schema:
          *           $ref: '#/definitions/Message'
          *
          */
-        this.router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/lastDrawing', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
-            const time: Message = await this.indexService.helloWorld();
+            const time: Message = await this.indexService.lastDrawing();
             res.json(time);
         });
 
@@ -65,10 +67,9 @@ export class IndexController {
          *
          * /api/index/about:
          *   get:
-         *     description: Return information about http api
+         *     description: Information de base sur le serveur de PolyDessin
          *     tags:
-         *       - Index
-         *       - Time
+         *       - About
          *     produces:
          *       - application/json
          *     responses:

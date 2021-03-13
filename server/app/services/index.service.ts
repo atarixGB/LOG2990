@@ -1,15 +1,13 @@
-import { TYPES } from '@app/types';
 import { Message } from '@common/communication/message';
 import * as fs from 'fs';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import 'reflect-metadata';
-import { DateService } from './date.service';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 @injectable()
 export class IndexService {
     clientMessages: Message[];
-    constructor(@inject(TYPES.DateService) private dateService: DateService) {
+    constructor() {
         this.clientMessages = [];
     }
 
@@ -17,20 +15,19 @@ export class IndexService {
 
     about(): Message {
         return {
-            title: 'Basic Server About Page',
+            title: 'Serveur PolyDessin',
             labels: [],
-            body: 'Try calling helloWorld to get the time',
+            body: "Ce serveur permet de sauvegarder les dessins de l'application PolyDessin dans le format base64",
         };
     }
 
-    async helloWorld(): Promise<Message> {
-        return this.dateService
-            .currentTime()
-            .then((timeMessage: Message) => {
+    async lastDrawing(): Promise<Message> {
+        return this.getLastMessage()
+            .then((message: Message) => {
                 return {
-                    title: 'Hello world',
-                    labels: [],
-                    body: 'Time is ' + timeMessage.body,
+                    title: message.title,
+                    labels: message.labels,
+                    body: message.body,
                 };
             })
             .catch((error: unknown) => {
@@ -57,7 +54,12 @@ export class IndexService {
         const dataBuffer = Buffer.from(metadata, 'base64');
         fs.writeFile(SAVED_DRAWINGS_PATH + message.title + '.png', dataBuffer, (error) => {
             if (error) throw error;
+            this.clientMessages.push(message);
         });
+    }
+
+    async getLastMessage(): Promise<Message> {
+        return this.clientMessages[this.clientMessages.length - 1];
     }
 
     getAllMessages(): Message[] {
