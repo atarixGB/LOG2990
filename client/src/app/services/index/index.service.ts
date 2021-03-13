@@ -13,12 +13,7 @@ export class IndexService {
     constructor(private http: HttpClient) {}
 
     basicGet(): Observable<DrawingData> {
-        return this.http.get<DrawingData>(this.BASE_URL).pipe(
-            catchError((error) => {
-                console.log('in service ERROR get method', error);
-                throw error;
-            }),
-        );
+        return this.http.get<DrawingData>(this.BASE_URL);
     }
 
     basicPost(message: DrawingData): Observable<DrawingData> {
