@@ -51,13 +51,11 @@ export class IndexService {
             });
     }
 
-    storeDrawing(message: DrawingData): void {
-        const img = message.body;
-        const metadata = img.replace(IMAGE_DATA_PREFIX, '');
-        const dataBuffer = Buffer.from(metadata, DATA_ENCODING);
-        fs.writeFile(SAVED_DRAWINGS_PATH + message.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
+    storeDrawing(drawingData: DrawingData): void {
+        const dataBuffer = this.parseImageData(drawingData);
+        fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
             if (error) throw error;
-            this.clientMessages.push(message);
+            this.clientMessages.push(drawingData);
         });
     }
 
@@ -65,12 +63,16 @@ export class IndexService {
         return this.clientMessages[this.clientMessages.length - 1];
     }
 
+    parseImageData(drawingData: DrawingData): Buffer {
+        const metadata = drawingData.body.replace(IMAGE_DATA_PREFIX, '');
+        const dataBuffer = Buffer.from(metadata, DATA_ENCODING);
+        return dataBuffer;
+    }
+
     // TEMPORAIRE
-    getAllMessages(): DrawingData[] {
+    getAllDrawings(): DrawingData[] {
         fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
-            if (error) {
-                throw error;
-            }
+            if (error) throw error;
 
             files.forEach((file) => {
                 console.log(file);

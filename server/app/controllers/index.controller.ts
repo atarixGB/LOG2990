@@ -130,7 +130,7 @@ export class IndexController {
          *             $ref: '#/definitions/Message'
          */
         this.router.get('/all', (req: Request, res: Response, next: NextFunction) => {
-            res.json(this.indexService.getAllMessages());
+            res.json(this.indexService.getAllDrawings());
         });
     }
 }
