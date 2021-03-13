@@ -178,7 +178,7 @@ export class LineService extends Tool {
     }
 
     private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.lineWidth = this.lineWidth;
         ctx.strokeStyle = color;
         ctx.beginPath();
@@ -193,7 +193,7 @@ export class LineService extends Tool {
 
         this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
         ctx.lineWidth = this.lineWidth;
-        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.strokeStyle = color;
         ctx.beginPath();
         if (this.closestPoint) {
@@ -204,7 +204,7 @@ export class LineService extends Tool {
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, position: Vec2): void {
-        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.fillStyle = color;
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();

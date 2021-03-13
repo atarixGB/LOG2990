@@ -26,6 +26,7 @@ import { DrawingComponent } from './components/drawing/drawing.component';
 import { EditorComponent } from './components/editor/editor.component';
 import { MainPageComponent } from './components/main-page/main-page.component';
 import { NewDrawModalComponent } from './components/new-draw-modal/new-draw-modal.component';
+import { SaveDrawingModalComponent } from './components/save-drawing-modal/save-drawing-modal.component';
 import { AlphaSliderComponent } from './components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorDisplayerComponent } from './components/sidebar/color-components/color-displayer/color-displayer.component';
 import { ColorPaletteComponent } from './components/sidebar/color-components/color-palette/color-palette.component';
@@ -37,8 +38,11 @@ import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
+import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SprayAttributesComponent } from './components/sidebar/spray-attributes/spray-attributes.component';
+import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 @NgModule({
     declarations: [
@@ -63,7 +67,10 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         RectangleConfigComponent,
         ColorPopupComponent,
         ConfigPanelComponent,
-        CarouselComponent,
+        SaveDrawingModalComponent,
+        PolygonConfigComponent,
+        SprayConfigComponent,
+        SprayAttributesComponent,
     ],
     imports: [
         BrowserModule,

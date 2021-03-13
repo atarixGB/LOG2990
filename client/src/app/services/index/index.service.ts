@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Message } from '@common/communication/message';
-import { Observable, of } from 'rxjs';
+import { DrawingData } from '@common/communication/drawing-data';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -12,17 +12,33 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    basicGet(): Observable<Message> {
-        return this.http.get<Message>(this.BASE_URL).pipe(catchError(this.handleError<Message>('basicGet')));
+    basicGet(): Observable<DrawingData | string[]> {
+        const url = (this.BASE_URL + '/getAllDrawings') as string;
+        return this.http.get<DrawingData | string[]>(url).pipe(catchError(this.handleError));
     }
 
-    basicPost(message: Message): Observable<void> {
-        return this.http.post<void>(this.BASE_URL + '/send', message).pipe(catchError(this.handleError<void>('basicPost')));
-    }
-
-    private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-        return (error: Error): Observable<T> => {
-            return of(result as T);
+    basicPost(message: DrawingData): Observable<DrawingData | string[]> {
+        const url: string = (this.BASE_URL + '/send') as string;
+        const httpOptions = {
+            headers: new HttpHeaders({
+                Accept: 'text/plain, */*',
+                'Content-Type': 'application/json',
+            }),
+            responseType: 'text' as 'json', // to allow plain text response
         };
+
+        return this.http.post<DrawingData | string[]>(url, message, httpOptions).pipe(catchError(this.handleError));
+    }
+
+    private handleError(error: HttpErrorResponse): Observable<DrawingData | string[]> {
+        let errorMessage = 'Erreur inconnue';
+        if (error.error instanceof ErrorEvent) {
+            // Client-side
+            errorMessage = `Erreur: ${error.error.message}`;
+        } else {
+            // Server-side
+            errorMessage = `\Erreur ${error.status}\n${error.message}`;
+        }
+        return throwError(errorMessage); // throw back to client
     }
 }

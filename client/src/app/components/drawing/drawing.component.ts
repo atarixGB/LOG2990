@@ -1,8 +1,10 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
+import { ComponentType } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
+import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
@@ -66,7 +68,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
-
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
@@ -126,10 +127,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.handleHotKeysShortcut(event);
-        if (event.ctrlKey && event.key === 'o') {
-            event.preventDefault();
-            this.dialog.open(NewDrawModalComponent, {});
+        this.modalHandler(event, NewDrawModalComponent, 'o');
+        this.modalHandler(event, SaveDrawingModalComponent, 's');
+        // this.modalHandler(event, ExportModalComponent, 'e');
+        if (this.dialog.openDialogs.length < 1) {
+            this.toolManagerService.handleHotKeysShortcut(event);
         }
         if (event.ctrlKey && event.key === 'g') {
             event.preventDefault();
@@ -186,5 +188,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    private modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
+        if (event.ctrlKey && event.key === key) {
+            event.preventDefault();
+            if (this.dialog.openDialogs.length === 0) {
+                this.dialog.open(component, {});
+            }
+            return;
+        }
     }
 }

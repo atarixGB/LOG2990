@@ -10,7 +10,7 @@ describe('ToolsListComponent', () => {
     let component: ToolsListComponent;
     let fixture: ComponentFixture<ToolsListComponent>;
     //let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
-    
+
     beforeEach(async(() => {
         //toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['switchTool']);
         TestBed.configureTestingModule({
@@ -34,5 +34,4 @@ describe('ToolsListComponent', () => {
     //     component.onTool(pencil);
     //     expect(toolManagerSpy.switchTool).toHaveBeenCalledTimes(1);
     // });
-
 });

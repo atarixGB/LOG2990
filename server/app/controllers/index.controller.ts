@@ -1,5 +1,5 @@
 import { TYPES } from '@app/types';
-import { Message } from '@common/communication/message';
+import { DrawingData } from '@common/communication/drawing-data';
 import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 import { IndexService } from '../services/index.service';
@@ -33,7 +33,7 @@ export class IndexController {
          * @swagger
          * tags:
          *   - name: Index
-         *     description: Default cadriciel endpoint
+         *     description: Gestion des requêtes concernant les dessins sauvegardés
          *   - name: Message
          *     description: Messages functions
          */
@@ -41,22 +41,24 @@ export class IndexController {
         /**
          * @swagger
          *
-         * /api/index:
+         * /api/index/lastDrawing:
          *   get:
-         *     description: Return current time with hello world
+         *     description: Retourne le dernier dessin envoyé sur le serveur de la session courante
          *     tags:
          *       - Index
+         *       - Message
          *     produces:
          *       - application/json
          *     responses:
          *       200:
+         *         description: Succès de la requête
          *         schema:
          *           $ref: '#/definitions/Message'
          *
          */
-        this.router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/lastDrawing', async (req: Request, res: Response, next: NextFunction) => {
             // Send the request to the service and send the response
-            const time: Message = await this.indexService.helloWorld();
+            const time: DrawingData = await this.indexService.lastDrawing();
             res.json(time);
         });
 
@@ -65,10 +67,9 @@ export class IndexController {
          *
          * /api/index/about:
          *   get:
-         *     description: Return information about http api
+         *     description: Information de base sur le serveur de PolyDessin
          *     tags:
-         *       - Index
-         *       - Time
+         *       - About
          *     produces:
          *       - application/json
          *     responses:
@@ -77,7 +78,6 @@ export class IndexController {
          *           $ref: '#/definitions/Message'
          */
         this.router.get('/about', (req: Request, res: Response, next: NextFunction) => {
-            // Send the request to the service and send the response
             res.json(this.indexService.about());
         });
 
@@ -104,17 +104,17 @@ export class IndexController {
          *         description: Created
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
-            const message: Message = req.body;
-            this.indexService.storeMessage(message);
+            const message: DrawingData = req.body;
+            this.indexService.storeDrawing(message);
             res.sendStatus(HTTP_STATUS_CREATED);
         });
 
         /**
          * @swagger
          *
-         * /api/index/all:
+         * /api/index/getAllDrawings:
          *   get:
-         *     description: Return all messages
+         *     description: Retourne une liste de toutes les images sauvegardées sur le serveur
          *     tags:
          *       - Index
          *       - Message
@@ -122,14 +122,14 @@ export class IndexController {
          *      - application/json
          *     responses:
          *       200:
-         *         description: messages
          *         schema:
          *           type: array
          *           items:
          *             $ref: '#/definitions/Message'
          */
-        this.router.get('/all', (req: Request, res: Response, next: NextFunction) => {
-            res.json(this.indexService.getAllMessages());
+        this.router.get('/getAllDrawings', (req: Request, res: Response, next: NextFunction) => {
+            console.log('Mise à jour:', this.indexService.getAllDrawingsPath());
+            res.json(this.indexService.getAllDrawingsPath());
         });
     }
 }

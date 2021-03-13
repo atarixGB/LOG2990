@@ -30,17 +30,18 @@ export class ColorPopupComponent {
     }
 
     updateHex(): void {
-        this.colorManager.updateWithHex(this.data, this.selectedColor.Hex.Red, this.selectedColor.Hex.Green, this.selectedColor.Hex.Blue);
+        this.colorManager.updateWithHex(this.data, this.selectedColor);
     }
 
     mouseClickOnHistory(event: MouseEvent, colorElement: RGBA): void {
         event.preventDefault();
         const cloneColor: RGBA = JSON.parse(JSON.stringify(colorElement));
         if (event.buttons === 1) {
-            this.colorManager.updateRGBAColor(ColorOrder.primaryColor, cloneColor, false);
+            this.colorHistory.splice(this.colorHistory.indexOf(colorElement), 1);
+            this.colorManager.updateRGBAColor(ColorOrder.PrimaryColor, cloneColor, false);
         } else if (event.button === 2) {
             this.colorHistory.splice(this.colorHistory.indexOf(colorElement), 1);
-            this.colorManager.updateRGBAColor(ColorOrder.secondaryColor, cloneColor, false);
+            this.colorManager.updateRGBAColor(ColorOrder.SecondaryColor, cloneColor, false);
         }
     }
 

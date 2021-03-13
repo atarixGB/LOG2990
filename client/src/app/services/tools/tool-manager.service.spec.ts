@@ -211,16 +211,16 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toBeInstanceOf(RectangleService);
     });
 
-    it('switchTool should not switch tool if invalid tool', () => {
-        service.currentTool = RectangleServiceSpy;
-        service.currentToolEnum = ToolList.Rectangle;
+    // it('switchTool should not switch tool if invalid tool', () => {
+    //     service.currentTool = RectangleServiceSpy;
+    //     service.currentToolEnum = ToolList.Rectangle;
 
-        let getSpy = spyOn(service.serviceBindings, 'get');
+    //     let getSpy = spyOn(service.serviceBindings, 'get');
 
-        service.switchTool(5);
+    //     service.switchTool(5);
 
-        expect(getSpy).not.toHaveBeenCalled();
-        expect(service.currentToolEnum).toEqual(ToolList.Rectangle);
-        expect(service.currentTool).toEqual(RectangleServiceSpy);
-    });
+    //     expect(getSpy).not.toHaveBeenCalled();
+    //     expect(service.currentToolEnum).toEqual(ToolList.Rectangle);
+    //     expect(service.currentTool).toEqual(RectangleServiceSpy);
+    // });
 });
