@@ -1,4 +1,3 @@
-
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,13 +5,12 @@ import { MatIconModule } from '@angular/material/icon';
 // import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { ToolsListComponent } from './tools-list.component';
 
-
 // tslint:disable
 describe('ToolsListComponent', () => {
     let component: ToolsListComponent;
     let fixture: ComponentFixture<ToolsListComponent>;
     //let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
-    
+
     beforeEach(async(() => {
         //toolManagerSpy = jasmine.createSpyObj('ToolManagerService', ['switchTool']);
         TestBed.configureTestingModule({
@@ -36,5 +34,4 @@ describe('ToolsListComponent', () => {
     //     component.onTool(pencil);
     //     expect(toolManagerSpy.switchTool).toHaveBeenCalledTimes(1);
     // });
-
 });

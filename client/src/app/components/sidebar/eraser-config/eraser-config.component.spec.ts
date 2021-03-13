@@ -1,16 +1,17 @@
-import { FormsModule } from '@angular/forms';
-import { MatSliderModule,MatSlider } from '@angular/material/slider';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { EraserConfigComponent } from './eraser-config.component';
 
+// tslint:disable
 describe('PencilConfigComponent', () => {
     let component: EraserConfigComponent;
     let fixture: ComponentFixture<EraserConfigComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [EraserConfigComponent,MatSlider],
-            imports:[MatSliderModule,FormsModule],
+            declarations: [EraserConfigComponent, MatSlider],
+            imports: [MatSliderModule, FormsModule],
         }).compileComponents();
     }));
 
