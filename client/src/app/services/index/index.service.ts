@@ -13,7 +13,7 @@ export class IndexService {
     constructor(private http: HttpClient) {}
 
     basicGet(): Observable<DrawingData> {
-        return this.http.get<DrawingData>(this.BASE_URL);
+        return this.http.get<DrawingData>(this.BASE_URL + '/all');
     }
 
     basicPost(message: DrawingData): Observable<DrawingData> {
