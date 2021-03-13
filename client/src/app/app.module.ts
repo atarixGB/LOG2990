@@ -39,6 +39,7 @@ import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 @NgModule({
     declarations: [
         AppComponent,
@@ -62,6 +63,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         RectangleConfigComponent,
         ColorPopupComponent,
         ConfigPanelComponent,
+        PolygonConfigComponent,
     ],
     imports: [
         BrowserModule,
