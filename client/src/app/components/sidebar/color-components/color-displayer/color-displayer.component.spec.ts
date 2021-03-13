@@ -42,16 +42,16 @@ describe('ColorDisplayerComponent', () => {
     });
 
     it('should open color picker', () => {
-        component.openColorPicker(ColorOrder.secondaryColor);
+        component.openColorPicker(ColorOrder.SecondaryColor);
         expect(ColorPopupComponent).toBeTruthy();
     });
 
     it('should switch color', () => {
         const colorMangerSpy = jasmine.createSpyObj('ColorManagerService', ['selectedColor']);
-        colorMangerSpy.selectedColor[ColorOrder.primaryColor] = FIRSTCOLORTEST;
-        colorMangerSpy.selectedColor[ColorOrder.secondaryColor] = SECONDCOLORTEST;
+        colorMangerSpy.selectedColor[ColorOrder.PrimaryColor] = FIRSTCOLORTEST;
+        colorMangerSpy.selectedColor[ColorOrder.SecondaryColor] = SECONDCOLORTEST;
         component.exchangeColorOrder();
-        expect(colorMangerSpy.selectedColor[ColorOrder.primaryColor]).toEqual(SECONDCOLORTEST);
-        expect(colorMangerSpy.selectedColor[ColorOrder.secondaryColor]).toEqual(FIRSTCOLORTEST);
+        expect(colorMangerSpy.selectedColor[ColorOrder.PrimaryColor]).toEqual(SECONDCOLORTEST);
+        expect(colorMangerSpy.selectedColor[ColorOrder.SecondaryColor]).toEqual(FIRSTCOLORTEST);
     });
 });
