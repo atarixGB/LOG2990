@@ -3,7 +3,6 @@ import { RGBA } from '@app/interfaces-enums/rgba';
 // Canvas constants
 
 export const MIN_SIZE = 250;
-
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -13,10 +12,10 @@ export enum MouseButton {
 }
 
 export enum MouseDirection {
-    UPPER_LEFT = 0,
-    UPPER_RIGHT = 1,
-    LOWER_LEFT = 2,
-    LOWER_RIGHT = 3,
+    UpperLeft = 0,
+    UpperRight = 1,
+    LowerLeft = 2,
+    LowerRight = 3,
 }
 
 export enum TypeOfJunctions {
@@ -36,6 +35,7 @@ export enum ToolList {
     Line = 2,
     Rectangle = 3,
     Ellipse = 4,
+    Spray = 5,
 }
 
 export const mouseEventLClick = {
@@ -68,6 +68,17 @@ export const OPACITY_POS_ALPHA = 3;
 export const HEX_BASE = 16;
 export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
 
+export const PRIMARYCOLORINITIAL: RGBA = {
+    Dec: { Red: 255, Green: 0, Blue: 0, Alpha: 1 },
+    Hex: { Red: 'ff', Green: '0', Blue: '0' },
+    inString: 'rgba(255, 0, 0, 1)',
+};
+export const SECONDARYCOLORINITIAL: RGBA = {
+    Dec: { Red: 0, Green: 255, Blue: 0, Alpha: 1 },
+    Hex: { Red: '0', Green: 'ff', Blue: '0' },
+    inString: 'rgba(0, 255, 0, 1)',
+};
+
 // in the following we find testing constants
 export const FIRST_CASE = 75;
 export const SECOND_AND_THIRD_CASE = 25;
@@ -88,3 +99,13 @@ export const COLOR_WIN_WIDTH = '500px';
 
 export const WORKING_AREA_WIDTH = '85vw';
 export const WORKING_AREA_LENGHT = '100vh';
+
+// constants for spray service
+export const SPRAY_DENSITY = 40;
+export const MIN_SPRAY_WIDTH = 5;
+export const MIN_SPRAY_DOT_WIDTH = 1;
+export const MAX_SPRAY_DOT_WIDTH = 20;
+export const MIN_SPRAY_FREQUENCY = 10;
+export const MAX_SPRAY_FREQUENCY = 50;
+export const ONE_SECOND = 1000;
+export const TWO_DECIMAL_MULTIPLIER = 100;

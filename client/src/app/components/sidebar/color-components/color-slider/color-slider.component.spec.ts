@@ -15,8 +15,8 @@ describe('ColorSliderComponent', () => {
         colorManagerSpy.getColorStringAlpha.and.returnValue('rgba(255,255,255,1)');
         colorManagerSpy = jasmine.createSpyObj('ColorManagerService', ['updatePixelColor']);
         colorManagerSpy.selectedColor = new Array<RGBA>();
-        colorManagerSpy.selectedColor[ColorOrder.primaryColor] = FIRSTCOLORTEST;
-        colorManagerSpy.selectedColor[ColorOrder.secondaryColor] = SECONDCOLORTEST;
+        colorManagerSpy.selectedColor[ColorOrder.PrimaryColor] = FIRSTCOLORTEST;
+        colorManagerSpy.selectedColor[ColorOrder.SecondaryColor] = SECONDCOLORTEST;
     });
 
     beforeEach(async(() => {
@@ -54,7 +54,7 @@ describe('ColorSliderComponent', () => {
     });
 
     it('should update color if user clic on gradient', () => {
-        component.colorOrder = ColorOrder.primaryColor;
+        component.colorOrder = ColorOrder.PrimaryColor;
         spyOn(component.shouldUpdateGradient, 'emit').and.callThrough();
         const mockMouse = new MouseEvent('mousedown');
 

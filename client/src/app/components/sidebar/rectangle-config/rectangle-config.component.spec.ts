@@ -1,13 +1,21 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatOption } from '@angular/material/core';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RectangleConfigComponent } from './rectangle-config.component';
 
+// tslint:disable
 describe('RectangleConfigComponent', () => {
     let component: RectangleConfigComponent;
     let fixture: ComponentFixture<RectangleConfigComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [RectangleConfigComponent],
+            declarations: [RectangleConfigComponent, MatLabel, MatOption],
+            imports: [MatSliderModule, MatFormFieldModule, MatSelectModule, FormsModule, BrowserAnimationsModule],
         }).compileComponents();
     }));
 
