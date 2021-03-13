@@ -54,14 +54,14 @@ export class SprayService extends Tool implements OnDestroy {
             this.mouseDown = true;
             this.mouseCoord = this.getPositionFromMouse(event);
             clearTimeout(this.timeoutId);
-            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.previewCtx);
+            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.baseCtx);
         }
     }
 
     onMouseUp(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            this.drawingService.applyPreview();
+            // this.drawingService.applyPreview();
             this.canvasData = this.drawingService.getCanvasData();
             this.updateSprayData();
         }
@@ -77,7 +77,7 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseLeave(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            this.drawingService.applyPreview();
+            // this.drawingService.applyPreview();
         }
     }
 
