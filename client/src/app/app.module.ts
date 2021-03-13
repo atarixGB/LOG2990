@@ -38,6 +38,8 @@ import { LineConfigComponent } from './components/sidebar/line-config/line-confi
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SprayAttributesComponent } from './components/sidebar/spray-attributes/spray-attributes.component';
+import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 @NgModule({
@@ -63,7 +65,12 @@ import { PolygonConfigComponent } from './components/sidebar/polygon-config/poly
         RectangleConfigComponent,
         ColorPopupComponent,
         ConfigPanelComponent,
+<<<<<<< HEAD
         PolygonConfigComponent,
+=======
+        SprayConfigComponent,
+        SprayAttributesComponent,
+>>>>>>> 1c2f21b79b25a20414730eb6f86944a423cb5fa0
     ],
     imports: [
         BrowserModule,

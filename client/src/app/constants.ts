@@ -36,7 +36,8 @@ export enum ToolList {
     Line = 2,
     Rectangle = 3,
     Ellipse = 4,
-    Polygon = 5,
+    Spray = 5,
+    Polygon = 6,
 }
 
 export const mouseEventLClick = {
@@ -95,4 +96,13 @@ export enum TypeStyle {
     fill = 'fill',
     strokeFill = 'strokeFill',
 }
- export const DOUBLE_MATH=2;
+export const DOUBLE_MATH = 2;
+// constants for spray service
+export const SPRAY_DENSITY = 40;
+export const MIN_SPRAY_WIDTH = 5;
+export const MIN_SPRAY_DOT_WIDTH = 1;
+export const MAX_SPRAY_DOT_WIDTH = 20;
+export const MIN_SPRAY_FREQUENCY = 10;
+export const MAX_SPRAY_FREQUENCY = 50;
+export const ONE_SECOND = 1000;
+export const TWO_DECIMAL_MULTIPLIER = 100;

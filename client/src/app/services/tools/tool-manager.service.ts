@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ToolList } from '@app/constants';
+import { SprayService } from '@app/services/tools/spray/spray.service';
 import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
@@ -26,7 +27,11 @@ export class ToolManagerService {
         private eraserService: EraserService,
         private ellipseService: EllipseService,
         private rectangleService: RectangleService,
+<<<<<<< HEAD
         private polygonService: PolygonService,
+=======
+        private sprayService: SprayService,
+>>>>>>> 1c2f21b79b25a20414730eb6f86944a423cb5fa0
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
@@ -38,7 +43,8 @@ export class ToolManagerService {
             .set(ToolList.Rectangle, this.rectangleService)
             .set(ToolList.Polygon, this.polygonService)
             .set(ToolList.Eraser, this.eraserService)
-            .set(ToolList.Line, this.lineService);
+            .set(ToolList.Line, this.lineService)
+            .set(ToolList.Spray, this.sprayService);
 
         this.keyBindings = new Map<string, Tool>();
         this.keyBindings
@@ -47,7 +53,11 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService)
+<<<<<<< HEAD
             .set('3', this.polygonService);
+=======
+            .set('a', this.sprayService);
+>>>>>>> 1c2f21b79b25a20414730eb6f86944a423cb5fa0
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {
