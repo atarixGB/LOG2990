@@ -1,7 +1,14 @@
-// this service is responsible of the storage of our 10 selected colors
-// it will also handle the conversion from hex code to RGB
 import { Injectable } from '@angular/core';
-import { COLOR_HISTORY, COLOR_ORDER, HEX_BASE, HEX_VALIDATOR, MAX_DEC_RANGE, OPACITY_POS_ALPHA } from '@app/constants';
+import {
+    COLOR_HISTORY,
+    COLOR_ORDER,
+    HEX_BASE,
+    HEX_VALIDATOR,
+    MAX_DEC_RANGE,
+    OPACITY_POS_ALPHA,
+    PRIMARYCOLORINITIAL,
+    SECONDARYCOLORINITIAL,
+} from '@app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 
@@ -25,8 +32,9 @@ export class ColorManagerService {
                 inString: 'rgba(0,0,0,1)',
             });
         }
-        this.updateWithHex(ColorOrder.primaryColor, 'ff', '0', '0');
-        this.updateWithHex(ColorOrder.secondaryColor, '0', 'ff', '0');
+
+        this.updateWithHex(ColorOrder.PrimaryColor, PRIMARYCOLORINITIAL);
+        this.updateWithHex(ColorOrder.SecondaryColor, SECONDARYCOLORINITIAL);
     }
 
     private updateColorLasts(colorOrder: ColorOrder, shouldDeleteLast: boolean): void {
@@ -75,14 +83,14 @@ export class ColorManagerService {
         }
     }
 
-    updateWithHex(colorOrder: ColorOrder, redHex: string, greenHex: string, blueHex: string): void {
-        if (HEX_VALIDATOR.test(redHex) && HEX_VALIDATOR.test(greenHex) && HEX_VALIDATOR.test(blueHex)) {
-            this.selectedColor[colorOrder].Dec.Red = parseInt(redHex, 16);
-            this.selectedColor[colorOrder].Dec.Green = parseInt(greenHex, 16);
-            this.selectedColor[colorOrder].Dec.Blue = parseInt(blueHex, 16);
-            this.selectedColor[colorOrder].Hex.Red = redHex;
-            this.selectedColor[colorOrder].Hex.Green = greenHex;
-            this.selectedColor[colorOrder].Hex.Blue = blueHex;
+    updateWithHex(colorOrder: ColorOrder, colorHex: RGBA): void {
+        if (HEX_VALIDATOR.test(colorHex.Hex.Red) && HEX_VALIDATOR.test(colorHex.Hex.Green) && HEX_VALIDATOR.test(colorHex.Hex.Blue)) {
+            this.selectedColor[colorOrder].Dec.Red = parseInt(colorHex.Hex.Red, 16);
+            this.selectedColor[colorOrder].Dec.Green = parseInt(colorHex.Hex.Green, 16);
+            this.selectedColor[colorOrder].Dec.Blue = parseInt(colorHex.Hex.Blue, 16);
+            this.selectedColor[colorOrder].Hex.Red = colorHex.Hex.Red;
+            this.selectedColor[colorOrder].Hex.Green = colorHex.Hex.Green;
+            this.selectedColor[colorOrder].Hex.Blue = colorHex.Hex.Blue;
             this.updateColorString(colorOrder);
             this.updateColorLasts(colorOrder, true);
         }

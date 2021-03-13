@@ -1,4 +1,4 @@
 export enum ColorOrder {
-    primaryColor,
-    secondaryColor,
+    PrimaryColor,
+    SecondaryColor,
 }

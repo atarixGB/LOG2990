@@ -93,8 +93,8 @@ export class SprayService extends Tool implements OnDestroy {
             const angle = sameSpray.getRandomNumber(0, Math.PI * 2);
             const radius = sameSpray.getRandomNumber(0, sameSpray.width);
             ctx.globalAlpha = Math.random();
-            ctx.strokeStyle = sameSpray.colorManager.selectedColor[ColorOrder.primaryColor].inString;
-            ctx.fillStyle = sameSpray.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+            ctx.strokeStyle = sameSpray.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+            ctx.fillStyle = sameSpray.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
             ctx.beginPath();
             ctx.arc(
                 sameSpray.mouseCoord.x + radius * Math.cos(angle),

@@ -13,10 +13,10 @@ export enum MouseButton {
 }
 
 export enum MouseDirection {
-    UPPER_LEFT = 0,
-    UPPER_RIGHT = 1,
-    LOWER_LEFT = 2,
-    LOWER_RIGHT = 3,
+    UpperLeft = 0,
+    UpperRight = 1,
+    LowerLeft = 2,
+    LowerRight = 3,
 }
 
 export enum TypeOfJunctions {
@@ -69,6 +69,17 @@ export const MAX_DEC_RANGE = 255;
 export const OPACITY_POS_ALPHA = 3;
 export const HEX_BASE = 16;
 export const HEX_VALIDATOR = RegExp('^[a-fA-F0-9 ]+');
+
+export const PRIMARYCOLORINITIAL: RGBA = {
+    Dec: { Red: 255, Green: 0, Blue: 0, Alpha: 1 },
+    Hex: { Red: 'ff', Green: '0', Blue: '0' },
+    inString: 'rgba(255, 0, 0, 1)',
+};
+export const SECONDARYCOLORINITIAL: RGBA = {
+    Dec: { Red: 0, Green: 255, Blue: 0, Alpha: 1 },
+    Hex: { Red: '0', Green: 'ff', Blue: '0' },
+    inString: 'rgba(0, 255, 0, 1)',
+};
 
 // in the following we find testing constants
 export const FIRST_CASE = 75;
