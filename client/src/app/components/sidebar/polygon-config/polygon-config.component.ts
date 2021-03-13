@@ -3,8 +3,8 @@ import { PolygonService } from 'src/app/services/tools/polygon/polygon.service';
 
 @Component({
     selector: 'app-polygon-config',
-    templateUrl: './Polygon-config.component.html',
-    styleUrls: ['./Polygon-config.component.scss'],
+    templateUrl: './polygon-config.component.html',
+    styleUrls: ['./polygon-config.component.scss'],
 })
 export class PolygonConfigComponent {
     polygonService: PolygonService;
