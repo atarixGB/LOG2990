@@ -10,6 +10,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { Subscription } from 'rxjs';
+import { CarouselComponent } from '../carousel/carousel-modal/carousel.component';
 
 @Component({
     selector: 'app-drawing',
@@ -131,6 +132,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         // this.modalHandler(event, ExportModalComponent, 'e');
         if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
+        }
+        if (event.ctrlKey && event.key === 'g') {
+            event.preventDefault();
+            this.dialog.open(CarouselComponent, {});
         }
     }
 
