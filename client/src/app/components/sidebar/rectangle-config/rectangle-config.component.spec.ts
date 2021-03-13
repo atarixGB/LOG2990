@@ -1,6 +1,12 @@
-
+import { MatSliderModule } from '@angular/material/slider';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RectangleConfigComponent } from './rectangle-config.component';
+import { MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatOption } from '@angular/material/core';
+
 
 
 describe('RectangleConfigComponent', () => {
@@ -9,8 +15,8 @@ describe('RectangleConfigComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [RectangleConfigComponent],
-            
+            declarations: [RectangleConfigComponent,MatLabel,MatOption],
+            imports:[MatSliderModule,MatFormFieldModule,MatSelectModule,FormsModule,BrowserAnimationsModule]
         }).compileComponents();
     }));
 
