@@ -15,7 +15,7 @@ export class IndexService {
 
     // TODO : Retrieve titles and tags from mongodb when database will be done
     getAllDrawingTitles(): Observable<string[]> {
-        const url = this.BASE_URL + this.API_URL + '/titles';
+        const url = this.BASE_URL + this.API_URL + '/drawings';
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain,*/*',

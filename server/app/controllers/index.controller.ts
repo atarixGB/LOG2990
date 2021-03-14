@@ -137,7 +137,7 @@ export class IndexController {
         /**
          * @swagger
          *
-         * /api/index/titles:
+         * /api/index/drawings:
          *   get:
          *     description: Retourne le titre de tous les dessins sauvegardés sur le serveur
          *     tags:
@@ -152,7 +152,7 @@ export class IndexController {
          *           items:
          *             $ref: '#/definitions/Message'
          */
-        this.router.get('/titles', (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/drawings', (req: Request, res: Response, next: NextFunction) => {
             console.log('Mise à jour:', this.indexService.getAllDrawingsPath());
             res.json(this.indexService.getAllDrawingsPath());
         });
