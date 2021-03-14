@@ -43,7 +43,11 @@ export class DatabaseService {
             title: drawing.title,
             tags: drawing.labels,
         };
-        await this.db.collection(DATABASE_COLLECTION).insertOne(metadata);
+        try {
+            await this.db.collection(DATABASE_COLLECTION).insertOne(metadata);
+        } catch (error) {
+            throw error;
+        }
     }
 
     get database(): Db {

@@ -1,7 +1,9 @@
+import { TYPES } from '@app/types';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import 'reflect-metadata';
+import { DatabaseService } from './database.service';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';
@@ -18,7 +20,7 @@ export class IndexService {
     clientMessages: DrawingData[];
     drawingsPath: string[];
 
-    constructor() {
+    constructor(@inject(TYPES.DatabaseService) private databaseService: DatabaseService) {
         this.clientMessages = [];
         this.drawingsPath = [];
 
@@ -45,6 +47,9 @@ export class IndexService {
             fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
                 if (error) throw error;
                 this.drawingsPath.push(drawingData.title + `.${IMAGE_FORMAT}`);
+                this.databaseService.addDrawingMetadata(drawingData).catch((error: Error) => {
+                    throw error;
+                });
                 this.clientMessages.push(drawingData);
             });
         }
