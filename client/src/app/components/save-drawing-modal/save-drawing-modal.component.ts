@@ -40,9 +40,10 @@ export class SaveDrawingModalComponent {
 
     sendToServer(): void {
         if (!this.validateString(this.drawingTitle)) {
-            alert('Il y a une erreur avec les entrées. Veuillez revérifier le titre ou les étiquettes :)'); // temporaire
+            alert('Il y a une erreur avec les entrées. Veuillez revérifier le format du titre et/ou des étiquettes.'); // temporaire
             return;
         }
+
         this.message = {
             title: this.drawingTitle,
             labels: this.tags,
@@ -51,7 +52,7 @@ export class SaveDrawingModalComponent {
             body: this.drawingService.canvas.toDataURL(),
         };
 
-        this.indexService.basicPost(this.message).subscribe(
+        this.indexService.postDrawing(this.message).subscribe(
             (response) => {
                 console.log(response);
                 this.matDialogRef.close();

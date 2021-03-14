@@ -13,7 +13,7 @@ export class SidebarComponent {
     constructor(public toolManagerService: ToolManagerService, public indexService: IndexService) {}
 
     getDrawings(): void {
-        this.indexService.basicGet().subscribe(
+        this.indexService.getAllDrawingTitles().subscribe(
             (data) => {
                 // Do what you want with the data here
             },

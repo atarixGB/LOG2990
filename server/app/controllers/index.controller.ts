@@ -69,7 +69,7 @@ export class IndexController {
          *   get:
          *     description: Information de base sur le serveur de PolyDessin
          *     tags:
-         *       - About
+         *       - A propos
          *     produces:
          *       - application/json
          *     responses:
@@ -86,10 +86,10 @@ export class IndexController {
          *
          * /api/index/send:
          *   post:
-         *     description: Send a message
+         *     description: Sauvegarde du dessin (canvas) sur le serveur au format PNG (base64)
          *     tags:
          *       - Index
-         *       - Message
+         *       - Sauvegarde
          *     requestBody:
          *         description: message object
          *         required: true
@@ -112,12 +112,37 @@ export class IndexController {
         /**
          * @swagger
          *
-         * /api/index/getAllDrawings:
+         * /api/index/drawings/:title:
          *   get:
-         *     description: Retourne une liste de toutes les images sauvegardées sur le serveur
+         *     description: Retourne le dessin dont le titre a été spécifié en paramètre
          *     tags:
          *       - Index
-         *       - Message
+         *       - Dessin
+         *     produces:
+         *      - application/json
+         *     responses:
+         *       200:
+         *         schema:
+         *           type: file
+         *           items:
+         *             $ref: '#/definitions/Message'
+         */
+        this.router.get('/drawings/:title', (req: Request, res: Response, next: NextFunction) => {
+            console.log(`index.controller - /drawings/${req.params.title}`);
+            res.sendFile(req.params.title, { root: 'saved-drawings/' }, (error) => {
+                if (error) throw error;
+            });
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/index/titles:
+         *   get:
+         *     description: Retourne le titre de tous les dessins sauvegardés sur le serveur
+         *     tags:
+         *       - Index
+         *       - Dessin
          *     produces:
          *      - application/json
          *     responses:
@@ -127,7 +152,7 @@ export class IndexController {
          *           items:
          *             $ref: '#/definitions/Message'
          */
-        this.router.get('/getAllDrawings', (req: Request, res: Response, next: NextFunction) => {
+        this.router.get('/titles', (req: Request, res: Response, next: NextFunction) => {
             console.log('Mise à jour:', this.indexService.getAllDrawingsPath());
             res.json(this.indexService.getAllDrawingsPath());
         });

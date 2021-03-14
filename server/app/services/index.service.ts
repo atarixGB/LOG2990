@@ -101,9 +101,7 @@ export class IndexService {
             }
         }
 
-        if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) {
-            return false;
-        }
+        if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) return false;
 
         return true;
     }
