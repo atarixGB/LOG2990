@@ -120,3 +120,6 @@ export const MIN_SPRAY_FREQUENCY = 10;
 export const MAX_SPRAY_FREQUENCY = 50;
 export const ONE_SECOND = 1000;
 export const TWO_DECIMAL_MULTIPLIER = 100;
+
+//constants for pipette service
+export const ZOOM_RADIUS = 75;
