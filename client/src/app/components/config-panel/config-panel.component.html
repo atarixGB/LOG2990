@@ -11,6 +11,7 @@
         <app-ellipse-config *ngIf="toolManagerService.currentToolEnum === ToolList.Ellipse"></app-ellipse-config>
         <app-spray-config *ngIf="toolManagerService.currentToolEnum === ToolList.Spray"></app-spray-config>
         <app-polygon-config *ngIf="toolManagerService.currentToolEnum === ToolList.Polygon"></app-polygon-config>
+        <app-spray-config *ngIf="toolManagerService.currentToolEnum === ToolList.Spray"></app-spray-config>
         <div *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser">
             <h3>Choix de couleur</h3>
             <app-color-displayer></app-color-displayer>

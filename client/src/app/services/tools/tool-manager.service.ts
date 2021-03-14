@@ -50,7 +50,7 @@ export class ToolManagerService {
             .set('2', this.ellipseService)
             .set('l', this.lineService)
             .set('e', this.eraserService)
-            .set('3', this.polygonService)
+            .set('p', this.polygonService)
             .set('a', this.sprayService);
     }
 
