@@ -3,6 +3,7 @@ import { ComponentType } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Vec2 } from '@app/classes/vec2';
+import { CarouselComponent } from '@app/components/carousel/carousel-modal/carousel.component';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
@@ -10,7 +11,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { Subscription } from 'rxjs';
-import { CarouselComponent } from '../carousel/carousel-modal/carousel.component';
 
 @Component({
     selector: 'app-drawing',

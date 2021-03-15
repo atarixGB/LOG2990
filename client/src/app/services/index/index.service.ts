@@ -8,23 +8,47 @@ import { catchError } from 'rxjs/operators';
     providedIn: 'root',
 })
 export class IndexService {
-    private readonly BASE_URL: string = 'http://localhost:3000/api/index';
+    private readonly BASE_URL: string = 'http://localhost:3000';
+    private readonly INDEX_URL: string = '/api/index';
 
-    constructor(private http: HttpClient) {}
-
-    basicGet(): Observable<DrawingData | string[]> {
-        const url = (this.BASE_URL + '/getAllDrawings') as string;
-        return this.http.get<DrawingData | string[]>(url).pipe(catchError(this.handleError));
+    constructor(private http: HttpClient) {
+        this.BASE_URL = this.BASE_URL;
     }
 
-    basicPost(message: DrawingData): Observable<DrawingData | string[]> {
-        const url: string = (this.BASE_URL + '/send') as string;
+    // TODO : Retrieve titles and tags from mongodb when database will be done
+    getAllDrawingUrls(): Observable<string[]> {
+        const url = this.BASE_URL + this.INDEX_URL + '/drawings';
+        // const httpOptions = {
+        //     headers: new HttpHeaders({
+        //         Accept: 'text/plain,*/*',
+        //         'Content-Type': 'application/json',
+        //     }),
+        //     responseType: 'string[]' as 'json',
+        // };
+        return this.http.get<string[]>(url);
+    }
+
+    getDrawing(imageUrl: string): Observable<Blob> {
+        // const url = this.BASE_URL + this.INDEX_URL + `/drawings/${imageUrl}`;
+        // const httpOptions = {
+        //     headers: new HttpHeaders({
+        //         Accept: 'image/webp,*/*',
+        //         'Content-Type': 'application/json',
+        //     }),
+        //     responseType: 'blob' as 'json',
+        // };
+        console.log(imageUrl);
+        return this.http.get<Blob>(imageUrl);
+    }
+
+    postDrawing(message: DrawingData): Observable<DrawingData | string[]> {
+        const url: string = (this.BASE_URL + this.INDEX_URL + '/send') as string;
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain, */*',
                 'Content-Type': 'application/json',
             }),
-            responseType: 'text' as 'json', // to allow plain text response
+            responseType: 'text' as 'json',
         };
 
         return this.http.post<DrawingData | string[]>(url, message, httpOptions).pipe(catchError(this.handleError));
@@ -37,7 +61,7 @@ export class IndexService {
             errorMessage = `Erreur: ${error.error.message}`;
         } else {
             // Server-side
-            errorMessage = `\Erreur ${error.status}\n${error.message}`;
+            errorMessage = `Erreur ${error.status}\n${error.message}`;
         }
         return throwError(errorMessage); // throw back to client
     }

@@ -1,9 +1,9 @@
 <div id="main-container">
     <div id="header"><h1>Carousel de dessin</h1></div>
     <div id="drawing-container">
-        <app-carousel-drawing [imagesURL]="this.placement[0]"></app-carousel-drawing>
-        <app-carousel-drawing [imagesURL]="this.placement[1]"></app-carousel-drawing>
-        <app-carousel-drawing [imagesURL]="this.placement[2]"></app-carousel-drawing>
+        <app-carousel-drawing [imagesURL]="this.images[0]"></app-carousel-drawing>
+        <app-carousel-drawing [imagesURL]="this.images[1]"></app-carousel-drawing>
+        <app-carousel-drawing [imagesURL]="this.images[2]"></app-carousel-drawing>
     </div>
     <div id="control-container" mat-dialog-actions>
         <button mat-button (click)="previousImages()"><mat-icon>keyboard_arrow_left</mat-icon></button>
@@ -13,3 +13,6 @@
         <button mat-button mat-dialog-close>Fermer</button>
     </div>
 </div>
+
+<!-- EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le TS -->
+<!-- <canvas #canvas></canvas> -->

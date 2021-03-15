@@ -15,8 +15,8 @@ const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
     styleUrls: ['./save-drawing-modal.component.scss'],
 })
 export class SaveDrawingModalComponent {
-    matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
-    matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+    readonly matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+    readonly matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
     minLength: number;
     maxLength: number;
     drawingTitle: string;
@@ -40,9 +40,10 @@ export class SaveDrawingModalComponent {
 
     sendToServer(): void {
         if (!this.validateString(this.drawingTitle)) {
-            alert('Il y a une erreur avec les entrées. Veuillez revérifier le titre ou les étiquettes :)'); // temporaire
+            alert('Il y a une erreur avec les entrées. Veuillez revérifier le format du titre et/ou des étiquettes.'); // temporaire
             return;
         }
+
         this.message = {
             title: this.drawingTitle,
             labels: this.tags,
@@ -51,7 +52,7 @@ export class SaveDrawingModalComponent {
             body: this.drawingService.canvas.toDataURL(),
         };
 
-        this.indexService.basicPost(this.message).subscribe(
+        this.indexService.postDrawing(this.message).subscribe(
             (response) => {
                 console.log(response);
                 this.matDialogRef.close();
