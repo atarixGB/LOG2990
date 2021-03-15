@@ -9,14 +9,24 @@ import { IndexService } from '@app/services/index/index.service';
 })
 export class CarouselComponent implements OnInit {
     drawing: SafeUrl;
+    drawingsUrls: Map<string, string>;
+    urls: string[];
 
     constructor(public indexService: IndexService, private sanitizer: DomSanitizer) {}
 
     ngOnInit(): void {
-        this.getDrawings('test.png');
+        this.getDrawing('test.png');
+        this.getDrawingsUrls();
     }
 
-    getDrawings(imageUrl: string): void {
+    getDrawingsUrls(): void {
+        this.indexService.getAllDrawingUrls().subscribe((res: Map<string, string>) => {
+            this.drawingsUrls = res;
+            console.log(res.get('test.png'));
+        });
+    }
+
+    getDrawing(imageUrl: string): void {
         this.indexService.getDrawing(imageUrl).subscribe(
             (response) => {
                 // Do what you want with the data here

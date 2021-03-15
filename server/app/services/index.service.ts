@@ -1,13 +1,17 @@
+import { BASE_URL, INDEX_URL } from '@app/constants';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
+import { JsonObject } from 'swagger-ui-express';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';
 const DATA_ENCODING = 'base64';
+
 const IMAGE_DATA_PREFIX = /^data:image\/\w+;base64,/;
 const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
+
 const MIN_LENGTH_TITLE = 1;
 const MAX_LENGTH_INPUT = 15;
 const NB_TAGS_ALLOWED = 5;
@@ -16,18 +20,18 @@ const NB_TAGS_ALLOWED = 5;
 export class IndexService {
     fs = require('fs');
     clientMessages: DrawingData[];
-    drawingsPath: string[];
+    drawingURLS: Map<string, string>;
 
     constructor() {
         this.clientMessages = [];
-        this.drawingsPath = [];
+        this.drawingURLS = new Map<string, string>();
 
         fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
             if (error) throw error;
             files.forEach((file) => {
-                this.drawingsPath.push(file);
+                this.drawingURLS.set(file, `${BASE_URL}${INDEX_URL}/drawings/${file}`);
             });
-            console.log('Dessins actuellement sur le serveur:', this.drawingsPath);
+            console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
         });
     }
 
@@ -37,6 +41,14 @@ export class IndexService {
         return description;
     }
 
+    mapToJSON(map: Map<string, string>): JsonObject {
+        let jsonObject: JsonObject = {};
+        map.forEach((value, key) => {
+            jsonObject[key] = value;
+        });
+        return jsonObject;
+    }
+
     storeDrawing(drawingData: DrawingData): void {
         const requestValid = this.validateRequest(drawingData);
 
@@ -44,14 +56,10 @@ export class IndexService {
             const dataBuffer = this.parseImageData(drawingData);
             fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
                 if (error) throw error;
-                this.drawingsPath.push(drawingData.title + `.${IMAGE_FORMAT}`);
+                this.drawingURLS.set(drawingData.title + `.${IMAGE_FORMAT}`, `${BASE_URL}${INDEX_URL}/drawings/${drawingData.title}.${IMAGE_FORMAT}`);
                 this.clientMessages.push(drawingData);
             });
         }
-    }
-
-    getAllDrawingsPath(): string[] {
-        return this.drawingsPath;
     }
 
     async lastDrawing(): Promise<DrawingData> {

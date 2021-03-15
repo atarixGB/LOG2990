@@ -9,13 +9,15 @@ import { catchError } from 'rxjs/operators';
 })
 export class IndexService {
     private readonly BASE_URL: string = 'http://localhost:3000';
-    private readonly API_URL: string = '/api/index';
+    private readonly INDEX_URL: string = '/api/index';
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {
+        this.BASE_URL = this.BASE_URL;
+    }
 
     // TODO : Retrieve titles and tags from mongodb when database will be done
-    getAllDrawingTitles(): Observable<string[]> {
-        const url = this.BASE_URL + this.API_URL + '/drawings';
+    getAllDrawingUrls(): Observable<Map<string, string>> {
+        const url = this.BASE_URL + this.INDEX_URL + '/drawings';
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain,*/*',
@@ -23,11 +25,11 @@ export class IndexService {
             }),
             responseType: 'string' as 'json',
         };
-        return this.http.get<string[]>(url, httpOptions);
+        return this.http.get<Map<string, string>>(url, httpOptions);
     }
 
     getDrawing(imageUrl: string): Observable<Blob> {
-        const url = this.BASE_URL + this.API_URL + `/drawings/${imageUrl}`;
+        const url = this.BASE_URL + this.INDEX_URL + `/drawings/${imageUrl}`;
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'image/webp,*/*',
@@ -39,7 +41,7 @@ export class IndexService {
     }
 
     postDrawing(message: DrawingData): Observable<DrawingData | string[]> {
-        const url: string = (this.BASE_URL + this.API_URL + '/send') as string;
+        const url: string = (this.BASE_URL + this.INDEX_URL + '/send') as string;
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain, */*',

@@ -15,8 +15,8 @@ const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
     styleUrls: ['./save-drawing-modal.component.scss'],
 })
 export class SaveDrawingModalComponent {
-    matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
-    matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+    readonly matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+    readonly matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
     minLength: number;
     maxLength: number;
     drawingTitle: string;
