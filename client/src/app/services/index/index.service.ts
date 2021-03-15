@@ -16,28 +16,29 @@ export class IndexService {
     }
 
     // TODO : Retrieve titles and tags from mongodb when database will be done
-    getAllDrawingUrls(): Observable<Map<string, string>> {
+    getAllDrawingUrls(): Observable<string[]> {
         const url = this.BASE_URL + this.INDEX_URL + '/drawings';
-        const httpOptions = {
-            headers: new HttpHeaders({
-                Accept: 'text/plain,*/*',
-                'Content-Type': 'application/json',
-            }),
-            responseType: 'string' as 'json',
-        };
-        return this.http.get<Map<string, string>>(url, httpOptions);
+        // const httpOptions = {
+        //     headers: new HttpHeaders({
+        //         Accept: 'text/plain,*/*',
+        //         'Content-Type': 'application/json',
+        //     }),
+        //     responseType: 'string[]' as 'json',
+        // };
+        return this.http.get<string[]>(url);
     }
 
     getDrawing(imageUrl: string): Observable<Blob> {
-        const url = this.BASE_URL + this.INDEX_URL + `/drawings/${imageUrl}`;
-        const httpOptions = {
-            headers: new HttpHeaders({
-                Accept: 'image/webp,*/*',
-                'Content-Type': 'application/json',
-            }),
-            responseType: 'blob' as 'json',
-        };
-        return this.http.get<Blob>(url, httpOptions);
+        // const url = this.BASE_URL + this.INDEX_URL + `/drawings/${imageUrl}`;
+        // const httpOptions = {
+        //     headers: new HttpHeaders({
+        //         Accept: 'image/webp,*/*',
+        //         'Content-Type': 'application/json',
+        //     }),
+        //     responseType: 'blob' as 'json',
+        // };
+        console.log(imageUrl);
+        return this.http.get<Blob>(imageUrl);
     }
 
     postDrawing(message: DrawingData): Observable<DrawingData | string[]> {

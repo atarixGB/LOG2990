@@ -20,16 +20,19 @@ const NB_TAGS_ALLOWED = 5;
 export class IndexService {
     fs = require('fs');
     clientMessages: DrawingData[];
-    drawingURLS: Map<string, string>;
+    //drawingURLS: Map<string, stri
+    drawingURLS: string[];
 
     constructor() {
         this.clientMessages = [];
-        this.drawingURLS = new Map<string, string>();
+        //this.drawingURLS = new Map<string, string>();
+        this.drawingURLS = [];
 
         fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
             if (error) throw error;
             files.forEach((file) => {
-                this.drawingURLS.set(file, `${BASE_URL}${INDEX_URL}/drawings/${file}`);
+                //this.drawingURLS.set(file, `${BASE_URL}${INDEX_URL}/drawings/${file}`);
+                this.drawingURLS.push(`${BASE_URL}${INDEX_URL}/drawings/${file}`);
             });
             console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
         });
@@ -56,7 +59,7 @@ export class IndexService {
             const dataBuffer = this.parseImageData(drawingData);
             fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
                 if (error) throw error;
-                this.drawingURLS.set(drawingData.title + `.${IMAGE_FORMAT}`, `${BASE_URL}${INDEX_URL}/drawings/${drawingData.title}.${IMAGE_FORMAT}`);
+                this.drawingURLS.push(`${BASE_URL}${INDEX_URL}/drawings/${drawingData.title}.${IMAGE_FORMAT}`);
                 this.clientMessages.push(drawingData);
             });
         }

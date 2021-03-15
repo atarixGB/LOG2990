@@ -128,6 +128,7 @@ export class IndexController {
          *             $ref: '#/definitions/Message'
          */
         this.router.get('/drawings/:title', (req: Request, res: Response, next: NextFunction) => {
+            console.log(req.params.title,"OK");
             res.sendFile(req.params.title, { root: 'saved-drawings/' }, (error) => {
                 if (error) throw error;
             });
@@ -153,8 +154,8 @@ export class IndexController {
          */
         this.router.get('/drawings', (req: Request, res: Response, next: NextFunction) => {
             console.log('Mise à jour:', this.indexService.drawingURLS);
-            const jsonObject = this.indexService.mapToJSON(this.indexService.drawingURLS);
-            res.json(jsonObject);
+            // const jsonObject = this.indexService.mapToJSON(this.indexService.drawingURLS);
+            res.json(this.indexService.drawingURLS);
         });
     }
 }
