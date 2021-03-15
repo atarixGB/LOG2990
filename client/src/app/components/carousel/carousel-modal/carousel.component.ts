@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener } from '@angular/core';
 import { SafeUrl } from '@angular/platform-browser';
 import { IndexService } from '@app/services/index/index.service';
 
@@ -7,7 +7,7 @@ import { IndexService } from '@app/services/index/index.service';
     templateUrl: './carousel.component.html',
     styleUrls: ['./carousel.component.scss'],
 })
-export class CarouselComponent implements OnInit {
+export class CarouselComponent implements AfterViewInit {
     images: string[];
     placement: string[];
     private index: number;
@@ -18,24 +18,26 @@ export class CarouselComponent implements OnInit {
     drawingsUrls: string[];
     urls: string[];
 
-    @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
+    // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
     constructor(public indexService: IndexService) {
         this.index = 0;
-        this.images = [
-            'https://image.freepik.com/vecteurs-libre/animal-dessin-style-boho-icone-vector-illustration-graphique_25030-12802.jpg',
-            'https://cdn.arstechnica.net/wp-content/uploads/2017/07/ms-paint-rip-800x500.png',
-            'https://1gew6o3qn6vx9kp3s42ge0y1-wpengine.netdna-ssl.com/wp-content/uploads/sites/140/2014/01/Boston.jpg',
-            'https://digitalsynopsis.com/wp-content/uploads/2018/03/grandma-creates-beautiful-artwork-in-ms-paint-14.jpg',
-        ];
-        //  this.images = [''];
+        // this.images = [
+        //     'https://image.freepik.com/vecteurs-libre/animal-dessin-style-boho-icone-vector-illustration-graphique_25030-12802.jpg',
+        //     'https://cdn.arstechnica.net/wp-content/uploads/2017/07/ms-paint-rip-800x500.png',
+        //     'https://1gew6o3qn6vx9kp3s42ge0y1-wpengine.netdna-ssl.com/wp-content/uploads/sites/140/2014/01/Boston.jpg',
+        //     'https://digitalsynopsis.com/wp-content/uploads/2018/03/grandma-creates-beautiful-artwork-in-ms-paint-14.jpg',
+        // ];
+        this.images = [''];
         this.placement = ['', '', ''];
         this.afterNext = false;
         this.afterPrevious = false;
+        this.getDrawingsUrls();
         this.nextImages();
     }
 
-    async ngOnInit(): Promise<void> {
-        //await this.getDrawingsUrls();
+    ngAfterViewInit() {
+        this.getDrawingsUrls();
+        this.nextImages();
     }
     nextImages() {
         //console.log('dans next. Init :', this.index);
