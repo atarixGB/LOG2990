@@ -1,7 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { PipetteComponent } from './pipette.component';
 
+
+// tslint:disable
 describe('PipetteComponent', () => {
   let component: PipetteComponent;
   let fixture: ComponentFixture<PipetteComponent>;
