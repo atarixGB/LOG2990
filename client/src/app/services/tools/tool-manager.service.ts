@@ -55,6 +55,7 @@ export class ToolManagerService {
             .set('e', this.eraserService)
             .set('i', this.pipetteService)
             .set('3', this.polygonService)
+            .set('p', this.polygonService)
             .set('a', this.sprayService);
     }
 
