@@ -71,9 +71,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         }
         this.cdr.detectChanges();
 
-        this.baseCtx.beginPath();
-        this.baseCtx.fillStyle = '#FFFFFF';
-        this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+        this.whiteBackgroundCanvas();
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
@@ -185,5 +183,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    private whiteBackgroundCanvas(): void {
+        this.baseCtx.beginPath();
+        this.baseCtx.fillStyle = '#FFFFFF';
+        this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
     }
 }

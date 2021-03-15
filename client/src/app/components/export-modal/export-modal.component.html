@@ -3,9 +3,13 @@
     <div mat-dialog-content>Veuillez choisir un nom pour votre dessin.</div>
 
     <mat-form-field>
-        <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="exportService.drawingTitle" required />
+        <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="exportService.drawingTitle" [maxlength]="this.maxLength" required />
         <mat-icon matSuffix class="help-btn" [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help </mat-icon>
     </mat-form-field>
+
+    <div class="warning-msg" *ngIf="!this.validateString(exportService.drawingTitle)">
+        Le titre du dessin <span class="underline">ne doit pas</span> comporter de caractères spéciaux ni d'espaces.
+    </div>
 
     <br />
     <mat-form-field>
@@ -49,6 +53,6 @@
 
     <div mat-dialog-actions>
         <button mat-button mat-dialog-close>Annuler</button>
-        <button mat-button mat-dialog-close (click)="exportService.exportDrawing()">Exporter</button>
+        <button mat-button mat-dialog-close (click)="exportDrawing()">Exporter</button>
     </div>
 </div>

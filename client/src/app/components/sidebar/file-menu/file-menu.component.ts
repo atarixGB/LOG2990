@@ -20,6 +20,7 @@ export class FileMenuComponent {
         this.dialog.open(ExportModalComponent, {});
         this.exportService.imagePrevisualization();
 
+        this.exportService.drawingTitle = 'dessin';
         this.exportService.selectedFilter = FiltersList.None;
         this.exportService.currentFilter = 'none';
         this.exportService.currentImageFormat = 'png';
