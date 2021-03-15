@@ -44,6 +44,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.whiteBackgroundCanvas();
             }
         });
     }
@@ -169,6 +170,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         }
 
         setTimeout(() => {
+            this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
         }, 0);
     }
