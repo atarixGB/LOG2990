@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { MouseButton, ZOOM_RADIUS } from '@app/constants';
+import { MouseButton, ZOOM_RADIUS, ZOOM_RATIO } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -47,18 +47,37 @@ export class PipetteService extends Tool {
 
         this.pixelColor[0] = pixelData[red].toString() + pixelData[green].toString() + pixelData[blue].toString();
         this.pixelColor[1] = pixelData[alpha].toString();
-        const color = 'rgba(' + pixelData[red] + ',' + pixelData[green] + ',' + pixelData[blue] + ',' + pixelData[alpha] + ')';
-        this.zoomCtx.beginPath();
-        this.zoomCtx.fillStyle = color;
-        this.zoomCtx.arc(this.zoom.width / 2, this.zoom.height / 2, ZOOM_RADIUS, 0, 2 * Math.PI);
-        this.zoomCtx.fill();
-        this.zoomCtx.stroke();
-        this.zoomCtx.closePath();
 
         return pixelData;
     }
 
+    drawOnZoom(event: MouseEvent): void {
+        
+        const x = this.getPositionFromMouse(event).x;
+        const y = this.getPositionFromMouse(event).y;
+
+        const hSource = this.zoom.height; 
+        const wSource = this.zoom.width;
+
+        this.zoomCtx.beginPath();
+        this.zoomCtx.arc(this.zoom.width / 2, this.zoom.height / 2, ZOOM_RADIUS, 0, 2 * Math.PI);
+        this.zoomCtx.clip();
+        this.zoomCtx.drawImage(
+            this.drawingService.canvas,
+            x - wSource / 2 * ZOOM_RATIO,
+            y - hSource / 2 * ZOOM_RATIO,
+            wSource * ZOOM_RATIO,
+            hSource * ZOOM_RATIO,
+            0,
+            0,
+            this.zoom.width, 
+            this.zoom.height  
+        );
+        this.zoomCtx.strokeRect(this.zoom.width / 2, this.zoom.height / 2, (1/ZOOM_RATIO), (1/ZOOM_RATIO));
+        this.zoomCtx.closePath();
+    }
+
     onMouseMove(event: MouseEvent): void {
-        this.pixelOnZoom(event);
+        this.drawOnZoom(event);
     }
 }
