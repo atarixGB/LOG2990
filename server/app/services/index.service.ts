@@ -9,10 +9,6 @@ const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';
 const DATA_ENCODING = 'base64';
 const IMAGE_DATA_PREFIX = /^data:image\/\w+;base64,/;
-const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
-const MIN_LENGTH_TITLE = 1;
-const MAX_LENGTH_INPUT = 15;
-const NB_TAGS_ALLOWED = 5;
 
 @injectable()
 export class IndexService {
@@ -40,17 +36,22 @@ export class IndexService {
     }
 
     storeDrawing(drawingData: DrawingData): void {
-        const requestValid = this.validateRequest(drawingData);
+        const requestValid = this.validateRequestBody(drawingData.body);
 
         if (requestValid) {
             const dataBuffer = this.parseImageData(drawingData);
             fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
                 if (error) throw error;
-                this.drawingsPath.push(drawingData.title + `.${IMAGE_FORMAT}`);
-                this.databaseService.addDrawingMetadata(drawingData).catch((error: Error) => {
-                    throw error;
-                });
-                this.clientMessages.push(drawingData);
+
+                try {
+                    this.drawingsPath.push(drawingData.title + `.${IMAGE_FORMAT}`);
+                    this.clientMessages.push(drawingData);
+                    this.databaseService.addDrawing(drawingData).catch((error: Error) => {
+                        throw error;
+                    });
+                } catch {
+                    console.error('Cannot save data on database !');
+                }
             });
         }
     }
@@ -93,29 +94,7 @@ export class IndexService {
         return dataBuffer;
     }
 
-    private validateString(str: string, minLength: number): boolean {
-        const isAlphanumeric = ALPHANUMERIC_REGEX.test(str);
-        const isValidSize = str.length >= minLength && str.length <= MAX_LENGTH_INPUT;
-        return isValidSize && isAlphanumeric;
-    }
-
-    private validateTags(tags: string[]): boolean {
-        for (const tag in tags) {
-            if (!this.validateString(tag, 0)) {
-                return false;
-            }
-        }
-
-        if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) return false;
-
-        return true;
-    }
-
     private validateRequestBody(body: string): boolean {
         return IMAGE_DATA_PREFIX.test(body);
-    }
-
-    private validateRequest(request: DrawingData): boolean {
-        return this.validateString(request.title, MIN_LENGTH_TITLE) && this.validateTags(request.labels) && this.validateRequestBody(request.body);
     }
 }
