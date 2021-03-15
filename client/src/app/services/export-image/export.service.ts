@@ -28,15 +28,6 @@ export class ExportService {
     private image: HTMLImageElement;
 
     constructor(private drawingService: DrawingService) {
-        this.drawingTitle = 'mon-dessin';
-        this.currentDrawing = '';
-        this.currentImageFormat = 'png';
-        this.selectedFilter = FiltersList.None;
-        this.currentFilter = 'none';
-        this.filterIntensity = DEFAULT_INTENSITY;
-
-        this.image = new Image();
-
         this.filtersBindings = new Map<FiltersList, string>();
         this.filtersBindings
             .set(FiltersList.None, 'none')
@@ -45,6 +36,15 @@ export class ExportService {
             .set(FiltersList.Contrast, 'contrast')
             .set(FiltersList.Invert, 'invert')
             .set(FiltersList.Grayscale, 'grayscale');
+
+        this.drawingTitle = 'dessin';
+        this.currentDrawing = '';
+        this.currentImageFormat = 'png';
+        this.selectedFilter = FiltersList.None;
+        this.currentFilter = this.filtersBindings.get(this.selectedFilter);
+        this.filterIntensity = DEFAULT_INTENSITY;
+
+        this.image = new Image();
     }
 
     imagePrevisualization(): void {

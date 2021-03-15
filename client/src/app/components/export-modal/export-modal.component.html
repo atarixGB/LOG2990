@@ -3,17 +3,11 @@
     <div mat-dialog-content>Veuillez choisir un nom pour votre dessin.</div>
 
     <mat-form-field>
-        <input
-            matInput
-            placeholder="Titre du dessin"
-            type="text"
-            [(ngModel)]="exportService.drawingTitle"
-            required
-        />
+        <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="exportService.drawingTitle" required />
         <mat-icon matSuffix class="help-btn" [matTooltip]="this.matTooltipForTitle" matTooltipPosition="right">help </mat-icon>
     </mat-form-field>
 
-    <br>
+    <br />
     <mat-form-field>
         <mat-label>Format de l'image</mat-label>
         <mat-select [(ngModel)]="exportService.currentImageFormat">
@@ -22,7 +16,7 @@
         </mat-select>
     </mat-form-field>
 
-    <mat-form-field class=filters-container>
+    <mat-form-field class="filters-container">
         <mat-label>Filtres</mat-label>
         <mat-select [(ngModel)]="exportService.selectedFilter" (selectionChange)="exportService.applyFilter()">
             <mat-option [value]="FiltersList.None">Aucun</mat-option>
@@ -35,9 +29,16 @@
     </mat-form-field>
 
     <div *ngIf="exportService.currentFilter !== 'none'">
-        <h4>Intensité du filtre : {{ exportService.filterIntensity }} </h4>
+        <h4>Intensité du filtre : {{ exportService.filterIntensity }}</h4>
         <div>
-            <mat-slider min="0" max="100" tickInterval="1000" thumbLabel (change)="exportService.applyFilter()" [(ngModel)]="exportService.filterIntensity">
+            <mat-slider
+                min="0"
+                max="100"
+                tickInterval="1000"
+                thumbLabel
+                (change)="exportService.applyFilter()"
+                [(ngModel)]="exportService.filterIntensity"
+            >
             </mat-slider>
         </div>
     </div>
@@ -48,7 +49,6 @@
 
     <div mat-dialog-actions>
         <button mat-button mat-dialog-close>Annuler</button>
-        <button mat-button (click)="exportService.exportDrawing()">Exporter</button>
+        <button mat-button mat-dialog-close (click)="exportService.exportDrawing()">Exporter</button>
     </div>
 </div>
-
