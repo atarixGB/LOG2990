@@ -9,6 +9,10 @@
 }
 
 app-carousel-drawing {
-    display: inline-block;
     padding: 12px;
+    display: inline-flex;
+}
+
+::ng-deep .mat-dialog-container {
+    overflow: hidden !important;
 }
