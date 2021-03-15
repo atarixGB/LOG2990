@@ -26,6 +26,7 @@ export class PipetteService extends Tool {
         // } else if (event.button == MouseButton.Right) {
         //     // Assigner couleur secondaire
         // }
+        
         this.mouseDown = true;
         this.mouseDownCoord = this.getPositionFromMouse(event);
         const pixelData = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;
@@ -35,7 +36,7 @@ export class PipetteService extends Tool {
         let blue = pixelData[2].toString(16);
         this.color[0] = '#' + red + green + blue;
         this.color[1] = pixelData[3].toString();
-
+        
         if (event.button === MouseButton.Left) {
             this.colorManagerService.selectedColor[ColorOrder.PrimaryColor].inString = this.color[0]; //on assigne la chaine correspondante à RGB à la couleur primaire
             this.primaryColor.emit(this.color);
