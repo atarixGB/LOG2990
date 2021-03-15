@@ -5,6 +5,7 @@ import { inject, injectable } from 'inversify';
 import { IndexService } from '../services/index.service';
 
 const HTTP_STATUS_CREATED = 201;
+const HTTP_STATUS_NOT_FOUND = 404;
 
 @injectable()
 export class IndexController {
@@ -104,9 +105,17 @@ export class IndexController {
          *         description: Created
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
-            const message: DrawingData = req.body;
-            this.indexService.storeDrawing(message);
-            res.sendStatus(HTTP_STATUS_CREATED);
+            const drawing: DrawingData = req.body;
+            this.indexService
+                .addDrawing(drawing)
+                .then(() => {
+                    res.sendStatus(HTTP_STATUS_CREATED);
+                })
+                .catch((error: Error) => {
+                    res.status(HTTP_STATUS_NOT_FOUND);
+                });
+
+            // res.sendStatus(HTTP_STATUS_CREATED);
         });
 
         /**

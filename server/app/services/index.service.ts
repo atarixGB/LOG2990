@@ -2,14 +2,22 @@ import { TYPES } from '@app/types';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
+import { Collection } from 'mongodb';
 import 'reflect-metadata';
+import { DrawingMetadata } from '../classes/drawing-metadata';
 import { DatabaseService } from './database.service';
+
+const DATABASE_COLLECTION = 'Drawings';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';
 const DATA_ENCODING = 'base64';
 const IMAGE_DATA_PREFIX = /^data:image\/\w+;base64,/;
 
+const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
+const MIN_LENGTH_TITLE = 1;
+const MAX_LENGTH_INPUT = 15;
+const NB_TAGS_ALLOWED = 5;
 @injectable()
 export class IndexService {
     fs = require('fs');
@@ -35,23 +43,27 @@ export class IndexService {
         return description;
     }
 
-    storeDrawing(drawingData: DrawingData): void {
-        const requestValid = this.validateRequestBody(drawingData.body);
+    async addDrawing(drawingData: DrawingData): Promise<void> {
+        const requestValid = this.validateRequest(drawingData);
 
         if (requestValid) {
+            // Save as PNG to server
             const dataBuffer = this.parseImageData(drawingData);
             fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
                 if (error) throw error;
+                this.drawingsPath.push(drawingData.title + `.${IMAGE_FORMAT}`);
+                this.clientMessages.push(drawingData);
+            });
 
-                try {
-                    this.drawingsPath.push(drawingData.title + `.${IMAGE_FORMAT}`);
-                    this.clientMessages.push(drawingData);
-                    this.databaseService.addDrawing(drawingData).catch((error: Error) => {
-                        throw error;
-                    });
-                } catch {
-                    console.error('Cannot save data on database !');
-                }
+            // Send metadata to server
+            const metadata: DrawingMetadata = {
+                title: drawingData.title,
+                labels: drawingData.labels,
+            };
+
+            await this.collection.insertOne(metadata).catch((error: Error) => {
+                // throw new HttpException();
+                console.error('Failed to add drawing to database');
             });
         }
     }
@@ -96,5 +108,29 @@ export class IndexService {
 
     private validateRequestBody(body: string): boolean {
         return IMAGE_DATA_PREFIX.test(body);
+    }
+
+    private validateString(str: string, minLength: number): boolean {
+        const isAlphanumeric = ALPHANUMERIC_REGEX.test(str);
+        const isValidSize = str.length >= minLength && str.length <= MAX_LENGTH_INPUT;
+        return isValidSize && isAlphanumeric;
+    }
+
+    private validateTags(tags: string[]): boolean {
+        if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) return false;
+        for (const tag in tags) {
+            if (!this.validateString(tag, 0)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private validateRequest(request: DrawingData): boolean {
+        return this.validateString(request.title, MIN_LENGTH_TITLE) && this.validateTags(request.labels) && this.validateRequestBody(request.body);
+    }
+
+    get collection(): Collection<DrawingMetadata> {
+        return this.databaseService.database.collection(DATABASE_COLLECTION);
     }
 }
