@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 const PREVIEW_ORIGIN_X = 0;
 const PREVIEW_ORIGIN_Y = 0;
 const PREVIEW_WIDTH = 400;
-const PREVIEW_LENGTH = 250;
+const PREVIEW_HEIGHT = 250;
 const DEFAULT_INTENSITY = 50;
 @Injectable({
     providedIn: 'root',
@@ -68,7 +68,7 @@ export class ExportService {
             this.image.src = this.currentDrawing;
 
             this.image.onload = () => {
-                this.baseCtx.clearRect(PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, PREVIEW_WIDTH, PREVIEW_LENGTH);
+                this.baseCtx.clearRect(PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, PREVIEW_WIDTH, PREVIEW_HEIGHT);
 
                 if (this.currentFilter === 'none') {
                     this.baseCtx.filter = 'none';
@@ -93,11 +93,11 @@ export class ExportService {
 
     private getResizedCanvas(): void {
         const ratio: number = this.getCanvasRatio();
-        this.resizeWidth = this.canvas.width;
+        this.resizeWidth = PREVIEW_WIDTH;
         this.resizeHeight = this.resizeWidth / ratio;
 
-        if (this.resizeHeight > this.canvas.height) {
-            this.resizeHeight = this.canvas.height;
+        if (this.resizeHeight > PREVIEW_HEIGHT) {
+            this.resizeHeight = PREVIEW_HEIGHT;
             this.resizeWidth = this.resizeHeight * ratio;
         }
     }

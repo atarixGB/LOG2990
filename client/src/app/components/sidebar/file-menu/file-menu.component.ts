@@ -21,6 +21,7 @@ export class FileMenuComponent {
         this.exportService.imagePrevisualization();
 
         this.exportService.selectedFilter = FiltersList.None;
+        this.exportService.currentFilter = 'none';
         this.exportService.currentImageFormat = 'png';
     }
 }
