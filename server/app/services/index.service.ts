@@ -3,7 +3,6 @@ import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
-import { JsonObject } from 'swagger-ui-express';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';
@@ -18,20 +17,16 @@ const NB_TAGS_ALLOWED = 5;
 
 @injectable()
 export class IndexService {
-    fs = require('fs');
     clientMessages: DrawingData[];
-    //drawingURLS: Map<string, stri
     drawingURLS: string[];
 
     constructor() {
         this.clientMessages = [];
-        //this.drawingURLS = new Map<string, string>();
         this.drawingURLS = [];
 
         fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
             if (error) throw error;
             files.forEach((file) => {
-                //this.drawingURLS.set(file, `${BASE_URL}${INDEX_URL}/drawings/${file}`);
                 this.drawingURLS.push(`${BASE_URL}${INDEX_URL}/drawings/${file}`);
             });
             console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
@@ -39,17 +34,9 @@ export class IndexService {
     }
 
     about(): string {
-        const description: string =
+        const description =
             "Bienvenue sur le serveur de PolyDessin. Ce serveur permet de sauvegarder les dessins de l'application PolyDessin dans le format png";
         return description;
-    }
-
-    mapToJSON(map: Map<string, string>): JsonObject {
-        let jsonObject: JsonObject = {};
-        map.forEach((value, key) => {
-            jsonObject[key] = value;
-        });
-        return jsonObject;
     }
 
     storeDrawing(drawingData: DrawingData): void {

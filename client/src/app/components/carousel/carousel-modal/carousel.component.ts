@@ -30,6 +30,7 @@ export class CarouselComponent implements OnInit {
         });
     }
 
+    // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
     async getNewImage(src: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -48,23 +49,9 @@ export class CarouselComponent implements OnInit {
         console.log(this.drawingsUrls, 'LLLL');
         for (let i = 0; i < this.drawingsUrls.length; i++) {
             this.drawing = this.drawingsUrls[i];
-            const img = await this.getNewImage(this.drawingsUrls[i]);
-            const ctx = this.canvasRef.nativeElement.getContext('2d');
-            ctx?.drawImage(img, 0, 0);
+            // const img = await this.getNewImage(this.drawingsUrls[i]);
+            // const ctx = this.canvasRef.nativeElement.getContext('2d');
+            // ctx?.drawImage(img, 0, 0);
         }
-
-        // this.indexService.getDrawing(imageUrl).subscribe(
-        //     (response) => {
-        //         // Do what you want with the data here
-        //         this.drawing = response;
-        //         let objectURL = URL.createObjectURL(response);
-        //         this.drawing = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-        //     },
-        //     (error) => {
-        //         alert(
-        //             `Votre requête pour récupérer le dessin sélectionné n'a pas pu être acheminé vers le serveur de PolyDessin. Veuillez réessayer.\n${error}`,
-        //         );
-        //     },
-        // );
     }
 }
