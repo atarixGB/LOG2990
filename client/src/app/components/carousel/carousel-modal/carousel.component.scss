@@ -1,0 +1,14 @@
+#main-container {
+    width: 1000px;
+    height: 500px;
+    overflow: hidden;
+}
+
+#header {
+    text-align: center;
+}
+
+app-carousel-drawing {
+    display: inline-block;
+    padding: 12px;
+}

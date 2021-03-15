@@ -1,1 +1,10 @@
-<p>carousel-drawing works!</p>
+<div class="main-container">
+    <img [src]="imagesURL" />
+    <h3>Nom : {{ name }}</h3>
+    <div id="tag-container">
+        <h3>Tags :</h3>
+        <button mat-flat-button *ngFor="let tag of this.tags">
+            {{ tag }}
+        </button>
+    </div>
+</div>
