@@ -1,18 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { SidebarComponent } from './sidebar.component';
+import { SprayAttributesComponent } from './spray-attributes.component';
 
-describe('SidebarComponent', () => {
-    let component: SidebarComponent;
-    let fixture: ComponentFixture<SidebarComponent>;
+// tslint:disable:
+describe('SprayAttributesComponent', () => {
+    let component: SprayAttributesComponent;
+    let fixture: ComponentFixture<SprayAttributesComponent>;
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [SidebarComponent],
+            declarations: [SprayAttributesComponent],
         }).compileComponents();
     }));
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(SidebarComponent);
+        fixture = TestBed.createComponent(SprayAttributesComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

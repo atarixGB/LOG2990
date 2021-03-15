@@ -72,7 +72,7 @@ export class PencilService extends Tool {
             ctx.lineTo(point.x, point.y);
             ctx.lineWidth = this.pencilThickness;
         }
-        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.strokeStyle = color;
         ctx.stroke();
     }
@@ -80,7 +80,7 @@ export class PencilService extends Tool {
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
         ctx.beginPath();
         ctx.arc(path[0].x, path[0].y, this.pencilThickness, 0, 2 * Math.PI, true);
-        const color = this.colorManager.selectedColor[ColorOrder.primaryColor].inString;
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.fillStyle = color;
         ctx.fill();
     }

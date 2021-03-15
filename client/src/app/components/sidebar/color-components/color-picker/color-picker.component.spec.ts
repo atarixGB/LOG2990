@@ -2,7 +2,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { COLOR_POSITION } from '@app/constants';
 import { ColorDisplayerComponent } from 'src/app/components/sidebar/color-components/color-displayer/color-displayer.component';
 import { FIRSTCOLORTEST, SECONDCOLORTEST } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
@@ -36,8 +35,8 @@ describe('ColorPickerComponent', () => {
     beforeEach(() => {
         colorManagerSpy = jasmine.createSpyObj('ColorManagerService', ['updatePixelColor']);
         colorManagerSpy.selectedColor = new Array<RGBA>();
-        colorManagerSpy.selectedColor[ColorOrder.primaryColor] = FIRSTCOLORTEST;
-        colorManagerSpy.selectedColor[ColorOrder.secondaryColor] = SECONDCOLORTEST;
+        colorManagerSpy.selectedColor[ColorOrder.PrimaryColor] = FIRSTCOLORTEST;
+        colorManagerSpy.selectedColor[ColorOrder.SecondaryColor] = SECONDCOLORTEST;
     });
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -64,22 +63,22 @@ describe('ColorPickerComponent', () => {
     });
 
     it('should change secondary color when right button of mouse down', () => {
-        const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
+        const pickPixelColorSpy = spyOn<any>(component, 'pickPixelColor').and.stub();
         let eventMock = new EventMock();
         component['onMouseDown'](eventMock as any);
-        expect(colorPickerSpy).toHaveBeenCalledWith(component.coord, ColorOrder.secondaryColor, COLOR_POSITION[1]);
+        expect(pickPixelColorSpy).toHaveBeenCalledWith(component.coord, ColorOrder.SecondaryColor);
     });
     it('should change primary color when left button of mouse down', () => {
-        const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
+        const pickPixelColorSpy = spyOn<any>(component, 'pickPixelColor').and.stub();
         let eventMock = new SecondEventMock();
         component['onMouseDown'](eventMock as any);
-        expect(colorPickerSpy).toHaveBeenCalledWith(component.coord, ColorOrder.primaryColor, COLOR_POSITION[0]);
+        expect(pickPixelColorSpy).toHaveBeenCalledWith(component.coord, ColorOrder.PrimaryColor);
     });
     it('should not change when wrong button of mouse down', () => {
-        const colorPickerSpy = spyOn<any>(component, 'colorPicker').and.stub();
+        const pickPixelColorSpy = spyOn<any>(component, 'pickPixelColor').and.stub();
         let eventMock = new ThirdEventMock();
         component['onMouseDown'](eventMock as any);
-        expect(colorPickerSpy).toHaveBeenCalledTimes(0);
+        expect(pickPixelColorSpy).toHaveBeenCalledTimes(0);
     });
     it('should not change when colorPixels does not exist', () => {
         const contextSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);

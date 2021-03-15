@@ -37,8 +37,11 @@ import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
+import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { SprayAttributesComponent } from './components/sidebar/spray-attributes/spray-attributes.component';
+import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 @NgModule({
     declarations: [
@@ -64,6 +67,9 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         ColorPopupComponent,
         ConfigPanelComponent,
         ExportModalComponent,
+        PolygonConfigComponent,
+        SprayConfigComponent,
+        SprayAttributesComponent,
     ],
     imports: [
         BrowserModule,
