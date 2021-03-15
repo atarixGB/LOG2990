@@ -1,13 +1,12 @@
+import { DrawingMetadata } from '@app/classes/drawing-metadata';
 import { TYPES } from '@app/types';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { inject, injectable } from 'inversify';
-import { Collection } from 'mongodb';
 import 'reflect-metadata';
-import { DrawingMetadata } from '../classes/drawing-metadata';
 import { DatabaseService } from './database.service';
 
-const DATABASE_COLLECTION = 'Drawings';
+// const DATABASE_COLLECTION = 'Drawings';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';
@@ -55,13 +54,15 @@ export class IndexService {
                 this.clientMessages.push(drawingData);
             });
 
-            // Send metadata to server
             const metadata: DrawingMetadata = {
                 title: drawingData.title,
                 labels: drawingData.labels,
             };
 
-            await this.collection.insertOne(metadata).catch((error: Error) => {
+            console.log('avant', this.databaseService.drawingsCollection);
+            console.log(this.databaseService.drawingsCollection);
+            await this.databaseService.drawingsCollection.insertOne(metadata).catch((error: Error) => {
+                console.log();
                 // throw new HttpException();
                 console.error('Failed to add drawing to database');
             });
@@ -128,9 +129,5 @@ export class IndexService {
 
     private validateRequest(request: DrawingData): boolean {
         return this.validateString(request.title, MIN_LENGTH_TITLE) && this.validateTags(request.labels) && this.validateRequestBody(request.body);
-    }
-
-    get collection(): Collection<DrawingMetadata> {
-        return this.databaseService.database.collection(DATABASE_COLLECTION);
     }
 }

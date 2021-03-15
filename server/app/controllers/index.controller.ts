@@ -106,6 +106,7 @@ export class IndexController {
          */
         this.router.post('/send', (req: Request, res: Response, next: NextFunction) => {
             const drawing: DrawingData = req.body;
+            console.log('hello');
             this.indexService
                 .addDrawing(drawing)
                 .then(() => {
