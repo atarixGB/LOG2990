@@ -9,23 +9,21 @@ import { catchError } from 'rxjs/operators';
 })
 export class IndexService {
     private readonly BASE_URL: string = 'http://localhost:3000';
-    private readonly INDEX_URL: string = '/api/index';
+    // private readonly INDEX_URL: string = '/api/index';
+    private readonly DATABASE_URL: string = '/api/database';
+    private readonly DRAWINGS_URL: string = '/drawings';
+    private readonly SEND_URL: string = '/send';
 
     constructor(private http: HttpClient) {}
 
     // TODO : Retrieve titles and tags from mongodb when database will be done
     getAllDrawingUrls(): Observable<string[]> {
-        const url = this.BASE_URL + this.INDEX_URL + '/drawings';
+        const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
         return this.http.get<string[]>(url);
     }
 
-    getDrawing(imageUrl: string): Observable<Blob> {
-        console.log(imageUrl);
-        return this.http.get<Blob>(imageUrl);
-    }
-
     postDrawing(message: DrawingData): Observable<DrawingData | string[]> {
-        const url: string = (this.BASE_URL + this.INDEX_URL + '/send') as string;
+        const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
         const httpOptions = {
             headers: new HttpHeaders({
                 Accept: 'text/plain, */*',
