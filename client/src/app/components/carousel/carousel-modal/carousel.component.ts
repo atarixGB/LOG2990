@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { SafeUrl } from '@angular/platform-browser';
 import { IndexService } from '@app/services/index/index.service';
 
 @Component({
@@ -14,10 +14,7 @@ export class CarouselComponent implements OnInit {
     drawingsUrls: string[];
     urls: string[];
 
-    constructor(public indexService: IndexService, private sanitizer: DomSanitizer) {
-        if (this.sanitizer) {
-        }
-    }
+    constructor(public indexService: IndexService) {}
 
     ngOnInit(): void {
         this.getDrawingsUrls();
@@ -46,9 +43,9 @@ export class CarouselComponent implements OnInit {
     }
 
     async getDrawing(): Promise<void> {
-        console.log(this.drawingsUrls, 'LLLL');
-        for (let i = 0; i < this.drawingsUrls.length; i++) {
-            this.drawing = this.drawingsUrls[i];
+        for (const url of this.drawingsUrls) {
+            // for (let i = 0; i < this.drawingsUrls.length; i++) {
+            this.drawing = url;
             // const img = await this.getNewImage(this.drawingsUrls[i]);
             // const ctx = this.canvasRef.nativeElement.getContext('2d');
             // ctx?.drawImage(img, 0, 0);
