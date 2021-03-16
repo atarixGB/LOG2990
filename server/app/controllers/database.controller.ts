@@ -5,7 +5,7 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 
 @injectable()
-export class DateController {
+export class DatabaseController {
     router: Router;
 
     constructor(@inject(TYPES.DateService) private dateService: DateService) {
