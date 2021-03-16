@@ -1,14 +1,10 @@
 import { DrawingMetadata } from '@app/classes/drawing-metadata';
-import { BASE_URL, DATABASE_URL, DRAWINGS_URL } from '@app/constants';
+import { BASE_URL, DATABASE_DRAWINGS_COLLECTION, DATABASE_MONGO_URL, DATABASE_NAME, DATABASE_URL, DRAWINGS_URL } from '@app/constants';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
 import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb';
 import 'reflect-metadata';
-
-const DATABASE_MONGO_URL = 'mongodb+srv://admin:admin@cluster0.l4dzm.mongodb.net/PolyDessin?retryWrites=true&w=majority';
-const DATABASE_NAME = 'PolyDessin';
-const DATABASE_DRAWINGS_COLLECTION = 'Drawings';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
 const IMAGE_FORMAT = 'png';

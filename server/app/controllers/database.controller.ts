@@ -20,31 +20,11 @@ export class DatabaseController {
         /**
          * @swagger
          *
-         * definitions:
-         *   Message:
-         *     type: object
-         *     properties:
-         *       title:
-         *         type: string
-         *       body:
-         *         type: string
-         */
-
-        /**
-         * @swagger
-         * tags:
-         *   - name: Time
-         *     description: Time endpoints
-         */
-
-        /**
-         * @swagger
-         *
-         * /api/date:
+         * /api/database:
          *   get:
-         *     description: Return current time
+         *     description: Index du routage vers la base de données
          *     tags:
-         *       - Time
+         *       - Index
          *     produces:
          *       - application/json
          *     responses:
@@ -53,18 +33,19 @@ export class DatabaseController {
          *           $ref: '#/definitions/Message'
          */
         this.router.get('/', (req: Request, res: Response, next: NextFunction) => {
-            res.send('Database routing');
+            res.send('Routage vers la base de données MongoDB');
         });
 
         /**
          * @swagger
          *
-         * /api/index/drawings:
+         * /api/database/drawings:
          *   get:
-         *     description: Retourne le titre de tous les dessins sauvegardés sur le serveur
+         *     description: Retourne une liste de tous URLs des dessins sauvegardés sur le serveur
          *     tags:
-         *       - Index
+         *       - Sauvegarde
          *       - Dessin
+         *       - Base de données
          *     produces:
          *      - application/json
          *     responses:
@@ -82,12 +63,13 @@ export class DatabaseController {
         /**
          * @swagger
          *
-         * /api/index/send:
+         * /api/database/send:
          *   post:
-         *     description: Sauvegarde du dessin (canvas) sur le serveur au format PNG (base64)
+         *     description: Sauvegarde du dessin (canvas) sur le serveur au format PNG (base64) et envoie des métadonnées sur la base de données
          *     tags:
-         *       - Index
+         *       - Base de données
          *       - Sauvegarde
+         *       - Dessin
          *     requestBody:
          *         description: message object
          *         required: true
@@ -111,18 +93,16 @@ export class DatabaseController {
                 .catch((error: Error) => {
                     res.status(HTTP_STATUS_NOT_FOUND);
                 });
-
-            // res.sendStatus(HTTP_STATUS_CREATED);
         });
 
         /**
          * @swagger
          *
-         * /api/index/drawings/:title:
+         * /api/database/drawings/:title:
          *   get:
          *     description: Retourne le dessin dont le titre a été spécifié en paramètre
          *     tags:
-         *       - Index
+         *       - Base de données
          *       - Dessin
          *     produces:
          *      - application/json

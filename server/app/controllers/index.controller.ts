@@ -23,6 +23,14 @@ export class IndexController {
          *     properties:
          *       title:
          *         type: string
+         *       labels:
+         *         type: array
+         *         items:
+         *           type: string
+         *       width:
+         *         type: number
+         *       height:
+         *         type: number
          *       body:
          *         type: string
          */
@@ -31,9 +39,11 @@ export class IndexController {
          * @swagger
          * tags:
          *   - name: Index
-         *     description: Gestion des requêtes concernant les dessins sauvegardés
-         *   - name: Message
-         *     description: Messages functions
+         *     description: Index du serveur
+         *   - name: Base de données
+         *     description: Gestion CRUD de la base de données
+         *   - name: Sauvegarde
+         *   - name: Dessin
          */
     }
 }
