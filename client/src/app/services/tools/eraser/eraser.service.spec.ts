@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EraserService } from './eraser.service';
 
 //tslint:disable
-describe('EraserService', () => {
+fdescribe('EraserService', () => {
     let service: EraserService;
     let mouseEvent: MouseEvent;
     let canvasTestHelper: CanvasTestHelper;

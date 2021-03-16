@@ -191,5 +191,4 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.baseCtx.fillStyle = '#FFFFFF';
         this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
     }
-
 }

@@ -52,11 +52,10 @@ export class PipetteService extends Tool {
     }
 
     drawOnZoom(event: MouseEvent): void {
-        
         const x = this.getPositionFromMouse(event).x;
         const y = this.getPositionFromMouse(event).y;
 
-        const hSource = this.zoom.height; 
+        const hSource = this.zoom.height;
         const wSource = this.zoom.width;
 
         this.zoomCtx.beginPath();
@@ -64,16 +63,16 @@ export class PipetteService extends Tool {
         this.zoomCtx.clip();
         this.zoomCtx.drawImage(
             this.drawingService.canvas,
-            x - wSource / 2 * ZOOM_RATIO,
-            y - hSource / 2 * ZOOM_RATIO,
+            x - (wSource / 2) * ZOOM_RATIO,
+            y - (hSource / 2) * ZOOM_RATIO,
             wSource * ZOOM_RATIO,
             hSource * ZOOM_RATIO,
             0,
             0,
-            this.zoom.width, 
-            this.zoom.height  
+            this.zoom.width,
+            this.zoom.height,
         );
-        this.zoomCtx.strokeRect(this.zoom.width / 2, this.zoom.height / 2, (1/ZOOM_RATIO), (1/ZOOM_RATIO));
+        this.zoomCtx.strokeRect(this.zoom.width / 2, this.zoom.height / 2, 1 / ZOOM_RATIO, 1 / ZOOM_RATIO);
         this.zoomCtx.closePath();
     }
 
