@@ -10,6 +10,7 @@ import { PencilService } from './pencil/pencil-service';
 import { PipetteService } from './pipette/pipette.service';
 import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';
+import { SelectionService } from './selection/selection.service';
 
 @Injectable({
     providedIn: 'root',
@@ -31,6 +32,7 @@ export class ToolManagerService {
         private pipetteService: PipetteService,
         private polygonService: PolygonService,
         private sprayService: SprayService,
+        private selectionService: SelectionService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
@@ -44,7 +46,9 @@ export class ToolManagerService {
             .set(ToolList.Eraser, this.eraserService)
             .set(ToolList.Line, this.lineService)
             .set(ToolList.Pipette, this.pipetteService)
-            .set(ToolList.Spray, this.sprayService);
+            .set(ToolList.Spray, this.sprayService)
+            .set(ToolList.SelectionRectangle, this.selectionService)
+            .set(ToolList.SelectionEllipse, this.selectionService);
 
         this.keyBindings = new Map<string, Tool>();
         this.keyBindings
@@ -55,7 +59,9 @@ export class ToolManagerService {
             .set('e', this.eraserService)
             .set('i', this.pipetteService)
             .set('3', this.polygonService)
-            .set('a', this.sprayService);
+            .set('a', this.sprayService)
+            .set('r', this.selectionService)
+            .set('s', this.selectionService);
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {
@@ -76,7 +82,12 @@ export class ToolManagerService {
     switchToolWithKeys(keyShortcut: string): void {
         if (this.keyBindings.has(keyShortcut)) {
             this.currentTool = this.keyBindings.get(keyShortcut);
-            this.currentToolEnum = this.getEnumFromMap(this.serviceBindings, this.currentTool);
+            if (keyShortcut === 's') {
+                this.currentToolEnum = ToolList.SelectionEllipse;
+            } else {
+                this.currentToolEnum = this.getEnumFromMap(this.serviceBindings, this.currentTool);
+            }
+            this.isSelectionEllipse();
         }
     }
 
@@ -84,6 +95,7 @@ export class ToolManagerService {
         if (this.serviceBindings.has(tool)) {
             this.currentTool = this.serviceBindings.get(tool);
             this.currentToolEnum = tool;
+            this.isSelectionEllipse();
         }
     }
 
@@ -124,5 +136,13 @@ export class ToolManagerService {
         if (this.currentTool) {
             this.currentTool.handleKeyUp(event);
         }
+    }
+
+    isSelectionEllipse(): void {
+        if (this.currentToolEnum === ToolList.SelectionEllipse) {
+            this.selectionService.isEllipse = true;
+            return;
+        }
+        this.selectionService.isEllipse = false;
     }
 }
