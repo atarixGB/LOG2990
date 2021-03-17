@@ -13,24 +13,28 @@ import { RectangleService } from '../rectangle/rectangle.service';
 export class SelectionService extends Tool {
     isEllipse: boolean;
     selection: ImageData;
-    private origin: Vec2;
-    private destination: Vec2;
+    origin: Vec2;
+    destination: Vec2;
+    newSelection: boolean;
+    areaSelected: boolean;
     private width: number;
     private height: number;
-    // private selectionOver: boolean;
 
     constructor(protected drawingService: DrawingService, private rectangleService: RectangleService, private ellipseService: EllipseService) {
         super(drawingService);
         this.isEllipse = false;
-
-        // this.selectionOver = true;
+        this.newSelection = true;
+        this.areaSelected = false;
     }
 
     onMouseDown(event: MouseEvent): void {
         this.drawingService.previewCtx.strokeStyle = '#black';
 
         this.mouseDown = event.button === MouseButton.Left;
+        this.mouseDownCoord = this.getPositionFromMouse(event);
+
         if (this.mouseDown) {
+            this.areaSelected = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawingService.previewCtx.setLineDash([2]);
 
@@ -52,11 +56,35 @@ export class SelectionService extends Tool {
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
         this.getSelectionData(this.drawingService.baseCtx);
+        this.areaSelected = true;
+
+        console.log('selection', this.areaSelected);
     }
 
     // onMouseLeave(event: MouseEvent): void{
     //     this.onMouseUp(event);
     // }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        // if (!this.isEllipse) this.rectangleService.handleKeyDown(event);
+        // else this.ellipseService.handleKeyDown(event);
+
+        console.log('keydown');
+        console.log(event);
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            console.log('escape');
+
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.areaSelected = false;
+        }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+        if (!this.isEllipse) this.rectangleService.handleKeyUp(event);
+        else this.ellipseService.handleKeyUp(event);
+    }
 
     calculateDimension(): void {
         if (!this.isEllipse) {
@@ -73,6 +101,13 @@ export class SelectionService extends Tool {
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
         this.calculateDimension();
         this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
+
+        // console.log('2');
+        // console.log('origin', this.origin);
+        // console.log('dest', this.destination);
+        // console.log('Witdh', this.width);
+        // console.log('height', this.height);
+
         if (this.isEllipse) {
             const imageData = this.selection.data;
             const pixelLenght = 4;
@@ -85,9 +120,8 @@ export class SelectionService extends Tool {
                     const x = j - rectangleCenter.x;
                     const y = i - rectangleCenter.y;
 
-                    // verification of if pixel is out of bounds of the ellipse selection with the ellipse formula (x^2/a^2 + y^2/b^2)
+                    // optimisation et juste mettre la transparence a 0 ?
                     if (Math.pow(x, 2) / Math.pow(rectangleCenter.x, 2) + Math.pow(y, 2) / Math.pow(rectangleCenter.y, 2) > 1) {
-                        // if out of bounds, the corresponding values in imageData to the current pixel are set to 0
                         for (let z = 0; z < pixelLenght; z++) {
                             imageData[pixelCounter] = 0;
                             pixelCounter++;

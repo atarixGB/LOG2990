@@ -10,6 +10,7 @@ import { PencilService } from './pencil/pencil-service';
 import { PipetteService } from './pipette/pipette.service';
 import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';
+import { MoveSelectionService } from './selection/move-selection.service';
 import { SelectionService } from './selection/selection.service';
 
 @Injectable({
@@ -33,9 +34,10 @@ export class ToolManagerService {
         private polygonService: PolygonService,
         private sprayService: SprayService,
         private selectionService: SelectionService,
+        private moveSelectionService: MoveSelectionService,
     ) {
-        this.currentTool = this.pencilService;
-        this.currentToolEnum = ToolList.Pencil;
+        this.currentTool = this.selectionService;
+        this.currentToolEnum = ToolList.SelectionRectangle;
 
         this.serviceBindings = new Map<ToolList, Tool>();
         this.serviceBindings
@@ -48,7 +50,8 @@ export class ToolManagerService {
             .set(ToolList.Pipette, this.pipetteService)
             .set(ToolList.Spray, this.sprayService)
             .set(ToolList.SelectionRectangle, this.selectionService)
-            .set(ToolList.SelectionEllipse, this.selectionService);
+            .set(ToolList.SelectionEllipse, this.selectionService)
+            .set(ToolList.MoveSelection, this.moveSelectionService);
 
         this.keyBindings = new Map<string, Tool>();
         this.keyBindings

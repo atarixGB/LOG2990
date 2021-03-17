@@ -6,6 +6,8 @@ import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-m
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
+import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { Subscription } from 'rxjs';
 
@@ -28,6 +30,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private subscription: Subscription;
     private positionX: number;
     private positionY: number;
+
     dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(
@@ -36,6 +39,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
         public dialog: MatDialog,
+
+        private selectionService: SelectionService,
+        private moveSelectionService: MoveSelectionService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
 
@@ -70,9 +76,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
         this.cdr.detectChanges();
+
         this.baseCtx.beginPath();
         this.baseCtx.fillStyle = '#FFFFFF';
         this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+        this.baseCtx.closePath();
+
+        this.baseCtx.beginPath();
+        this.baseCtx.fillStyle = '#00FFFF';
+        this.baseCtx.fillRect(20, 20, 300, 300);
         this.baseCtx.closePath();
     }
 
@@ -91,6 +103,18 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
+
+            // console.log('drawing', this.selectionService.areaSelected);
+
+            // if (this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle) {
+            //     if (!this.selectionService.newSelection) {
+            //         console.log('!newSelection');
+            //         this.toolManagerService.currentTool = this.moveSelectionService;
+            //     } else {
+            //         console.log('newSelection');
+            //         this.toolManagerService.currentTool = this.selectionService;
+            //     }
+            // }
         }
     }
 
@@ -106,6 +130,16 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         const ELEMENT = event.target as HTMLElement;
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseUp(event, this.mouseCoord(event));
+
+            console.log('drawing', this.selectionService.areaSelected);
+
+            if (
+                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
+                (this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse && this.selectionService.areaSelected)
+            ) {
+                console.log('if');
+                this.toolManagerService.currentTool = this.moveSelectionService;
+            }
         }
     }
 

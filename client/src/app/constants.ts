@@ -43,6 +43,7 @@ export enum ToolList {
     SelectionEllipse = 9,
     Sceau = 10,
     Lasso = 11,
+    MoveSelection = 12,
 }
 
 export const mouseEventLClick = {
