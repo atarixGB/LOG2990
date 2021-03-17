@@ -6,12 +6,11 @@ import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 export abstract class ShapeService extends Tool {
-    protected pathData: Vec2[];
+    pathData: Vec2[];
     protected fillValue: boolean;
     lineWidth: number;
     protected strokeValue: boolean;
     selectType: TypeStyle;
-    protected isShiftShape: boolean;
     protected size: Vec2;
     protected origin: Vec2;
 
