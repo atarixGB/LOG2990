@@ -51,4 +51,16 @@ export class CarouselComponent implements OnInit {
             // ctx?.drawImage(img, 0, 0);
         }
     }
+
+    async delete(str: string): Promise<void> {
+        this.indexService.deleteDrawingById(str).subscribe((res) => {
+            console.log(res);
+        });
+    }
+
+    async get(str: string): Promise<void> {
+        this.indexService.findDrawingById(str).subscribe((res: any) => {
+            console.log(res);
+        });
+    }
 }

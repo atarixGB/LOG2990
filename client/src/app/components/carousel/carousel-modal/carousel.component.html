@@ -1,10 +1,13 @@
 <h1>Carousel de dessin</h1>
 <div>
+  <button (click)="delete('')">DELETE</button>
+  <button (click)="get('')">GET</button>
   <img *ngFor="let drawing of drawingsUrls" [src]="drawing" alt="drawing">
 </div>
 <div mat-dialog-actions>
   <button mat-button mat-dialog-close>Fermer</button>
 </div>
+
 
 <!-- EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le TS -->
 <!-- <canvas #canvas></canvas> -->

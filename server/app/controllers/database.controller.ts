@@ -5,6 +5,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
 
 const HTTP_STATUS_CREATED = 201;
+const HTTP_STATUS_NO_CONTENT = 204;
 const HTTP_STATUS_NOT_FOUND = 404;
 @injectable()
 export class DatabaseController {
@@ -117,6 +118,54 @@ export class DatabaseController {
             res.sendFile(req.params.title, { root: 'saved-drawings/' }, (error) => {
                 if (error) throw error;
             });
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/database/drawings/:id:
+         *   get:
+         *     description: Supprime de la base de données le dessin avec l'id spécifié en paramètre
+         *     tags:
+         *       - Base de données
+         *       - Dessin
+         *     produces:
+         *      - application/json
+         *     responses:
+         *       200:
+         *         schema:
+         *           type: file
+         */
+        this.router.delete('/drawings/:id', (req: Request, res: Response, next: NextFunction) => {
+            this.databaseService
+                .deleteDrawingByIdName(req.params.id)
+                .then(() => {
+                    res.sendStatus(HTTP_STATUS_NO_CONTENT);
+                })
+                .catch((error) => {
+                    res.sendStatus(HTTP_STATUS_NOT_FOUND);
+                });
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/database/drawings/:id:
+         *   get:
+         *     description: Récupère de la base de données le dessin avec l'id spécifié en paramètre
+         *     tags:
+         *       - Base de données
+         *       - Dessin
+         *     produces:
+         *      - application/json
+         *     responses:
+         *       200:
+         *         schema:
+         *           type: file
+         */
+        this.router.get('/drawings/:id', (req: Request, res: Response, next: NextFunction) => {
+            console.log('TODO: get by id');
+            this.databaseService.findDrawingByIdName(req.params.id).then().catch();
         });
     }
 }

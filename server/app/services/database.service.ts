@@ -3,7 +3,7 @@ import { BASE_URL, DATABASE_DRAWINGS_COLLECTION, DATABASE_MONGO_URL, DATABASE_NA
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
-import { Collection, Db, MongoClient, MongoClientOptions } from 'mongodb';
+import { Collection, Db, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
 import 'reflect-metadata';
 
 const SAVED_DRAWINGS_PATH = './saved-drawings/';
@@ -60,18 +60,46 @@ export class DatabaseService {
 
     async addDrawing(drawingData: DrawingData): Promise<void> {
         if (this.validateRequest(drawingData)) {
-            this.saveImageAsPNG(drawingData);
+            const id = new ObjectId();
+            drawingData._id = id.toHexString();
 
             const drawingMetadata: DrawingMetadata = {
                 title: drawingData.title,
-                labels: drawingData.labels,
+                labels: drawingData.labels ? drawingData.labels : undefined,
             };
-
             await this.drawingsCollection.insertOne(drawingMetadata).catch((error: Error) => {
-                console.error('Failed to add drawing to database', error);
+                console.error(`Failed to add drawing ${drawingData.title} to database`, error);
                 throw error;
             });
+
+            this.saveImageAsPNG(drawingData);
         }
+    }
+
+    async findDrawingByIdName(id: string): Promise<DrawingMetadata> {
+        const objectId = new ObjectId(id);
+        return this.drawingsCollection
+            .findOne({ _id: objectId })
+            .then((drawing: DrawingMetadata) => {
+                console.log(`Drawing with id:${id} has been successfully added.`);
+                return drawing;
+            })
+            .catch((error) => {
+                throw new Error(`Failed to get drawing with id ${id}\n${error}`);
+            });
+    }
+
+    async deleteDrawingByIdName(id: string): Promise<void> {
+        const objectId = new ObjectId(id);
+        return this.drawingsCollection
+            .findOneAndDelete({ _id: objectId })
+            .then(() => {
+                this.deleteDrawingFromServer(id);
+                console.log(`Drawing with id:${id} has been successfully deleted.`);
+            })
+            .catch((error) => {
+                throw new Error(`Failed to delete drawing with id ${id}\n${error}`);
+            });
     }
 
     private parseImageData(drawingData: DrawingData): Buffer {
@@ -81,12 +109,17 @@ export class DatabaseService {
     }
 
     private saveImageAsPNG(drawingData: DrawingData): void {
-        // Save as PNG to server
         const dataBuffer = this.parseImageData(drawingData);
-        fs.writeFile(SAVED_DRAWINGS_PATH + drawingData.title + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
+        fs.writeFile(SAVED_DRAWINGS_PATH + drawingData._id + `.${IMAGE_FORMAT}`, dataBuffer, (error) => {
             if (error) throw error;
-            this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${drawingData.title}.${IMAGE_FORMAT}`);
+            this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${drawingData._id}.${IMAGE_FORMAT}`);
             this.clientMessages.push(drawingData);
+        });
+    }
+
+    private deleteDrawingFromServer(id: string): void {
+        fs.unlink(SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`, (error) => {
+            if (error) throw error;
         });
     }
 
@@ -100,18 +133,20 @@ export class DatabaseService {
         return isValidSize && isAlphanumeric;
     }
 
-    private validateTags(tags: string[]): boolean {
-        if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) return false;
-        for (const tag in tags) {
-            if (!this.validateString(tag, 0)) {
-                return false;
+    private validateTags(tags: string[] | undefined): boolean {
+        if (tags) {
+            if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) return false;
+            for (const tag in tags) {
+                if (!this.validateString(tag, 0)) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     private validateRequest(request: DrawingData): boolean {
-        return this.validateString(request.title, MIN_LENGTH_TITLE) && this.validateTags(request.labels) && this.validateRequestBody(request.body);
+        return this.validateString(request.title, MIN_LENGTH_TITLE) && this.validateRequestBody(request.body) && this.validateTags(request.labels);
     }
 
     get database(): Db {
