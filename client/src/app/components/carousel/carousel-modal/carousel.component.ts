@@ -21,12 +21,7 @@ export class CarouselComponent implements AfterViewInit {
     // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
     constructor(public indexService: IndexService) {
         this.index = 0;
-        // this.images = [
-        //     'https://image.freepik.com/vecteurs-libre/animal-dessin-style-boho-icone-vector-illustration-graphique_25030-12802.jpg',
-        //     'https://cdn.arstechnica.net/wp-content/uploads/2017/07/ms-paint-rip-800x500.png',
-        //     'https://1gew6o3qn6vx9kp3s42ge0y1-wpengine.netdna-ssl.com/wp-content/uploads/sites/140/2014/01/Boston.jpg',
-        //     'https://digitalsynopsis.com/wp-content/uploads/2018/03/grandma-creates-beautiful-artwork-in-ms-paint-14.jpg',
-        // ];
+
         this.images = [''];
         this.placement = ['', '', ''];
         this.afterNext = false;
