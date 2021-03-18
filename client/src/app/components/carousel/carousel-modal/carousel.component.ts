@@ -114,8 +114,9 @@ export class CarouselComponent implements AfterViewInit {
 
     deleteDrawing() {
         // mettre if si pas d'image selectionne
+        console.log('carousel: ', this.chosenURL);
         let pathname = (url: string): string => {
-            let parseUrl = new URL(this.chosenURL).pathname;
+            let parseUrl = new URL(url).pathname;
             parseUrl = parseUrl.split('/')[4].split('.')[0];
             return parseUrl;
         };

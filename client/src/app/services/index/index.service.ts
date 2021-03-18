@@ -13,23 +13,13 @@ export class IndexService {
     private readonly DATABASE_URL: string = '/api/database';
     private readonly DRAWINGS_URL: string = '/drawings';
     private readonly SEND_URL: string = '/send';
-    // private readonly DELETE_URL: string = '/delete';
+    private readonly DELETE_URL: string = '/delete';
     private readonly GET_URL: string = '/get';
     private readonly TAGS_URL: string = '/tags';
 
     constructor(private http: HttpClient) {
         this.BASE_URL = this.BASE_URL;
     }
-
-    // TODO : Retrieve titles and tags from mongodb when database will be done
-    // getAllDrawingUrls(): Observable<string[] | number> {
-    //     const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
-    //     return this.http.get<string[]>(url).pipe(
-    //         catchError((error: HttpErrorResponse) => {
-    //             return of(error.status);
-    //         }),
-    //     );
-    // }
 
     async getAllDrawingUrls(): Promise<string[] | number> {
         return new Promise<string[] | number>((resolve) => {
@@ -53,25 +43,16 @@ export class IndexService {
         return this.http.post<DrawingData>(url, message, httpOptions).pipe(catchError(this.handleError));
     }
 
-    deleteDrawingById(id: string): Observable<void | number> {
-        const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}` + '.png';
-        console.log(id);
-        console.log('indexService:', url);
-        return this.http.delete<void>(url).pipe(
-            catchError((error: HttpErrorResponse) => {
-                return of(error.status);
-            }),
-        );
+    async deleteDrawingById(id: string): Promise<void> {
+        return new Promise<void>((resolve) => {
+            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.png`;
+            console.log('dans index client ' + id);
+            console.log('dans index client ' + url);
+            this.http.delete(url, { responseType: 'text' }).subscribe(() => {
+                resolve();
+            });
+        });
     }
-    // async deleteDrawingById(id: string): Promise<void> {
-    //     return new Promise<void>((resolve) => {
-    //         // const url = this.BASE_URL + this.DATABASE_URL + '/' + id;
-    //         console.log('dans index client ' + id);
-    //         this.http.delete(id, { responseType: 'text' }).subscribe(() => {
-    //             resolve();
-    //         });
-    //     });
-    // }
 
     findDrawingById(id: string): Observable<DrawingData | number> {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;

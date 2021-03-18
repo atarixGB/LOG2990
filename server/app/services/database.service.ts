@@ -97,7 +97,7 @@ export class DatabaseService {
         return this.drawingsCollection
             .findOneAndDelete({ _id: objectId })
             .then(() => {
-                this.deleteDrawingFromServer(id);
+                // this.deleteDrawingFromServer(id);
                 console.log(`Drawing with id:${id} has been successfully deleted.`);
             })
             .catch((error) => {
@@ -120,11 +120,11 @@ export class DatabaseService {
         });
     }
 
-    private deleteDrawingFromServer(id: string): void {
-        fs.unlink(SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`, (error) => {
-            if (error) throw error;
-        });
-    }
+    // private deleteDrawingFromServer(id: string): void {
+    //     fs.unlink(SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`, (error) => {
+    //         if (error) throw error;
+    //     });
+    // }
 
     private validateRequestBody(body: string): boolean {
         return DATA_URL_BASE64_PREFIX.test(body);
