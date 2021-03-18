@@ -16,3 +16,8 @@ app-carousel-drawing {
 ::ng-deep .mat-dialog-container {
     overflow: hidden !important;
 }
+
+#images-container {
+    max-width: 1000px;
+    height: 400px;
+}

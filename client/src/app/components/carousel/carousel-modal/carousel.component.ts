@@ -13,6 +13,7 @@ export class CarouselComponent implements AfterViewInit {
     private index: number;
     private afterNext: boolean;
     private afterPrevious: boolean;
+    isLoading: boolean;
 
     drawing: SafeUrl;
     drawingsUrls: string[];
@@ -21,19 +22,18 @@ export class CarouselComponent implements AfterViewInit {
     // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
     constructor(public indexService: IndexService) {
         this.index = 0;
-        this.images = [''];
+        this.images = [];
         this.placement = ['', '', ''];
         this.afterNext = false;
         this.afterPrevious = false;
-        this.getDrawingsUrls();
-        this.nextImages();
+        this.isLoading = true;
     }
 
     async ngAfterViewInit() {
         this.getDrawingsUrls();
     }
     nextImages() {
-        console.log('dans next. Init :', this.index);
+        console.log('dans next');
         if (this.afterPrevious) {
             this.index++;
             this.afterPrevious = false;
@@ -43,12 +43,9 @@ export class CarouselComponent implements AfterViewInit {
             if (this.index > this.images.length - 1) {
                 this.index = 0;
             }
-            //     console.log('index:', this.index);
             this.placement[i] = this.images[this.index];
             this.index++;
-            //    console.log('index at end for', this.index);
         }
-        //  console.log(this.images);
         this.afterNext = true;
     }
     previousImages() {
@@ -83,18 +80,13 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     getDrawingsUrls() {
+        this.isLoading = true;
         this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
+            this.isLoading = false;
             this.images = drawings;
             this.nextImages();
         });
     }
-
-    // getDrawingsUrls() {
-    //     this.indexService.getAllDrawingUrls().subscribe((res: string[]) => {
-    //         this.images = res;
-    //         console.log('trying');
-    //     });
-    // }
 
     // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
     async getNewImage(src: string): Promise<HTMLImageElement> {

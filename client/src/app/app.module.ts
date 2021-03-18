@@ -10,6 +10,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -98,6 +99,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         MatSnackBarModule,
         BrowserAnimationsModule,
         MatSidenavModule,
+        MatProgressSpinnerModule,
     ],
     entryComponents: [ColorPopupComponent, ColorPickerComponent],
     providers: [],
