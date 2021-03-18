@@ -34,7 +34,11 @@ export class DatabaseController {
          *           $ref: '#/definitions/Message'
          */
         this.router.get('/', (req: Request, res: Response, next: NextFunction) => {
-            res.send('Routage vers la base de données MongoDB');
+            this.databaseService.drawingsCollection
+                .find()
+                .toArray()
+                .then((result) => res.send(result))
+                .catch((error) => res.send(error));
         });
 
         /**
@@ -164,7 +168,6 @@ export class DatabaseController {
          *           type: file
          */
         this.router.get('/drawings/:id', (req: Request, res: Response, next: NextFunction) => {
-            console.log('TODO: get by id');
             this.databaseService.findDrawingByIdName(req.params.id).then().catch();
         });
     }

@@ -60,19 +60,22 @@ export class DatabaseService {
 
     async addDrawing(drawingData: DrawingData): Promise<void> {
         if (this.validateRequest(drawingData)) {
-            const id = new ObjectId();
-            drawingData._id = id.toHexString();
-
             const drawingMetadata: DrawingMetadata = {
                 title: drawingData.title,
                 labels: drawingData.labels ? drawingData.labels : undefined,
             };
-            await this.drawingsCollection.insertOne(drawingMetadata).catch((error: Error) => {
-                console.error(`Failed to add drawing ${drawingData.title} to database`, error);
-                throw error;
-            });
 
-            this.saveImageAsPNG(drawingData);
+            await this.drawingsCollection
+                .insertOne(drawingMetadata)
+                .then((result) => {
+                    drawingData._id = result.insertedId.toHexString();
+                    this.saveImageAsPNG(drawingData);
+                    console.log(`Drawing ${drawingData.title} has been successfully added!`);
+                })
+                .catch((error: Error) => {
+                    console.error(`Failed to add drawing ${drawingData.title} to database`, error);
+                    throw error;
+                });
         }
     }
 
