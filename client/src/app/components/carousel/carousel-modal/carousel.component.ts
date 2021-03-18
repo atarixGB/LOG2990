@@ -21,7 +21,6 @@ export class CarouselComponent implements AfterViewInit {
     // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
     constructor(public indexService: IndexService) {
         this.index = 0;
-
         this.images = [''];
         this.placement = ['', '', ''];
         this.afterNext = false;
@@ -30,12 +29,11 @@ export class CarouselComponent implements AfterViewInit {
         this.nextImages();
     }
 
-    ngAfterViewInit() {
+    async ngAfterViewInit() {
         this.getDrawingsUrls();
-        this.nextImages();
     }
     nextImages() {
-        //console.log('dans next. Init :', this.index);
+        console.log('dans next. Init :', this.index);
         if (this.afterPrevious) {
             this.index++;
             this.afterPrevious = false;
@@ -45,12 +43,12 @@ export class CarouselComponent implements AfterViewInit {
             if (this.index > this.images.length - 1) {
                 this.index = 0;
             }
-            console.log('index:', this.index);
+            //     console.log('index:', this.index);
             this.placement[i] = this.images[this.index];
             this.index++;
-            console.log('index at end for', this.index);
+            //    console.log('index at end for', this.index);
         }
-        console.log(this.images);
+        //  console.log(this.images);
         this.afterNext = true;
     }
     previousImages() {
@@ -84,14 +82,19 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    async getDrawingsUrls(): Promise<void> {
-        this.indexService.getAllDrawingUrls().subscribe((res: string[]) => {
-            //this.drawingsUrls = res;
-            this.images = res;
-            console.log(this.images);
-            // this.getDrawing();
+    getDrawingsUrls() {
+        this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
+            this.images = drawings;
+            this.nextImages();
         });
     }
+
+    // getDrawingsUrls() {
+    //     this.indexService.getAllDrawingUrls().subscribe((res: string[]) => {
+    //         this.images = res;
+    //         console.log('trying');
+    //     });
+    // }
 
     // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
     async getNewImage(src: string): Promise<HTMLImageElement> {

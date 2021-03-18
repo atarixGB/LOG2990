@@ -22,13 +22,22 @@ export class IndexService {
     }
 
     // TODO : Retrieve titles and tags from mongodb when database will be done
-    getAllDrawingUrls(): Observable<string[] | number> {
-        const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
-        return this.http.get<string[]>(url).pipe(
-            catchError((error: HttpErrorResponse) => {
-                return of(error.status);
-            }),
-        );
+    // getAllDrawingUrls(): Observable<string[] | number> {
+    //     const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
+    //     return this.http.get<string[]>(url).pipe(
+    //         catchError((error: HttpErrorResponse) => {
+    //             return of(error.status);
+    //         }),
+    //     );
+    // }
+
+    async getAllDrawingUrls(): Promise<string[] | number> {
+        return new Promise<string[] | number>((resolve) => {
+            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
+            this.http.get<string[]>(url).subscribe((drawings: string[]) => {
+                resolve(drawings);
+            });
+        });
     }
 
     postDrawing(message: DrawingData): Observable<DrawingData> {
