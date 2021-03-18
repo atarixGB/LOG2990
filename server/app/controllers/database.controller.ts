@@ -140,7 +140,7 @@ export class DatabaseController {
          *         schema:
          *           type: file
          */
-        this.router.delete('/delete/:id', (req: Request, res: Response, next: NextFunction) => {
+        this.router.delete('/drawings/:id', (req: Request, res: Response, next: NextFunction) => {
             console.log('controller : ' + req.params.id);
 
             const id = req.params.id.split('.')[0];

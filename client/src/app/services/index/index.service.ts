@@ -9,17 +9,12 @@ import { catchError } from 'rxjs/operators';
 })
 export class IndexService {
     private readonly BASE_URL: string = 'http://localhost:3000';
-    // private readonly INDEX_URL: string = '/api/index';
     private readonly DATABASE_URL: string = '/api/database';
     private readonly DRAWINGS_URL: string = '/drawings';
     private readonly SEND_URL: string = '/send';
-    private readonly DELETE_URL: string = '/delete';
-    private readonly GET_URL: string = '/get';
     private readonly TAGS_URL: string = '/tags';
 
-    constructor(private http: HttpClient) {
-        this.BASE_URL = this.BASE_URL;
-    }
+    constructor(private http: HttpClient) {}
 
     async getAllDrawingUrls(): Promise<string[] | number> {
         return new Promise<string[] | number>((resolve) => {
@@ -65,7 +60,7 @@ export class IndexService {
 
     findDrawingsByTags(tags: string[]): Observable<string[] | number> {
         const queryTags: string = tags.join('-');
-        const url = this.BASE_URL + this.DATABASE_URL + this.GET_URL + this.TAGS_URL + `/${queryTags}`;
+        const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + this.TAGS_URL + `/${queryTags}`;
         return this.http.get<string[]>(url).pipe(
             catchError((error: HttpErrorResponse) => {
                 return of(error.status);

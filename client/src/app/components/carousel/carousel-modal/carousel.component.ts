@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
 
@@ -17,10 +16,6 @@ export class CarouselComponent implements AfterViewInit {
     private afterPrevious: boolean;
     private chosenURL: string;
     isLoading: boolean;
-
-    drawing: SafeUrl;
-    drawingsUrls: string[];
-    urls: string[];
 
     @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
     constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {

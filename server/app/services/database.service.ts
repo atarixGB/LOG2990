@@ -32,13 +32,7 @@ export class DatabaseService {
         this.clientMessages = [];
         this.drawingURLS = [];
 
-        fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
-            if (error) throw error;
-            files.forEach((file) => {
-                this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${file}`);
-            });
-            console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
-        });
+        this.readDrawingDirectory();
     }
 
     async start(url: string = DATABASE_MONGO_URL): Promise<MongoClient | null> {
@@ -97,7 +91,7 @@ export class DatabaseService {
         return this.drawingsCollection
             .findOneAndDelete({ _id: objectId })
             .then(() => {
-                // this.deleteDrawingFromServer(id);
+                this.deleteDrawingFromServer(id);
                 console.log(`Drawing with id:${id} has been successfully deleted.`);
             })
             .catch((error) => {
@@ -120,11 +114,16 @@ export class DatabaseService {
         });
     }
 
-    // private deleteDrawingFromServer(id: string): void {
-    //     fs.unlink(SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`, (error) => {
-    //         if (error) throw error;
-    //     });
-    // }
+    private deleteDrawingFromServer(id: string): void {
+        let url = SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`;
+        fs.unlink(url, (error) => {
+            if (error) {
+                console.log(error);
+            }
+            console.log('delete done');
+            this.readDrawingDirectory();
+        });
+    }
 
     private validateRequestBody(body: string): boolean {
         return DATA_URL_BASE64_PREFIX.test(body);
@@ -154,5 +153,16 @@ export class DatabaseService {
 
     get database(): Db {
         return this.db;
+    }
+
+    private readDrawingDirectory(): void {
+        this.drawingURLS = [];
+        fs.readdir(SAVED_DRAWINGS_PATH, (error, files) => {
+            if (error) throw error;
+            files.forEach((file) => {
+                this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${file}`);
+            });
+            console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
+        });
     }
 }
