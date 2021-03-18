@@ -54,7 +54,8 @@ export class IndexService {
     }
 
     deleteDrawingById(id: string): Observable<void | number> {
-        const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;
+        const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}` + '.png';
+        console.log(id);
         console.log('indexService:', url);
         return this.http.delete<void>(url).pipe(
             catchError((error: HttpErrorResponse) => {
@@ -62,6 +63,15 @@ export class IndexService {
             }),
         );
     }
+    // async deleteDrawingById(id: string): Promise<void> {
+    //     return new Promise<void>((resolve) => {
+    //         // const url = this.BASE_URL + this.DATABASE_URL + '/' + id;
+    //         console.log('dans index client ' + id);
+    //         this.http.delete(id, { responseType: 'text' }).subscribe(() => {
+    //             resolve();
+    //         });
+    //     });
+    // }
 
     findDrawingById(id: string): Observable<DrawingData | number> {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;

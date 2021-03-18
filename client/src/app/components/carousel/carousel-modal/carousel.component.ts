@@ -1,5 +1,7 @@
-import { AfterViewInit, Component, HostListener } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { SafeUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
 
 @Component({
@@ -13,20 +15,22 @@ export class CarouselComponent implements AfterViewInit {
     private index: number;
     private afterNext: boolean;
     private afterPrevious: boolean;
+    private chosenURL: string;
     isLoading: boolean;
 
     drawing: SafeUrl;
     drawingsUrls: string[];
     urls: string[];
 
-    // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
-    constructor(public indexService: IndexService) {
+    @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
+    constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {
         this.index = 0;
         this.images = [];
         this.placement = ['', '', ''];
         this.afterNext = false;
         this.afterPrevious = false;
         this.isLoading = true;
+        this.chosenURL = '';
     }
 
     async ngAfterViewInit() {
@@ -84,6 +88,7 @@ export class CarouselComponent implements AfterViewInit {
         this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
             this.isLoading = false;
             this.images = drawings;
+            console.log('dans carousel ' + this.images);
             this.nextImages();
         });
     }
@@ -103,13 +108,22 @@ export class CarouselComponent implements AfterViewInit {
         });
     }
 
-    async getDrawing(): Promise<void> {
-        console.log(this.drawingsUrls, 'LLLL');
-        for (let i = 0; i < this.drawingsUrls.length; i++) {
-            this.drawing = this.drawingsUrls[i];
-            // const img = await this.getNewImage(this.drawingsUrls[i]);
-            // const ctx = this.canvasRef.nativeElement.getContext('2d');
-            // ctx?.drawImage(img, 0, 0);
-        }
+    chosen(url: string) {
+        this.chosenURL = url;
+    }
+
+    deleteDrawing() {
+        // mettre if si pas d'image selectionne
+        let pathname = (url: string): string => {
+            let parseUrl = new URL(this.chosenURL).pathname;
+            parseUrl = parseUrl.split('/')[4].split('.')[0];
+            return parseUrl;
+        };
+        this.indexService.deleteDrawingById(pathname(this.chosenURL));
+    }
+
+    loadImage() {
+        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor']));
+        this.dialogRef.close();
     }
 }

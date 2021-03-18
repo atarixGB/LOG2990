@@ -2,18 +2,20 @@
     <div id="header"><h1>Carousel de dessin</h1></div>
     <div id="images-container">
         <mat-spinner *ngIf="isLoading"></mat-spinner>
-        <div *ngIf="images.length == 0 && !isLoading">Aucun dessin n'a été trouvé.</div>
+        <div id="no-drawing-container" *ngIf="images.length == 0 && !isLoading">Aucun dessin.</div>
         <div id="drawings-container" *ngIf="images.length > 0 && !isLoading">
-            <app-carousel-drawing [imagesURL]="this.placement[0]"></app-carousel-drawing>
-            <app-carousel-drawing [imagesURL]="this.placement[1]"></app-carousel-drawing>
-            <app-carousel-drawing [imagesURL]="this.placement[2]"></app-carousel-drawing>
+            <app-carousel-drawing [imagesURL]="this.placement[0]" (componentClicked)="chosen($event)"></app-carousel-drawing>
+            <app-carousel-drawing [imagesURL]="this.placement[1]" (componentClicked)="chosen($event)"></app-carousel-drawing>
+            <app-carousel-drawing [imagesURL]="this.placement[2]" (componentClicked)="chosen($event)"></app-carousel-drawing>
         </div>
     </div>
     <div id="control-container" mat-dialog-actions>
         <button mat-button (click)="previousImages()"><mat-icon>keyboard_arrow_left</mat-icon></button>
         <button mat-button (click)="nextImages()"><mat-icon>keyboard_arrow_right</mat-icon></button>
-    </div>
-    <div mat-dialog-actions>
+        <button mat-button (click)="deleteDrawing()"><mat-icon>delete</mat-icon></button>
+        <button mat-button (click)="loadImage()"><mat-icon>input</mat-icon></button>
         <button mat-button mat-dialog-close>Fermer</button>
     </div>
 </div>
+
+<!-- <canvas #canvas [src] = ></canvas> -->
