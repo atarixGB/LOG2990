@@ -8,20 +8,19 @@ import { SprayService } from '@app/services/tools/spray/spray.service';
     styleUrls: ['./spray-config.component.scss'],
 })
 export class SprayConfigComponent { 
-    toolWidth: number;
+    sprayWidth: number;
     dotWidth: number;
     sprayFrequency: number;
 
     constructor(public sprayService: SprayService) {
-        this.toolWidth = sprayService.width;
+        this.sprayWidth = sprayService.width;
         this.dotWidth = sprayService.dotWidth;
         this.sprayFrequency = sprayService.sprayFrequency;
     }
 
-    changeWidth(newWidth: number): number {
-        this.toolWidth = newWidth;
-        this.sprayService.changeWidth(this.toolWidth);
-        return newWidth;
+    changeWidth(newWidth: number): void {
+        this.sprayWidth = newWidth;
+        this.sprayService.changeWidth(this.sprayWidth);
     }
 
     changeDotWidth(newWidth: number): void {
