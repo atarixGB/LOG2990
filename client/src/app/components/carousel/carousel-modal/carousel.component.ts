@@ -79,11 +79,12 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     getDrawingsUrls() {
+        console.log('dans drawingURLs: ' + this.images);
         this.isLoading = true;
         this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
             this.isLoading = false;
             this.images = drawings;
-            console.log('dans carousel ' + this.images);
+            console.log('les images :' + this.images);
             this.nextImages();
         });
     }
@@ -107,15 +108,17 @@ export class CarouselComponent implements AfterViewInit {
         this.chosenURL = url;
     }
 
-    deleteDrawing() {
+    async deleteDrawing() {
         // mettre if si pas d'image selectionne
-        console.log('carousel: ', this.chosenURL);
         let pathname = (url: string): string => {
             let parseUrl = new URL(url).pathname;
             parseUrl = parseUrl.split('/')[4].split('.')[0];
             return parseUrl;
         };
-        this.indexService.deleteDrawingById(pathname(this.chosenURL));
+        this.indexService.deleteDrawingById(pathname(this.chosenURL)).then(() => {
+            console.log('deleted');
+            this.getDrawingsUrls();
+        });
     }
 
     loadImage() {

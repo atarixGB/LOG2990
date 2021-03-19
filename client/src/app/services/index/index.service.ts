@@ -41,8 +41,6 @@ export class IndexService {
     async deleteDrawingById(id: string): Promise<void> {
         return new Promise<void>((resolve) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.png`;
-            console.log('dans index client ' + id);
-            console.log('dans index client ' + url);
             this.http.delete(url, { responseType: 'text' }).subscribe(() => {
                 resolve();
             });
