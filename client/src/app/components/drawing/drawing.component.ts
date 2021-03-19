@@ -165,7 +165,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         }
 
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            console.log('dans drawing.component');
             this.moveSelectionService.handleKeyDown(event);
         }
 
