@@ -67,6 +67,16 @@ export class MoveSelectionService extends Tool {
         this.mouseDown = false;
     }
 
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+
+            this.selectionService.printMovedSelection();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            console.log(this.selectionData);
+        }
+    }
+
     private moveSelectionMouse(ctx: CanvasRenderingContext2D): void {
         const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;

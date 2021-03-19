@@ -34,14 +34,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(
+        public toolManagerService: ToolManagerService,
+        public moveSelectionService: MoveSelectionService,
+
         private drawingService: DrawingService,
-        private toolManagerService: ToolManagerService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
         public dialog: MatDialog,
-
         private selectionService: SelectionService,
-        private moveSelectionService: MoveSelectionService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
 
@@ -104,17 +104,16 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
 
-            // console.log('drawing', this.selectionService.areaSelected);
-
-            // if (this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle) {
-            //     if (!this.selectionService.newSelection) {
-            //         console.log('!newSelection');
-            //         this.toolManagerService.currentTool = this.moveSelectionService;
-            //     } else {
-            //         console.log('newSelection');
-            //         this.toolManagerService.currentTool = this.selectionService;
-            //     }
-            // }
+            if (
+                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
+                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse
+            ) {
+                if (!this.selectionService.newSelection) {
+                    this.toolManagerService.currentTool = this.moveSelectionService;
+                } else {
+                    this.toolManagerService.currentTool = this.selectionService;
+                }
+            }
         }
     }
 
@@ -130,16 +129,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         const ELEMENT = event.target as HTMLElement;
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseUp(event, this.mouseCoord(event));
-
-            console.log('drawing', this.selectionService.areaSelected);
-
-            if (
-                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
-                (this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse && this.selectionService.areaSelected)
-            ) {
-                console.log('if');
-                this.toolManagerService.currentTool = this.moveSelectionService;
-            }
         }
     }
 
@@ -163,11 +152,20 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.handleHotKeysShortcut(event);
         if (event.ctrlKey && event.key === 'o') {
             event.preventDefault();
             this.dialog.open(NewDrawModalComponent, {});
+            return;
         }
+
+        if (event.ctrlKey && event.key === 'a') {
+            event.preventDefault();
+            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
+            this.selectionService.selectAll();
+            return;
+        }
+
+        this.toolManagerService.handleHotKeysShortcut(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {

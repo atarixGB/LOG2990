@@ -49,10 +49,7 @@ export class SelectionService extends Tool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
         if (this.mouseDown) {
-            if (this.imageMoved) {
-                this.printMovedSelection();
-                this.imageMoved = false;
-            }
+            this.printMovedSelection();
             this.initialSelection = true;
             this.clearUnderneath = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -106,6 +103,7 @@ export class SelectionService extends Tool {
 
             this.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            console.log(this.selection);
         }
     }
 
@@ -133,9 +131,14 @@ export class SelectionService extends Tool {
     selectAll(): void {
         this.clearUnderneath = true;
         this.isSelectAll = true;
-        this.selection = this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height);
+        this.newSelection = true;
+        this.printMovedSelection();
+        console.log('selectall', this.selection);
+
         this.origin = { x: 0, y: 0 };
         this.destination = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
+        this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
+        console.log('end select', this.selection);
     }
 
     clearUnderneathShape(): void {
@@ -147,7 +150,6 @@ export class SelectionService extends Tool {
             this.drawingService.baseCtx.closePath();
         } else if (this.isSelectAll) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-            console.log('ici!!');
         } else this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
     }
 
@@ -158,8 +160,6 @@ export class SelectionService extends Tool {
         if (this.isEllipse) {
             this.checkPixelInEllipse();
         }
-
-        // this.clearUnderneathShape();
     }
 
     private checkPixelInEllipse(): void {
@@ -181,7 +181,13 @@ export class SelectionService extends Tool {
         }
     }
 
-    private printMovedSelection(): void {
-        this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+    printMovedSelection(): void {
+        if (this.imageMoved) {
+            console.log('print', this.selection);
+
+            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+            //this.selection = new ImageData(0, 0);
+            this.imageMoved = false;
+        }
     }
 }
