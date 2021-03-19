@@ -7,6 +7,7 @@ import { SelectionService } from './selection.service';
 
 const DX = 3;
 const DY = 3;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -16,9 +17,12 @@ export class MoveSelectionService extends Tool {
     private newOrigin: Vec2;
     private destination: Vec2;
     private selectionData: ImageData;
+    private keysDown: Map<string, boolean>;
 
     constructor(drawingService: DrawingService, private selectionService: SelectionService) {
         super(drawingService);
+        this.keysDown = new Map<string, boolean>();
+        this.keysDown.set('ArrowUp', false).set('ArrowDown', false).set('ArrowLeft', false).set('ArrowRight', false);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -74,6 +78,7 @@ export class MoveSelectionService extends Tool {
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             event.preventDefault();
             this.clearUnderneathShape();
+            this.keysDown.set();
             this.moveSelectionKeyboard(this.drawingService.previewCtx, event);
         }
     }
@@ -95,18 +100,19 @@ export class MoveSelectionService extends Tool {
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D, event: KeyboardEvent): void {
         switch (event.key) {
             case 'ArrowRight':
-                this.newOrigin = { x: this.origin.x + DX, y: this.origin.y };
+                this.newOrigin.x = this.origin.x + DX;
                 break;
             case 'ArrowLeft':
-                this.newOrigin = { x: this.origin.x - DX, y: this.origin.y };
+                this.newOrigin.x = this.origin.x - DX;
                 break;
             case 'ArrowDown':
-                this.newOrigin = { x: this.origin.x, y: this.origin.y + DY };
+                this.newOrigin.y = this.origin.y + DY;
                 break;
             case 'ArrowUp':
-                this.newOrigin = { x: this.origin.x, y: this.origin.y - DY };
+                this.newOrigin.y = this.origin.y - DY;
                 break;
         }
+
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
