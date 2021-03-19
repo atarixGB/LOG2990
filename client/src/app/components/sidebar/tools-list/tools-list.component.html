@@ -58,6 +58,8 @@
                 <mat-icon>power_input</mat-icon>
             </button>
         </mat-grid-tile>
+
+        
         <mat-grid-tile>
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Spray }"
@@ -78,6 +80,18 @@
                 (click)="onTool(ToolList.Polygon)"
             >
                 <mat-icon>change_history</mat-icon>
+            </button>
+        </mat-grid-tile>
+
+        <mat-grid-tile>
+            <button
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Pipette }"
+                mat-icon-button
+                matTooltip="Pipette (I)"
+                matTooltipPosition="above"
+                (click)="onTool(ToolList.Pipette)"
+            >
+                <mat-icon>colorize</mat-icon>
             </button>
         </mat-grid-tile>
     </mat-grid-list>

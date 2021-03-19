@@ -9,6 +9,7 @@
         <app-eraser-config *ngIf="toolManagerService.currentToolEnum === ToolList.Eraser"></app-eraser-config>
         <app-rectangle-config *ngIf="toolManagerService.currentToolEnum === ToolList.Rectangle"> </app-rectangle-config>
         <app-ellipse-config *ngIf="toolManagerService.currentToolEnum === ToolList.Ellipse"></app-ellipse-config>
+        <app-pipette-config *ngIf="toolManagerService.currentToolEnum === ToolList.Pipette"></app-pipette-config>
         <app-polygon-config *ngIf="toolManagerService.currentToolEnum === ToolList.Polygon"></app-polygon-config>
         <app-spray-config *ngIf="toolManagerService.currentToolEnum === ToolList.Spray"></app-spray-config>
         <div *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser">

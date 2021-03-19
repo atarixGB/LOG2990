@@ -69,8 +69,8 @@ export class PolygonService extends ToolShape {
         const radiusFinal = this.initializePolygonVariables();
         ctx.beginPath();
         ctx.lineWidth = this.lineWidth;
-        ctx.strokeStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-        ctx.fillStyle = this.colorManager.selectedColor[ColorOrder.SecondaryColor].inString;
+        ctx.strokeStyle = this.colorManager.selectedColor[ColorOrder.SecondaryColor].inString;
+        ctx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
 
         ctx.moveTo(
             this.pointCircleCenter.x + radiusFinal * Math.cos(-Math.PI / DOUBLE_MATH),
