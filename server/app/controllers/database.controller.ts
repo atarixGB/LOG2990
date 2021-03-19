@@ -141,16 +141,10 @@ export class DatabaseController {
          *           type: file
          */
         this.router.delete('/drawings/:id', (req: Request, res: Response, next: NextFunction) => {
-            console.log('controller : ' + req.params.id);
-
             const id = req.params.id.split('.')[0];
-
-            console.log('controller id: ' + id);
-
             this.databaseService
                 .deleteDrawingByIdName(id)
                 .then(() => {
-                    console.log('im in');
                     res.sendStatus(HTTP_STATUS_NO_CONTENT);
                 })
                 .catch((error) => {

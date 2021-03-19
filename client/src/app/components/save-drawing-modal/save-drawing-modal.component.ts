@@ -54,7 +54,6 @@ export class SaveDrawingModalComponent {
 
         this.indexService.postDrawing(this.message).subscribe(
             (response) => {
-                console.log(response);
                 this.matDialogRef.close();
                 alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
             },

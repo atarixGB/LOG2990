@@ -31,7 +31,6 @@ export class DatabaseService {
     constructor() {
         this.clientMessages = [];
         this.drawingURLS = [];
-
         this.readDrawingDirectory();
     }
 
@@ -92,7 +91,7 @@ export class DatabaseService {
             .findOneAndDelete({ _id: objectId })
             .then(() => {
                 this.deleteDrawingFromServer(id);
-                console.log(`Drawing with id:${id} has been successfully deleted.`);
+                console.log(`Drawing with id:${id} has been successfully deleted from database.`);
             })
             .catch((error) => {
                 throw new Error(`Failed to delete drawing with id ${id}\n${error}`);
@@ -115,13 +114,14 @@ export class DatabaseService {
     }
 
     private deleteDrawingFromServer(id: string): void {
-        let url = SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`;
+        const url = SAVED_DRAWINGS_PATH + id + `.${IMAGE_FORMAT}`;
         fs.unlink(url, (error) => {
             if (error) {
-                console.log(error);
+                throw error;
+            } else {
+                console.log(`Drawing with id ${id} has been successfully deleted from server.`);
+                this.readDrawingDirectory();
             }
-            console.log('delete done');
-            this.readDrawingDirectory();
         });
     }
 
@@ -149,10 +149,6 @@ export class DatabaseService {
 
     private validateRequest(request: DrawingData): boolean {
         return this.validateString(request.title, MIN_LENGTH_TITLE) && this.validateRequestBody(request.body) && this.validateTags(request.labels);
-    }
-
-    get database(): Db {
-        return this.db;
     }
 
     private readDrawingDirectory(): void {
