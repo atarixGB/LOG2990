@@ -9,7 +9,12 @@ import { SelectionService } from './selection.service';
     providedIn: 'root',
 })
 export class MoveSelectionService extends Tool {
-    private initialPosition: Vec2;
+    private initialMousePosition: Vec2;
+    private origin: Vec2;
+    private newOrigin: Vec2;
+    private destination: Vec2;
+    private selectionData: ImageData;
+    private newSelectionData: ImageData;
 
     constructor(drawingService: DrawingService, private selectionService: SelectionService) {
         super(drawingService);
@@ -18,69 +23,55 @@ export class MoveSelectionService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            console.log('youpi');
-
-            this.initialPosition = this.getPositionFromMouse(event);
+            this.initialMousePosition = this.getPositionFromMouse(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
+        this.selectionService.imageMoved = true;
         if (this.mouseDown) {
-            console.log('coucou');
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.moveSelectionMouse(this.drawingService.previewCtx);
+
+            if (this.selectionService.clearUnderneath) {
+                this.selectionService.clearUnderneathShape();
+                this.selectionService.clearUnderneath = false;
+            }
             return;
         }
 
-        // console.log('move');
+        if (this.selectionService.initialSelection) {
+            this.origin = this.selectionService.origin;
+            this.destination = this.selectionService.destination;
+            this.selectionData = this.selectionService.selection;
+            this.selectionService.initialSelection = false;
+        }
 
-        // this.mouseDownCoord = this.getPositionFromMouse(event);
-        // if (this.mouseInSelectionArea()) {
-        //     this.selectionService.newSelection = false;
-        // } else {
-        //     this.selectionService.newSelection = true;
-        // }
+        if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+            this.selectionService.newSelection = false;
+        } else {
+            this.selectionService.newSelection = true;
+        }
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.moveSelectionMouse(this.drawingService.baseCtx);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.moveSelectionMouse(this.drawingService.previewCtx);
+            this.origin = this.newOrigin;
+            this.selectionData = this.newSelectionData;
+            this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
+            this.selectionService.selection = this.newSelectionData;
+            this.selectionService.origin = this.origin;
         }
         this.mouseDown = false;
     }
 
-    mouseInSelectionArea(): boolean {
-        const mouseCoord: Vec2 = this.mouseDownCoord;
-        const origin: Vec2 = this.selectionService.origin;
-        const destination: Vec2 = this.selectionService.destination;
-        return mouseCoord.x >= origin.x && mouseCoord.x <= destination.x && mouseCoord.y >= origin.y && mouseCoord.y <= destination.y;
-    }
-
     private moveSelectionMouse(ctx: CanvasRenderingContext2D): void {
-        const image = this.selectionService.selection;
-
-        // Effacer l'ancienne image
-        let firstPositionX: number = this.selectionService.origin.x;
-        let firstPositionY: number = this.selectionService.origin.y;
-        if (this.selectionService.origin.x > this.selectionService.destination.x) {
-            firstPositionX = this.selectionService.destination.x;
-        }
-        if (this.selectionService.origin.y > this.selectionService.destination.y) {
-            firstPositionY = this.selectionService.destination.y;
-        }
-
-        this.drawingService.baseCtx.fillStyle = '#FFFFFF';
-        if (!this.selectionService.isEllipse) this.drawingService.baseCtx.fillRect(firstPositionX, firstPositionY, image.width, image.height);
-        else {
-            this.drawingService.baseCtx.ellipse(firstPositionX, firstPositionY, this.size.x / 2, this.size.y / 2, 0, 2 * Math.PI, 0);
-            this.drawingService.baseCtx.fill();
-        }
-
-        const distanceX: number = this.mouseDownCoord.x - this.initialPosition.x;
-        const distanceY: number = this.mouseDownCoord.y - this.initialPosition.y;
-        ctx.putImageData(image, firstPositionX + distanceX, firstPositionY + distanceY);
+        const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
+        const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
+        this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
+        ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
+        this.newSelectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
     }
 }
