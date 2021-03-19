@@ -6,7 +6,7 @@ import { MouseButton, ONE_SECOND } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 
 // tslint:disable:
-fdescribe('SprayHandlerService', () => {
+describe('SprayHandlerService', () => {
     let service: SprayService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let colorManagerServiceSpy: jasmine.SpyObj<ColorManagerService>;
