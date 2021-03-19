@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { Vec2 } from '@app/classes/vec2';
 import { MouseButton, ZOOM_RADIUS, ZOOM_RATIO } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -76,7 +77,31 @@ export class PipetteService extends Tool {
         this.zoomCtx.closePath();
     }
 
+    nearBorder(mousePosition: Vec2): void {
+        this.isNearBorder = false;
+        if (mousePosition.x >= this.drawingService.canvas.width || mousePosition.x <= 0) {
+            this.isNearBorder = true;
+        }
+        if (mousePosition.y >= this.drawingService.canvas.height || mousePosition.y <= 0) {
+            this.isNearBorder = true;
+        }
+        if (this.isNearBorder) {
+            this.clearCanvas();
+        }
+    }
+
+    clearCanvas(): void {
+        this.zoomCtx.clearRect(0, 0, this.zoom.width, this.zoom.height);
+    }
+
+    showZoom(event: MouseEvent): void {
+        this.clearCanvas();
+        if (!this.isNearBorder) {
+            this.drawOnZoom(event);
+        }
+    }
     onMouseMove(event: MouseEvent): void {
-        this.drawOnZoom(event);
+        this.nearBorder(this.getPositionFromMouse(event));
+        this.showZoom(event);
     }
 }
