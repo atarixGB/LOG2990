@@ -1,13 +1,12 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { SprayService } from '@app/services/tools/spray/spray.service';
-
 
 @Component({
     selector: 'app-spray-config',
     templateUrl: './spray-config.component.html',
     styleUrls: ['./spray-config.component.scss'],
 })
-export class SprayConfigComponent { 
+export class SprayConfigComponent {
     sprayWidth: number;
     dotWidth: number;
     sprayFrequency: number;
@@ -32,5 +31,4 @@ export class SprayConfigComponent {
         this.sprayFrequency = newSprayFrequency;
         this.sprayService.changeSprayFrequency(newSprayFrequency);
     }
-
 }

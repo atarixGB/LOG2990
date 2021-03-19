@@ -1,11 +1,11 @@
-import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { TestBed } from '@angular/core/testing';
-import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SprayService } from './spray.service';
 import { MouseButton, ONE_SECOND } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
+import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SprayService } from './spray.service';
 
-// tslint:disable:
+// tslint:disable
 describe('SprayHandlerService', () => {
     let service: SprayService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -17,7 +17,7 @@ describe('SprayHandlerService', () => {
         colorManagerServiceSpy = jasmine.createSpyObj('ColorSelectionService', ['getRgbaPrimaryColor']);
         baseCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['beginPath', 'moveTo', 'lineTo', 'stroke']);
         previewCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['beginPath', 'moveTo', 'lineTo', 'stroke', 'arc', 'fill']);
-        
+
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
@@ -270,7 +270,7 @@ describe('SprayHandlerService', () => {
 
         expect(service.getRandomNumber(minimum, maximum)).toBeGreaterThan(minimum);
         expect(service.getRandomNumber(minimum, maximum)).toBeGreaterThan(minimum);
-    
+
         expect(service.getRandomNumber(minimum, maximum)).toBeLessThan(maximum);
         expect(service.getRandomNumber(minimum, maximum)).toBeLessThan(maximum);
     });
