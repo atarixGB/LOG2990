@@ -16,12 +16,17 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    async getAllDrawingUrls(): Promise<string[] | number> {
-        return new Promise<string[] | number>((resolve) => {
+    async getAllDrawingUrls(): Promise<string[]> {
+        return new Promise<string[]>((resolve) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
-            this.http.get<string[]>(url).subscribe((drawings: string[]) => {
-                resolve(drawings);
-            });
+            this.http.get<string[]>(url).subscribe(
+                (drawings: string[]) => {
+                    resolve(drawings);
+                },
+                (error) => {
+                    return throwError(error);
+                },
+            );
         });
     }
 
@@ -41,21 +46,24 @@ export class IndexService {
     async deleteDrawingById(id: string): Promise<void> {
         return new Promise<void>((resolve) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.png`;
-            console.log('dans index client ' + id);
-            console.log('dans index client ' + url);
-            this.http.delete(url, { responseType: 'text' }).subscribe(() => {
-                resolve();
-            });
+            this.http.delete(url, { responseType: 'text' }).subscribe(
+                () => {
+                    resolve();
+                },
+                (error) => {
+                    return throwError(error);
+                },
+            );
         });
     }
 
-    findDrawingById(id: string): Observable<DrawingData | number> {
-        const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;
-        return this.http.delete<DrawingData>(url).pipe(
-            catchError((error: HttpErrorResponse) => {
-                return of(error.status);
-            }),
-        );
+    findDrawingById(id: string): Promise<DrawingData> {
+        return new Promise<DrawingData>((resolve) => {
+            const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;
+            return this.http.get<DrawingData>(url).subscribe((drawing: DrawingData) => {
+                resolve(drawing);
+            });
+        });
     }
 
     findDrawingsByTags(tags: string[]): Observable<string[] | number> {
@@ -71,12 +79,10 @@ export class IndexService {
     private handleError(error: HttpErrorResponse): Observable<DrawingData> {
         let errorMessage = 'Erreur inconnue';
         if (error.error instanceof ErrorEvent) {
-            // Client-side
             errorMessage = `Erreur: ${error.error.message}`;
         } else {
-            // Server-side
-            errorMessage = `Erreur ${error.status}\n${error.message}`;
+            errorMessage = `Erreur: ${error.status}\n${error.message}`;
         }
-        return throwError(errorMessage); // throw back to client
+        return throwError(errorMessage);
     }
 }

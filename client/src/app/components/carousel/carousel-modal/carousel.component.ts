@@ -1,7 +1,10 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
+
+const DRAWING_ID = 0;
+const LAST_INDEX = 4;
 
 @Component({
     selector: 'app-carousel',
@@ -9,15 +12,15 @@ import { IndexService } from '@app/services/index/index.service';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
+    // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>; // Pour mettre le dessin selectionne sur le canvas
     images: string[];
     placement: string[];
+    isLoading: boolean;
     private index: number;
     private afterNext: boolean;
     private afterPrevious: boolean;
     private chosenURL: string;
-    isLoading: boolean;
 
-    @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
     constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {
         this.index = 0;
         this.images = [];
@@ -31,6 +34,7 @@ export class CarouselComponent implements AfterViewInit {
     async ngAfterViewInit() {
         this.getDrawingsUrls();
     }
+
     nextImages() {
         console.log('dans next');
         if (this.afterPrevious) {
@@ -47,6 +51,7 @@ export class CarouselComponent implements AfterViewInit {
         }
         this.afterNext = true;
     }
+
     previousImages() {
         console.log('dans previous');
         if (this.afterNext) this.index--;
@@ -78,14 +83,18 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    getDrawingsUrls() {
+    getDrawingsUrls(): void {
         this.isLoading = true;
-        this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
-            this.isLoading = false;
-            this.images = drawings;
-            console.log('dans carousel ' + this.images);
-            this.nextImages();
-        });
+        this.indexService
+            .getAllDrawingUrls()
+            .then((drawings: string[]) => {
+                this.isLoading = false;
+                this.images = drawings;
+                this.nextImages();
+            })
+            .catch((error) => {
+                throw error;
+            });
     }
 
     // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
@@ -112,10 +121,19 @@ export class CarouselComponent implements AfterViewInit {
         console.log('carousel: ', this.chosenURL);
         let pathname = (url: string): string => {
             let parseUrl = new URL(url).pathname;
-            parseUrl = parseUrl.split('/')[4].split('.')[0];
+            parseUrl = parseUrl.split('/')[LAST_INDEX].split('.')[DRAWING_ID];
             return parseUrl;
         };
-        this.indexService.deleteDrawingById(pathname(this.chosenURL));
+
+        this.indexService
+            .deleteDrawingById(pathname(this.chosenURL))
+            .then(() => {
+                this.images.length = 0;
+                this.isLoading = false;
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     loadImage() {
