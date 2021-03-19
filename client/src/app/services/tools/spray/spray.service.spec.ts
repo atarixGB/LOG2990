@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { MouseButton, ONE_SECOND } from '@app/constants';
-import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SprayService } from './spray.service';
@@ -48,21 +47,6 @@ describe('SprayHandlerService', () => {
         expect(clearTimeoutSpy).toHaveBeenCalled();
     });
 
-    it(' mouseDown should call setTimeout on left click', () => {
-        const setTimeoutSpy = spyOn(global, 'setTimeout');
-        const mouseEvent = {
-            button: MouseButton.Left,
-        } as MouseEvent;
-
-        service.onMouseDown(mouseEvent);
-
-        expect(setTimeoutSpy).toHaveBeenCalledWith(
-            service.drawSpray,
-            ONE_SECOND / service.sprayFrequency,
-            service,
-            service['drawingService'].previewCtx,
-        );
-    });
 
     it(' mouseDown should set mouseDown to true on left click', () => {
         const setTimeoutSpy = spyOn(global, 'setTimeout');
@@ -77,20 +61,7 @@ describe('SprayHandlerService', () => {
         expect(service.mouseDown).toEqual(true);
     });
 
-    it(' mouseDown should set mouseCoord on left click', () => {
-        const setTimeoutSpy = spyOn(global, 'setTimeout');
-        service.mouseCoord = { x: 0, y: 0 };
-        const mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
-            button: MouseButton.Left,
-        } as MouseEvent;
-
-        service.onMouseDown(mouseEvent);
-
-        expect(setTimeoutSpy).toHaveBeenCalled();
-        expect(service.mouseCoord).toEqual({ x: 25, y: 25 });
-    });
+   
 
     it(' mouseUp should call clearTimeout if mousDown is true', () => {
         const clearTimeoutSpy = spyOn(global, 'clearTimeout');
@@ -118,19 +89,6 @@ describe('SprayHandlerService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(service.mouseCoord).toEqual({ x: 0, y: 0 });
-    });
-
-    it(' onMouseMove should set mouseCoord if mousDown is false', () => {
-        service.mouseCoord = { x: 0, y: 0 };
-        service.mouseDown = true;
-        const mouseEvent = {
-            offsetX: 25,
-            offsetY: 25,
-            button: MouseButton.Left,
-        } as MouseEvent;
-
-        service.onMouseMove(mouseEvent);
-        expect(service.mouseCoord).toEqual({ x: 25, y: 25 });
     });
 
     it(' mouseLeave should not call clearTimeout if mousDown is false', () => {
@@ -199,70 +157,7 @@ describe('SprayHandlerService', () => {
         );
     });
 
-    it('drawSpray should not call getRandomNumber', () => {
-        const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
-        service.density = 1;
-        service.width = 2;
-        service.mouseCoord = { x: 0, y: 0 };
 
-        service.drawSpray(service, service['drawingService'].previewCtx);
-
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
-    });
-
-    it('drawSpray should call Math.random', () => {
-        const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
-        const randomSpy = spyOn(Math, 'random');
-        service.density = 1;
-        service.mouseCoord = { x: 0, y: 0 };
-
-        service.drawSpray(service, service['drawingService'].previewCtx);
-
-        expect(randomSpy).toHaveBeenCalled();
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
-    });
-
-    it('drawSpray should set ctx.globalAlpha', () => {
-        const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
-        service.density = 1;
-        service.mouseCoord = { x: 0, y: 0 };
-
-        service.drawSpray(service, service['drawingService'].previewCtx);
-
-        expect(previewCtxSpy.globalAlpha).toBeDefined();
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
-    });
-
-    it('drawSpray should set ctx.strokeStyle and ctx.fillStyle to colorSelectionService.primaryColor', () => {
-        const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
-        service.density = 1;
-        service.mouseCoord = { x: 0, y: 0 };
-        service.colorManager.selectedColor[ColorOrder.PrimaryColor].inString = '#ff0000';
-
-        service.drawSpray(service, service['drawingService'].previewCtx);
-
-        expect(previewCtxSpy.strokeStyle).toEqual('#ff0000');
-        expect(previewCtxSpy.fillStyle).toEqual('#ff0000');
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
-    });
-
-    it('drawSpray should call ctx fonctions to draw an arc', () => {
-        const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
-        service.density = 1;
-        service.mouseCoord = { x: 0, y: 0 };
-
-        service.drawSpray(service, service['drawingService'].previewCtx);
-
-        expect(previewCtxSpy.beginPath).toHaveBeenCalled();
-        expect(previewCtxSpy.arc).toHaveBeenCalled();
-        expect(previewCtxSpy.fill).toHaveBeenCalled();
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
-        expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
-    });
 
     it('getRandomNumber should return random float within min and max range', () => {
         const minimum = 5;
