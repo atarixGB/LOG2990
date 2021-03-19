@@ -16,7 +16,6 @@ export class MoveSelectionService extends Tool {
     private newOrigin: Vec2;
     private destination: Vec2;
     private selectionData: ImageData;
-    private newSelectionData: ImageData;
 
     constructor(drawingService: DrawingService, private selectionService: SelectionService) {
         super(drawingService);
@@ -57,9 +56,8 @@ export class MoveSelectionService extends Tool {
         if (this.mouseDown) {
             this.moveSelectionMouse(this.drawingService.previewCtx);
             this.origin = this.newOrigin;
-            this.selectionData = this.newSelectionData;
             this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
-            this.selectionService.selection = this.newSelectionData;
+            this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
         }
         this.mouseDown = false;
@@ -81,15 +79,9 @@ export class MoveSelectionService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        console.log('fucking key up');
-        // this.selectionService.clearUnderneath = true;
-        // this.drawingService.baseCtx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
-        // this.selectionData = this.drawingService.baseCtx.getImageData(
-        //     this.newOrigin.x,
-        //     this.newOrigin.y,
-        //     this.selectionData.width,
-        //     this.selectionData.height,
-        // );
+        this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
+        this.selectionService.selection = this.selectionData;
+        this.selectionService.origin = this.origin;
     }
 
     private moveSelectionMouse(ctx: CanvasRenderingContext2D): void {
@@ -97,7 +89,7 @@ export class MoveSelectionService extends Tool {
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
-        this.newSelectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
+        this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
     }
 
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D, event: KeyboardEvent): void {
@@ -118,6 +110,7 @@ export class MoveSelectionService extends Tool {
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
+        this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
         this.origin = this.newOrigin;
     }
 

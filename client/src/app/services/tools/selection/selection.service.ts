@@ -83,15 +83,7 @@ export class SelectionService extends Tool {
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
         this.getSelectionData(this.drawingService.baseCtx);
-
-        // faire une methode de reset des parametres;
-        this.rectangleService.mouseDown = false;
-        this.rectangleService.lineWidth = this.previousLineWidthRectangle;
-        this.ellipseService.mouseDown = false;
-        this.ellipseService.lineWidth = this.previousLineWidthEllipse;
-        this.drawingService.previewCtx.setLineDash([0]);
-        this.rectangleService.isSelection = false;
-        this.ellipseService.isSelection = false;
+        this.resetParametersTools();
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -100,10 +92,8 @@ export class SelectionService extends Tool {
 
         if (event.key === 'Escape') {
             event.preventDefault();
-
             this.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            console.log(this.selection);
         }
     }
 
@@ -133,12 +123,10 @@ export class SelectionService extends Tool {
         this.isSelectAll = true;
         this.newSelection = true;
         this.printMovedSelection();
-        console.log('selectall', this.selection);
 
         this.origin = { x: 0, y: 0 };
         this.destination = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
-        console.log('end select', this.selection);
     }
 
     clearUnderneathShape(): void {
@@ -150,7 +138,10 @@ export class SelectionService extends Tool {
             this.drawingService.baseCtx.closePath();
         } else if (this.isSelectAll) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
-        } else this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
+        } else {
+            console.log('pop');
+            this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
+        }
     }
 
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
@@ -183,11 +174,18 @@ export class SelectionService extends Tool {
 
     printMovedSelection(): void {
         if (this.imageMoved) {
-            console.log('print', this.selection);
-
             this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
-            //this.selection = new ImageData(0, 0);
             this.imageMoved = false;
         }
+    }
+
+    private resetParametersTools(): void {
+        this.rectangleService.mouseDown = false;
+        this.rectangleService.lineWidth = this.previousLineWidthRectangle;
+        this.ellipseService.mouseDown = false;
+        this.ellipseService.lineWidth = this.previousLineWidthEllipse;
+        this.drawingService.previewCtx.setLineDash([0]);
+        this.rectangleService.isSelection = false;
+        this.ellipseService.isSelection = false;
     }
 }

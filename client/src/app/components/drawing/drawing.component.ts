@@ -146,6 +146,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
+        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                this.moveSelectionService.handleKeyUp(event);
+            }
+        }
+
         this.toolManagerService.handleKeyUp(event);
     }
 
@@ -164,8 +170,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             return;
         }
 
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            this.moveSelectionService.handleKeyDown(event);
+        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                this.moveSelectionService.handleKeyDown(event);
+            }
         }
 
         this.toolManagerService.handleHotKeysShortcut(event);
