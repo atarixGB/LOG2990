@@ -18,8 +18,8 @@ export class ColorDisplayerComponent {
     ColorOrder: typeof ColorOrder = ColorOrder;
 
     constructor(public dialog: MatDialog, private colorManager: ColorManagerService) {
-        this.primaryColor = this.colorManager.selectedColor[ColorOrder.primaryColor];
-        this.secondaryColor = this.colorManager.selectedColor[ColorOrder.secondaryColor];
+        this.primaryColor = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
+        this.secondaryColor = this.colorManager.selectedColor[ColorOrder.SecondaryColor];
     }
 
     openColorPicker(colorOrder: ColorOrder): void {
@@ -31,8 +31,8 @@ export class ColorDisplayerComponent {
     }
 
     exchangeColorOrder(): void {
-        const primary = this.colorManager.selectedColor[ColorOrder.primaryColor];
-        const secondary = this.colorManager.selectedColor[ColorOrder.secondaryColor];
+        const primary = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
+        const secondary = this.colorManager.selectedColor[ColorOrder.SecondaryColor];
 
         const tempForSwitch = JSON.parse(JSON.stringify(primary));
 
