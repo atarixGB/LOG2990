@@ -37,7 +37,7 @@ export class SprayService extends Tool implements OnDestroy {
     sprayFrequency: number = this.minFrequency;
     canvasData: ImageData;
 
-    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, public colorManager: ColorManagerService) {
         super(drawingService);
     }
 
@@ -61,7 +61,6 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseUp(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            // this.drawingService.applyPreview();
             this.canvasData = this.drawingService.getCanvasData();
             this.updateSprayData();
         }
@@ -77,7 +76,6 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseLeave(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            // this.drawingService.applyPreview();
         }
     }
 
