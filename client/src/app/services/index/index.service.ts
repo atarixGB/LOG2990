@@ -18,7 +18,7 @@ export class IndexService {
 
     async getAllDrawingUrls(): Promise<string[]> {
         return new Promise<string[]>((resolve) => {
-            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/dessin';
+            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
             this.http.get<string[]>(url).subscribe(
                 (drawings: string[]) => {
                     resolve(drawings);
@@ -57,7 +57,7 @@ export class IndexService {
         });
     }
 
-    findDrawingById(id: string): Promise<DrawingData> {
+    async findDrawingById(id: string): Promise<DrawingData> {
         return new Promise<DrawingData>((resolve) => {
             const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;
             return this.http.get<DrawingData>(url).subscribe((drawing: DrawingData) => {
@@ -91,7 +91,7 @@ export class IndexService {
         });
     }
 
-    getTags(): Promise<DrawingData> {
+    async getTags(): Promise<DrawingData> {
         return new Promise<DrawingData>((resolve) => {
             const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/meta/tags';
             return this.http.get<DrawingData>(url).subscribe(
