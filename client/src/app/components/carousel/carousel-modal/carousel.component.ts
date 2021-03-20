@@ -11,14 +11,13 @@ import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/c
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
-    private imageCards: Drawing[];
-
-    placement: Drawing[];
     private index: number;
-    //private afterNext: boolean;
+    private afterNext: boolean;
     private afterPrevious: boolean;
     private chosenURL: string;
     isLoading: boolean;
+    imageCards: Drawing[];
+    placement: Drawing[];
 
     @ViewChild('canvas') canvasRef: ElementRef<CarouselDrawingComponent>;
     @ViewChild('firstDraw') firstDraw: ElementRef<CarouselDrawingComponent>;
@@ -50,41 +49,38 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     nextImages() {
-        this.placement[0] = this.imageCards[0];
-        this.placement[1] = this.imageCards[1];
-        this.placement[2] = this.imageCards[0];
-        // console.log('dans next');
-        // if (this.afterPrevious) {
-        //     this.index++;
-        //     this.afterPrevious = false;
-        // }
-        // for (let i = 0; i < 3; i++) {
-        //     if (this.index > this.imageCards.length - 1) {
-        //         this.index = 0;
-        //     }
-        //     this.placement[i] = this.imageCards[this.index];
-        //     this.index++;
-        // }
-        // this.afterNext = true;
+        console.log('dans next');
+        if (this.afterPrevious) {
+            this.index++;
+            this.afterPrevious = false;
+        }
+        for (let i = 0; i < 3; i++) {
+            if (this.index > this.imageCards.length - 1) {
+                this.index = 0;
+            }
+            this.placement[i] = this.imageCards[this.index];
+            this.index++;
+        }
+        this.afterNext = true;
     }
     previousImages() {
-        // console.log('dans previous');
-        // if (this.afterNext) this.index--;
-        // if (this.afterNext) {
-        //     this.afterNext = false;
-        //     this.index = this.index - 3;
-        //     console.log('dans after next ' + this.index);
-        // }
-        // for (let i = 2; i >= 0; i--) {
-        //     this.index--;
-        //     if (this.index < 0) {
-        //         this.index = this.imageCards.length - 1;
-        //     }
-        //     console.log(this.index);
-        //     this.placement[i] = this.imageCards[this.index];
-        //     this.afterNext = false;
-        // }
-        // this.afterPrevious = true;
+        console.log('dans previous');
+        if (this.afterNext) this.index--;
+        if (this.afterNext) {
+            this.afterNext = false;
+            this.index = this.index - 3;
+            console.log('dans after next ' + this.index);
+        }
+        for (let i = 2; i >= 0; i--) {
+            this.index--;
+            if (this.index < 0) {
+                this.index = this.imageCards.length - 1;
+            }
+            console.log(this.index);
+            this.placement[i] = this.imageCards[this.index];
+            this.afterNext = false;
+        }
+        this.afterPrevious = true;
     }
 
     @HostListener('document:keydown', ['$event'])
