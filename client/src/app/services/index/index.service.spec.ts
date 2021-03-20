@@ -1,64 +1,55 @@
-// import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-// import { TestBed } from '@angular/core/testing';
-// import { DrawingData } from '@common/communication/drawing-data';
-// import { IndexService } from './index.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+import { DrawingData } from '@common/communication/drawing-data';
+import { IndexService } from './index.service';
 
-// // tslint: disabled
-// describe('IndexService', () => {
-//     let httpMock: HttpTestingController;
-//     let service: IndexService;
-//     let baseUrl: string;
+// tslint: disabled
+fdescribe('IndexService', () => {
+    let httpMock: HttpTestingController;
+    let indexService: IndexService;
+    let mockDrawing: DrawingData;
 
-//     beforeEach(() => {
-//         TestBed.configureTestingModule({
-//             imports: [HttpClientTestingModule],
-//         });
-//         service = TestBed.inject(IndexService);
-//         httpMock = TestBed.inject(HttpTestingController);
-//         // BASE_URL is private so we need to access it with its name as a key
-//         // Try to avoid this syntax which violates encapsulation
-//         // tslint:disable: no-string-literal
-//         baseUrl = service['BASE_URL'];
-//     });
+    beforeEach(() => {
+        TestBed.configureTestingModule({
+            imports: [HttpClientTestingModule],
+        });
+        indexService = TestBed.inject(IndexService);
+        httpMock = TestBed.inject(HttpTestingController);
 
-//     afterEach(() => {
-//         httpMock.verify();
-//     });
+        mockDrawing = {
+            title: 'title',
+            labels: ['tag1'],
+            width: 100,
+            height: 100,
+            body: 'Drawing data',
+        };
+    });
 
-//     it('should return expected DrawingData (HttpClient called once)', () => {
-//         const expectedMessage: DrawingData = { body: 'Hello', height: 0, width: 0, labels: [], title: 'World' };
+    afterEach(() => {
+        httpMock.verify();
+    });
 
-//         // check the content of the mocked callDrawingData
-//         service.basicGet().subscribe((response: DrawingData) => {
-//             expect(response.title).toEqual(expectedMessage.title, 'Title check');
-//             expect(response.body).toEqual(expectedMessage.body, 'body check');
-//         }, fail);
+    it('should be created', () => {
+        expect(indexService).toBeTruthy();
+    });
 
-//         const req = httpMock.expectOne(baseUrl);
-//         expect(req.request.method).toBe('GET');
-//         // actually send the request
-//         req.flush(expectedMessage);
-//     });
+    it('should call http request GET on getAllDrawingUrls', async () => {
+        const httpGetSpy = spyOn(indexService['http'], 'get').and.stub();
+        indexService.getAllDrawingUrls();
+        expect(httpGetSpy).toHaveBeenCalled();
+    });
 
-//     it('should not return aDrawingDataage when sending a POST request (HttpClient called once)', () => {
-//         const sentMessage: DrawingData = { body: 'Hello', labels: [], height: 0, width: 0, title: 'World' };
-//         // subscribe to the mocked call
-//         // tslint:disable-next-line: no-empty
-//         service.basicPost(sentMessage).subscribe(() => {}, fail);
+    fit('should call http request DELETE on deleteDrawingById', async () => {
+        const httpDeleteSpy = spyOn(indexService['http'], 'delete').and.stub();
+        indexService.deleteDrawingById('1.png');
+        expect(httpDeleteSpy).toHaveBeenCalled();
+    });
 
-//         const req = httpMock.expectOne(baseUrl + '/send');
-//         expect(req.request.method).toBe('POST');
-//         // actually send the request
-//         req.flush(sentMessage);
-//     });
+    it('should call http request POST on postDrawing', () => {
+        const postDrawingSpy = spyOn(indexService['http'], 'post').and.stub();
+        // const pipeSpy = spyOn<any>(indexService['http'], 'pipe').and.stub();
 
-//     it('should handle http error safely', () => {
-//         service.basicGet().subscribe((response: DrawingData) => {
-//             expect(response).toBeUndefined();
-//         }, fail);
-
-//         const req = httpMock.expectOne(baseUrl);
-//         expect(req.request.method).toBe('GET');
-//         req.error(new ErrorEvent('Random error occured'));
-//     });
-// });
+        indexService.postDrawing(mockDrawing).pipe();
+        expect(postDrawingSpy).toHaveBeenCalled();
+    });
+});
