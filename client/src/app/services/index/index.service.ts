@@ -18,7 +18,7 @@ export class IndexService {
 
     async getAllDrawingUrls(): Promise<string[]> {
         return new Promise<string[]>((resolve) => {
-            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
+            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/dessin';
             this.http.get<string[]>(url).subscribe(
                 (drawings: string[]) => {
                     resolve(drawings);
@@ -74,6 +74,35 @@ export class IndexService {
                 return of(error.status);
             }),
         );
+    }
+
+    async getTitles(): Promise<DrawingData[]> {
+        return new Promise<DrawingData[]>((resolve) => {
+            const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/meta/titles';
+            return this.http.get<DrawingData[]>(url).subscribe(
+                (drawings: DrawingData[]) => {
+                    console.log(drawings);
+                    resolve(drawings);
+                },
+                (error) => {
+                    return throwError(error);
+                },
+            );
+        });
+    }
+
+    getTags(): Promise<DrawingData> {
+        return new Promise<DrawingData>((resolve) => {
+            const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/meta/tags';
+            return this.http.get<DrawingData>(url).subscribe(
+                (drawing: DrawingData) => {
+                    resolve(drawing);
+                },
+                (error) => {
+                    return throwError(error);
+                },
+            );
+        });
     }
 
     private handleError(error: HttpErrorResponse): Observable<DrawingData> {

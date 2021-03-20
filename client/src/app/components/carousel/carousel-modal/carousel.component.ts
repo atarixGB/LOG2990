@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
+import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/carousel-drawing.component';
 
 @Component({
     selector: 'app-carousel',
@@ -17,7 +18,11 @@ export class CarouselComponent implements AfterViewInit {
     private chosenURL: string;
     isLoading: boolean;
 
-    @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>;
+    @ViewChild('canvas') canvasRef: ElementRef<CarouselDrawingComponent>;
+    @ViewChild('firstDraw') firstDraw: ElementRef<CarouselDrawingComponent>;
+    @ViewChild('secondDraw') secondDraw: ElementRef<CarouselDrawingComponent>;
+    @ViewChild('thirdDraw') thirdDraw: ElementRef<CarouselDrawingComponent>;
+
     constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {
         this.index = 0;
         this.images = [];
@@ -30,6 +35,9 @@ export class CarouselComponent implements AfterViewInit {
 
     async ngAfterViewInit() {
         this.getDrawingsUrls();
+        // this.indexService.getTitles().then((result: DrawingData[]) => {
+        //     console.log(result);
+        // });
     }
     nextImages() {
         console.log('dans next');
@@ -69,7 +77,6 @@ export class CarouselComponent implements AfterViewInit {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        console.log(event.code);
         if (event.code == 'ArrowLeft') {
             this.previousImages();
         }
