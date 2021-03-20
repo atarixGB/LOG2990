@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
@@ -18,7 +19,10 @@ export class CarouselComponent implements AfterViewInit {
     isLoading: boolean;
     imageCards: Drawing[];
     placement: Drawing[];
+    isDisabled: boolean;
 
+    @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
+    @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
     @ViewChild('canvas') canvasRef: ElementRef<CarouselDrawingComponent>;
     @ViewChild('firstDraw') firstDraw: ElementRef<CarouselDrawingComponent>;
     @ViewChild('secondDraw') secondDraw: ElementRef<CarouselDrawingComponent>;
@@ -28,10 +32,11 @@ export class CarouselComponent implements AfterViewInit {
         this.index = 0;
         this.imageCards = [];
         this.placement = [];
-        //  this.afterNext = false;
+        this.afterNext = false;
         this.afterPrevious = false;
         this.isLoading = true;
         this.chosenURL = '';
+        this.isDisabled = true;
     }
 
     async ngAfterViewInit() {
@@ -110,6 +115,9 @@ export class CarouselComponent implements AfterViewInit {
 
     chosen(url: string) {
         this.chosenURL = url;
+        this.isDisabled = false;
+        this.loadImageButton.nativeElement.disabled = false;
+        this.recycleButton.nativeElement.disabled = false;
     }
 
     async deleteDrawing() {
