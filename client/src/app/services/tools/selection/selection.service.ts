@@ -77,8 +77,12 @@ export class SelectionService extends Tool {
 
         if (this.isFirstSelection) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                console.log('false');
+
                 this.newSelection = false;
             } else {
+                console.log('true');
+
                 this.newSelection = true;
             }
         }
@@ -126,11 +130,14 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.isSelectAll = true;
         this.newSelection = true;
+        this.isFirstSelection = true;
+        this.initialSelection = true;
         this.printMovedSelection();
-
+        console.log('OKOKOKOK');
         this.origin = { x: 0, y: 0 };
         this.destination = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
+        console.log('fin select all', this.selection);
     }
 
     clearUnderneathShape(): void {

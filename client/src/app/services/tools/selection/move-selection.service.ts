@@ -105,6 +105,7 @@ export class MoveSelectionService extends Tool {
     }
 
     private moveSelectionMouse(ctx: CanvasRenderingContext2D): void {
+        this.initialSelection();
         const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
