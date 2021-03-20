@@ -63,6 +63,8 @@ export class MoveSelectionService extends Tool {
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.moveSelectionMouse(this.drawingService.previewCtx);
+            // À voir avec les contours si tu peux sélectionner à partir de n'importe où
+            //this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
             this.origin = this.newOrigin;
             this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
             this.selectionService.selection = this.selectionData;
@@ -107,14 +109,10 @@ export class MoveSelectionService extends Tool {
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
-        this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
     }
 
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D): void {
         this.newOrigin = this.selectionService.origin;
-        console.log(this.newOrigin);
-        console.log(this.selectionData);
-
         if (this.keysDown.get(ArrowKeys.Right)) {
             this.newOrigin.x += DX;
         }
