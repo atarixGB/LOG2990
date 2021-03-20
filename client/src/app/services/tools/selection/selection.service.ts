@@ -147,6 +147,13 @@ export class SelectionService extends Tool {
         }
     }
 
+    private printMovedSelection(): void {
+        if (this.imageMoved) {
+            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+            this.imageMoved = false;
+        }
+    }
+
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
         this.calculateDimension();
         this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
@@ -172,13 +179,6 @@ export class SelectionService extends Tool {
                 }
                 pixelCounter += pixelLenght;
             }
-        }
-    }
-
-    printMovedSelection(): void {
-        if (this.imageMoved) {
-            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
-            this.imageMoved = false;
         }
     }
 
