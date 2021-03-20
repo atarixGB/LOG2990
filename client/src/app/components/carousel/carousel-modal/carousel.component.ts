@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
+import { Drawing } from '@common/communication/drawing';
 import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/carousel-drawing.component';
 
 @Component({
@@ -10,10 +11,11 @@ import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/c
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
-    images: string[];
-    placement: string[];
+    private imageCards: Drawing[];
+
+    placement: Drawing[];
     private index: number;
-    private afterNext: boolean;
+    //private afterNext: boolean;
     private afterPrevious: boolean;
     private chosenURL: string;
     isLoading: boolean;
@@ -25,54 +27,64 @@ export class CarouselComponent implements AfterViewInit {
 
     constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {
         this.index = 0;
-        this.images = [];
-        this.placement = ['', '', ''];
-        this.afterNext = false;
+        this.imageCards = [];
+        this.placement = [];
+        //  this.afterNext = false;
         this.afterPrevious = false;
         this.isLoading = true;
         this.chosenURL = '';
     }
 
     async ngAfterViewInit() {
-        this.getDrawingsUrls();
-        // this.indexService.getTitles().then((result: DrawingData[]) => {
-        //     console.log(result);
-        // });
+        this.getDrawings();
     }
-    nextImages() {
-        console.log('dans next');
-        if (this.afterPrevious) {
-            this.index++;
-            this.afterPrevious = false;
-        }
 
-        for (let i = 0; i < 3; i++) {
-            if (this.index > this.images.length - 1) {
-                this.index = 0;
-            }
-            this.placement[i] = this.images[this.index];
-            this.index++;
-        }
-        this.afterNext = true;
+    getDrawings() {
+        this.isLoading = true;
+        this.indexService.getAllDrawings().then((drawings: Drawing[]) => {
+            console.log(drawings);
+            this.imageCards = drawings;
+            this.isLoading = false;
+            this.nextImages();
+        });
+    }
+
+    nextImages() {
+        this.placement[0] = this.imageCards[0];
+        this.placement[1] = this.imageCards[1];
+        this.placement[2] = this.imageCards[0];
+        // console.log('dans next');
+        // if (this.afterPrevious) {
+        //     this.index++;
+        //     this.afterPrevious = false;
+        // }
+        // for (let i = 0; i < 3; i++) {
+        //     if (this.index > this.imageCards.length - 1) {
+        //         this.index = 0;
+        //     }
+        //     this.placement[i] = this.imageCards[this.index];
+        //     this.index++;
+        // }
+        // this.afterNext = true;
     }
     previousImages() {
-        console.log('dans previous');
-        if (this.afterNext) this.index--;
-        if (this.afterNext) {
-            this.afterNext = false;
-            this.index = this.index - 3;
-            console.log('dans after next ' + this.index);
-        }
-        for (let i = 2; i >= 0; i--) {
-            this.index--;
-            if (this.index < 0) {
-                this.index = this.images.length - 1;
-            }
-            console.log(this.index);
-            this.placement[i] = this.images[this.index];
-            this.afterNext = false;
-        }
-        this.afterPrevious = true;
+        // console.log('dans previous');
+        // if (this.afterNext) this.index--;
+        // if (this.afterNext) {
+        //     this.afterNext = false;
+        //     this.index = this.index - 3;
+        //     console.log('dans after next ' + this.index);
+        // }
+        // for (let i = 2; i >= 0; i--) {
+        //     this.index--;
+        //     if (this.index < 0) {
+        //         this.index = this.imageCards.length - 1;
+        //     }
+        //     console.log(this.index);
+        //     this.placement[i] = this.imageCards[this.index];
+        //     this.afterNext = false;
+        // }
+        // this.afterPrevious = true;
     }
 
     @HostListener('document:keydown', ['$event'])
@@ -83,17 +95,6 @@ export class CarouselComponent implements AfterViewInit {
         if (event.code == 'ArrowRight') {
             this.nextImages();
         }
-    }
-
-    getDrawingsUrls() {
-        console.log('dans drawingURLs: ' + this.images);
-        this.isLoading = true;
-        this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
-            this.isLoading = false;
-            this.images = drawings;
-            console.log('les images :' + this.images);
-            this.nextImages();
-        });
     }
 
     // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
@@ -123,8 +124,7 @@ export class CarouselComponent implements AfterViewInit {
             return parseUrl;
         };
         this.indexService.deleteDrawingById(pathname(this.chosenURL)).then(() => {
-            console.log('deleted');
-            this.getDrawingsUrls();
+            this.getDrawings();
         });
     }
 

@@ -7,11 +7,11 @@
     </div>
     <div id="images-container">
         <mat-spinner *ngIf="isLoading"></mat-spinner>
-        <div id="no-drawing-container" *ngIf="images.length == 0 && !isLoading">Aucun dessin.</div>
-        <div id="drawings-container" *ngIf="images.length > 0 && !isLoading">
-            <app-carousel-drawing [imagesURL]="this.placement[0]" (componentClicked)="chosen($event)"></app-carousel-drawing>
-            <app-carousel-drawing [imagesURL]="this.placement[1]" (componentClicked)="chosen($event)"></app-carousel-drawing>
-            <app-carousel-drawing [imagesURL]="this.placement[2]" (componentClicked)="chosen($event)"></app-carousel-drawing>
+        <div id="no-drawing-container" *ngIf="imageCards.length == 0 && !isLoading">Aucun dessin.</div>
+        <div id="drawings-container" *ngIf="imageCards.length > 0 && !isLoading">
+            <app-carousel-drawing [drawing]="placement[0]" (componentClicked)="chosen($event)"></app-carousel-drawing>
+            <app-carousel-drawing [drawing]="placement[1]" (componentClicked)="chosen($event)"></app-carousel-drawing>
+            <app-carousel-drawing [drawing]="placement[2]" (componentClicked)="chosen($event)"></app-carousel-drawing>
         </div>
     </div>
     <div id="control-container" mat-dialog-actions>

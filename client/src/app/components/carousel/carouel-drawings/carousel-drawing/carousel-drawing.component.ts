@@ -1,4 +1,5 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { Drawing } from '@common/communication/drawing';
 
 @Component({
     selector: 'app-carousel-drawing',
@@ -6,15 +7,9 @@ import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewC
     styleUrls: ['./carousel-drawing.component.scss'],
 })
 export class CarouselDrawingComponent {
-    @Input() imagesURL: string;
+    @Input() drawing: Drawing;
     @ViewChild('mainContainer', { static: false }) mainContainer: ElementRef<HTMLDivElement>;
     @Output() componentClicked = new EventEmitter<string>();
-    name: string;
-    tags: string[];
-    constructor() {
-        this.name = 'Mon dessin';
-        this.tags = ['test', 'dessin'];
-    }
 
     @HostListener('click', ['$event'])
     handleKeyDown(event: KeyboardEvent) {
@@ -23,7 +18,7 @@ export class CarouselDrawingComponent {
     }
 
     componentClickedEvent(): void {
-        this.componentClicked.emit(this.imagesURL);
+        this.componentClicked.emit(this.drawing.imageURL);
     }
 
     defaultColor(): void {
