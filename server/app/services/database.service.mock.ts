@@ -16,7 +16,7 @@ const MAX_LENGTH_INPUT = 15;
 const NB_TAGS_ALLOWED = 5;
 
 export class DatabaseServiceMock {
-    private db: Db;
+    db: Db;
     private client: MongoClient;
     mongoServer: MongoMemoryServer;
     drawingsCollection: Collection<DrawingMetadata>;
