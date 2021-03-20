@@ -152,24 +152,20 @@ export class DatabaseController {
                 });
         });
 
-        /**
-         * @swagger
-         *
-         * /api/database/drawings/:id:
-         *   get:
-         *     description: Récupère de la base de données le dessin avec l'id spécifié en paramètre
-         *     tags:
-         *       - Base de données
-         *       - Dessin
-         *     produces:
-         *      - application/json
-         *     responses:
-         *       200:
-         *         schema:
-         *           type: file
-         */
-        this.router.get('/drawings/:id', (req: Request, res: Response, next: NextFunction) => {
-            this.databaseService.findDrawingByIdName(req.params.id).then().catch();
+        this.router.get('/drawings/meta/titles', (req: Request, res: Response, next: NextFunction) => {
+            this.databaseService.drawingsCollection
+                .find({}, { fields: { title: 1, _id: 0 } })
+                .toArray()
+                .then((result) => res.send(result))
+                .catch((error) => res.send(error));
+        });
+
+        this.router.get('/drawings/meta/tags', (req: Request, res: Response, next: NextFunction) => {
+            this.databaseService.drawingsCollection
+                .find({}, { fields: { labels: 1, _id: 0 } })
+                .toArray()
+                .then((result) => res.send(result))
+                .catch((error) => res.send(error));
         });
     }
 }

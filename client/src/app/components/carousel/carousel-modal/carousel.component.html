@@ -1,5 +1,10 @@
 <div id="main-container">
     <div id="header"><h1>Carousel de dessin</h1></div>
+    <div>
+        <label for="ffiltre">Filtrer: </label>
+        <input type="text" id="filtre" name="ffiltre" />
+        <button>Entrer</button><br /><br />
+    </div>
     <div id="images-container">
         <mat-spinner *ngIf="isLoading"></mat-spinner>
         <div id="no-drawing-container" *ngIf="images.length == 0 && !isLoading">Aucun dessin.</div>

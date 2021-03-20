@@ -25,4 +25,8 @@ export class CarouselDrawingComponent {
     componentClickedEvent(): void {
         this.componentClicked.emit(this.imagesURL);
     }
+
+    defaultColor(): void {
+        this.mainContainer.nativeElement.style.border = '2px solid black';
+    }
 }

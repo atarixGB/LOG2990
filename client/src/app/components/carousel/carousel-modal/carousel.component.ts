@@ -1,10 +1,8 @@
-import { AfterViewInit, Component, HostListener } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { IndexService } from '@app/services/index/index.service';
-
-const DRAWING_ID = 0;
-const LAST_INDEX = 4;
+import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/carousel-drawing.component';
 
 @Component({
     selector: 'app-carousel',
@@ -12,14 +10,18 @@ const LAST_INDEX = 4;
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
-    // @ViewChild('canvas') canvasRef: ElementRef<HTMLCanvasElement>; // Pour mettre le dessin selectionne sur le canvas
     images: string[];
     placement: string[];
-    isLoading: boolean;
     private index: number;
     private afterNext: boolean;
     private afterPrevious: boolean;
     private chosenURL: string;
+    isLoading: boolean;
+
+    @ViewChild('canvas') canvasRef: ElementRef<CarouselDrawingComponent>;
+    @ViewChild('firstDraw') firstDraw: ElementRef<CarouselDrawingComponent>;
+    @ViewChild('secondDraw') secondDraw: ElementRef<CarouselDrawingComponent>;
+    @ViewChild('thirdDraw') thirdDraw: ElementRef<CarouselDrawingComponent>;
 
     constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {
         this.index = 0;
@@ -33,8 +35,10 @@ export class CarouselComponent implements AfterViewInit {
 
     async ngAfterViewInit() {
         this.getDrawingsUrls();
+        // this.indexService.getTitles().then((result: DrawingData[]) => {
+        //     console.log(result);
+        // });
     }
-
     nextImages() {
         console.log('dans next');
         if (this.afterPrevious) {
@@ -51,7 +55,6 @@ export class CarouselComponent implements AfterViewInit {
         }
         this.afterNext = true;
     }
-
     previousImages() {
         console.log('dans previous');
         if (this.afterNext) this.index--;
@@ -74,7 +77,6 @@ export class CarouselComponent implements AfterViewInit {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        console.log(event.code);
         if (event.code == 'ArrowLeft') {
             this.previousImages();
         }
@@ -83,18 +85,15 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    getDrawingsUrls(): void {
+    getDrawingsUrls() {
+        console.log('dans drawingURLs: ' + this.images);
         this.isLoading = true;
-        this.indexService
-            .getAllDrawingUrls()
-            .then((drawings: string[]) => {
-                this.isLoading = false;
-                this.images = drawings;
-                this.nextImages();
-            })
-            .catch((error) => {
-                throw error;
-            });
+        this.indexService.getAllDrawingUrls().then((drawings: string[]) => {
+            this.isLoading = false;
+            this.images = drawings;
+            console.log('les images :' + this.images);
+            this.nextImages();
+        });
     }
 
     // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
@@ -116,24 +115,17 @@ export class CarouselComponent implements AfterViewInit {
         this.chosenURL = url;
     }
 
-    deleteDrawing() {
+    async deleteDrawing() {
         // mettre if si pas d'image selectionne
-        console.log('carousel: ', this.chosenURL);
         let pathname = (url: string): string => {
             let parseUrl = new URL(url).pathname;
-            parseUrl = parseUrl.split('/')[LAST_INDEX].split('.')[DRAWING_ID];
+            parseUrl = parseUrl.split('/')[4].split('.')[0];
             return parseUrl;
         };
-
-        this.indexService
-            .deleteDrawingById(pathname(this.chosenURL))
-            .then(() => {
-                this.images.length = 0;
-                this.isLoading = false;
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        this.indexService.deleteDrawingById(pathname(this.chosenURL)).then(() => {
+            console.log('deleted');
+            this.getDrawingsUrls();
+        });
     }
 
     loadImage() {
