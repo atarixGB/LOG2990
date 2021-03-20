@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { IndexService } from './index.service';
 
 // tslint: disabled
-fdescribe('IndexService', () => {
+describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
 

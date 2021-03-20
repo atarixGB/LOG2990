@@ -36,8 +36,7 @@ export class DatabaseService {
 
     async start(url: string = DATABASE_MONGO_URL): Promise<MongoClient | null> {
         try {
-            const client = await MongoClient.connect(url, this.options);
-            this.client = client;
+            this.client = await MongoClient.connect(url, this.options);
             this.db = this.client.db(DATABASE_NAME);
             this.drawingsCollection = this.db.collection(DATABASE_DRAWINGS_COLLECTION);
         } catch {
