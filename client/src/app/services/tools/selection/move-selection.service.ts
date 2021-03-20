@@ -29,6 +29,7 @@ export class MoveSelectionService extends Tool {
     constructor(drawingService: DrawingService, private selectionService: SelectionService) {
         super(drawingService);
         this.keysDown = new Map<ArrowKeys, boolean>();
+
         this.keysDown.set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, false);
     }
 
@@ -41,6 +42,7 @@ export class MoveSelectionService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         this.selectionService.imageMoved = true;
+
         if (this.mouseDown) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -89,16 +91,20 @@ export class MoveSelectionService extends Tool {
         }
     }
 
-    handleKeyUp(event: KeyboardEvent): void {
-        this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
-        this.selectionService.selection = this.selectionData;
-        this.selectionService.origin = this.origin;
+    async delay(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
 
+    handleKeyUp(event: KeyboardEvent): void {
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             event.preventDefault();
             this.clearUnderneathShape();
             this.handleKeyUpArrow(event);
             this.moveSelectionKeyboard(this.drawingService.previewCtx);
+            this.selectionService.selection = this.selectionData;
+            this.selectionService.origin = this.origin;
+            this.selectionService.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
+            console.log('key up', this.origin, this.destination);
         }
     }
 
@@ -111,19 +117,23 @@ export class MoveSelectionService extends Tool {
     }
 
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D): void {
+        this.newOrigin = this.selectionService.origin;
         if (this.keysDown.get(ArrowKeys.Right)) {
-            this.newOrigin.x = this.origin.x + DX;
+            this.newOrigin.x += DX;
         }
         if (this.keysDown.get(ArrowKeys.Left)) {
-            this.newOrigin.x = this.origin.x - DX;
+            this.newOrigin.x -= DX;
         }
         if (this.keysDown.get(ArrowKeys.Down)) {
-            this.newOrigin.y = this.origin.y + DY;
+            this.newOrigin.y += DY;
         }
         if (this.keysDown.get(ArrowKeys.Up)) {
-            this.newOrigin.y = this.origin.y - DY;
+            this.newOrigin.y -= DY;
         }
 
+        // console.log('Waiting the delay');
+        // await this.delay(1000);
+        // console.log('Waiting done');
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
@@ -133,8 +143,6 @@ export class MoveSelectionService extends Tool {
 
     private clearUnderneathShape(): void {
         if (this.selectionService.clearUnderneath) {
-            console.log('clear');
-
             this.selectionService.clearUnderneathShape();
             this.selectionService.clearUnderneath = false;
         }

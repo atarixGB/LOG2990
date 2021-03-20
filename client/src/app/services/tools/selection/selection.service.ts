@@ -18,6 +18,7 @@ export class SelectionService extends Tool {
     origin: Vec2;
     destination: Vec2;
     newSelection: boolean;
+    isFirstSelection: boolean;
     initialSelection: boolean;
     imageMoved: boolean;
     clearUnderneath: boolean;
@@ -33,6 +34,7 @@ export class SelectionService extends Tool {
         this.newSelection = true;
         this.initialSelection = true;
         this.imageMoved = false;
+        this.isFirstSelection = false;
         this.clearUnderneath = true;
         this.isSelectAll = false;
     }
@@ -47,8 +49,8 @@ export class SelectionService extends Tool {
 
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
-
         if (this.mouseDown) {
+            this.isFirstSelection = true;
             this.printMovedSelection();
             this.initialSelection = true;
             this.clearUnderneath = true;
@@ -73,10 +75,12 @@ export class SelectionService extends Tool {
             return;
         }
 
-        if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
-            this.newSelection = false;
-        } else {
-            this.newSelection = true;
+        if (this.isFirstSelection) {
+            if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                this.newSelection = false;
+            } else {
+                this.newSelection = true;
+            }
         }
     }
 
@@ -139,7 +143,6 @@ export class SelectionService extends Tool {
         } else if (this.isSelectAll) {
             this.drawingService.clearCanvas(this.drawingService.baseCtx);
         } else {
-            console.log('pop');
             this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
         }
     }
