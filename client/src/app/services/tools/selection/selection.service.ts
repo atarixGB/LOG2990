@@ -123,7 +123,6 @@ export class SelectionService extends Tool {
             this.ellipseService.pathData.push(this.destination);
             this.ellipseService.drawShape(this.drawingService.previewCtx);
         } else {
-            console.log(this.rectangleService.pathData);
             this.rectangleService.clearPath();
             this.rectangleService.pathData.push(this.origin);
             this.rectangleService.pathData.push(this.destination);
@@ -131,7 +130,6 @@ export class SelectionService extends Tool {
         }
 
         this.createControlPoints();
-        this.resetParametersTools();
     }
 
     createControlPoints(): void {

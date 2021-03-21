@@ -73,9 +73,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
-            this.moveSelectionMouse(this.drawingService.previewCtx);
-            // À voir avec les contours si tu peux sélectionner à partir de n'importe où
-            // this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
             this.origin = this.newOrigin;
             this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
             this.selectionService.selection = this.selectionData;
