@@ -192,6 +192,7 @@ export class SelectionService extends Tool {
 
             this.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.resetParametersTools();
         }
     }
 
