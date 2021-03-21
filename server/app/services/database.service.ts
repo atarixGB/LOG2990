@@ -15,7 +15,8 @@ const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
 const MIN_LENGTH_TITLE = 1;
 const MAX_LENGTH_INPUT = 15;
 const NB_TAGS_ALLOWED = 5;
-
+const HTTP_STATUS_NO_CONTENT = 204;
+const HTTP_NOT_FOUND = 404;
 @injectable()
 export class DatabaseService {
     drawingsCollection: Collection<DrawingMetadata>;
@@ -32,6 +33,14 @@ export class DatabaseService {
     constructor() {
         this.clientMessages = [];
         this.drawingURLS = [];
+
+        if (!fs.existsSync(SAVED_DRAWINGS_PATH)) {
+            fs.mkdirSync(SAVED_DRAWINGS_PATH);
+            console.log(`${SAVED_DRAWINGS_PATH} has been succesfully created!`);
+        } else {
+            console.log(`${SAVED_DRAWINGS_PATH} already exists on server.`);
+        }
+
         this.readDrawingDirectory();
     }
 
@@ -51,7 +60,7 @@ export class DatabaseService {
         return this.client.close();
     }
 
-    async addDrawing(drawingData: DrawingData): Promise<void> {
+    async addDrawing(drawingData: DrawingData): Promise<number> {
         if (this.validateRequest(drawingData)) {
             const drawingMetadata: DrawingMetadata = {
                 title: drawingData.title,
@@ -64,38 +73,59 @@ export class DatabaseService {
                     drawingData._id = result.insertedId.toHexString();
                     this.saveImageAsPNG(drawingData);
                     console.log(`Drawing ${drawingData.title} has been successfully added!`);
+                    return HTTP_STATUS_NO_CONTENT;
                 })
                 .catch((error: Error) => {
                     console.error(`Failed to add drawing ${drawingData.title} to database`, error);
-                    throw error;
+                    return HTTP_NOT_FOUND;
                 });
         }
+
+        return HTTP_NOT_FOUND;
     }
 
-    async findDrawingByIdName(id: string): Promise<DrawingMetadata> {
-        const objectId = new ObjectId(id);
-        return this.drawingsCollection
-            .findOne({ _id: objectId })
-            .then((drawing: DrawingMetadata) => {
-                console.log(`Drawing with id:${id} has been successfully added.`);
-                return drawing;
-            })
-            .catch((error) => {
-                throw new Error(`Failed to get drawing with id ${id}\n${error}`);
-            });
-    }
-
-    async deleteDrawingByIdName(id: string): Promise<void> {
+    async deleteDrawingByIdName(id: string): Promise<number> {
         const objectId = new ObjectId(id);
         return this.drawingsCollection
             .findOneAndDelete({ _id: objectId })
             .then(() => {
                 this.deleteDrawingFromServer(id);
                 console.log(`Drawing with id:${id} has been successfully deleted from database.`);
+                return HTTP_STATUS_NO_CONTENT;
             })
             .catch((error) => {
-                throw new Error(`Failed to delete drawing with id ${id}\n${error}`);
+                console.log(`Failed to delete drawing with id ${id}\n${error}`);
+                return HTTP_NOT_FOUND;
             });
+    }
+
+    async getDrawingByTags(tags: string): Promise<Drawing[]> {
+        return new Promise<Drawing[]>((resolve) => {
+            const split = this.splitTags(tags);
+            this.drawingsCollection
+                .find({ labels: { $in: split } })
+                .toArray()
+                .then((result) => {
+                    resolve(this.toDrawType(result));
+                });
+        });
+    }
+
+    toDrawType(data: DrawingMetadata[]): Drawing[] {
+        const drawings = [];
+        for (const drawing of data) {
+            const previewUrl = drawing._id?.toHexString();
+            const tag = drawing.labels;
+            if (previewUrl !== undefined && tag !== undefined) {
+                const draw: Drawing = {
+                    name: drawing.title,
+                    tags: tag,
+                    imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${previewUrl}.${IMAGE_FORMAT}`,
+                };
+                drawings.push(draw);
+            }
+        }
+        return drawings;
     }
 
     private parseImageData(drawingData: DrawingData): Buffer {
@@ -164,33 +194,5 @@ export class DatabaseService {
 
     private splitTags(tag: string): string[] {
         return tag.split('-');
-    }
-    async getDrawingByTags(tags: string): Promise<Drawing[]> {
-        return new Promise<Drawing[]>((resolve) => {
-            const split = this.splitTags(tags);
-            this.drawingsCollection
-                .find({ labels: { $in: split } })
-                .toArray()
-                .then((result) => {
-                    resolve(this.toDrawType(result));
-                });
-        });
-    }
-
-    toDrawType(data: DrawingMetadata[]): Drawing[] {
-        const drawings = [];
-        for (const drawing of data) {
-            const previewUrl = drawing._id?.toHexString();
-            const tag = drawing.labels;
-            if (previewUrl !== undefined && tag !== undefined) {
-                const draw: Drawing = {
-                    name: drawing.title,
-                    tags: tag,
-                    imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${previewUrl}.${IMAGE_FORMAT}`,
-                };
-                drawings.push(draw);
-            }
-        }
-        return drawings;
     }
 }
