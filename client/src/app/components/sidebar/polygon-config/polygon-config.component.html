@@ -2,20 +2,12 @@
 <div>
     <mat-slider min="1" max="50" tickInterval="1000" thumbLabel [displayWith]="updateLineWidth" [(ngModel)]="polygonService.lineWidth"> </mat-slider>
 </div>
+
+<h4>Nombre de côtés: {{ polygonService.sides }} px</h4>
 <div>
-    <label>Nombre de côtés du polygone</label>
-    <input
-        #box
-        onkeydown="return false"
-        type="number"
-        min="3"
-        max="12"
-        id="sides-polygon"
-        value="3"
-        [ngModel]="sides"
-        (change)="getSides(box.value)"
-    />
+    <mat-slider min="3" max="12" tickInterval="1000" thumbLabel [displayWith]="updateLineWidth" [(ngModel)]="polygonService.sides"> </mat-slider>
 </div>
+
 <mat-form-field>
     <mat-label>Style du dessin</mat-label>
     <mat-select [(ngModel)]="polygonService.selectType" (selectionChange)="polygonService.changeSelectedType()">
