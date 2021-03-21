@@ -10,6 +10,7 @@ export abstract class ShapeService extends Tool {
     lineWidth: number;
     selectType: TypeStyle;
     isSelection: boolean;
+    isShiftShape: boolean;
     protected fillValue: boolean;
     protected strokeValue: boolean;
     protected size: Vec2;

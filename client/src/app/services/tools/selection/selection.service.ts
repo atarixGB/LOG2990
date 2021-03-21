@@ -229,7 +229,12 @@ export class SelectionService extends Tool {
                 const x = j - rectangleCenter.x;
                 const y = i - rectangleCenter.y;
 
-                if (Math.pow(x, 2) / Math.pow(rectangleCenter.x, 2) + Math.pow(y, 2) / Math.pow(rectangleCenter.y, 2) > 1) {
+                if (this.ellipseService.isShiftShape && Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(this.width / 2, 2)) {
+                    imageData[pixelCounter + pixelLenght - 1] = 0;
+                } else if (
+                    !this.ellipseService.isShiftShape &&
+                    Math.pow(x, 2) / Math.pow(rectangleCenter.x, 2) + Math.pow(y, 2) / Math.pow(rectangleCenter.y, 2) > 1
+                ) {
                     imageData[pixelCounter + pixelLenght - 1] = 0;
                 }
                 pixelCounter += pixelLenght;
