@@ -6,7 +6,7 @@ import { MoveSelectionService } from './move-selection.service';
 import { SelectionService } from './selection.service';
 
 // tslint:disable
-fdescribe('MoveSelectionService', () => {
+describe('MoveSelectionService', () => {
     let service: MoveSelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let selectionService: SelectionService;

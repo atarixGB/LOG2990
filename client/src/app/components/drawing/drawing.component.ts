@@ -153,6 +153,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.toolManagerService.handleKeyUp(event);
     }
 
+    // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === 'o') {

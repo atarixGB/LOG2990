@@ -11,7 +11,6 @@ import { ExportModalComponent } from './export-modal.component';
 
 // tslint:disable
 describe('ExportModalComponent', () => {
-    let component: ExportModalComponent;
     let fixture: ComponentFixture<ExportModalComponent>;
     let drawingServiceSpy: DrawingService;
     const mockDialogRef = {
@@ -39,11 +38,6 @@ describe('ExportModalComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(ExportModalComponent);
-        component = fixture.componentInstance;
         fixture.detectChanges();
-    });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
     });
 });

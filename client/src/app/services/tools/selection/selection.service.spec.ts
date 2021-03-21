@@ -42,7 +42,6 @@ describe('SelectionService', () => {
         expect(service).toBeTruthy();
     });
 
-    // onMouseDown
     it('onMouseDown does nothing if not down', () => {
         service.mouseDown = false;
         service.onMouseDown(mouseEventRClick);
@@ -65,7 +64,6 @@ describe('SelectionService', () => {
         expect(ellipseServiceSpy.onMouseDown).toHaveBeenCalled();
     });
 
-    // onMouseMove
     it('onMouseMove should not do something if mouse not down', () => {
         service.onMouseMove(mouseEventRClick);
         expect(rectangleServiceSpy.onMouseMove).not.toHaveBeenCalled();
@@ -106,30 +104,12 @@ describe('SelectionService', () => {
         expect(service.newSelection).toEqual(true);
     });
 
-    // OnMouseUp
     it('onMouseUp should not change the parameters if mouse is not down ', () => {
         service.activeSelection = false;
         service.onMouseUp();
         expect(service.activeSelection).toEqual(false);
     });
 
-    /*
-    it('onMouseUp should  change the parameters if mouse is  down ', () => {
-        service.isEllipse = false;
-        rectangleServiceSpy.pathData[0] = {x: 2, y: 3};
-        rectangleServiceSpy.pathData[1] = {x:4, y: 5};
-        service.activeSelection = false;
-        service.mouseDown = true;
-        service.onMouseUp();
-        expect(service.activeSelection).toEqual(true);
-        expect(service.mouseDown).toEqual(false);
-        expect(service['getSelectionData']).toHaveBeenCalled();
-        expect(service.createControlPoints).toHaveBeenCalled();
-        expect(service['resetParametersTools']).toHaveBeenCalled();
-    });
-    */
-
-    // OnMouseLeave
     it('onMouseLeave call onMouseUp if the mouse is down', () => {
         service.mouseDown = true;
         const onMouseUpSpy = spyOn(service, 'onMouseUp');
@@ -137,7 +117,6 @@ describe('SelectionService', () => {
         expect(onMouseUpSpy).toHaveBeenCalled();
     });
 
-    // handleKeyDown
     it('handleKeyDown for a rectangle selection', () => {
         const event = new KeyboardEvent('1');
         service.isEllipse = false;
@@ -152,17 +131,6 @@ describe('SelectionService', () => {
         expect(ellipseServiceSpy.handleKeyDown).toHaveBeenCalled();
     });
 
-    /*
-    it('handleKeyDown terminate selection if the keyboard event is escape', () => {
-        const event = new KeyboardEvent('Escape');
-        event.key === 'Escape';
-        service.handleKeyDown(event);
-        const terminateSpy = spyOn(service, 'terminateSelection');
-
-        // expect(keySpy).toHaveBeenCalled();
-        expect(terminateSpy).toHaveBeenCalled();
-    });
-    */
     it('handleKeyUp for a rectangle selection', () => {
         const event = new KeyboardEvent('1');
         service.isEllipse = false;
@@ -185,27 +153,6 @@ describe('SelectionService', () => {
         const result = service.mouseInSelectionArea(origin, destination, mouseCoordTest);
         expect(result).toEqual(result);
     });
-
-    /*
-    it('selectAll changes the attributes of the selection to specify its all the drawing', () => {
-        canvasTestHelper.canvas.width = 10;
-        canvasTestHelper.canvas.height = 10;
-        service.activeSelection = false;
-        service.newSelection = false;
-        service.initialSelection = false;
-        service.clearUnderneath = false;
-        service.selectionTerminated = true;
-        service.selectAll();
-        expect(service.activeSelection).toEqual(true);
-        expect(service.newSelection).toEqual(true);
-        expect(service.initialSelection).toEqual(true);
-        expect(service.clearUnderneath).toEqual(true);
-        expect(service.selectionTerminated).toEqual(false);
-        expect(service.origin).toEqual({ x: 0, y: 0 });
-        expect(service['width']).toEqual(10);
-        expect(service['height']).toEqual(10);
-    });
-    */
 
     it('clearUnderneath shape clear in ellipse if it the selection form', () => {
         const points = { x: 10, y: 10 };
@@ -251,40 +198,6 @@ describe('SelectionService', () => {
         expect(service.mouseDown).toEqual(true);
     });
 
-    /*
-    it('terminateSelection terminate if its an activeSelection', () => {
-        const imageData = new ImageData(10,10);
-        //const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
-        const points = {x:0, y:0};
-        service.selection = imageData;
-        service.origin = points;
-        service.activeSelection = true;
-        service.newSelection = false;
-        service.imageMoved = true;
-        service.selectionTerminated = false;
-        service.mouseDown = true;
-        service.terminateSelection();
-        expect(service.activeSelection).toEqual(false);
-        //expect(service.newSelection).toEqual(true);
-        //expect(service.imageMoved).toEqual(true);
-        //expect(service.selectionTerminated).toEqual(true);
-        //expect(service.mouseDown).toEqual(false);
-        //expect(clearCanvasSpy).toHaveBeenCalled();
-    });
-*/
-
-    /*
-    it('calculateDimensions reajust the origin and the destination with rectangle', () => {
-        service.isEllipse = false;
-        service['rectangleService'].pathData[0] = {x: 0, y:0};
-        service['rectangleService'].pathData[1] = {x: 10, y:10};
-        service['calculateDimension']();
-        expect(service.origin).toEqual({x: 0, y:0});
-        expect(service.destination).toEqual({x: 10, y:10});
-        expect(service['width']).toEqual(10);
-        expect(service['height']).toEqual(10);
-    });
-*/
     it('getSelectionData use the good range to select data', () => {
         const origin = { x: 0, y: 0 };
         const width = 10;
