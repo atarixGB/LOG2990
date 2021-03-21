@@ -151,21 +151,5 @@ export class DatabaseController {
                     res.sendStatus(HTTP_STATUS_NOT_FOUND);
                 });
         });
-
-        this.router.get('/drawings/meta/titles', (req: Request, res: Response, next: NextFunction) => {
-            this.databaseService.drawingsCollection
-                .find({}, { fields: { title: 1, _id: 0 } })
-                .toArray()
-                .then((result) => res.send(result))
-                .catch((error) => res.send(error));
-        });
-
-        this.router.get('/drawings/meta/tags', (req: Request, res: Response, next: NextFunction) => {
-            this.databaseService.drawingsCollection
-                .find({}, { fields: { labels: 1, _id: 0 } })
-                .toArray()
-                .then((result) => res.send(result))
-                .catch((error) => res.send(error));
-        });
     }
 }

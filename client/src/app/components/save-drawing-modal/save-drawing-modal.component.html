@@ -30,7 +30,7 @@
         <mat-icon matSuffix class="help-btn" [matTooltip]="this.matTooltipForTags" matTooltipPosition="right">help </mat-icon>
     </mat-form-field>
 
-    <button mat-icon-button class="add-btn" (click)="this.addTag()">
+    <button matTooltip="Ajouter" [matTooltipPosition]="'right'" mat-icon-button class="add-btn" (click)="this.addTag()">
         <mat-icon>add_circle_outline</mat-icon>
     </button>
 
