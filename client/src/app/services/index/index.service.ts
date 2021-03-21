@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -13,7 +13,6 @@ export class IndexService {
     private readonly DATABASE_URL: string = '/api/database';
     private readonly DRAWINGS_URL: string = '/drawings';
     private readonly SEND_URL: string = '/send';
-    private readonly TAGS_URL: string = '/tags';
 
     constructor(private http: HttpClient) {}
 
@@ -42,25 +41,6 @@ export class IndexService {
                 },
             );
         });
-    }
-
-    findDrawingById(id: string): Promise<DrawingData> {
-        return new Promise<DrawingData>((resolve) => {
-            const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;
-            return this.http.get<DrawingData>(url).subscribe((drawing: DrawingData) => {
-                resolve(drawing);
-            });
-        });
-    }
-
-    findDrawingsByTags(tags: string[]): Observable<string[] | number> {
-        const queryTags: string = tags.join('-');
-        const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + this.TAGS_URL + `/${queryTags}`;
-        return this.http.get<string[]>(url).pipe(
-            catchError((error: HttpErrorResponse) => {
-                return of(error.status);
-            }),
-        );
     }
 
     async getAllDrawings(): Promise<Drawing[]> {

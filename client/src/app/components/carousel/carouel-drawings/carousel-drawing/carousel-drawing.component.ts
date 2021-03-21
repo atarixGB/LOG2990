@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 
 @Component({
@@ -10,6 +10,11 @@ export class CarouselDrawingComponent {
     @Input() drawing: Drawing;
     @ViewChild('mainContainer', { static: false }) mainContainer: ElementRef<HTMLDivElement>;
     @Output() componentClicked = new EventEmitter<string>();
+
+    @HostListener('click', ['$event'])
+    handleKeyDown() {
+        this.componentClickedEvent();
+    }
 
     componentClickedEvent(): void {
         this.componentClicked.emit(this.drawing.imageURL);

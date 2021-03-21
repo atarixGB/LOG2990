@@ -106,20 +106,6 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
-    async getNewImage(src: string): Promise<HTMLImageElement> {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => {
-                resolve(img);
-            };
-            img.onerror = (err: string | Event) => {
-                reject(err);
-            };
-            img.src = src;
-        });
-    }
     chosen(url: string) {
         this.chosenURL = url;
         this.isDisabled = false;
