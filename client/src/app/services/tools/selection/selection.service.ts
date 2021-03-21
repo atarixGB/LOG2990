@@ -61,9 +61,9 @@ export class SelectionService extends Tool {
         if (this.activeSelection && !this.selectionTerminated) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.newSelection = false;
-                console.log('moveService');
+                // console.log('moveService');
             } else {
-                console.log('selectionService');
+                // console.log('selectionService');
 
                 this.newSelection = true;
             }
@@ -100,8 +100,8 @@ export class SelectionService extends Tool {
     }
 
     mouseInSelectionArea(origin: Vec2, destination: Vec2, mouseCoord: Vec2): boolean {
-        console.log(origin, destination, mouseCoord);
-
+        // console.log(origin, destination, mouseCoord);
+        // console.log(this.width, this.height);
         return mouseCoord.x >= origin.x && mouseCoord.x <= destination.x && mouseCoord.y >= origin.y && mouseCoord.y <= destination.y;
     }
 
@@ -121,8 +121,6 @@ export class SelectionService extends Tool {
     }
 
     createControlPoints(): void {
-        console.log('jolol');
-
         const ctx = this.drawingService.previewCtx;
         const controlPointSize = 10;
         const alignmentFactor = -controlPointSize / 2;
@@ -187,6 +185,7 @@ export class SelectionService extends Tool {
         }
         this.width = this.destination.x - this.origin.x;
         this.height = this.destination.y - this.origin.y;
+        this.reajustOriginAndDestination();
     }
 
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
@@ -224,16 +223,22 @@ export class SelectionService extends Tool {
         }
     }
 
-    private findMouseDirection(): void {
-        if (this.width <= 0 && this.height >= 0) {
-            this.lowerLeft(this.pathData);
-        } else if (this.height <= 0 && this.width >= 0) {
-            this.upperRight(this.pathData);
-        } else if (this.height <= 0 && this.width <= 0) {
-            this.upperLeft(this.pathData);
-        } else {
-            this.lowerRight(this.pathData);
+    private reajustOriginAndDestination(): void {
+        let temp: Vec2;
+        if (this.width <= 0 && this.height <= 0) {
+            temp = this.origin;
+            this.origin = this.destination;
+            this.destination = temp;
+        } else if (this.width <= 0) {
+            this.origin.x += this.width;
+            this.destination.x += Math.abs(this.width);
+        } else if (this.height <= 0) {
+            this.origin.y += this.height;
+            this.destination.y += Math.abs(this.height);
         }
+
+        this.width = Math.abs(this.width);
+        this.height = Math.abs(this.height);
     }
 
     private initializeToolParameters(): void {

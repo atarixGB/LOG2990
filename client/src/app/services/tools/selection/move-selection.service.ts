@@ -65,10 +65,10 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (!this.selectionService.selectionTerminated) {
             if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.selectionService.newSelection = false;
-                console.log('moveService');
+                // console.log('moveService');
             } else {
                 this.selectionService.newSelection = true;
-                console.log('selectionService');
+                // console.log('selectionService');
             }
         }
     }
