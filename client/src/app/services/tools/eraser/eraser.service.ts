@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';
+import { DEFAULT_ERASER_COLOR, MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
@@ -53,7 +49,6 @@ export class EraserService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
@@ -77,7 +72,8 @@ export class EraserService extends Tool {
         let interpolationY = 0;
 
         for (const point of path) {
-            ctx.clearRect(this.centerX(point.x), this.centerY(point.y), this.eraserThickness, this.eraserThickness);
+            ctx.fillStyle = DEFAULT_ERASER_COLOR;
+            ctx.fillRect(this.centerX(point.x), this.centerY(point.y), this.eraserThickness, this.eraserThickness);
 
             interpolation = (point.y - previousPointY) / (point.x - previousPointX);
 
@@ -86,22 +82,22 @@ export class EraserService extends Tool {
                     interpolationY =
                         this.interpolationNewPoint(x, interpolation) +
                         (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
-                    ctx.clearRect(this.centerX(x), this.centerY(interpolationY), this.eraserThickness, this.eraserThickness);
+                    ctx.fillRect(this.centerX(x), this.centerY(interpolationY), this.eraserThickness, this.eraserThickness);
                 }
             } else if (previousPointX > point.x) {
                 for (let x = point.x; x < previousPointX; x++) {
                     interpolationY =
                         this.interpolationNewPoint(x, interpolation) +
                         (point.x * previousPointY - previousPointX * point.y) / (point.x - previousPointX);
-                    ctx.clearRect(this.centerX(x), this.centerY(interpolationY), this.eraserThickness, this.eraserThickness);
+                    ctx.fillRect(this.centerX(x), this.centerY(interpolationY), this.eraserThickness, this.eraserThickness);
                 }
             } else if (previousPointY < point.y) {
                 for (let y = previousPointY; y < point.y; y++) {
-                    ctx.clearRect(this.centerX(point.x), this.centerY(y), this.eraserThickness, this.eraserThickness);
+                    ctx.fillRect(this.centerX(point.x), this.centerY(y), this.eraserThickness, this.eraserThickness);
                 }
             } else if (previousPointY > point.y) {
                 for (let y = previousPointY; y > point.y; y--) {
-                    ctx.clearRect(this.centerX(point.x), this.centerY(y), this.eraserThickness, this.eraserThickness);
+                    ctx.fillRect(this.centerX(point.x), this.centerY(y), this.eraserThickness, this.eraserThickness);
                 }
             }
 
@@ -111,7 +107,7 @@ export class EraserService extends Tool {
     }
 
     private drawPoint(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        ctx.clearRect(this.centerX(path[0].x), this.centerY(path[0].y), this.eraserThickness, this.eraserThickness);
+        ctx.fillRect(this.centerX(path[0].x), this.centerY(path[0].y), this.eraserThickness, this.eraserThickness);
     }
 
     private clearPath(): void {
