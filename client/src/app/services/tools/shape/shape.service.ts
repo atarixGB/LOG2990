@@ -95,7 +95,8 @@ export abstract class ShapeService extends Tool {
 
         if (this.isSelection) {
             ctx.strokeStyle = 'rgb(116, 113, 113)';
-            ctx.fillStyle = 'rgba(116, 113, 113, 0.432)';
+            // ctx.fillStyle = 'rgba(116, 113, 113, 0.432)';
+            ctx.fillStyle = 'rgba(116, 113, 113, 0)';
             ctx.fill();
             ctx.stroke();
             return;
