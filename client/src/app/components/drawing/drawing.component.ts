@@ -36,7 +36,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     constructor(
         public toolManagerService: ToolManagerService,
         public moveSelectionService: MoveSelectionService,
-
         private drawingService: DrawingService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
@@ -163,6 +162,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
             this.selectionService.selectAll();
             return;
+        }
+
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            console.log('dans drawing.component');
+            this.moveSelectionService.handleKeyDown(event);
         }
 
         this.toolManagerService.handleHotKeysShortcut(event);

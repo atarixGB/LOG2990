@@ -5,6 +5,8 @@ import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from './selection.service';
 
+const DX = 3;
+const DY = 3;
 @Injectable({
     providedIn: 'root',
 })
@@ -73,7 +75,12 @@ export class MoveSelectionService extends Tool {
 
             this.selectionService.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            console.log(this.selectionData);
+        }
+
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            console.log('dans move-selection handleKeyDown', event.key);
+            event.preventDefault();
+            this.moveSelectionKeyboard(this.drawingService.previewCtx, event);
         }
     }
 
@@ -82,6 +89,40 @@ export class MoveSelectionService extends Tool {
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
+        this.newSelectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
+    }
+
+    private moveSelectionKeyboard(ctx: CanvasRenderingContext2D, event: KeyboardEvent): void {
+        console.log('dans move-selection.service moveSelectionKeyboard');
+
+        switch (event.key) {
+            case 'ArrowRight':
+                console.log('right');
+                console.log('avant', this.newOrigin);
+                this.newOrigin = { x: this.origin.x + DX, y: this.origin.y };
+                console.log('apres', this.newOrigin);
+                break;
+            case 'ArrowLeft':
+                console.log('left');
+                console.log('avant', this.newOrigin);
+                this.newOrigin = { x: this.origin.x - DX, y: this.origin.y };
+                console.log('apres', this.newOrigin);
+                break;
+            case 'ArrowDown': // fonctionne pas ?
+                console.log('down');
+                console.log('avant', this.newOrigin);
+                this.newOrigin = { x: this.origin.x, y: this.origin.y + DY };
+                console.log('apres', this.newOrigin);
+                break;
+            case 'ArrowUp': // fonctionne pas ?
+                console.log('up');
+                console.log('avant', this.newOrigin);
+                this.newOrigin = { x: this.origin.x, y: this.origin.y - DY };
+                console.log('apres', this.newOrigin);
+                break;
+        }
+        this.drawingService.clearCanvas(ctx);
+        ctx.putImageData(this.selectionData, this.newOrigin.x, this.origin.y);
         this.newSelectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
     }
 }
