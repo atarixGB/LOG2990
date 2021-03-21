@@ -61,10 +61,7 @@ export class SelectionService extends Tool {
         if (this.activeSelection && !this.selectionTerminated) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.newSelection = false;
-                // console.log('moveService');
             } else {
-                // console.log('selectionService');
-
                 this.newSelection = true;
             }
         }
@@ -100,8 +97,6 @@ export class SelectionService extends Tool {
     }
 
     mouseInSelectionArea(origin: Vec2, destination: Vec2, mouseCoord: Vec2): boolean {
-        // console.log(origin, destination, mouseCoord);
-        // console.log(this.width, this.height);
         return mouseCoord.x >= origin.x && mouseCoord.x <= destination.x && mouseCoord.y >= origin.y && mouseCoord.y <= destination.y;
     }
 
@@ -118,6 +113,25 @@ export class SelectionService extends Tool {
 
         this.printMovedSelection();
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
+    }
+
+    createBoundaryBox(): void {
+        this.initializeToolParameters();
+        if (this.isEllipse) {
+            this.ellipseService.clearPath();
+            this.ellipseService.pathData.push(this.origin);
+            this.ellipseService.pathData.push(this.destination);
+            this.ellipseService.drawShape(this.drawingService.previewCtx);
+        } else {
+            console.log(this.rectangleService.pathData);
+            this.rectangleService.clearPath();
+            this.rectangleService.pathData.push(this.origin);
+            this.rectangleService.pathData.push(this.destination);
+            this.rectangleService.drawShape(this.drawingService.previewCtx);
+        }
+
+        this.createControlPoints();
+        this.resetParametersTools();
     }
 
     createControlPoints(): void {

@@ -45,7 +45,7 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    protected clearPath(): void {
+    clearPath(): void {
         this.pathData = [];
     }
 

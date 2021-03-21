@@ -65,10 +65,8 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (!this.selectionService.selectionTerminated) {
             if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.selectionService.newSelection = false;
-                // console.log('moveService');
             } else {
                 this.selectionService.newSelection = true;
-                // console.log('selectionService');
             }
         }
     }
@@ -82,6 +80,8 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
+            this.selectionService.destination = this.destination;
+            this.selectionService.createBoundaryBox();
         }
         this.mouseDown = false;
     }
@@ -104,8 +104,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
                 setTimeout(() => {
                     if (this.isArrowPressed()) {
                         if (!this.intervalId) {
-                            console.log('ici');
-
                             this.intervalId = setInterval(this.moveSelectionKeyboard, SHORT_DELAY, this, this.drawingService.previewCtx);
                         }
                     }
@@ -130,6 +128,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
             this.selectionService.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
+            this.selectionService.createBoundaryBox();
         }
     }
 
