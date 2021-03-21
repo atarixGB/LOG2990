@@ -22,6 +22,7 @@ export class SelectionService extends Tool {
     initialSelection: boolean;
     imageMoved: boolean;
     clearUnderneath: boolean;
+    selectionTerminated: boolean;
     width: number;
     height: number;
     test: number;
@@ -37,6 +38,7 @@ export class SelectionService extends Tool {
         this.isFirstSelection = false;
         this.clearUnderneath = true;
         this.isSelectAll = false;
+        this.selectionTerminated = false;
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -54,6 +56,7 @@ export class SelectionService extends Tool {
             this.printMovedSelection();
             this.initialSelection = true;
             this.clearUnderneath = true;
+            this.selectionTerminated = false;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawingService.previewCtx.setLineDash([2]);
 
@@ -64,6 +67,8 @@ export class SelectionService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
+            console.log('move');
+
             this.rectangleService.lineWidth = SELECTION_DEFAULT_LINE_THICKNESS;
             this.ellipseService.lineWidth = SELECTION_DEFAULT_LINE_THICKNESS;
             if (!this.isEllipse) {
@@ -77,21 +82,28 @@ export class SelectionService extends Tool {
 
         if (this.isFirstSelection) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
-                console.log('false');
-
                 this.newSelection = false;
             } else {
-                console.log('true');
-
                 this.newSelection = true;
             }
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
-        this.mouseDown = false;
-        this.getSelectionData(this.drawingService.baseCtx);
-        this.resetParametersTools();
+    onMouseUp(): void {
+        if (this.mouseDown) {
+            this.mouseDown = false;
+            console.log('up', this.mouseDown);
+
+            this.getSelectionData(this.drawingService.baseCtx);
+            this.resetParametersTools();
+        }
+    }
+
+    onMouseLeave(event: MouseEvent): void {
+        if (this.mouseDown) {
+            console.log('leave');
+            this.onMouseUp();
+        }
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -100,8 +112,7 @@ export class SelectionService extends Tool {
 
         if (event.key === 'Escape') {
             event.preventDefault();
-            this.printMovedSelection();
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.terminateSelection();
         }
     }
 
@@ -114,30 +125,17 @@ export class SelectionService extends Tool {
         return mouseCoord.x >= origin.x && mouseCoord.x <= destination.x && mouseCoord.y >= origin.y && mouseCoord.y <= destination.y;
     }
 
-    calculateDimension(): void {
-        if (!this.isEllipse) {
-            this.origin = this.rectangleService.pathData[0];
-            this.destination = this.rectangleService.pathData[this.rectangleService.pathData.length - 1];
-        } else {
-            this.origin = this.ellipseService.pathData[0];
-            this.destination = this.ellipseService.pathData[this.ellipseService.pathData.length - 1];
-        }
-        this.width = Math.abs(this.destination.x - this.origin.x);
-        this.height = Math.abs(this.destination.y - this.origin.y);
-    }
-
     selectAll(): void {
         this.clearUnderneath = true;
         this.isSelectAll = true;
         this.newSelection = true;
         this.isFirstSelection = true;
         this.initialSelection = true;
+        this.selectionTerminated = false;
         this.printMovedSelection();
-        console.log('OKOKOKOK');
         this.origin = { x: 0, y: 0 };
         this.destination = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
-        console.log('fin select all', this.selection);
     }
 
     clearUnderneathShape(): void {
@@ -154,11 +152,29 @@ export class SelectionService extends Tool {
         }
     }
 
-    private printMovedSelection(): void {
-        if (this.imageMoved) {
-            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
-            this.imageMoved = false;
+    terminateSelection(): void {
+        console.log('firstselection', this.isFirstSelection);
+
+        if (this.isFirstSelection) {
+            console.log('terminate');
+
+            this.imageMoved = true;
+            this.printMovedSelection();
+            this.selectionTerminated = true;
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
+    }
+
+    private calculateDimension(): void {
+        if (!this.isEllipse) {
+            this.origin = this.rectangleService.pathData[0];
+            this.destination = this.rectangleService.pathData[this.rectangleService.pathData.length - 1];
+        } else {
+            this.origin = this.ellipseService.pathData[0];
+            this.destination = this.ellipseService.pathData[this.ellipseService.pathData.length - 1];
+        }
+        this.width = Math.abs(this.destination.x - this.origin.x);
+        this.height = Math.abs(this.destination.y - this.origin.y);
     }
 
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
@@ -186,6 +202,15 @@ export class SelectionService extends Tool {
                 }
                 pixelCounter += pixelLenght;
             }
+        }
+    }
+
+    private printMovedSelection(): void {
+        if (this.imageMoved) {
+            console.log('print');
+
+            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+            this.imageMoved = false;
         }
     }
 

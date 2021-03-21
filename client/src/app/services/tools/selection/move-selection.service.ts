@@ -34,8 +34,10 @@ export class MoveSelectionService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
+        console.log('move : ', this.selectionService.selectionTerminated);
+
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
         }
     }
@@ -43,7 +45,7 @@ export class MoveSelectionService extends Tool {
     onMouseMove(event: MouseEvent): void {
         this.selectionService.imageMoved = true;
 
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.moveSelectionMouse(this.drawingService.previewCtx);
@@ -76,7 +78,7 @@ export class MoveSelectionService extends Tool {
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
             event.preventDefault();
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.selectionService.terminateSelection();
         }
 
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
@@ -86,10 +88,6 @@ export class MoveSelectionService extends Tool {
             this.handleKeyDownArrow(event);
             this.moveSelectionKeyboard(this.drawingService.previewCtx);
         }
-    }
-
-    async delay(ms: number): Promise<void> {
-        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     handleKeyUp(event: KeyboardEvent): void {

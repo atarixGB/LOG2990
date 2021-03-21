@@ -95,6 +95,8 @@ export class ToolManagerService {
     }
 
     switchTool(tool: ToolList): void {
+        // if(this.currentTool instanceof SelectionService && tool isntance of != SelectionService)
+
         if (this.serviceBindings.has(tool)) {
             this.currentTool = this.serviceBindings.get(tool);
             this.currentToolEnum = tool;
@@ -124,21 +126,19 @@ export class ToolManagerService {
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (this.currentTool) {
-            this.currentTool.onMouseClick(event);
-        }
+        if (this.currentTool) this.currentTool.onMouseClick(event);
     }
 
     onMouseDoubleClick(event: MouseEvent): void {
-        if (this.currentTool) {
-            this.currentTool.onMouseDoubleClick(event);
-        }
+        if (this.currentTool) this.currentTool.onMouseDoubleClick(event);
+    }
+
+    onMouseLeave(event: MouseEvent): void {
+        if (this.currentTool) this.currentTool.onMouseLeave(event);
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.currentTool) {
-            this.currentTool.handleKeyUp(event);
-        }
+        if (this.currentTool) this.currentTool.handleKeyUp(event);
     }
 
     isSelectionEllipse(): void {

@@ -144,6 +144,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.toolManagerService.onMouseDoubleClick(event);
     }
 
+    onMouseLeave(event: MouseEvent): void {
+        this.toolManagerService.onMouseLeave(event);
+    }
+
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
         if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
