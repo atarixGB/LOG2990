@@ -53,18 +53,6 @@ describe('DrawingComponent', () => {
         expect(toolManagerSpy.onMouseMove).toHaveBeenCalledWith(event as any, mouseCoord(event as any));
     });
 
-    it(" should not call the tool's manager mouse move when receiving a mouse move event if resizing", () => {
-        const event = {
-            target: {
-                className: 'box',
-            },
-        };
-        const mouseCoord = spyOn(component, 'mouseCoord').and.stub();
-        component.onMouseMove(event as any);
-        expect(toolManagerSpy.onMouseMove).not.toHaveBeenCalled();
-        expect(toolManagerSpy.onMouseMove).not.toHaveBeenCalledWith(event as any, mouseCoord(event as any));
-    });
-
     it(" should call the tool's manager mouse down when receiving a mouse down event if not resizing", () => {
         const event = {
             target: {
@@ -75,18 +63,6 @@ describe('DrawingComponent', () => {
         component.onMouseDown(event as any);
         expect(toolManagerSpy.onMouseDown).toHaveBeenCalled();
         expect(toolManagerSpy.onMouseDown).toHaveBeenCalledWith(event as any, mouseCoord(event as any));
-    });
-
-    it(" should not call the tool's manager mouse down when receiving a mouse down event if resizing", () => {
-        const event = {
-            target: {
-                className: 'box',
-            },
-        };
-        const mouseCoord = spyOn(component, 'mouseCoord').and.stub();
-        component.onMouseDown(event as any);
-        expect(toolManagerSpy.onMouseDown).not.toHaveBeenCalled();
-        expect(toolManagerSpy.onMouseDown).not.toHaveBeenCalledWith(event as any, mouseCoord(event as any));
     });
 
     it(" should call the tool's manager mouse up when receiving a mouse up event if not resizing", () => {
@@ -155,12 +131,6 @@ describe('DrawingComponent', () => {
         component.handleKeyDown(event);
         expect(handleModalSpy).toHaveBeenCalledTimes(2);
     });
-
-    // it('should call the handleKeyShortcut when a key is pressed and all modals are closed', () => {
-    //     const event = new KeyboardEvent('keydown', { key: 'l' });
-    //     component.handleKeyDown(event);
-    //     expect(toolManagerSpy.handleHotKeysShortcut).toHaveBeenCalled();
-    // });
 
     it('should return canvas width', () => {
         const CANVAS_WIDTH = 10;
