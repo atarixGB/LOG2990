@@ -2,10 +2,10 @@ import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { DrawingParams } from '@app/components/drawing/DrawingParams';
 import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/carousel-drawing.component';
-
 @Component({
     selector: 'app-carousel',
     templateUrl: './carousel.component.html',
@@ -112,12 +112,9 @@ export class CarouselComponent implements AfterViewInit {
             img.src = src;
         });
     }
-
     chosen(url: string) {
         this.chosenURL = url;
         this.isDisabled = false;
-        this.loadImageButton.nativeElement.disabled = false;
-        this.recycleButton.nativeElement.disabled = false;
     }
 
     async deleteDrawing() {
@@ -133,7 +130,10 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     loadImage() {
-        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor']));
+        const params: DrawingParams = {
+            url: this.chosenURL,
+        };
+        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
         this.dialogRef.close();
     }
 }

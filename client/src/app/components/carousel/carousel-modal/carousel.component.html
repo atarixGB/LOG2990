@@ -17,13 +17,13 @@
     <div id="control-container" mat-dialog-actions>
         <button mat-button (click)="previousImages()"><mat-icon>keyboard_arrow_left</mat-icon></button>
         <button mat-button (click)="nextImages()"><mat-icon>keyboard_arrow_right</mat-icon></button>
-        <button mat-button [disabled]="isDisabled" (click)="deleteDrawing()" id="delete-button" #recycleBin>
+        <button mat-button matTooltip="Supprimer" [disabled]="isDisabled" (click)="deleteDrawing()" id="delete-button" #recycleBin>
             <mat-icon>delete</mat-icon>
         </button>
-        <button mat-button [disabled]="isDisabled" (click)="loadImage()" id="load-button" #loadImageButton>
+        <button mat-button matTooltip="Charger" [disabled]="isDisabled" (click)="loadImage()" id="load-button" #loadImageButton>
             <mat-icon>input</mat-icon>
         </button>
-        <button mat-button mat-dialog-close>Fermer</button>
+        <button mat-button mat-dialog-close matTooltip="Fermer"><mat-icon>disabled_by_default</mat-icon></button>
     </div>
 </div>
 
