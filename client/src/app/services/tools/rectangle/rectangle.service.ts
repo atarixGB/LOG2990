@@ -68,6 +68,7 @@ export class RectangleService extends ShapeService {
         this.computeSize();
         this.findMouseDirection();
         this.shortestSide = Math.abs(this.size.x) < Math.abs(this.size.y) ? Math.abs(this.size.x) : Math.abs(this.size.y);
+        this.pathData.push({ x: this.origin.x + this.shortestSide, y: this.origin.y + this.shortestSide });
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.rect(this.origin.x, this.origin.y, this.shortestSide, this.shortestSide);
