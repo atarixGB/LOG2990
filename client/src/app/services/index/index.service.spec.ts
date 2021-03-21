@@ -1,11 +1,14 @@
+import { HttpHeaders } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { DrawingData } from '@common/communication/drawing-data';
 import { IndexService } from './index.service';
 
 // tslint: disabled
 describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
+    let mockDrawing: DrawingData;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -13,6 +16,13 @@ describe('IndexService', () => {
         });
         indexService = TestBed.inject(IndexService);
         httpMock = TestBed.inject(HttpTestingController);
+        mockDrawing = {
+            title: 'title',
+            labels: ['tag'],
+            width: 100,
+            height: 100,
+            body: 'data',
+        };
     });
 
     afterEach(() => {
@@ -23,45 +33,44 @@ describe('IndexService', () => {
         expect(indexService).toBeTruthy();
     });
 
-    it('should call http request GET on getAllDrawingUrls', async () => {
+    it('should call http request GET on getAllDrawing', async () => {
         const httpGetSpy = spyOn(indexService['http'], 'get').and.stub();
-        const expectedUrl = 'http://localhost:3000/api/database/drawings';
-        indexService.getAllDrawingUrls();
+        const expectedUrl = 'http://localhost:3000/api/database';
+        indexService.getAllDrawings();
         expect(httpGetSpy).toHaveBeenCalledWith(expectedUrl);
     });
 
     xit('should call http request POST on postDrawing', () => {
-        // const postDrawingSpy = spyOn(indexService['http'], 'post').and.stub();
-        // const pipeSpy = spyOn<any>(indexService['http'], 'pipe').and.stub();
-        // indexService.postDrawing(mockDrawing).pipe();
-        // expect(postDrawingSpy).toHaveBeenCalled();
+        const httpPostSpy = spyOn(indexService['http'], 'post').and.stub();
+        const expectedUrl = 'http://localhost:3000/api/database/send';
+        const expectedMessage: DrawingData = {
+            title: 'title',
+            labels: ['tag'],
+            width: 100,
+            height: 100,
+            body: 'data',
+        };
+        const httpOptions = {
+            headers: new HttpHeaders({
+                Accept: 'text/plain, */*',
+                'Content-Type': 'application/json',
+            }),
+            responseType: 'text' as 'json',
+        };
+        indexService.postDrawing(mockDrawing).subscribe((res) => {
+            expect(httpPostSpy).toHaveBeenCalledWith(expectedUrl, expectedMessage, httpOptions);
+            expect(res).toEqual(expectedMessage);
+        });
     });
 
     xit('should call http request DELETE on deleteDrawingById', async () => {
         const httpDeleteSpy = spyOn(indexService['http'], 'delete').and.stub();
         const expectedUrl = 'http://localhost:3000/api/database/drawings/12345.png';
-        indexService.deleteDrawingById('12345');
-        expect(httpDeleteSpy).toHaveBeenCalledWith(expectedUrl);
-    });
-
-    it('should call http request GET on findDrawingById', async () => {
-        const httpGetSpy = spyOn(indexService['http'], 'get').and.stub();
-        const expectedId = 'http://localhost:3000/api/database/drawings/12345.png';
-        indexService.findDrawingById('12345.png');
-        expect(httpGetSpy).toHaveBeenCalledWith(expectedId);
-    });
-
-    it('should call http request GET on getTitles', async () => {
-        const httpGetSpy = spyOn(indexService['http'], 'get').and.stub();
-        const expectedUrl = 'http://localhost:3000/api/database/drawings/meta/titles';
-        indexService.getTitles();
-        expect(httpGetSpy).toHaveBeenCalledWith(expectedUrl);
-    });
-
-    it('should call http request GET on getTags', async () => {
-        const httpGetSpy = spyOn(indexService['http'], 'get').and.stub();
-        const expectedUrl = 'http://localhost:3000/api/database/drawings/meta/tags';
-        indexService.getTags();
-        expect(httpGetSpy).toHaveBeenCalledWith(expectedUrl);
+        indexService
+            .deleteDrawingById('12345')
+            .then(() => {
+                expect(httpDeleteSpy).toHaveBeenCalledWith(expectedUrl);
+            })
+            .catch(fail);
     });
 });

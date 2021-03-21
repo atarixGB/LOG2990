@@ -10,6 +10,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
 import { of } from 'rxjs';
 import { SaveDrawingModalComponent } from './save-drawing-modal.component';
+
 // tslint:disable
 describe('SaveDrawingModalComponent', () => {
     let component: SaveDrawingModalComponent;
@@ -22,7 +23,7 @@ describe('SaveDrawingModalComponent', () => {
 
     beforeEach(async(() => {
         drawingServiceSpy = new DrawingService();
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicPost']);
+        indexServiceSpy = jasmine.createSpyObj('IndexService', ['postDrawing']);
 
         TestBed.configureTestingModule({
             declarations: [SaveDrawingModalComponent],
@@ -72,28 +73,28 @@ describe('SaveDrawingModalComponent', () => {
         expect(component.tags.length).toEqual(expectedValue.length);
     });
 
-    // it('sendToServer should close matdialog if drawing has been sent', () => {
-    //     component.drawingTitle = 'validTitle';
-    //     component.tags = ['blabla'];
-
-    //     drawingServiceSpy.canvas = document.createElement('canvas');
-    //     spyOn(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('Mock data url');
-    //     indexServiceSpy.basicPost.and.returnValue(of(null));
-    //     spyOn(component, 'validateString').and.returnValue(true);
-
-    //     component.sendToServer();
-    //     expect(mockDialogRef.close).toHaveBeenCalled();
-    // });
+    xit('sendToServer should close matdialog if drawing has been sent', () => {
+        // // drawingServiceSpy.canvas = new CanvasTestHelper().canvas;
+        // // console.log(drawingServiceSpy.canvas);
+        // // spyOn(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('data');
+        // indexServiceSpy.postDrawing.and.returnValue(of(null));
+        // spyOn(component, 'validateString').and.returnValue(true);
+        // component.message = {
+        //     title: 'title',
+        //     labels: ['tags'],
+        //     height: 0,
+        //     width: 0,
+        //     body: 'data',
+        // };
+        // component.sendToServer();
+        // expect(mockDialogRef.close).toHaveBeenCalled();
+    });
 
     it('sendToServer should not close matdialog if drawing has not been sent', () => {
         component.drawingTitle = 'invalid@#$%^';
         component.tags = ['blabla'];
-
-        drawingServiceSpy.canvas = document.createElement('canvas');
-        spyOn(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('Mock data url');
-        indexServiceSpy.basicPost.and.returnValue(of(null));
+        indexServiceSpy.postDrawing.and.returnValue(of(null));
         spyOn(component, 'validateString').and.returnValue(false);
-
         component.sendToServer();
         expect(mockDialogRef.close).not.toHaveBeenCalled();
     });
