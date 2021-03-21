@@ -136,8 +136,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         }
 
         if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
-            console.log('ici');
-
             event.preventDefault();
             this.undoRedoService.undo();
         }
@@ -149,8 +147,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.undoRedoService.canRedo() &&
             !this.toolManagerService.currentTool?.mouseDown
         ) {
-            console.log('pas ici');
-
             event.preventDefault();
             this.undoRedoService.redo();
         }

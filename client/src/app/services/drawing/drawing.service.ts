@@ -16,9 +16,4 @@ export class DrawingService {
     getCanvasData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
     }
-
-    applyPreview(): void {
-        this.baseCtx.drawImage(this.previewCanvas, 0, 0);
-        this.clearCanvas(this.previewCtx);
-    }
 }
