@@ -6,6 +6,8 @@ import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-m
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
+import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subscription } from 'rxjs';
@@ -32,12 +34,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     private positionY: number;
 
     constructor(
+        public toolManagerService: ToolManagerService,
+        public moveSelectionService: MoveSelectionService,
         private drawingService: DrawingService,
-        private toolManagerService: ToolManagerService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
         public dialog: MatDialog,
         private undoRedoService: UndoRedoService,
+        private selectionService: SelectionService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
 
@@ -73,6 +77,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
         this.cdr.detectChanges();
+
         this.whiteBackgroundCanvas();
     }
 
@@ -91,6 +96,17 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
+
+            if (
+                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
+                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse
+            ) {
+                if (!this.selectionService.newSelection) {
+                    this.toolManagerService.currentTool = this.moveSelectionService;
+                } else {
+                    this.toolManagerService.currentTool = this.selectionService;
+                }
+            }
         }
     }
 
@@ -122,17 +138,27 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.toolManagerService.onMouseDoubleClick(event);
     }
 
+    onMouseLeave(event: MouseEvent): void {
+        this.toolManagerService.onMouseLeave(event);
+    }
+
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
+        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                this.moveSelectionService.handleKeyUp(event);
+            }
+        }
+
         this.toolManagerService.handleKeyUp(event);
     }
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.toolManagerService.handleHotKeysShortcut(event);
         if (event.ctrlKey && event.key === 'o') {
             event.preventDefault();
             this.dialog.open(NewDrawModalComponent, {});
+            return;
         }
 
         if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
@@ -150,6 +176,20 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             event.preventDefault();
             this.undoRedoService.redo();
         }
+        if (event.ctrlKey && event.key === 'a') {
+            event.preventDefault();
+            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
+            this.selectionService.selectAll();
+            return;
+        }
+
+        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                this.moveSelectionService.handleKeyDown(event);
+            }
+        }
+
+        this.toolManagerService.handleHotKeysShortcut(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
