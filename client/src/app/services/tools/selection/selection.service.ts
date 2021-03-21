@@ -18,7 +18,7 @@ export class SelectionService extends Tool {
     origin: Vec2;
     destination: Vec2;
     newSelection: boolean;
-    isFirstSelection: boolean;
+    activeSelection: boolean;
     initialSelection: boolean;
     imageMoved: boolean;
     clearUnderneath: boolean;
@@ -35,7 +35,7 @@ export class SelectionService extends Tool {
         this.newSelection = true;
         this.initialSelection = true;
         this.imageMoved = false;
-        this.isFirstSelection = false;
+        this.activeSelection = false;
         this.clearUnderneath = true;
         this.isSelectAll = false;
         this.selectionTerminated = false;
@@ -52,7 +52,7 @@ export class SelectionService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.isFirstSelection = true;
+            this.activeSelection = true;
             this.printMovedSelection();
             this.initialSelection = true;
             this.clearUnderneath = true;
@@ -80,7 +80,7 @@ export class SelectionService extends Tool {
             return;
         }
 
-        if (this.isFirstSelection) {
+        if (this.activeSelection && !this.selectionTerminated) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.newSelection = false;
             } else {
@@ -92,18 +92,13 @@ export class SelectionService extends Tool {
     onMouseUp(): void {
         if (this.mouseDown) {
             this.mouseDown = false;
-            console.log('up', this.mouseDown);
-
             this.getSelectionData(this.drawingService.baseCtx);
             this.resetParametersTools();
         }
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) {
-            console.log('leave');
-            this.onMouseUp();
-        }
+        if (this.mouseDown) this.onMouseUp();
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -129,7 +124,7 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.isSelectAll = true;
         this.newSelection = true;
-        this.isFirstSelection = true;
+        this.activeSelection = true;
         this.initialSelection = true;
         this.selectionTerminated = false;
         this.printMovedSelection();
@@ -153,15 +148,14 @@ export class SelectionService extends Tool {
     }
 
     terminateSelection(): void {
-        console.log('firstselection', this.isFirstSelection);
-
-        if (this.isFirstSelection) {
-            console.log('terminate');
-
+        if (this.activeSelection) {
             this.imageMoved = true;
             this.printMovedSelection();
             this.selectionTerminated = true;
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.activeSelection = false;
+            this.mouseDown = false;
+            this.newSelection = true;
         }
     }
 
@@ -207,8 +201,6 @@ export class SelectionService extends Tool {
 
     private printMovedSelection(): void {
         if (this.imageMoved) {
-            console.log('print');
-
             this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
             this.imageMoved = false;
         }

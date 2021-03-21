@@ -34,8 +34,6 @@ export class MoveSelectionService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        console.log('move : ', this.selectionService.selectionTerminated);
-
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
@@ -55,10 +53,12 @@ export class MoveSelectionService extends Tool {
 
         this.initialSelection();
 
-        if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
-            this.selectionService.newSelection = false;
-        } else {
-            this.selectionService.newSelection = true;
+        if (!this.selectionService.selectionTerminated) {
+            if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                this.selectionService.newSelection = false;
+            } else {
+                this.selectionService.newSelection = true;
+            }
         }
     }
 
@@ -79,14 +79,17 @@ export class MoveSelectionService extends Tool {
         if (event.key === 'Escape') {
             event.preventDefault();
             this.selectionService.terminateSelection();
+            this.mouseDown = false;
         }
 
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-            event.preventDefault();
-            this.initialSelection();
-            this.clearUnderneathShape();
-            this.handleKeyDownArrow(event);
-            this.moveSelectionKeyboard(this.drawingService.previewCtx);
+        if (this.selectionService.activeSelection) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                this.initialSelection();
+                this.clearUnderneathShape();
+                this.handleKeyDownArrow(event);
+                this.moveSelectionKeyboard(this.drawingService.previewCtx);
+            }
         }
     }
 

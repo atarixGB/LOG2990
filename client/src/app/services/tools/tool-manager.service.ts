@@ -95,7 +95,7 @@ export class ToolManagerService {
     }
 
     switchTool(tool: ToolList): void {
-        // if(this.currentTool instanceof SelectionService && tool isntance of != SelectionService)
+        if (this.currentTool instanceof SelectionService) this.selectionService.terminateSelection();
 
         if (this.serviceBindings.has(tool)) {
             this.currentTool = this.serviceBindings.get(tool);
