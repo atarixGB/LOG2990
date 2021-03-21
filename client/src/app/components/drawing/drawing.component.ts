@@ -135,14 +135,20 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.dialog.open(NewDrawModalComponent, {});
         }
 
-        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo()) {
+        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
             console.log('ici');
 
             event.preventDefault();
             this.undoRedoService.undo();
         }
 
-        if (event.ctrlKey && event.shiftKey && event.code === 'KeyZ' && this.undoRedoService.canRedo()) {
+        if (
+            event.ctrlKey &&
+            event.shiftKey &&
+            event.code === 'KeyZ' &&
+            this.undoRedoService.canRedo() &&
+            !this.toolManagerService.currentTool?.mouseDown
+        ) {
             console.log('pas ici');
 
             event.preventDefault();
