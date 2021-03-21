@@ -1,9 +1,9 @@
 <div id="main-container" #mainContainer>
-    <img [src]="imagesURL" />
-    <h3>Nom : {{ name }}</h3>
+    <img [src]="this.drawing.imageURL" />
+    <h3>Nom : {{ this.drawing.name }}</h3>
     <div id="tag-container">
         <h3>Tags :</h3>
-        <button mat-flat-button *ngFor="let tag of this.tags">
+        <button mat-flat-button *ngFor="let tag of this.drawing.tags">
             {{ tag }}
         </button>
     </div>

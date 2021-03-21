@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -15,20 +16,6 @@ export class IndexService {
     private readonly TAGS_URL: string = '/tags';
 
     constructor(private http: HttpClient) {}
-
-    async getAllDrawingUrls(): Promise<string[]> {
-        return new Promise<string[]>((resolve) => {
-            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL;
-            this.http.get<string[]>(url).subscribe(
-                (drawings: string[]) => {
-                    resolve(drawings);
-                },
-                (error) => {
-                    return throwError(error);
-                },
-            );
-        });
-    }
 
     postDrawing(message: DrawingData): Observable<DrawingData> {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
@@ -57,7 +44,7 @@ export class IndexService {
         });
     }
 
-    async findDrawingById(id: string): Promise<DrawingData> {
+    findDrawingById(id: string): Promise<DrawingData> {
         return new Promise<DrawingData>((resolve) => {
             const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}`;
             return this.http.get<DrawingData>(url).subscribe((drawing: DrawingData) => {
@@ -76,27 +63,17 @@ export class IndexService {
         );
     }
 
-    async getTitles(): Promise<DrawingData[]> {
-        return new Promise<DrawingData[]>((resolve) => {
-            const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/meta/titles';
+    async getAllDrawings(): Promise<Drawing[]> {
+        return new Promise<Drawing[]>((resolve) => {
+            const url = this.BASE_URL + this.DATABASE_URL;
             return this.http.get<DrawingData[]>(url).subscribe(
-                (drawings: DrawingData[]) => {
-                    console.log(drawings);
-                    resolve(drawings);
-                },
-                (error) => {
-                    return throwError(error);
-                },
-            );
-        });
-    }
-
-    async getTags(): Promise<DrawingData> {
-        return new Promise<DrawingData>((resolve) => {
-            const url: string = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/meta/tags';
-            return this.http.get<DrawingData>(url).subscribe(
-                (drawing: DrawingData) => {
-                    resolve(drawing);
+                (drawing: DrawingData[]) => {
+                    let drawingCard = [];
+                    for (let i = 0; i < drawing.length; i++) {
+                        const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawing[i]._id + '.png';
+                        drawingCard[i] = new Drawing(drawing[i].title, drawing[i].labels!, imgURL);
+                    }
+                    resolve(drawingCard);
                 },
                 (error) => {
                     return throwError(error);

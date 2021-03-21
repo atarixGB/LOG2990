@@ -1,7 +1,8 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ComponentType } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
 import { CarouselComponent } from '@app/components/carousel/carousel-modal/carousel.component';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
@@ -17,7 +18,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
@@ -34,6 +35,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     dragPosition: Vec2 = { x: 0, y: 0 };
 
     constructor(
+        private route: ActivatedRoute,
         private drawingService: DrawingService,
         private toolManagerService: ToolManagerService,
         private cdr: ChangeDetectorRef,
@@ -53,6 +55,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.subscription.unsubscribe();
+    }
+
+    ngOnInit(): void {
+        this.route.params.subscribe((params) => {
+            let path = params.url;
+            this.getNewImage(path).then((img) => {
+                this.baseCtx.drawImage(img, 0, 0);
+            });
+        });
     }
 
     ngAfterViewInit(): void {
@@ -129,13 +140,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
     handleKeyDown(event: KeyboardEvent): void {
         this.modalHandler(event, NewDrawModalComponent, 'o');
         this.modalHandler(event, SaveDrawingModalComponent, 's');
+        this.modalHandler(event, CarouselComponent, 'g');
         // this.modalHandler(event, ExportModalComponent, 'e');
         if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
-        }
-        if (event.ctrlKey && event.key === 'g') {
-            event.preventDefault();
-            this.dialog.open(CarouselComponent, {});
         }
     }
 
@@ -190,7 +198,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         return this.canvasSize.y;
     }
 
-    private modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
+    private modalHandler(
+        event: KeyboardEvent,
+        component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent | CarouselComponent>,
+        key: string,
+    ): void {
         if (event.ctrlKey && event.key === key) {
             event.preventDefault();
             if (this.dialog.openDialogs.length === 0) {
@@ -198,5 +210,19 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             }
             return;
         }
+    }
+
+    async getNewImage(src: string): Promise<HTMLImageElement> {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => {
+                resolve(img);
+            };
+            img.onerror = (err: string | Event) => {
+                reject(err);
+            };
+            img.src = src;
+        });
     }
 }
