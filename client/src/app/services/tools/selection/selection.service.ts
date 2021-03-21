@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
-import { DrawingService } from '../../drawing/drawing.service';
-import { EllipseService } from '../ellipse/ellipse.service';
-import { RectangleService } from '../rectangle/rectangle.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 
@@ -12,54 +12,41 @@ const SELECTION_DEFAULT_LINE_THICKNESS = 3;
     providedIn: 'root',
 })
 export class SelectionService extends Tool {
-    isEllipse: boolean;
-    isSelectAll: boolean;
     selection: ImageData;
     origin: Vec2;
     destination: Vec2;
-    newSelection: boolean;
+    isEllipse: boolean;
     activeSelection: boolean;
+    newSelection: boolean;
     initialSelection: boolean;
     imageMoved: boolean;
     clearUnderneath: boolean;
     selectionTerminated: boolean;
-    width: number;
-    height: number;
-    test: number;
+    private width: number;
+    private height: number;
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
 
     constructor(protected drawingService: DrawingService, private rectangleService: RectangleService, private ellipseService: EllipseService) {
         super(drawingService);
         this.isEllipse = false;
+        this.activeSelection = false;
         this.newSelection = true;
         this.initialSelection = true;
         this.imageMoved = false;
-        this.activeSelection = false;
         this.clearUnderneath = true;
-        this.isSelectAll = false;
         this.selectionTerminated = false;
     }
 
     onMouseDown(event: MouseEvent): void {
-        this.previousLineWidthRectangle = this.rectangleService.lineWidth;
-        this.previousLineWidthEllipse = this.ellipseService.lineWidth;
-        this.rectangleService.isSelection = true;
-        this.ellipseService.isSelection = true;
-
-        this.isSelectAll = false;
-
         this.mouseDown = event.button === MouseButton.Left;
-        this.mouseDownCoord = this.getPositionFromMouse(event);
         if (this.mouseDown) {
-            this.activeSelection = true;
-            this.printMovedSelection();
             this.initialSelection = true;
             this.clearUnderneath = true;
             this.selectionTerminated = false;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawingService.previewCtx.setLineDash([2]);
 
+            this.initializeToolParameters();
+            this.printMovedSelection();
             if (!this.isEllipse) this.rectangleService.onMouseDown(event);
             else this.ellipseService.onMouseDown(event);
         }
@@ -67,37 +54,26 @@ export class SelectionService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            console.log('move');
-
-            this.rectangleService.lineWidth = SELECTION_DEFAULT_LINE_THICKNESS;
-            this.ellipseService.lineWidth = SELECTION_DEFAULT_LINE_THICKNESS;
-            if (!this.isEllipse) {
-                this.rectangleService.onMouseMove(event);
-            } else {
-                this.ellipseService.onMouseMove(event);
-            }
-
-            return;
+            if (!this.isEllipse) this.rectangleService.onMouseMove(event);
+            else this.ellipseService.onMouseMove(event);
         }
 
         if (this.activeSelection && !this.selectionTerminated) {
-            if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
-                this.newSelection = false;
-            } else {
-                this.newSelection = true;
-            }
+            if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) this.newSelection = false;
+            else this.newSelection = true;
         }
     }
 
     onMouseUp(): void {
         if (this.mouseDown) {
+            this.activeSelection = true;
             this.mouseDown = false;
             this.getSelectionData(this.drawingService.baseCtx);
             this.resetParametersTools();
         }
     }
 
-    onMouseLeave(event: MouseEvent): void {
+    onMouseLeave(): void {
         if (this.mouseDown) this.onMouseUp();
     }
 
@@ -121,15 +97,17 @@ export class SelectionService extends Tool {
     }
 
     selectAll(): void {
-        this.clearUnderneath = true;
-        this.isSelectAll = true;
-        this.newSelection = true;
         this.activeSelection = true;
+        this.newSelection = true;
         this.initialSelection = true;
+        this.clearUnderneath = true;
         this.selectionTerminated = false;
-        this.printMovedSelection();
         this.origin = { x: 0, y: 0 };
         this.destination = { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height };
+        this.width = this.destination.x;
+        this.height = this.destination.y;
+
+        this.printMovedSelection();
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
     }
 
@@ -140,22 +118,22 @@ export class SelectionService extends Tool {
             this.drawingService.baseCtx.ellipse(this.origin.x, this.origin.y, this.width / 2, this.height / 2, 0, 2 * Math.PI, 0);
             this.drawingService.baseCtx.fill();
             this.drawingService.baseCtx.closePath();
-        } else if (this.isSelectAll) {
-            this.drawingService.clearCanvas(this.drawingService.baseCtx);
         } else {
             this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
+            this.drawingService.baseCtx.closePath();
         }
     }
 
     terminateSelection(): void {
         if (this.activeSelection) {
-            this.imageMoved = true;
-            this.printMovedSelection();
-            this.selectionTerminated = true;
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.activeSelection = false;
-            this.mouseDown = false;
             this.newSelection = true;
+            this.imageMoved = true;
+            this.selectionTerminated = true;
+            this.mouseDown = false;
+
+            this.printMovedSelection();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
     }
 
@@ -201,9 +179,20 @@ export class SelectionService extends Tool {
 
     private printMovedSelection(): void {
         if (this.imageMoved) {
-            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
             this.imageMoved = false;
+            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
         }
+    }
+
+    private initializeToolParameters(): void {
+        this.previousLineWidthRectangle = this.rectangleService.lineWidth;
+        this.previousLineWidthEllipse = this.ellipseService.lineWidth;
+        this.rectangleService.isSelection = true;
+        this.ellipseService.isSelection = true;
+        this.rectangleService.lineWidth = SELECTION_DEFAULT_LINE_THICKNESS;
+        this.ellipseService.lineWidth = SELECTION_DEFAULT_LINE_THICKNESS;
+
+        this.drawingService.previewCtx.setLineDash([2]);
     }
 
     private resetParametersTools(): void {

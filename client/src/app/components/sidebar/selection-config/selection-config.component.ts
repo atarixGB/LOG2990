@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 @Component({
@@ -6,8 +6,6 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
     templateUrl: './selection-config.component.html',
     styleUrls: ['./selection-config.component.scss'],
 })
-export class SelectionConfigComponent implements OnInit {
+export class SelectionConfigComponent {
     constructor(public selectionService: SelectionService) {}
-
-    ngOnInit(): void {}
 }

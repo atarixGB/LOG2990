@@ -66,7 +66,7 @@ export class MoveSelectionService extends Tool {
         if (this.mouseDown) {
             this.moveSelectionMouse(this.drawingService.previewCtx);
             // À voir avec les contours si tu peux sélectionner à partir de n'importe où
-            //this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
+            // this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
             this.origin = this.newOrigin;
             this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
             this.selectionService.selection = this.selectionData;
@@ -131,6 +131,7 @@ export class MoveSelectionService extends Tool {
         // console.log('Waiting the delay');
         // await this.delay(1000);
         // console.log('Waiting done');
+
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
