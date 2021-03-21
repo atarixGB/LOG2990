@@ -159,16 +159,16 @@ describe('LineService', () => {
         expect(drawLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, pathData);
     });
 
-    it('should call drawConstrainedLine on base context when onMouseUp is called and shift key is pressed', () => {
-        service['coordinates'] = pathData;
-        service.mouseDown = true;
-        service['hasPressedShiftKey'] = true;
+    // it('should call drawConstrainedLine on base context when onMouseUp is called and shift key is pressed', () => {
+    //     service['coordinates'] = pathData;
+    //     service.mouseDown = true;
+    //     service['hasPressedShiftKey'] = true;
 
-        drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
+    //     drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.callThrough();
 
-        service.onMouseUp(leftMouseEvent);
-        expect(drawConstrainedLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, service['coordinates'], leftMouseEvent);
-    });
+    //     service.onMouseUp(leftMouseEvent);
+    //     expect(drawConstrainedLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, service['coordinates'], leftMouseEvent);
+    // });
 
     it('should call getCanvasState when onMouseUp is called', () => {
         let getCanvasStateSpy = spyOn<any>(service, 'getCanvasState').and.callThrough();

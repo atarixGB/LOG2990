@@ -4,7 +4,7 @@ import { FiltersList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
 
-// tslint:disabled
+// tslint:disable
 describe('ExportService', () => {
     let service: ExportService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -30,25 +30,19 @@ describe('ExportService', () => {
     });
 
     it('applyFilter should get the selected filter and assign to current filter', () => {
-       service.selectedFilter = FiltersList.Blur;
-       spyOn<any>(service,'getResizedCanvas').and.stub();
-       const filterGetSpy = spyOn(service.filtersBindings,'get').and.callThrough();
-       service.applyFilter();
-       expect(filterGetSpy).toHaveBeenCalled();
-       expect(service.currentFilter).toEqual('blur');
+        service.selectedFilter = FiltersList.Blur;
+        spyOn<any>(service, 'getResizedCanvas').and.stub();
+        const filterGetSpy = spyOn(service.filtersBindings, 'get').and.callThrough();
+        service.applyFilter();
+        expect(filterGetSpy).toHaveBeenCalled();
+        expect(service.currentFilter).toEqual('blur');
     });
 
     it('getResizedCanvas should resize if the ratio is too big', () => {
         service.selectedFilter = FiltersList.Blur;
-        spyOn<any>(service,'getCanvasRatio').and.returnValue(1);
+        spyOn<any>(service, 'getCanvasRatio').and.returnValue(1);
         service['getResizedCanvas']();
         expect(service.resizeHeight).toEqual(250);
         expect(service.resizeWidth).toEqual(250);
-
-     });
-
-    
-
-
-    
+    });
 });

@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
+import { Eraser } from '@app/classes/eraser';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_ERASER_COLOR, MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
+// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
+// Vous êtes encouragés de modifier et compléter le code.
+// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
 @Injectable({
     providedIn: 'root',
 })
@@ -12,7 +17,7 @@ export class EraserService extends Tool {
 
     private pathData: Vec2[];
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private undoRedoService: UndoRedoService) {
         super(drawingService);
         this.clearPath();
 
@@ -24,7 +29,6 @@ export class EraserService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
@@ -37,8 +41,10 @@ export class EraserService extends Tool {
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
         }
-
+        const eraser = new Eraser(this.eraserThickness, this.pathData);
+        this.undoRedoService.addToStack(eraser);
         this.mouseDown = false;
+        this.undoRedoService.setToolInUse(false);
         this.clearPath();
     }
 
@@ -48,9 +54,9 @@ export class EraserService extends Tool {
             this.mouseMove = true;
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.undoRedoService.setToolInUse(true);
         }
     }
 
