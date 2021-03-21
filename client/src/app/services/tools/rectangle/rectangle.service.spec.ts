@@ -44,10 +44,6 @@ describe('RectangleService', () => {
         } as MouseEvent;
     });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
-
     it('drawShape should call drawRectangle is isShiftShape is false', () => {
         service['isShiftShape'] = false;
         drawRectangleSpy = spyOn<any>(service, 'drawRectangle').and.stub();
@@ -62,21 +58,9 @@ describe('RectangleService', () => {
         expect(drawSquareSpy).toHaveBeenCalled();
     });
 
-    it('onMouseUp should set mouseDown to false', () => {
-        service.onMouseUp(mouseEvent);
-        expect(service.mouseDown).toBeFalsy();
-    });
-
     it('onMouseUp should clear canvas on preview context', () => {
         service.onMouseUp(mouseEvent);
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
-    });
-
-    it('onMouseUp should call drawRectangle if isShiftShape is false', () => {
-        service['isShiftShape'] = false;
-        drawRectangleSpy = spyOn<any>(service, 'drawRectangle');
-        service.onMouseUp(mouseEvent);
-        expect(drawRectangleSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should call drawSquare if isShiftShape is true', () => {
