@@ -39,6 +39,7 @@ import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil
 import { PipetteComponent } from './components/sidebar/pipette-config/pipette.component';
 import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
+import { SelectionConfigComponent } from './components/sidebar/selection-config/selection-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
@@ -69,6 +70,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         PipetteComponent,
         PolygonConfigComponent,
         SprayConfigComponent,
+        SelectionConfigComponent,
     ],
     imports: [
         BrowserModule,

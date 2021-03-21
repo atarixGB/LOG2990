@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
@@ -7,6 +7,8 @@ import { SelectionService } from './selection.service';
 
 const DX = 3;
 const DY = 3;
+const LONG_DELAY = 5000;
+const SHORT_DELAY = 100;
 
 enum ArrowKeys {
     Up = 1,
@@ -18,19 +20,26 @@ enum ArrowKeys {
 @Injectable({
     providedIn: 'root',
 })
-export class MoveSelectionService extends Tool {
+export class MoveSelectionService extends Tool implements OnDestroy {
     private initialMousePosition: Vec2;
     private origin: Vec2;
     private newOrigin: Vec2;
     private destination: Vec2;
     private selectionData: ImageData;
     private keysDown: Map<ArrowKeys, boolean>;
+    private intervalId: ReturnType<typeof setTimeout> | undefined = undefined;
 
     constructor(drawingService: DrawingService, private selectionService: SelectionService) {
         super(drawingService);
         this.keysDown = new Map<ArrowKeys, boolean>();
 
         this.keysDown.set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, false);
+    }
+
+    ngOnDestroy(): void {
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+        }
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -56,8 +65,10 @@ export class MoveSelectionService extends Tool {
         if (!this.selectionService.selectionTerminated) {
             if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.selectionService.newSelection = false;
+                console.log('moveService');
             } else {
                 this.selectionService.newSelection = true;
+                console.log('selectionService');
             }
         }
     }
@@ -89,6 +100,16 @@ export class MoveSelectionService extends Tool {
                 this.clearUnderneathShape();
                 this.handleKeyDownArrow(event);
                 this.moveSelectionKeyboard(this.drawingService.previewCtx);
+
+                setTimeout(() => {
+                    if (this.isArrowPressed()) {
+                        if (!this.intervalId) {
+                            console.log('ici');
+
+                            this.intervalId = setInterval(this.moveSelectionKeyboard, SHORT_DELAY, this, this.drawingService.previewCtx);
+                        }
+                    }
+                }, LONG_DELAY);
             }
         }
     }
@@ -98,6 +119,13 @@ export class MoveSelectionService extends Tool {
             event.preventDefault();
             this.clearUnderneathShape();
             this.handleKeyUpArrow(event);
+
+            if (this.intervalId) {
+                if (!this.isArrowPressed()) {
+                    clearInterval(this.intervalId);
+                    this.intervalId = undefined;
+                }
+            }
 
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
@@ -187,5 +215,14 @@ export class MoveSelectionService extends Tool {
                 this.keysDown.set(ArrowKeys.Right, true);
                 break;
         }
+    }
+
+    private isArrowPressed(): boolean {
+        for (const [key] of this.keysDown) {
+            if (this.keysDown.get(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

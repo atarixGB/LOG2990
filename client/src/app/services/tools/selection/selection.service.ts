@@ -59,8 +59,14 @@ export class SelectionService extends Tool {
         }
 
         if (this.activeSelection && !this.selectionTerminated) {
-            if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) this.newSelection = false;
-            else this.newSelection = true;
+            if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                this.newSelection = false;
+                console.log('moveService');
+            } else {
+                console.log('selectionService');
+
+                this.newSelection = true;
+            }
         }
     }
 
@@ -94,6 +100,8 @@ export class SelectionService extends Tool {
     }
 
     mouseInSelectionArea(origin: Vec2, destination: Vec2, mouseCoord: Vec2): boolean {
+        console.log(origin, destination, mouseCoord);
+
         return mouseCoord.x >= origin.x && mouseCoord.x <= destination.x && mouseCoord.y >= origin.y && mouseCoord.y <= destination.y;
     }
 
@@ -124,9 +132,9 @@ export class SelectionService extends Tool {
             { x: this.destination.x, y: this.destination.y },
             { x: this.origin.x, y: this.destination.y },
             { x: this.origin.x + this.width / 2, y: this.origin.y },
-            { x: this.destination.x, y: this.destination.y - this.height / 2 },
+            { x: this.destination.x, y: this.origin.y + this.height / 2 },
             { x: this.origin.x + this.width / 2, y: this.destination.y },
-            { x: this.origin.x, y: this.destination.y - this.height / 2 },
+            { x: this.origin.x, y: this.origin.y + this.height / 2 },
         ] as Vec2[];
 
         ctx.beginPath();
@@ -177,8 +185,8 @@ export class SelectionService extends Tool {
             this.origin = this.ellipseService.pathData[0];
             this.destination = this.ellipseService.pathData[this.ellipseService.pathData.length - 1];
         }
-        this.width = Math.abs(this.destination.x - this.origin.x);
-        this.height = Math.abs(this.destination.y - this.origin.y);
+        this.width = this.destination.x - this.origin.x;
+        this.height = this.destination.y - this.origin.y;
     }
 
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
@@ -213,6 +221,18 @@ export class SelectionService extends Tool {
         if (this.imageMoved) {
             this.imageMoved = false;
             this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+        }
+    }
+
+    private findMouseDirection(): void {
+        if (this.width <= 0 && this.height >= 0) {
+            this.lowerLeft(this.pathData);
+        } else if (this.height <= 0 && this.width >= 0) {
+            this.upperRight(this.pathData);
+        } else if (this.height <= 0 && this.width <= 0) {
+            this.upperLeft(this.pathData);
+        } else {
+            this.lowerRight(this.pathData);
         }
     }
 
