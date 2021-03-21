@@ -46,7 +46,6 @@ export class CarouselComponent implements AfterViewInit {
     getDrawings() {
         this.isLoading = true;
         this.indexService.getAllDrawings().then((drawings: Drawing[]) => {
-            console.log(drawings);
             this.imageCards = drawings;
             this.isLoading = false;
             this.nextImages();
@@ -118,7 +117,6 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     async deleteDrawing() {
-        // mettre if si pas d'image selectionne
         let pathname = (url: string): string => {
             let parseUrl = new URL(url).pathname;
             parseUrl = parseUrl.split('/')[4].split('.')[0];

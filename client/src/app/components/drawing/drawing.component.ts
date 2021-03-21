@@ -140,13 +140,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     handleKeyDown(event: KeyboardEvent): void {
         this.modalHandler(event, NewDrawModalComponent, 'o');
         this.modalHandler(event, SaveDrawingModalComponent, 's');
+        this.modalHandler(event, CarouselComponent, 'g');
         // this.modalHandler(event, ExportModalComponent, 'e');
         if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
-        }
-        if (event.ctrlKey && event.key === 'g') {
-            event.preventDefault();
-            this.dialog.open(CarouselComponent, {});
         }
     }
 
@@ -201,7 +198,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         return this.canvasSize.y;
     }
 
-    private modalHandler(event: KeyboardEvent, component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent>, key: string): void {
+    private modalHandler(
+        event: KeyboardEvent,
+        component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent | CarouselComponent>,
+        key: string,
+    ): void {
         if (event.ctrlKey && event.key === key) {
             event.preventDefault();
             if (this.dialog.openDialogs.length === 0) {
