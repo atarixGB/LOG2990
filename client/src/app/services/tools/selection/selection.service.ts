@@ -69,6 +69,7 @@ export class SelectionService extends Tool {
             this.activeSelection = true;
             this.mouseDown = false;
             this.getSelectionData(this.drawingService.baseCtx);
+            this.createControlPoints();
             this.resetParametersTools();
         }
     }
@@ -109,6 +110,37 @@ export class SelectionService extends Tool {
 
         this.printMovedSelection();
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
+    }
+
+    createControlPoints(): void {
+        console.log('jolol');
+
+        const ctx = this.drawingService.previewCtx;
+        const controlPointSize = 10;
+        const alignmentFactor = -controlPointSize / 2;
+        const controlPointCoord = [
+            { x: this.origin.x, y: this.origin.y },
+            { x: this.destination.x, y: this.origin.y },
+            { x: this.destination.x, y: this.destination.y },
+            { x: this.origin.x, y: this.destination.y },
+            { x: this.origin.x + this.width / 2, y: this.origin.y },
+            { x: this.destination.x, y: this.destination.y - this.height / 2 },
+            { x: this.origin.x + this.width / 2, y: this.destination.y },
+            { x: this.origin.x, y: this.destination.y - this.height / 2 },
+        ] as Vec2[];
+
+        ctx.beginPath();
+        ctx.lineWidth = 1;
+        ctx.fillStyle = '#FFFFFF';
+
+        for (const box of controlPointCoord) {
+            box.x += alignmentFactor;
+            box.y += alignmentFactor;
+            ctx.rect(box.x, box.y, controlPointSize, controlPointSize);
+        }
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
     }
 
     clearUnderneathShape(): void {
