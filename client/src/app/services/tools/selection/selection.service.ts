@@ -113,6 +113,7 @@ export class SelectionService extends Tool {
 
         this.printMovedSelection();
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
+        this.createBoundaryBox();
     }
 
     createBoundaryBox(): void {
