@@ -2,9 +2,9 @@
     <div id="header"><h1>Carousel de dessin</h1></div>
     <div id="filter-container">
         <label for="ffiltre">Filtre: </label>
-        <input type="text" id="filtre" name="ffiltre" [(ngModel)]="tagInput" />
+        <input type="text" name="ffiltre" [(ngModel)]="tagInput" />
         <button (click)="this.addTag()">Entrer</button><br />
-        <p>Vos filtres:</p>
+        <p id="filter">Vos filtres:</p>
         <ul>
             <li class="tag-list" *ngFor="let filter of filters">
                 {{ filter }}
