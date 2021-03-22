@@ -8,7 +8,6 @@
     <mat-slider min="3" max="12" tickInterval="1000" thumbLabel [displayWith]="updateLineWidth" [(ngModel)]="polygonService.sides"> </mat-slider>
 </div>
 
-
 <mat-form-field>
     <mat-label>Style du dessin</mat-label>
     <mat-select [(ngModel)]="polygonService.selectType" (selectionChange)="polygonService.changeSelectedType()">
