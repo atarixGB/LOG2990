@@ -40,6 +40,7 @@ import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
+import { PipetteComponent } from './components/sidebar/pipette-config/pipette.component';
 import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
@@ -70,6 +71,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         ColorPopupComponent,
         ConfigPanelComponent,
         SaveDrawingModalComponent,
+        PipetteComponent,
         PolygonConfigComponent,
         SprayConfigComponent,
         SprayAttributesComponent,

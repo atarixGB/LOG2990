@@ -1,26 +1,26 @@
 <mat-sidenav-container class="config-container" *ngIf="isOpened">
-  <mat-sidenav-content>
-    <button id="close-btn" mat-icon-button matTooltip="Fermer" matTooltipPosition="after" (click)="toggleConfigPanel()">
-      <mat-icon id="">close</mat-icon>
-    </button>
-    <h3>Paramètres de l'outil</h3>
-    <app-line-config *ngIf="toolManagerService.currentToolEnum === ToolList.Line"></app-line-config>
-    <app-pencil-config *ngIf="toolManagerService.currentToolEnum === ToolList.Pencil"></app-pencil-config>
-    <app-eraser-config *ngIf="toolManagerService.currentToolEnum === ToolList.Eraser"></app-eraser-config>
-    <app-rectangle-config *ngIf="toolManagerService.currentToolEnum === ToolList.Rectangle"> </app-rectangle-config>
-    <app-ellipse-config *ngIf="toolManagerService.currentToolEnum === ToolList.Ellipse"></app-ellipse-config>
-    <app-spray-config *ngIf="toolManagerService.currentToolEnum === ToolList.Spray"></app-spray-config>
-    <app-polygon-config *ngIf="toolManagerService.currentToolEnum === ToolList.Polygon"></app-polygon-config>
-    <div *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser">
-      <h3>Choix de couleur</h3>
-      <app-color-displayer></app-color-displayer>
-    </div>
-  </mat-sidenav-content>
+    <mat-sidenav-content>
+        <button id="close-btn" mat-icon-button matTooltip="Fermer" matTooltipPosition="after" (click)="toggleConfigPanel()">
+            <mat-icon id="">close</mat-icon>
+        </button>
+        <h3>Paramètres de l'outil</h3>
+        <app-line-config *ngIf="toolManagerService.currentToolEnum === ToolList.Line"></app-line-config>
+        <app-pencil-config *ngIf="toolManagerService.currentToolEnum === ToolList.Pencil"></app-pencil-config>
+        <app-eraser-config *ngIf="toolManagerService.currentToolEnum === ToolList.Eraser"></app-eraser-config>
+        <app-rectangle-config *ngIf="toolManagerService.currentToolEnum === ToolList.Rectangle"> </app-rectangle-config>
+        <app-ellipse-config *ngIf="toolManagerService.currentToolEnum === ToolList.Ellipse"></app-ellipse-config>
+        <app-pipette-config *ngIf="toolManagerService.currentToolEnum === ToolList.Pipette"></app-pipette-config>
+        <app-polygon-config *ngIf="toolManagerService.currentToolEnum === ToolList.Polygon"></app-polygon-config>
+        <app-spray-config *ngIf="toolManagerService.currentToolEnum === ToolList.Spray"></app-spray-config>
+        <div *ngIf="toolManagerService.currentToolEnum !== ToolList.Eraser">
+            <h3>Choix de couleur</h3>
+            <app-color-displayer></app-color-displayer>
+        </div>
+    </mat-sidenav-content>
 </mat-sidenav-container>
 
 <div class="minimized-panel" *ngIf="!isOpened">
-  <button mat-icon-button matTooltip="Ouvrir les paramètres de l'outil" matTooltipPosition="after"
-    (click)="toggleConfigPanel()">
-    <mat-icon id="">keyboard_arrow_right</mat-icon>
-  </button>
+    <button mat-icon-button matTooltip="Ouvrir les paramètres de l'outil" matTooltipPosition="after" (click)="toggleConfigPanel()">
+        <mat-icon id="">keyboard_arrow_right</mat-icon>
+    </button>
 </div>
