@@ -8,6 +8,13 @@ import { SelectionService } from './selection.service';
 const DX = 3;
 const DY = 3;
 
+enum ArrowKeys {
+    Up = 1,
+    Down = 2,
+    Left = 3,
+    Right = 4,
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -17,12 +24,12 @@ export class MoveSelectionService extends Tool {
     private newOrigin: Vec2;
     private destination: Vec2;
     private selectionData: ImageData;
-    private keysDown: Map<string, boolean>;
+    private keysDown: Map<ArrowKeys, boolean>;
 
     constructor(drawingService: DrawingService, private selectionService: SelectionService) {
         super(drawingService);
-        this.keysDown = new Map<string, boolean>();
-        this.keysDown.set('ArrowUp', false).set('ArrowDown', false).set('ArrowLeft', false).set('ArrowRight', false);
+        this.keysDown = new Map<ArrowKeys, boolean>();
+        this.keysDown.set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, false);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -70,7 +77,6 @@ export class MoveSelectionService extends Tool {
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
             event.preventDefault();
-
             this.selectionService.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
         }
@@ -78,8 +84,8 @@ export class MoveSelectionService extends Tool {
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             event.preventDefault();
             this.clearUnderneathShape();
-            this.keysDown.set();
-            this.moveSelectionKeyboard(this.drawingService.previewCtx, event);
+            this.handleKeyDownArrow(event);
+            this.moveSelectionKeyboard(this.drawingService.previewCtx);
         }
     }
 
@@ -87,6 +93,13 @@ export class MoveSelectionService extends Tool {
         this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
         this.selectionService.selection = this.selectionData;
         this.selectionService.origin = this.origin;
+
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+            event.preventDefault();
+            this.clearUnderneathShape();
+            this.handleKeyUpArrow(event);
+            this.moveSelectionKeyboard(this.drawingService.previewCtx);
+        }
     }
 
     private moveSelectionMouse(ctx: CanvasRenderingContext2D): void {
@@ -97,20 +110,18 @@ export class MoveSelectionService extends Tool {
         this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
     }
 
-    private moveSelectionKeyboard(ctx: CanvasRenderingContext2D, event: KeyboardEvent): void {
-        switch (event.key) {
-            case 'ArrowRight':
-                this.newOrigin.x = this.origin.x + DX;
-                break;
-            case 'ArrowLeft':
-                this.newOrigin.x = this.origin.x - DX;
-                break;
-            case 'ArrowDown':
-                this.newOrigin.y = this.origin.y + DY;
-                break;
-            case 'ArrowUp':
-                this.newOrigin.y = this.origin.y - DY;
-                break;
+    private moveSelectionKeyboard(ctx: CanvasRenderingContext2D): void {
+        if (this.keysDown.get(ArrowKeys.Right)) {
+            this.newOrigin.x = this.origin.x + DX;
+        }
+        if (this.keysDown.get(ArrowKeys.Left)) {
+            this.newOrigin.x = this.origin.x - DX;
+        }
+        if (this.keysDown.get(ArrowKeys.Down)) {
+            this.newOrigin.y = this.origin.y + DY;
+        }
+        if (this.keysDown.get(ArrowKeys.Up)) {
+            this.newOrigin.y = this.origin.y - DY;
         }
 
         this.clearUnderneathShape();
@@ -126,6 +137,40 @@ export class MoveSelectionService extends Tool {
 
             this.selectionService.clearUnderneathShape();
             this.selectionService.clearUnderneath = false;
+        }
+    }
+
+    private handleKeyUpArrow(event: KeyboardEvent): void {
+        switch (event.key) {
+            case 'ArrowUp':
+                this.keysDown.set(ArrowKeys.Up, false);
+                break;
+            case 'ArrowDown':
+                this.keysDown.set(ArrowKeys.Down, false);
+                break;
+            case 'ArrowLeft':
+                this.keysDown.set(ArrowKeys.Left, false);
+                break;
+            case 'ArrowRight':
+                this.keysDown.set(ArrowKeys.Right, false);
+                break;
+        }
+    }
+
+    private handleKeyDownArrow(event: KeyboardEvent): void {
+        switch (event.key) {
+            case 'ArrowUp':
+                this.keysDown.set(ArrowKeys.Up, true);
+                break;
+            case 'ArrowDown':
+                this.keysDown.set(ArrowKeys.Down, true);
+                break;
+            case 'ArrowLeft':
+                this.keysDown.set(ArrowKeys.Left, true);
+                break;
+            case 'ArrowRight':
+                this.keysDown.set(ArrowKeys.Right, true);
+                break;
         }
     }
 }
