@@ -1,12 +1,11 @@
-//import { DOUBLE_MATH } from './../../../constants';
 import { TestBed } from '@angular/core/testing';
 //import { Vec2 } from '@app/classes/vec2';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-//import { TypeStyle } from './../../../interfaces-enums/type-style';
+import { DOUBLE_MATH } from './../../../constants';
+import { TypeStyle } from './../../../interfaces-enums/type-style';
 import { PolygonService } from './polygon.service';
-
 
 fdescribe('PolygonService', () => {
     let polygonService: PolygonService;
@@ -14,6 +13,7 @@ fdescribe('PolygonService', () => {
     let mouseEvent: MouseEvent;
 
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let canvasSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     let ctxPreviewPerimeterSpy: jasmine.Spy<any>;
     let drawPolygonSpy: jasmine.Spy<any>;
 
@@ -22,7 +22,8 @@ fdescribe('PolygonService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
-        TestBed.configureTestingModule({ providers: [{ provide: DrawingService, useValue: drawServiceSpy }] });
+        canvasSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['lineTo']);
+        TestBed.configureTestingModule({ providers: [{ provide: DrawingService, useValue: drawServiceSpy },{ provide: CanvasRenderingContext2D, useValue: canvasSpy }] });
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -131,8 +132,63 @@ fdescribe('PolygonService', () => {
         expect(drawPolygonSpy).toHaveBeenCalled();
         expect(ctxPreviewPerimeterSpy).toHaveBeenCalled();
     });
+    it('drawPolygon should initialize Polygon Variables', () => {
+        let initializePolygonVariablesSpy = spyOn<any>(polygonService, 'initializePolygonVariables');
+        polygonService['drawPolygon'](baseCtxStub);
+        expect(initializePolygonVariablesSpy).toHaveBeenCalled();
+    });
 
-  
+    it('drawPolygon should update canvas path line while respecting sides number', () => {
+        // const lineToSpy = spyOn<any>(baseCtxStub, 'lineTo').and.stub();
+        polygonService.sides = 4;
+        polygonService['drawPolygon'](canvasSpy);
+        expect(canvasSpy.lineTo).toHaveBeenCalledTimes(4);
+    });
+    it('drawPolygon should call changeSelectedType', () => {
+        let changeSelectedTypeSpy = spyOn<any>(polygonService, 'changeSelectedType');
+        expect(changeSelectedTypeSpy).toHaveBeenCalled();
+    });
+
+    it('getCircleCenter should be called while initializing polygon Variables', () => {
+        const getCircleCenterSpy = spyOn<any>(polygonService, 'getCircleCenter');
+        polygonService['firstPoint'] = { x: 25, y: 25 };
+        polygonService['finalPoint'] = { x: 0, y: 0 };
+        polygonService['initializePolygonVariables']();
+        expect(getCircleCenterSpy).toHaveBeenCalled();
+    });
+
+    it('Radius value of polygone service should be correctly updated', () => {
+        const firstPoint = { x: 25, y: 25 };
+        const finalPoint = { x: 10, y: 10 };
+        const result = Math.abs(finalPoint.x-firstPoint.y)/DOUBLE_MATH;
+        polygonService['firstPoint'] = firstPoint;
+        polygonService['finalPoint'] = finalPoint;
+        polygonService['initializePolygonVariables']();
+        expect(polygonService.radius).toEqual(result);
+    });
+
+    it('changeSelectedType should activate outline when stroke value received', () => {
+        polygonService.selectType = TypeStyle.Stroke;
+        polygonService.changeSelectedType();
+        expect(polygonService.strokeValue).toEqual(true);
+        expect(polygonService.fillValue).toEqual(false);
+    });
+
+    it('changeSelectedType should activate plein when fill value received', () => {
+        polygonService.selectType = TypeStyle.Fill;
+        polygonService.changeSelectedType();
+        expect(polygonService.strokeValue).toEqual(false);
+        expect(polygonService.fillValue).toEqual(true);
+    });
+
+    it('changeSelectedType should activate plein with outline when strokeFill value received', () => {
+        polygonService.selectType = TypeStyle.StrokeFill;
+        polygonService.changeSelectedType();
+        expect(polygonService.strokeValue).toEqual(true);
+        expect(polygonService.fillValue).toEqual(true);
+    });
+
+
 
     // it('drawPolygon should initialize Polygon Variables', () => {
     //     let initializePolygonVariablesSpy = spyOn<any>(polygonService, 'initializePolygonVariables');
@@ -181,4 +237,4 @@ fdescribe('PolygonService', () => {
     //     expect(spy).toHaveBeenCalled();
     // });
    
-});
+})
