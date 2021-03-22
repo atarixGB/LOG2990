@@ -27,6 +27,8 @@ export class CarouselComponent implements AfterViewInit {
     imageCards: Drawing[];
     placement: Drawing[];
     isDisabled: boolean;
+    filters: string[];
+    tagInput: string;
     drawingCards: boolean[];
 
     @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
@@ -40,11 +42,13 @@ export class CarouselComponent implements AfterViewInit {
         this.index = 0;
         this.imageCards = [];
         this.placement = [];
+        this.filters = [];
         this.afterNext = false;
         this.afterPrevious = false;
         this.isLoading = true;
         this.chosenURL = '';
         this.isDisabled = true;
+        this.tagInput = '';
         this.drawingCards = [false, false, false];
     }
 
@@ -61,6 +65,12 @@ export class CarouselComponent implements AfterViewInit {
         });
     }
 
+    async searchbyTags() {
+        await this.indexService.searchByTags(this.filters).then((result) => {
+            this.imageCards = result;
+            this.nextImages();
+        });
+    }
     nextImages() {
         console.log('dans next');
         if (this.afterPrevious) {
@@ -128,6 +138,18 @@ export class CarouselComponent implements AfterViewInit {
         };
         this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
         this.dialogRef.close();
+    }
+
+    addTag(): void {
+        const trimmedTag: string = this.tagInput.trim();
+        this.filters.push(trimmedTag);
+        this.tagInput = '';
+        this.searchbyTags();
+    }
+
+    removeTag(tag: string): void {
+        this.filters = this.filters.filter((current) => current !== tag);
+        this.searchbyTags();
     }
 
     changeStyle(card: Card) {

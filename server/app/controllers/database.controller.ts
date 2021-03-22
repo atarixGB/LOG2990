@@ -41,6 +41,13 @@ export class DatabaseController {
                 .catch((error) => res.send(error));
         });
 
+        this.router.get('/drawings/filters/:tags?', (req: Request, res: Response, next: NextFunction) => {
+            let params = req.params.tags;
+            this.databaseService.getDrawingByTags(params).then((results) => {
+                res.send(results);
+            });
+        });
+
         /**
          * @swagger
          *

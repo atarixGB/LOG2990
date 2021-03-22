@@ -62,6 +62,26 @@ export class IndexService {
         });
     }
 
+    async searchByTags(tags: string[]) {
+        if (tags.length > 0) {
+            return new Promise<Drawing[]>((resolve) => {
+                let url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/filters/';
+                for (let tag of tags) {
+                    url += tag + '-';
+                }
+                this.http.get<Drawing[]>(url).subscribe((drawings: Drawing[]) => {
+                    resolve(drawings);
+                });
+            });
+        } else {
+            return new Promise<Drawing[]>((resolve) => {
+                this.getAllDrawings().then((result) => {
+                    resolve(result);
+                });
+            });
+        }
+    }
+
     private handleError(error: HttpErrorResponse): Observable<DrawingData> {
         let errorMessage = 'Erreur inconnue';
         if (error.error instanceof ErrorEvent) {

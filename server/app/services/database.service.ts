@@ -1,5 +1,6 @@
 import { DrawingMetadata } from '@app/classes/drawing-metadata';
 import { BASE_URL, DATABASE_DRAWINGS_COLLECTION, DATABASE_MONGO_URL, DATABASE_NAME, DATABASE_URL, DRAWINGS_URL } from '@app/constants';
+import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
@@ -158,6 +159,39 @@ export class DatabaseService {
                 this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${file}`);
             });
             console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
+        });
+    }
+
+    getDrawingByTags(tags: string): Promise<Drawing[]> {
+        return new Promise<Drawing[]>((resolve) => {
+            let splitTags = tags.split('-');
+            if (tags.length !== 0) {
+                const regex = [];
+                for (let i = 0; i < splitTags.length; ++i) {
+                    regex[i] = new RegExp('^' + splitTags[i]);
+                }
+                this.drawingsCollection
+                    .find({
+                        labels: { $all: regex },
+                    })
+                    .toArray()
+                    .then((result) => {
+                        let filtered = [];
+                        for (let drawing of result) {
+                            const draw: Drawing = {
+                                name: drawing.title,
+                                tags: drawing.labels!,
+                                imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${drawing._id?.toHexString()!}.${IMAGE_FORMAT}`,
+                            };
+                            filtered.push(draw);
+                        }
+                        resolve(filtered);
+                    });
+            } else {
+                let empty: Drawing[];
+                empty = [];
+                resolve(empty);
+            }
         });
     }
 }
