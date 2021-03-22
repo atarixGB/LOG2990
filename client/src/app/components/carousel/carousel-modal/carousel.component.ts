@@ -1,11 +1,10 @@
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild } from '@angular/core';
 import { MatButton } from '@angular/material/button';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { DrawingParams } from '@app/components/drawing/DrawingParams';
 import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
-import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/carousel-drawing.component';
 
 enum Card {
     First = 1,
@@ -33,12 +32,13 @@ export class CarouselComponent implements AfterViewInit {
 
     @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
     @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
-    @ViewChild('canvas') canvasRef: ElementRef<CarouselDrawingComponent>;
-    @ViewChild('firstDraw') firstDraw: ElementRef<CarouselDrawingComponent>;
-    @ViewChild('secondDraw') secondDraw: ElementRef<CarouselDrawingComponent>;
-    @ViewChild('thirdDraw') thirdDraw: ElementRef<CarouselDrawingComponent>;
 
-    constructor(public indexService: IndexService, private router: Router, private dialogRef: MatDialogRef<CarouselComponent>) {
+    constructor(
+        public indexService: IndexService,
+        private router: Router,
+        private dialogRef: MatDialogRef<CarouselComponent>,
+        @Inject(MAT_DIALOG_DATA) public isCanvaEmpty: boolean,
+    ) {
         this.index = 0;
         this.imageCards = [];
         this.placement = [];
@@ -133,6 +133,17 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     loadImage() {
+        if (!this.isCanvaEmpty) {
+            let decision = confirm('Voulez-vous abandonner votre dessin ?');
+            if (decision) {
+                this.openDrawing();
+            }
+        } else {
+            this.openDrawing();
+        }
+    }
+
+    openDrawing(): void {
         const params: DrawingParams = {
             url: this.chosenURL,
         };

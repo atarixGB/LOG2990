@@ -43,7 +43,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         public dialog: MatDialog,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
-
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
             if (isCleanRequest) {
                 this.drawingService.baseCtx.beginPath();
@@ -206,7 +205,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (event.ctrlKey && event.key === key) {
             event.preventDefault();
             if (this.dialog.openDialogs.length === 0) {
-                this.dialog.open(component, {});
+                if (key === 'g') {
+                    this.dialog.open(component, { data: this.isCanvasBlank() });
+                } else {
+                    this.dialog.open(component, {});
+                }
             }
             return;
         }
@@ -224,5 +227,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             };
             img.src = src;
         });
+    }
+
+    isCanvasBlank(): boolean {
+        return !this.baseCtx.getImageData(0, 0, this.width, this.height).data.some((channel) => channel !== 0);
     }
 }
