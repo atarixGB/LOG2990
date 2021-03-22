@@ -6,6 +6,12 @@ import { DrawingParams } from '@app/components/drawing/DrawingParams';
 import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 import { CarouselDrawingComponent } from '../carouel-drawings/carousel-drawing/carousel-drawing.component';
+
+enum Card {
+    First = 1,
+    Second = 2,
+    Third = 3,
+}
 @Component({
     selector: 'app-carousel',
     templateUrl: './carousel.component.html',
@@ -16,12 +22,14 @@ export class CarouselComponent implements AfterViewInit {
     private afterNext: boolean;
     private afterPrevious: boolean;
     private chosenURL: string;
+    Card: typeof Card = Card;
     isLoading: boolean;
     imageCards: Drawing[];
     placement: Drawing[];
     isDisabled: boolean;
     filters: string[];
     tagInput: string;
+    drawingCards: boolean[];
 
     @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
     @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
@@ -41,6 +49,7 @@ export class CarouselComponent implements AfterViewInit {
         this.chosenURL = '';
         this.isDisabled = true;
         this.tagInput = '';
+        this.drawingCards = [false, false, false];
     }
 
     async ngAfterViewInit() {
@@ -57,7 +66,10 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     async searchbyTags() {
-        await this.indexService.searchByTags(this.filters);
+        await this.indexService.searchByTags(this.filters).then((result) => {
+            this.imageCards = result;
+            this.nextImages();
+        });
     }
     nextImages() {
         console.log('dans next');
@@ -133,5 +145,22 @@ export class CarouselComponent implements AfterViewInit {
         this.filters.push(trimmedTag);
         this.tagInput = '';
         this.searchbyTags();
+    }
+
+    removeTag(tag: string): void {
+        this.filters = this.filters.filter((current) => current !== tag);
+        this.searchbyTags();
+    }
+
+    changeStyle(card: Card) {
+        if (card === Card.First) {
+            this.drawingCards = [!this.drawingCards[0], false, false];
+        }
+        if (card === Card.Second) {
+            this.drawingCards = [false, !this.drawingCards[1], false];
+        }
+        if (card === Card.Third) {
+            this.drawingCards = [false, false, !this.drawingCards[2]];
+        }
     }
 }

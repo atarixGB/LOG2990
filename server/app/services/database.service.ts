@@ -162,17 +162,17 @@ export class DatabaseService {
         });
     }
 
-    getDrawingByTags(tags: Drawing[]): Promise<Drawing[]> {
-        console.log('dans database.service');
+    getDrawingByTags(tags: string): Promise<Drawing[]> {
         return new Promise<Drawing[]>((resolve) => {
+            let splitTags = tags.split('-');
             if (tags.length !== 0) {
                 const regex = [];
-                for (let i = 0; i < tags.length; ++i) {
-                    regex[i] = new RegExp('^' + tags[i]);
+                for (let i = 0; i < splitTags.length; ++i) {
+                    regex[i] = new RegExp('^' + splitTags[i]);
                 }
                 this.drawingsCollection
                     .find({
-                        tags: { $all: regex },
+                        labels: { $all: regex },
                     })
                     .toArray()
                     .then((result) => {
@@ -181,11 +181,16 @@ export class DatabaseService {
                             const draw: Drawing = {
                                 name: drawing.title,
                                 tags: drawing.labels!,
+                                imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${drawing._id?.toHexString()!}.${IMAGE_FORMAT}`,
                             };
                             filtered.push(draw);
                         }
                         resolve(filtered);
                     });
+            } else {
+                let empty: Drawing[];
+                empty = [];
+                resolve(empty);
             }
         });
     }

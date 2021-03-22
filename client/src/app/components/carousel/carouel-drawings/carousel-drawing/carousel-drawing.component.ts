@@ -12,8 +12,7 @@ export class CarouselDrawingComponent {
     @Output() componentClicked = new EventEmitter<string>();
 
     @HostListener('click', ['$event'])
-    handleMouseDown(event: MouseEvent) {
-        this.mainContainer.nativeElement.style.border = '2px solid red';
+    handleKeyDown() {
         this.componentClickedEvent();
     }
 

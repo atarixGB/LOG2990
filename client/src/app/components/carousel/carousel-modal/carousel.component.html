@@ -8,7 +8,7 @@
         <ul>
             <li class="tag-list" *ngFor="let filter of filters">
                 {{ filter }}
-                <button mat-icon-button class="remove-btn">
+                <button mat-icon-button class="remove-btn" (click)="removeTag(filter)">
                     <mat-icon>highlight_off</mat-icon>
                 </button>
             </li>
@@ -19,20 +19,35 @@
         <mat-spinner *ngIf="isLoading"></mat-spinner>
         <div id="no-drawing-container" *ngIf="imageCards.length == 0 && !isLoading">Aucun dessin.</div>
         <div id="drawings-container" *ngIf="imageCards.length > 0 && !isLoading">
-            <app-carousel-drawing [drawing]="placement[0]" (componentClicked)="chosen($event)"></app-carousel-drawing>
-            <app-carousel-drawing [drawing]="placement[1]" (componentClicked)="chosen($event)"></app-carousel-drawing>
-            <app-carousel-drawing [drawing]="placement[2]" (componentClicked)="chosen($event)"></app-carousel-drawing>
+            <app-carousel-drawing
+                [ngClass]="{ active: this.drawingCards[0] }"
+                (click)="changeStyle(Card.First)"
+                [drawing]="placement[0]"
+                (componentClicked)="chosen($event)"
+            ></app-carousel-drawing>
+            <app-carousel-drawing
+                [ngClass]="{ active: this.drawingCards[1] }"
+                (click)="changeStyle(Card.Second)"
+                [drawing]="placement[1]"
+                (componentClicked)="chosen($event)"
+            ></app-carousel-drawing>
+            <app-carousel-drawing
+                [ngClass]="{ active: this.drawingCards[2] }"
+                (click)="changeStyle(Card.Third)"
+                [drawing]="placement[2]"
+                (componentClicked)="chosen($event)"
+            ></app-carousel-drawing>
+            <div id="control-container" mat-dialog-actions>
+                <button mat-button (click)="previousImages()"><mat-icon>keyboard_arrow_left</mat-icon></button>
+                <button mat-button (click)="nextImages()"><mat-icon>keyboard_arrow_right</mat-icon></button>
+                <button mat-button matTooltip="Supprimer" [disabled]="isDisabled" (click)="deleteDrawing()" id="delete-button" #recycleBin>
+                    <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-button matTooltip="Charger" [disabled]="isDisabled" (click)="loadImage()" id="load-button" #loadImageButton>
+                    <mat-icon>input</mat-icon>
+                </button>
+                <button mat-button mat-dialog-close matTooltip="Fermer"><mat-icon>disabled_by_default</mat-icon></button>
+            </div>
         </div>
-    </div>
-    <div id="control-container" mat-dialog-actions>
-        <button mat-button (click)="previousImages()"><mat-icon>keyboard_arrow_left</mat-icon></button>
-        <button mat-button (click)="nextImages()"><mat-icon>keyboard_arrow_right</mat-icon></button>
-        <button mat-button matTooltip="Supprimer" [disabled]="isDisabled" (click)="deleteDrawing()" id="delete-button" #recycleBin>
-            <mat-icon>delete</mat-icon>
-        </button>
-        <button mat-button matTooltip="Charger" [disabled]="isDisabled" (click)="loadImage()" id="load-button" #loadImageButton>
-            <mat-icon>input</mat-icon>
-        </button>
-        <button mat-button mat-dialog-close matTooltip="Fermer"><mat-icon>disabled_by_default</mat-icon></button>
     </div>
 </div>

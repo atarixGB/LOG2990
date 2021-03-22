@@ -41,10 +41,9 @@ export class DatabaseController {
                 .catch((error) => res.send(error));
         });
 
-        this.router.get('/filters', (req: Request, res: Response, next: NextFunction) => {
-            const tags = req.query.tag;
-            console.log('dans controller ', tags);
-            this.databaseService.getDrawingByTags(tags).then((results) => {
+        this.router.get('/drawings/filters/:tags?', (req: Request, res: Response, next: NextFunction) => {
+            let params = req.params.tags;
+            this.databaseService.getDrawingByTags(params).then((results) => {
                 res.send(results);
             });
         });
