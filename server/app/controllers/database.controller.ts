@@ -41,6 +41,14 @@ export class DatabaseController {
                 .catch((error) => res.send(error));
         });
 
+        this.router.get('/filters', (req: Request, res: Response, next: NextFunction) => {
+            const tags = req.query.tag;
+            console.log('dans controller ', tags);
+            this.databaseService.getDrawingByTags(tags).then((results) => {
+                res.send(results);
+            });
+        });
+
         /**
          * @swagger
          *

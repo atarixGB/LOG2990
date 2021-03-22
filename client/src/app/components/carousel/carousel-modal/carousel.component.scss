@@ -1,6 +1,6 @@
 #main-container {
     width: 1000px;
-    height: 550px;
+    height: 600px;
     overflow: hidden;
 }
 
@@ -24,4 +24,21 @@ app-carousel-drawing {
 
 #no-drawing-container {
     text-align: center;
+}
+
+mat-spinner {
+    position: absolute;
+    left: 50%;
+}
+
+li {
+    list-style: none;
+    display: inline-block;
+    background-color: rgb(230, 230, 230);
+    border-radius: 10px;
+    padding: 0 5px 0 15px;
+    margin: 5px;
+}
+#filter-container {
+    max-height: 100px;
 }

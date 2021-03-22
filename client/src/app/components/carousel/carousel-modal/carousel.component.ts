@@ -20,6 +20,8 @@ export class CarouselComponent implements AfterViewInit {
     imageCards: Drawing[];
     placement: Drawing[];
     isDisabled: boolean;
+    filters: string[];
+    tagInput: string;
 
     @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
     @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
@@ -32,11 +34,13 @@ export class CarouselComponent implements AfterViewInit {
         this.index = 0;
         this.imageCards = [];
         this.placement = [];
+        this.filters = [];
         this.afterNext = false;
         this.afterPrevious = false;
         this.isLoading = true;
         this.chosenURL = '';
         this.isDisabled = true;
+        this.tagInput = '';
     }
 
     async ngAfterViewInit() {
@@ -52,6 +56,9 @@ export class CarouselComponent implements AfterViewInit {
         });
     }
 
+    async searchbyTags() {
+        await this.indexService.searchByTags(this.filters);
+    }
     nextImages() {
         console.log('dans next');
         if (this.afterPrevious) {
@@ -97,20 +104,6 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    // EXEMPLE POUR AJOUTER A NOTRE CANVAS quand on va retrieve du carousel, voir le HTML
-    async getNewImage(src: string): Promise<HTMLImageElement> {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => {
-                resolve(img);
-            };
-            img.onerror = (err: string | Event) => {
-                reject(err);
-            };
-            img.src = src;
-        });
-    }
     chosen(url: string) {
         this.chosenURL = url;
         this.isDisabled = false;
@@ -133,5 +126,12 @@ export class CarouselComponent implements AfterViewInit {
         };
         this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
         this.dialogRef.close();
+    }
+
+    addTag(): void {
+        const trimmedTag: string = this.tagInput.trim();
+        this.filters.push(trimmedTag);
+        this.tagInput = '';
+        this.searchbyTags();
     }
 }

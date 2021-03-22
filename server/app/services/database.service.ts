@@ -1,5 +1,6 @@
 import { DrawingMetadata } from '@app/classes/drawing-metadata';
 import { BASE_URL, DATABASE_DRAWINGS_COLLECTION, DATABASE_MONGO_URL, DATABASE_NAME, DATABASE_URL, DRAWINGS_URL } from '@app/constants';
+import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { injectable } from 'inversify';
@@ -158,6 +159,34 @@ export class DatabaseService {
                 this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${file}`);
             });
             console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
+        });
+    }
+
+    getDrawingByTags(tags: Drawing[]): Promise<Drawing[]> {
+        console.log('dans database.service');
+        return new Promise<Drawing[]>((resolve) => {
+            if (tags.length !== 0) {
+                const regex = [];
+                for (let i = 0; i < tags.length; ++i) {
+                    regex[i] = new RegExp('^' + tags[i]);
+                }
+                this.drawingsCollection
+                    .find({
+                        tags: { $all: regex },
+                    })
+                    .toArray()
+                    .then((result) => {
+                        let filtered = [];
+                        for (let drawing of result) {
+                            const draw: Drawing = {
+                                name: drawing.title,
+                                tags: drawing.labels!,
+                            };
+                            filtered.push(draw);
+                        }
+                        resolve(filtered);
+                    });
+            }
         });
     }
 }

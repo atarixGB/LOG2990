@@ -62,6 +62,18 @@ export class IndexService {
         });
     }
 
+    async searchByTags(tags: string[]) {
+        return new Promise<Drawing[]>((resolve) => {
+            let url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/filters';
+            for (let tag of tags) {
+                url += '&tag=' + tag;
+            }
+            this.http.get<Drawing[]>(url).subscribe((drawings: Drawing[]) => {
+                resolve(drawings);
+            });
+        });
+    }
+
     private handleError(error: HttpErrorResponse): Observable<DrawingData> {
         let errorMessage = 'Erreur inconnue';
         if (error.error instanceof ErrorEvent) {
