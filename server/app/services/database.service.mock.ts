@@ -1,5 +1,6 @@
 import { DrawingMetadata } from '@app/classes/drawing-metadata';
 import { BASE_URL, DATABASE_URL, DRAWINGS_URL } from '@app/constants';
+import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
 import { Collection, Db, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
@@ -40,14 +41,12 @@ export class DatabaseServiceMock {
     }
 
     async closeConnection(): Promise<void> {
-        if (this.client) {
-            return this.client.close();
-        } else {
-            return Promise.resolve();
-        }
+        console.log('CLOSE CONNECTION');
+        return this.client.close();
     }
 
     async addDrawing(drawingData: DrawingData): Promise<void> {
+        console.log('add drawing');
         if (this.validateRequest(drawingData)) {
             const drawingMetadata: DrawingMetadata = {
                 title: drawingData.title,
@@ -66,19 +65,6 @@ export class DatabaseServiceMock {
                     throw error;
                 });
         }
-    }
-
-    async findDrawingByIdName(id: string): Promise<DrawingMetadata> {
-        const objectId = new ObjectId(id);
-        return this.drawingsCollection
-            .findOne({ _id: objectId })
-            .then((drawing: DrawingMetadata) => {
-                console.log(`Drawing with id:${id} has been successfully added.`);
-                return drawing;
-            })
-            .catch((error) => {
-                throw new Error(`Failed to get drawing with id ${id}\n${error}`);
-            });
     }
 
     async deleteDrawingByIdName(id: string): Promise<void> {
@@ -155,6 +141,39 @@ export class DatabaseServiceMock {
                 this.drawingURLS.push(`${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${file}`);
             });
             console.log('Dessins actuellement sur le serveur:', this.drawingURLS);
+        });
+    }
+
+    getDrawingByTags(tags: string): Promise<Drawing[]> {
+        return new Promise<Drawing[]>((resolve) => {
+            let splitTags = tags.split('-');
+            if (tags.length !== 0) {
+                const regex = [];
+                for (let i = 0; i < splitTags.length; ++i) {
+                    regex[i] = new RegExp('^' + splitTags[i]);
+                }
+                this.drawingsCollection
+                    .find({
+                        labels: { $all: regex },
+                    })
+                    .toArray()
+                    .then((result) => {
+                        let filtered = [];
+                        for (let drawing of result) {
+                            const draw: Drawing = {
+                                name: drawing.title,
+                                tags: drawing.labels!,
+                                imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${drawing._id?.toHexString()!}.${IMAGE_FORMAT}`,
+                            };
+                            filtered.push(draw);
+                        }
+                        resolve(filtered);
+                    });
+            } else {
+                let empty: Drawing[];
+                empty = [];
+                resolve(empty);
+            }
         });
     }
 }
