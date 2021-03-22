@@ -9,8 +9,9 @@
 }
 
 app-carousel-drawing {
-    padding: 12px;
     display: inline-flex;
+    border: black solid;
+    margin-left: 4px;
 }
 
 ::ng-deep .mat-dialog-container {
@@ -18,11 +19,12 @@ app-carousel-drawing {
 }
 
 #images-container {
-    max-width: 1000px;
-    height: 400px;
+    width: 1000px;
+    height: 500px;
 }
 
 #no-drawing-container {
+    height: 500px;
     text-align: center;
 }
 
@@ -42,12 +44,29 @@ li {
 #filter-container {
     max-height: 100px;
 }
-.active {
-    border: red solid 1px;
-}
 
 #filter {
     padding-top: 10px;
     padding-bottom: 0px;
     margin-bottom: 0px;
+}
+
+#next-drawing {
+    background-color: lightgray;
+    opacity: 0.8;
+}
+
+#previous-drawing {
+    background-color: lightgray;
+    opacity: 0.8;
+    margin-bottom: 50px;
+}
+
+#scrolling-container {
+    display: flex;
+    justify-content: center;
+}
+#action-container {
+    display: flex;
+    justify-content: center;
 }

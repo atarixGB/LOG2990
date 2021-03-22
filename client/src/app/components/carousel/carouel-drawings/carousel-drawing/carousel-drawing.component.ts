@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 
 @Component({
@@ -8,10 +8,4 @@ import { Drawing } from '@common/communication/drawing';
 })
 export class CarouselDrawingComponent {
     @Input() drawing: Drawing;
-    @Output() componentClicked = new EventEmitter<string>();
-
-    @HostListener('click', ['$event'])
-    handleKeyDown(event: KeyboardEvent) {
-        this.componentClicked.emit(this.drawing.imageURL);
-    }
 }
