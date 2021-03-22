@@ -1,13 +1,14 @@
-import { DOUBLE_MATH } from './../../../constants';
+//import { DOUBLE_MATH } from './../../../constants';
 import { TestBed } from '@angular/core/testing';
 //import { Vec2 } from '@app/classes/vec2';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { TypeStyle } from './../../../interfaces-enums/type-style';
+//import { TypeStyle } from './../../../interfaces-enums/type-style';
 import { PolygonService } from './polygon.service';
 
-describe('PolygonService', () => {
+
+fdescribe('PolygonService', () => {
     let polygonService: PolygonService;
     let canvasTestHelper: CanvasTestHelper;
     let mouseEvent: MouseEvent;
@@ -103,39 +104,81 @@ describe('PolygonService', () => {
         expect(drawPolygonSpy).not.toHaveBeenCalled();
     });
 
-    it('drawPolygon should initialize Polygon Variables', () => {
-        let initializePolygonVariablesSpy = spyOn<any>(polygonService, 'initializePolygonVariables');
-        expect(initializePolygonVariablesSpy).toHaveBeenCalled();
-    });
-
-    it('drawPolygon should update canvas path line while respecting sides number', () => {
-        polygonService.sides = 4;
-        expect(baseCtxStub.lineTo).toHaveBeenCalledTimes(4);
-    });
-    it('drawPolygon should call changeSelectedType', () => {
-        let changeSelectedTypeSpy = spyOn<any>(polygonService, 'changeSelectedType');
-        expect(changeSelectedTypeSpy).toHaveBeenCalled();
-    });
-
-    it('getCircleCenter should be called while initializing polygon Variables', () => {
-        const getCircleCenterSpy = spyOn<any>(polygonService, 'getCircleCenterSpy');
+    it('onMouseMove with perimeter drawing style should call drawPolygon and ctxPreviewPerimeter', () => {
         polygonService['firstPoint'] = { x: 25, y: 25 };
         polygonService['finalPoint'] = { x: 0, y: 0 };
-        expect(getCircleCenterSpy).toHaveBeenCalled();
+        polygonService['mouseDown'] = true;
+        
+        polygonService['selectType'] = 'stroke';
+
+        polygonService.onMouseMove(mouseEvent);
+
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawPolygonSpy).toHaveBeenCalled();
+        expect(ctxPreviewPerimeterSpy).toHaveBeenCalled();
     });
 
-    it('Radius value of polygone service should be correctly updated', () => {
-        const firstPoint = { x: 25, y: 25 };
-        const finalPoint = { x: 10, y: 10 };
-        const result = Math.abs(finalPoint.x-firstPoint.y)/DOUBLE_MATH;
-        expect(polygonService.radius).toEqual(result);
+    it('onMouseMove with plain drawing style should call drawPolygon and ctxPreviewPerimeter', () => {
+        polygonService['firstPoint'] = { x: 25, y: 25 };
+        polygonService['finalPoint'] = { x: 0, y: 0 };
+        polygonService['mouseDown'] = true;
+        
+        polygonService['selectType'] = 'fill';
+
+        polygonService.onMouseMove(mouseEvent);
+
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(drawPolygonSpy).toHaveBeenCalled();
+        expect(ctxPreviewPerimeterSpy).toHaveBeenCalled();
     });
 
-    it('changeSelectedType should activate outline when stroke value received', () => {
-        polygonService.selectType = TypeStyle.Stroke;
-        expect(polygonService.strokeValue).toEqual(true);
-        expect(polygonService.fillValue).toEqual(false);
-    });
+  
 
+    // it('drawPolygon should initialize Polygon Variables', () => {
+    //     let initializePolygonVariablesSpy = spyOn<any>(polygonService, 'initializePolygonVariables');
+    //     expect(initializePolygonVariablesSpy).toHaveBeenCalled();
+    // });
+
+    // it('drawPolygon should update canvas path line while respecting sides number', () => {
+    //     polygonService.sides = 4;
+    //     expect(baseCtxStub.lineTo).toHaveBeenCalledTimes(4);
+    // });
+    // it('drawPolygon should call changeSelectedType', () => {
+    //     let changeSelectedTypeSpy = spyOn<any>(polygonService, 'changeSelectedType');
+    //     expect(changeSelectedTypeSpy).toHaveBeenCalled();
+    // });
+
+    // it('getCircleCenter should be called while initializing polygon Variables', () => {
+    //     const getCircleCenterSpy = spyOn<any>(polygonService, 'getCircleCenterSpy');
+    //     polygonService['firstPoint'] = { x: 25, y: 25 };
+    //     polygonService['finalPoint'] = { x: 0, y: 0 };
+    //     expect(getCircleCenterSpy).toHaveBeenCalled();
+    // });
+
+    // it('Radius value of polygone service should be correctly updated', () => {
+    //     const firstPoint = { x: 25, y: 25 };
+    //     const finalPoint = { x: 10, y: 10 };
+    //     const result = Math.abs(finalPoint.x-firstPoint.y)/DOUBLE_MATH;
+    //     expect(polygonService.radius).toEqual(result);
+    // });
+
+    // it('changeSelectedType should activate outline when stroke value received', () => {
+    //     polygonService.selectType = TypeStyle.Stroke;
+    //     expect(polygonService.strokeValue).toEqual(true);
+    //     expect(polygonService.fillValue).toEqual(false);
+    // });
+
+    // it('case stroke', () => {
+    //     const ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+        
+    //     polygonService['fillValue']=false;
+    //     polygonService['strokeValue']=true;
+    //     polygonService['mouseDown']=true;
+
+    //     polygonService.onMouseUp(mouseEvent)
+    //     const spy = spyOn<any>(ctx, 'stroke');
+
+    //     expect(spy).toHaveBeenCalled();
+    // });
    
 });
