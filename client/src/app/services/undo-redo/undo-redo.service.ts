@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Drawable } from '@app/classes/drawable';
 import { LoadedImage } from '@app/classes/loaded-image';
-import { Resize } from '@app/classes/resize';
 import { Stack } from '@app/classes/stack';
 import { Tool } from '@app/classes/tool';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -34,11 +33,11 @@ export class UndoRedoService extends Tool {
             return;
         }
 
-        const lastElement = this.undoStack.pop();
-        const array = this.undoStack.getAll();
-        console.log(array);
-        this.redoStack.add(lastElement);
-        lastElement.undraw();
+        const lastObject = this.undoStack.pop();
+        const arrayObject = this.undoStack.getAll();
+        console.log(arrayObject);
+        this.redoStack.add(lastObject);
+        lastObject.undraw();
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.restore();
@@ -46,19 +45,14 @@ export class UndoRedoService extends Tool {
         if (startImg.src) {
             this.loadImage.getValue().draw(this.drawingService.baseCtx);
         }
-        for (const element of array) {
-            if (element instanceof Resize) {
-                element.undraw();
-                element.draw(this.drawingService.baseCtx);
-            } else {
-                element.draw(this.drawingService.baseCtx);
-            }
+        for (const element of arrayObject) {
+            element.draw(this.drawingService.baseCtx);
         }
     }
 
     addToStack(drawable: Drawable): void {
-        this.redoStack.clear();
         this.undoStack.add(drawable);
+        // this.redoStack.clear();
     }
 
     redo(): void {
@@ -66,10 +60,10 @@ export class UndoRedoService extends Tool {
             return;
         }
 
-        const lastElement = this.redoStack.pop();
-        this.undoStack.add(lastElement);
+        const lastObject = this.redoStack.pop();
+        this.undoStack.add(lastObject);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        lastElement.draw(this.drawingService.baseCtx);
+        lastObject.draw(this.drawingService.baseCtx);
     }
 
     canUndo(): boolean {
@@ -79,7 +73,7 @@ export class UndoRedoService extends Tool {
     canRedo(): boolean {
         return !this.redoStack.isEmpty();
     }
-    clearStacks(): void {
+    cleanStacks(): void {
         this.undoStack.clear();
         this.redoStack.clear();
     }

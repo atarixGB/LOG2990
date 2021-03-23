@@ -18,8 +18,6 @@ const NUMBER_SIGN_CHANGE = -1;
 export class LineService extends Tool {
     private pathData: Vec2[];
     private coordinates: Vec2[];
-    // private coordinateFinal: Vec2[];
-
     private hasPressedShiftKey: boolean;
     private closestPoint: Vec2 | undefined;
     private basePoint: Vec2;
@@ -48,7 +46,7 @@ export class LineService extends Tool {
         this.coordinates.push(this.mouseDownCoord);
 
         if (this.hasPressedShiftKey) {
-            // Handle automatic junction when drawing constrained-angle lines
+            
             this.closestPoint = this.calculatePosition(this.mouseDownCoord, this.basePoint);
             if (this.closestPoint) {
                 this.coordinates.push(this.closestPoint);
@@ -65,7 +63,7 @@ export class LineService extends Tool {
         this.mouseDown = false;
 
         const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-        const line = new Line(this.coordinates, this.coordinates[this.coordinates.length - 1], color, 1, 5, this.mouseDown);
+        const line = new Line(this.coordinates, color, 1, 5, this.mouseDown);
         this.undoRedoService.addToStack(line);
         this.undoRedoService.setToolInUse(false);
         this.coordinates = [];
