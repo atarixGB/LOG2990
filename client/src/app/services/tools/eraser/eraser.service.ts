@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Eraser } from '@app/classes/Eraser';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 // Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
 // L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
 // Vous êtes encouragés de modifier et compléter le code.
@@ -16,7 +17,7 @@ export class EraserService extends Tool {
 
     private pathData: Vec2[];
 
-    constructor(drawingService: DrawingService) {
+    constructor(drawingService: DrawingService, private undoRedoService: UndoRedoService) {
         super(drawingService);
         this.clearPath();
 
@@ -40,9 +41,12 @@ export class EraserService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
+            const eraser = new Eraser(this.eraserThickness, this.pathData);
+            this.undoRedoService.addToStack(eraser);
         }
 
         this.mouseDown = false;
+        this.undoRedoService.setToolInUse(false);
         this.clearPath();
     }
 
