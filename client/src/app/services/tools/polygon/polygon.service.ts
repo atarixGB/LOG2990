@@ -65,7 +65,7 @@ export class PolygonService extends ToolShape {
         this.drawingService.previewCtx.closePath();
     }
 
-    protected drawPolygon(ctx: CanvasRenderingContext2D): void {
+    drawPolygon(ctx: CanvasRenderingContext2D): void {
         const radiusFinal = this.initializePolygonVariables();
         ctx.beginPath();
         ctx.lineWidth = this.lineWidth;
