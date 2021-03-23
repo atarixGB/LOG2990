@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild }
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { DrawingURL } from '@app/components/drawing/DrawingURL';
+import { DrawingParams } from '@app/components/drawing/drawing-params';
 import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 
@@ -126,7 +126,7 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     openDrawing(): void {
-        const params: DrawingURL = {
+        const params: DrawingParams = {
             url: this.mainDrawingURL,
         };
         this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));

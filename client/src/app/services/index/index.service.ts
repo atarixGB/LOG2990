@@ -5,7 +5,6 @@ import { DrawingData } from '@common/communication/drawing-data';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-//tslint:disabled
 @Injectable({
     providedIn: 'root',
 })
@@ -24,7 +23,7 @@ export class IndexService {
         const httpOptions = {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json',
-                Accept: 'text/plain, */*',
+                'Accept': 'text/plain, */*',
             }),
             responseType: 'text' as 'json',
         };

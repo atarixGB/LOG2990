@@ -126,9 +126,7 @@ export class DatabaseController {
          *             $ref: '#/definitions/Message'
          */
         this.router.get('/drawings/:title', (req: Request, res: Response, next: NextFunction) => {
-            res.sendFile(req.params.title, { root: 'saved-drawings/' }, (error) => {
-                if (error) throw error;
-            });
+            res.sendFile(req.params.title, { root: 'saved-drawings/' });
         });
 
         /**
