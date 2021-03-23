@@ -21,7 +21,7 @@ export class IndexService {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
         return new Promise<void>((resolve, reject) => {
             const httpOptions = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
-            return this.http.post(url, message, { responseType: 'text', headers: httpOptions }).subscribe(
+            return this.http.post(url, message, { responseType: 'text' as 'json', headers: httpOptions }).subscribe(
                 (data) => resolve(),
                 (error) => reject(),
             );
