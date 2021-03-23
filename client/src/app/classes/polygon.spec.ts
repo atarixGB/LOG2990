@@ -6,7 +6,7 @@ import { TypeStyle } from '@app/constants';
 
 // tslint:disable: no-any
 // tslint:disable: no-magic-numbers
-fdescribe('Polygon', () => {
+describe('Polygon', () => {
     let canvasTestHelper:CanvasTestHelper;
     beforeEach(()=>{
         canvasTestHelper=TestBed.inject(CanvasTestHelper);
@@ -41,7 +41,7 @@ fdescribe('Polygon', () => {
 
     it('case StrokeFill', () => {
         const ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        const polygon = new Polygon({} as Vec2, 2, 3, 'StrokeFill', 2, 'black', 'red');
+        const polygon = new Polygon({} as Vec2, 2, 3, TypeStyle.strokeFill, 2, 'black', 'red');
 
         const fillSpy = spyOn<any>(ctx, 'fill');
         const strokeSpy = spyOn<any>(ctx, 'stroke');

@@ -116,13 +116,13 @@
 //     it('clearStacks should clear both stacks', () => {
 //         const undoClearSpy = spyOn<any>(service['undoStack'], 'clear').and.callThrough();
 //         const redoClearSpy = spyOn<any>(service['redoStack'], 'clear').and.callThrough();
-//         service.clearStacks();
+//         service.cleanStacks();
 //         expect(undoClearSpy).toHaveBeenCalled();
 //         expect(redoClearSpy).toHaveBeenCalled();
 //     });
 
 //     it('canUndo should return false if the undo stack is empty', () => {
-//         service.clearStacks();
+//         service.cleanStacks();
 //         expect(service.canUndo()).toBe(false);
 //         expect(service.canRedo()).toBe(false);
 //     });
