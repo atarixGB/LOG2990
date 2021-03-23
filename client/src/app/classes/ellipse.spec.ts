@@ -8,7 +8,7 @@ export enum TypeStyle {
     StrokeFill = 'strokeFill',
 }
 // tslint:disable: no-any
-fdescribe('Ellipse ', () => {
+describe('Ellipse ', () => {
     let canvasTestHelper:CanvasTestHelper;
     beforeEach(()=>{
         canvasTestHelper=TestBed.inject(CanvasTestHelper);
