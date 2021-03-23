@@ -42,7 +42,7 @@ export class DatabaseController {
         });
 
         this.router.get('/drawings/filters/:tags?', (req: Request, res: Response, next: NextFunction) => {
-            let params = req.params.tags;
+            const params = req.params.tags;
             this.databaseService.getDrawingByTags(params).then((results) => {
                 res.send(results);
             });
@@ -126,9 +126,7 @@ export class DatabaseController {
          *             $ref: '#/definitions/Message'
          */
         this.router.get('/drawings/:title', (req: Request, res: Response, next: NextFunction) => {
-            res.sendFile(req.params.title, { root: 'saved-drawings/' }, (error) => {
-                if (error) throw error;
-            });
+            res.sendFile(req.params.title, { root: 'saved-drawings/' });
         });
 
         /**

@@ -2,6 +2,7 @@
     width: 1000px;
     height: 600px;
     overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #header {
@@ -9,8 +10,8 @@
 }
 
 app-carousel-drawing {
-    padding: 12px;
     display: inline-flex;
+    margin-left: 4px;
 }
 
 ::ng-deep .mat-dialog-container {
@@ -18,11 +19,12 @@ app-carousel-drawing {
 }
 
 #images-container {
-    max-width: 1000px;
+    width: 1000px;
     height: 400px;
 }
 
 #no-drawing-container {
+    height: 500px;
     text-align: center;
 }
 
@@ -40,14 +42,45 @@ li {
     margin: 5px;
 }
 #filter-container {
-    max-height: 100px;
-}
-.active {
-    border: red solid 1px;
+    height: 100px;
+    margin-bottom: 10px;
+    margin-top: 2px;
 }
 
 #filter {
     padding-top: 10px;
     padding-bottom: 0px;
     margin-bottom: 0px;
+}
+
+#next-drawing {
+    background-color: lightgray;
+    opacity: 0.8;
+}
+
+#previous-drawing {
+    background-color: lightgray;
+    opacity: 0.8;
+}
+
+#main-drawing {
+    border: red solid 2px;
+}
+
+#scrolling-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 0px;
+}
+#action-container {
+    display: flex;
+    justify-content: center;
+}
+
+#quit-button {
+    left: 90%;
+}
+
+h1 {
+    font-family: fantasy;
 }

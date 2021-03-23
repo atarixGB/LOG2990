@@ -58,7 +58,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
-            let path = params.url;
+            const path = params.url;
             this.getNewImage(path).then((img) => {
                 this.baseCtx.drawImage(img, 0, 0);
             });
@@ -82,6 +82,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
         this.cdr.detectChanges();
+        this.baseCtx.beginPath();
+        this.baseCtx.fillStyle = '#FFFFFF';
+        this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+        this.baseCtx.closePath();
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
