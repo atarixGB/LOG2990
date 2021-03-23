@@ -27,9 +27,6 @@ export class RectangleService extends ShapeService {
     onMouseUp(event: MouseEvent): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         const leftpoint = this.calculLeftpoint(this.pathData[0], this.pathData[this.pathData.length - 1]);
-        leftpoint.x += 1 / 2;
-        leftpoint.y += 1 / 2;
-
         if (!this.isShiftShape) {
             this.drawRectangle(this.drawingService.baseCtx, false);
             this.width = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
