@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { DrawingData } from '@common/communication/drawing-data';
 import { IndexService } from './index.service';
 
-// tslint:disabled
+//tslint:disable
 describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
@@ -52,7 +52,7 @@ describe('IndexService', () => {
         };
         const httpOptions = {
             headers: new HttpHeaders({
-                'Accept': 'text/plain, */*',
+                Accept: 'text/plain, */*',
                 'Content-Type': 'application/json',
             }),
             responseType: 'text' as 'json',
