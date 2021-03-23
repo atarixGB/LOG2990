@@ -1,8 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
-import { throwError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -29,29 +28,28 @@ export class IndexService {
     }
 
     async deleteDrawingById(id: string): Promise<void> {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.png`;
             this.http.delete(url, { responseType: 'text' }).subscribe(
                 () => {
                     resolve();
                 },
                 (error) => {
-                    return throwError(error);
+                    return this.handleError(error);
                 },
             );
         });
     }
 
     async getAllDrawings(): Promise<Drawing[]> {
-        return new Promise<Drawing[]>((resolve) => {
+        return new Promise<Drawing[]>((resolve, reject) => {
             const url = this.BASE_URL + this.DATABASE_URL;
             return this.http.get<DrawingData[]>(url).subscribe(
                 (drawing: DrawingData[]) => {
-                    console.log(drawing);
                     resolve(this.drawingDataToDrawing(drawing));
                 },
                 (error) => {
-                    return throwError(error);
+                    return this.handleError(error);
                 },
             );
         });
@@ -66,7 +64,6 @@ export class IndexService {
                 parseDrawing[i] = new Drawing(drawings[i].title, labels, imgURL);
             }
         }
-        console.log(parseDrawing);
         return parseDrawing;
     }
 
@@ -90,13 +87,13 @@ export class IndexService {
         }
     }
 
-    // private handleError(error: HttpErrorResponse): Observable<DrawingData> {
-    //     let errorMessage = 'Erreur inconnue';
-    //     if (error.error instanceof ErrorEvent) {
-    //         errorMessage = `Erreur: ${error.error.message}`;
-    //     } else {
-    //         errorMessage = `Erreur: ${error.status}\n${error.message}`;
-    //     }
-    //     return throwError(errorMessage);
-    // }
+    private handleError(error: HttpErrorResponse): void {
+        let errorMessage = 'Erreur inconnue';
+        if (error.error instanceof ErrorEvent) {
+            errorMessage = `Erreur: ${error.error.message}`;
+        } else {
+            errorMessage = `Erreur: ${error.status}\n${error.message}`;
+        }
+        alert(errorMessage);
+    }
 }

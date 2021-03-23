@@ -1,11 +1,12 @@
-import { HttpHeaders } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
+import { of } from 'rxjs';
 import { IndexService } from './index.service';
 
 //tslint:disable
-describe('IndexService', () => {
+fdescribe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
     let mockDrawing: DrawingData;
@@ -33,44 +34,53 @@ describe('IndexService', () => {
         expect(indexService).toBeTruthy();
     });
 
-    it('should call http request GET on getAllDrawing', async () => {
-        const httpGetSpy = spyOn(indexService.http, 'get').and.stub();
-        const expectedUrl = 'http://localhost:3000/api/database';
-        indexService.getAllDrawings();
-        expect(httpGetSpy).toHaveBeenCalledWith(expectedUrl);
-    });
-
-    xit('should call http request POST on postDrawing', () => {
-        const httpPostSpy = spyOn(indexService.http, 'post').and.stub();
-        const expectedUrl = 'http://localhost:3000/api/database/send';
-        const expectedMessage: DrawingData = {
-            title: 'title',
-            labels: ['tag'],
-            width: 100,
-            height: 100,
-            body: 'data',
-        };
-        const httpOptions = {
-            headers: new HttpHeaders({
-                Accept: 'text/plain, */*',
-                'Content-Type': 'application/json',
-            }),
-            responseType: 'text' as 'json',
-        };
-        indexService.postDrawing(mockDrawing).subscribe((res) => {
-            expect(httpPostSpy).toHaveBeenCalledWith(expectedUrl, expectedMessage, httpOptions);
-            expect(res).toEqual(expectedMessage);
+    it('should call http request POST on postDrawing', async () => {
+        const spy = spyOn(indexService['http'], 'post').and.returnValue(of(DrawingData));
+        indexService.postDrawing(mockDrawing).then(() => {
+            expect(spy).toHaveBeenCalled();
         });
     });
 
-    xit('should call http request DELETE on deleteDrawingById', async () => {
-        const httpDeleteSpy = spyOn(indexService.http, 'delete').and.stub();
-        const expectedUrl = 'http://localhost:3000/api/database/drawings/12345.png';
-        indexService
-            .deleteDrawingById('12345')
-            .then(() => {
-                expect(httpDeleteSpy).toHaveBeenCalledWith(expectedUrl);
-            })
-            .catch(fail);
+    it('should call http request DELETE on deleteDrawingById', async () => {
+        const httpDeleteSpy = spyOn(indexService['http'], 'delete').and.returnValue(of(DrawingData));
+        indexService.deleteDrawingById('12345').then(() => {
+            expect(httpDeleteSpy).toHaveBeenCalled();
+        });
+    });
+    it('should call http request GET on getAllDrawing', async () => {
+        const httpGetSpy = spyOn(indexService['http'], 'get').and.returnValue(of(Drawing));
+        const expectedUrl = 'http://localhost:3000/api/database';
+        const toDataSpy = spyOn<any>(indexService, 'drawingDataToDrawing').and.stub();
+        indexService.getAllDrawings().then(() => {
+            expect(httpGetSpy).toHaveBeenCalledWith(expectedUrl);
+            expect(toDataSpy).toHaveBeenCalled();
+        });
+    });
+
+    it('should parse DrawingData to Drawing', async () => {
+        let drawingDatas: DrawingData[] = [mockDrawing];
+        let expectedDrawing = new Drawing('title', ['tag'], 'http://localhost:3000/api/database/drawings/undefined.png');
+        let drawings: Drawing[] = [];
+        drawings.push(expectedDrawing);
+        let parse = indexService.drawingDataToDrawing(drawingDatas);
+        expect(parse).toEqual(drawings);
+    });
+
+    it('should research by tags on array with more than a tag', async () => {
+        let tags = ['a', 'b'];
+        const tagSpy = spyOn(indexService['http'], 'get').and.returnValue(of(Drawing));
+        indexService.searchByTags(tags).then(() => {
+            expect(tagSpy).toHaveBeenCalled();
+        });
+    });
+
+    it('should research by tags on array with no tag', async () => {
+        let tags: string[] = [];
+        const tagSpy = spyOn(indexService['http'], 'get').and.returnValue(of(Drawing));
+        const getAllDrawingSpy = spyOn(indexService, 'getAllDrawings');
+        indexService.searchByTags(tags).then(() => {
+            expect(tagSpy).toHaveBeenCalled();
+            expect(getAllDrawingSpy).toHaveBeenCalled();
+        });
     });
 });
