@@ -20,16 +20,11 @@ export class Line extends Drawable {
 
     draw(ctx: CanvasRenderingContext2D): void {
         if (this.pathData.length > 1) {
-            console.log(this.pathData);
             ctx.beginPath();
             ctx.strokeStyle = this.color;
             ctx.lineWidth = this.width;
             for (const point of this.pathData) {
-                if (
-                    this.pointJoin &&
-                    point.x !== this.pathData[this.pathData.length - 1].x &&
-                    point.y !== this.pathData[this.pathData.length - 1].y
-                ) {
+                if (this.pointJoin ) {
                     ctx.lineTo(point.x, point.y);
                     ctx.fillStyle = this.color;
                     ctx.moveTo(point.x + this.radius, point.y);
