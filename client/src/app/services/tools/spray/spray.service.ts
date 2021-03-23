@@ -32,6 +32,7 @@ export class SprayService extends Tool implements OnDestroy {
     minToolWidth: number = MIN_SPRAY_WIDTH;
     maxToolWidth: number = 50;
     sprayData: SprayProperties;
+    spray :Spray;
     timeoutId: ReturnType<typeof setTimeout>;
     mouseCoord: Vec2;
     width: number = this.minToolWidth;
@@ -55,27 +56,29 @@ export class SprayService extends Tool implements OnDestroy {
         } else {
             this.mouseDown = true;
             this.mouseCoord = this.getPositionFromMouse(event);
-            this.undoRedoService.setToolInUse(true);
             clearTimeout(this.timeoutId);
             this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.baseCtx);
+            this.undoRedoService.setToolInUse(true);
         }
     }
 
     onMouseUp(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            // this.drawingService.applyPreview()
+            // this.drawingService.applyPreview(
+            this.undoRedoService.setToolInUse(false);
+            this.canvasData = this.drawingService.getCanvasData();
+
             this.updateSprayData();
+            this.undoRedoService.addToStack(this.spray);
         }
-        const imagedata = this.drawingService.previewCanvas.toDataURL();
-        const spray = new Spray(imagedata);
-        this.undoRedoService.addToStack(spray);
         this.mouseDown = false;
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseCoord = this.getPositionFromMouse(event);
+
         }
     }
 
@@ -83,6 +86,7 @@ export class SprayService extends Tool implements OnDestroy {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
             // this.drawingService.applyPreview();
+            this.undoRedoService.setToolInUse(false);
         }
     }
 
@@ -90,7 +94,8 @@ export class SprayService extends Tool implements OnDestroy {
         if (this.mouseDown) {
             this.mouseCoord = this.getPositionFromMouse(event);
             this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.previewCtx);
-        }
+            this.undoRedoService.setToolInUse(true);
+          }
     }
 
     drawSpray(sameSpray: SprayService, ctx: CanvasRenderingContext2D): void {
@@ -136,9 +141,9 @@ export class SprayService extends Tool implements OnDestroy {
     }
 
     updateSprayData(): void {
-        this.sprayData = {
-            type: 'fill',
-            imageData: this.canvasData,
-        };
+        this.spray = new Spray(
+
+            this.canvasData
+        );
     }
 }
