@@ -5,12 +5,10 @@ import { Vec2 } from './vec2';
 
 // tslint:disable: no-any
 // tslint:disable: no-magic-numbers
-fdescribe('Line', () => {
-
-    let canvasTestHelper:CanvasTestHelper;
-    beforeEach(()=>{
-        canvasTestHelper=TestBed.inject(CanvasTestHelper);
-
+describe('Line', () => {
+    let canvasTestHelper: CanvasTestHelper;
+    beforeEach(() => {
+        canvasTestHelper = TestBed.inject(CanvasTestHelper);
     });
     it('should create an instance', () => {
         const path: Vec2[] = [{ x: 2, y: 3 }];
@@ -19,7 +17,10 @@ fdescribe('Line', () => {
 
     it('should context methods if contain more than one element', () => {
         const ctxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        const path: Vec2[] = [{ x: 2, y: 3 },{x:2,y:4}];
+        const path: Vec2[] = [
+            { x: 2, y: 3 },
+            { x: 2, y: 4 },
+        ];
         const line = new Line(path, 'red', 5, 2, true);
         const beginPathSpy = spyOn<any>(ctxStub, 'beginPath').and.callThrough();
         const fill = spyOn<any>(ctxStub, 'fill').and.callThrough();
@@ -32,7 +33,10 @@ fdescribe('Line', () => {
 
     it('should call lineTo if joinPoint is false', () => {
         const ctxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        const path: Vec2[] = [{ x: 2, y: 3 },{x:2,y:4}];
+        const path: Vec2[] = [
+            { x: 2, y: 3 },
+            { x: 2, y: 4 },
+        ];
         const line = new Line(path, 'red', 5, 2, false);
         const lineTo = spyOn<any>(ctxStub, 'lineTo').and.callThrough();
         line.draw(ctxStub);
