@@ -33,6 +33,14 @@ export class DatabaseService {
     constructor() {
         this.clientMessages = [];
         this.drawingURLS = [];
+
+        if (!fs.existsSync(SAVED_DRAWINGS_PATH)) {
+            fs.mkdirSync(SAVED_DRAWINGS_PATH);
+            console.log(`${SAVED_DRAWINGS_PATH} has been succesfully created!`);
+        } else {
+            console.log(`${SAVED_DRAWINGS_PATH} already exists on server.`);
+        }
+
         this.readDrawingDirectory();
     }
 
