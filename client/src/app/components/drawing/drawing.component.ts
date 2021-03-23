@@ -58,7 +58,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
-            let path = params.url;
+            const path = params.url;
             this.getNewImage(path).then((img) => {
                 this.baseCtx.drawImage(img, 0, 0);
             });

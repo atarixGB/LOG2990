@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { DrawingData } from '@common/communication/drawing-data';
 import { IndexService } from './index.service';
 
-// tslint: disabled
+// tslint:disabled
 describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
@@ -34,14 +34,14 @@ describe('IndexService', () => {
     });
 
     it('should call http request GET on getAllDrawing', async () => {
-        const httpGetSpy = spyOn(indexService['http'], 'get').and.stub();
+        const httpGetSpy = spyOn(indexService.http, 'get').and.stub();
         const expectedUrl = 'http://localhost:3000/api/database';
         indexService.getAllDrawings();
         expect(httpGetSpy).toHaveBeenCalledWith(expectedUrl);
     });
 
     xit('should call http request POST on postDrawing', () => {
-        const httpPostSpy = spyOn(indexService['http'], 'post').and.stub();
+        const httpPostSpy = spyOn(indexService.http, 'post').and.stub();
         const expectedUrl = 'http://localhost:3000/api/database/send';
         const expectedMessage: DrawingData = {
             title: 'title',
@@ -64,7 +64,7 @@ describe('IndexService', () => {
     });
 
     xit('should call http request DELETE on deleteDrawingById', async () => {
-        const httpDeleteSpy = spyOn(indexService['http'], 'delete').and.stub();
+        const httpDeleteSpy = spyOn(indexService.http, 'delete').and.stub();
         const expectedUrl = 'http://localhost:3000/api/database/drawings/12345.png';
         indexService
             .deleteDrawingById('12345')

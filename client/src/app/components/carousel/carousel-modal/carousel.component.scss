@@ -2,6 +2,7 @@
     width: 1000px;
     height: 600px;
     overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #header {
@@ -10,7 +11,6 @@
 
 app-carousel-drawing {
     display: inline-flex;
-    border: black solid;
     margin-left: 4px;
 }
 
@@ -20,7 +20,7 @@ app-carousel-drawing {
 
 #images-container {
     width: 1000px;
-    height: 500px;
+    height: 400px;
 }
 
 #no-drawing-container {
@@ -42,7 +42,9 @@ li {
     margin: 5px;
 }
 #filter-container {
-    max-height: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    margin-top: 2px;
 }
 
 #filter {
@@ -59,14 +61,26 @@ li {
 #previous-drawing {
     background-color: lightgray;
     opacity: 0.8;
-    margin-bottom: 50px;
+}
+
+#main-drawing {
+    border: red solid 2px;
 }
 
 #scrolling-container {
     display: flex;
     justify-content: center;
+    margin-top: 0px;
 }
 #action-container {
     display: flex;
     justify-content: center;
+}
+
+#quit-button {
+    left: 90%;
+}
+
+h1 {
+    font-family: fantasy;
 }

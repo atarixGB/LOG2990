@@ -13,6 +13,8 @@ export class IndexService {
     private readonly DATABASE_URL: string = '/api/database';
     private readonly DRAWINGS_URL: string = '/drawings';
     private readonly SEND_URL: string = '/send';
+    private readonly FILTER_URL: string = '/filters/';
+    private readonly PNG: string = '.png';
 
     constructor(private http: HttpClient) {}
 
@@ -48,10 +50,12 @@ export class IndexService {
             const url = this.BASE_URL + this.DATABASE_URL;
             return this.http.get<DrawingData[]>(url).subscribe(
                 (drawing: DrawingData[]) => {
-                    let drawingCard = [];
+                    const drawingCard = [];
                     for (let i = 0; i < drawing.length; i++) {
-                        const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawing[i]._id + '.png';
-                        drawingCard[i] = new Drawing(drawing[i].title, drawing[i].labels!, imgURL);
+                        const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawing[i]._id + this.PNG;
+                        if (imgURL !== undefined) {
+                            drawingCard[i] = new Drawing(drawing[i].title, drawing[i].labels!, imgURL);
+                        }
                     }
                     resolve(drawingCard);
                 },
@@ -62,15 +66,16 @@ export class IndexService {
         });
     }
 
-    async searchByTags(tags: string[]) {
+    async searchByTags(tags: string[]): Promise<Drawing[]> {
         if (tags.length > 0) {
             return new Promise<Drawing[]>((resolve) => {
-                let url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/filters/';
-                for (let tag of tags) {
+                let url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + this.FILTER_URL;
+                for (const tag of tags) {
                     url += tag + '-';
                 }
                 this.http.get<Drawing[]>(url).subscribe((drawings: Drawing[]) => {
                     resolve(drawings);
+                    console.log(drawings);
                 });
             });
         } else {

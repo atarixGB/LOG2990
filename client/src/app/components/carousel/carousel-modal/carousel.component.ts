@@ -18,7 +18,7 @@ export class CarouselComponent implements AfterViewInit {
     imageCards: Drawing[];
     placement: Drawing[];
     isDisabled: boolean;
-    filters: string[];
+    tags: string[];
     tagInput: string;
 
     @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
@@ -33,19 +33,18 @@ export class CarouselComponent implements AfterViewInit {
         this.index = 0;
         this.imageCards = [];
         this.placement = [];
-        this.filters = [];
+        this.tags = [];
         this.isLoading = true;
         this.mainDrawingURL = '';
         this.isDisabled = true;
         this.tagInput = '';
     }
 
-    async ngAfterViewInit() {
-        console.log(this.isCanvaEmpty);
+    async ngAfterViewInit(): Promise<void> {
         this.getDrawings();
     }
 
-    getDrawings() {
+    getDrawings(): void {
         this.isLoading = true;
         this.indexService.getAllDrawings().then((drawings: Drawing[]) => {
             this.imageCards = drawings;
@@ -55,10 +54,12 @@ export class CarouselComponent implements AfterViewInit {
         });
     }
 
-    async searchbyTags() {
-        await this.indexService.searchByTags(this.filters).then((result) => {
+    async searchbyTags(): Promise<void> {
+        console.log(this.tags);
+        await this.indexService.searchByTags(this.tags).then((result) => {
             this.imageCards = result;
-            this.nextImages();
+            console.log(this.imageCards);
+            this.updateImagePlacement();
         });
     }
 
@@ -72,15 +73,15 @@ export class CarouselComponent implements AfterViewInit {
         this.placement[2] = this.imageCards[this.mod(this.index + 1, this.imageCards.length)];
     }
 
-    updateMainImageURL() {
+    updateMainImageURL(): void {
         this.mainDrawingURL = this.placement[1].imageURL!;
     }
-    nextImages() {
+    nextImages(): void {
         this.index++;
         this.updateImagePlacement();
         this.updateMainImageURL();
     }
-    previousImages() {
+    previousImages(): void {
         this.index--;
         this.updateImagePlacement();
         this.updateMainImageURL();
@@ -88,16 +89,16 @@ export class CarouselComponent implements AfterViewInit {
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        if (event.code == 'ArrowLeft') {
+        if (event.code === 'ArrowLeft') {
             this.previousImages();
         }
-        if (event.code == 'ArrowRight') {
+        if (event.code === 'ArrowRight') {
             this.nextImages();
         }
     }
 
-    async deleteDrawing() {
-        let path = (url: string): string => {
+    async deleteDrawing(): Promise<void> {
+        const path = (url: string): string => {
             let parseUrl = new URL(url).pathname;
             parseUrl = parseUrl.split('/')[4].split('.')[0];
             return parseUrl;
@@ -107,9 +108,12 @@ export class CarouselComponent implements AfterViewInit {
         });
     }
 
-    loadImage() {
+    loadImage(): void {
+        if (this.isCanvaEmpty === null) {
+            this.isCanvaEmpty = true;
+        }
         if (!this.isCanvaEmpty) {
-            let decision = confirm('Voulez-vous abandonner votre dessin ?');
+            const decision = confirm('Voulez-vous abandonner votre dessin ?');
             if (decision) {
                 this.openDrawing();
             }
@@ -128,13 +132,13 @@ export class CarouselComponent implements AfterViewInit {
 
     addTag(): void {
         const trimmedTag: string = this.tagInput.trim();
-        this.filters.push(trimmedTag);
+        this.tags.push(trimmedTag);
         this.tagInput = '';
         this.searchbyTags();
     }
 
     removeTag(tag: string): void {
-        this.filters = this.filters.filter((current) => current !== tag);
+        this.tags = this.tags.filter((current) => current !== tag);
         this.searchbyTags();
     }
 }

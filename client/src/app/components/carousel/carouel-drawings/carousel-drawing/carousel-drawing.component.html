@@ -3,8 +3,8 @@
     <h3>Nom : {{ this.drawing.name }}</h3>
     <div id="tag-container">
         <h3>Tags :</h3>
-        <button mat-flat-button *ngFor="let tag of this.drawing.tags">
+        <h3 *ngFor="let tag of this.drawing.tags">
             {{ tag }}
-        </button>
+        </h3>
     </div>
 </div>

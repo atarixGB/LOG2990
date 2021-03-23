@@ -162,36 +162,35 @@ export class DatabaseService {
         });
     }
 
-    getDrawingByTags(tags: string): Promise<Drawing[]> {
+    private splitTags(tag: string): string[] {
+        return tag.split('-');
+    }
+    async getDrawingByTags(tags: string): Promise<Drawing[]> {
         return new Promise<Drawing[]>((resolve) => {
-            let splitTags = tags.split('-');
-            if (tags.length !== 0) {
-                const regex = [];
-                for (let i = 0; i < splitTags.length; ++i) {
-                    regex[i] = new RegExp('^' + splitTags[i]);
-                }
-                this.drawingsCollection
-                    .find({
-                        labels: { $all: regex },
-                    })
-                    .toArray()
-                    .then((result) => {
-                        let filtered = [];
-                        for (let drawing of result) {
-                            const draw: Drawing = {
-                                name: drawing.title,
-                                tags: drawing.labels!,
-                                imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${drawing._id?.toHexString()!}.${IMAGE_FORMAT}`,
-                            };
-                            filtered.push(draw);
-                        }
-                        resolve(filtered);
-                    });
-            } else {
-                let empty: Drawing[];
-                empty = [];
-                resolve(empty);
-            }
+            const split = this.splitTags(tags);
+            this.drawingsCollection
+                .find({ labels: { $in: split } })
+                .toArray()
+                .then((result) => {
+                    resolve(this.toDrawType(result));
+                });
         });
+    }
+
+    toDrawType(data: DrawingMetadata[]): Drawing[] {
+        const drawings = [];
+        for (const drawing of data) {
+            const previewUrl = drawing._id?.toHexString();
+            const tag = drawing.labels;
+            if (previewUrl !== undefined && tag !== undefined) {
+                const draw: Drawing = {
+                    name: drawing.title,
+                    tags: tag,
+                    imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${previewUrl}.${IMAGE_FORMAT}`,
+                };
+                drawings.push(draw);
+            }
+        }
+        return drawings;
     }
 }
