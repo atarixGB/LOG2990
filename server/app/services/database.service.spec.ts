@@ -32,6 +32,9 @@ describe('Database service', () => {
             width: 0,
             body: 'data:image/png;base64,imagedatahere12345',
         };
+
+        const mongoUri = await mongoServer.getUri();
+        await databaseService.start(mongoUri);
     });
 
     afterEach(async () => {
@@ -46,22 +49,18 @@ describe('Database service', () => {
     });
 
     it('should connect to the database when start is called', async () => {
-        const mongoUri = await mongoServer.getUri();
-        await databaseService.start(mongoUri);
         expect(databaseService['client']).to.not.be.undefined;
         expect(databaseService['db'].databaseName).to.equal('PolyDessin');
     });
 
     it('should no longer be connected if close is called', async () => {
-        const mongoUri = await mongoServer.getUri();
-        await databaseService.start(mongoUri);
         await databaseService.closeConnection();
         expect(databaseService['client'].isConnected()).to.be.false;
     });
 
-    it('should add drawing', (done: Mocha.Done) => {
-        databaseService.addDrawing(validDrawing).then((result) => {
-            return expect(result).to.equal({
+    it('should add drawing to database', async () => {
+        await databaseService.addDrawing(validDrawing).then((result) => {
+            expect(result).to.equal({
                 _id: '123',
                 title: 'title',
                 labels: ['tag1', 'tag2'],
@@ -70,15 +69,13 @@ describe('Database service', () => {
                 body: 'data:image/png;base64,imagedatahere12345',
             });
         });
-        done();
     });
 
-    it('should delete drawing', (done: Mocha.Done) => {
-        databaseService.addDrawing(validDrawing).then(() => {
+    it('should delete drawing from database', async () => {
+        await databaseService.addDrawing(validDrawing).then(() => {
             databaseService.deleteDrawingByIdName('123456789101112131415161').then((res) => {
                 return expect(res).to.equal(HTTP_STATUS_NO_CONTENT);
             });
         });
-        done();
     });
 });
