@@ -39,6 +39,8 @@ export enum ToolList {
     Spray = 5,
     Polygon = 6,
     Pipette = 7,
+    Undo = 8,
+    Redo = 9,
 }
 
 export const mouseEventLClick = {

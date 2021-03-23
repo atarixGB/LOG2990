@@ -1,15 +1,23 @@
 import { Injectable } from '@angular/core';
+import { Ellipse } from '@app/classes/ellipse';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { ShapeService } from '@app/services/tools/shape/shape.service';
-
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 @Injectable({
     providedIn: 'root',
 })
 export class EllipseService extends ShapeService {
     private radius: number;
-    constructor(protected drawingService: DrawingService, colorManager: ColorManagerService, private rectangle: RectangleService) {
+    width: number;
+    height: number;
+    constructor(
+        protected drawingService: DrawingService,
+        colorManager: ColorManagerService,
+        private rectangle: RectangleService,
+        private undoRedoService: UndoRedoService,
+    ) {
         super(drawingService, colorManager);
     }
 
@@ -29,14 +37,33 @@ export class EllipseService extends ShapeService {
     onMouseUp(event: MouseEvent): void {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        if (!this.isShiftShape) this.drawEllipse(this.drawingService.baseCtx);
-        else {
+        if (!this.isShiftShape) {
+            this.drawEllipse(this.drawingService.baseCtx);
+            this.width = this.size.x / 2;
+            this.height = this.size.y / 2;
+        } else {
             this.drawCircle(this.drawingService.baseCtx);
+            this.width = this.radius;
+            this.height = this.radius;
             this.isShiftShape = false;
         }
+        const ellipse = new Ellipse(this.origin, this.width, this.height, this.selectType, this.lineWidth, this.colorPrime, this.colorSecond);
+
+        this.undoRedoService.addToStack(ellipse);
+        this.undoRedoService.setToolInUse(false);
+        this.mouseDown = false;
+
         this.clearPath();
     }
-
+    onMouseMove(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.undoRedoService.setToolInUse(true);
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawShape(this.drawingService.previewCtx);
+        }
+    }
     private drawEllipse(ctx: CanvasRenderingContext2D): void {
         ctx.lineWidth = this.lineWidth;
         ctx.beginPath();

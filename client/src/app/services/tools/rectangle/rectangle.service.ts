@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
+import { Rectangle } from '@app/classes/rectangle';
 import { Vec2 } from '@app/classes/vec2';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ShapeService } from '@app/services/tools/shape/shape.service';
-
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 @Injectable({
     providedIn: 'root',
 })
 export class RectangleService extends ShapeService {
     private shortestSide: number;
-    constructor(protected drawingService: DrawingService, colorManager: ColorManagerService) {
+    private width: number;
+    private height: number;
+    constructor(protected drawingService: DrawingService, colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService, colorManager);
     }
 
@@ -22,17 +25,37 @@ export class RectangleService extends ShapeService {
     }
 
     onMouseUp(event: MouseEvent): void {
-        this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        const leftpoint = this.calculLeftpoint(this.pathData[0], this.pathData[this.pathData.length - 1]);
+        leftpoint.x += 1 / 2;
+        leftpoint.y += 1 / 2;
 
         if (!this.isShiftShape) {
             this.drawRectangle(this.drawingService.baseCtx, false);
+            this.width = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
+            this.height = this.pathData[this.pathData.length - 1].y - this.pathData[0].y;
         } else {
             this.drawSquare(this.drawingService.baseCtx, false);
             this.isShiftShape = false;
+            this.width = this.shortestSide;
+            this.height = this.shortestSide;
         }
+        const rectangle = new Rectangle(leftpoint, this.width, this.height, this.selectType, this.lineWidth, this.colorPrime, this.colorSecond);
+
+        this.undoRedoService.addToStack(rectangle);
+        this.undoRedoService.setToolInUse(false);
+        this.mouseDown = false;
 
         this.clearPath();
+    }
+    onMouseMove(event: MouseEvent): void {
+        if (this.mouseDown) {
+            this.undoRedoService.setToolInUse(true);
+            const mousePosition = this.getPositionFromMouse(event);
+            this.pathData.push(mousePosition);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawShape(this.drawingService.previewCtx);
+        }
     }
 
     lowerLeft(path: Vec2[]): void {

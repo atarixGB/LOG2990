@@ -1,10 +1,11 @@
+import { Drawable } from '@app/classes/drawable';
 import { Vec2 } from './vec2';
 enum TypeStyle {
     stroke = 'stroke',
     fill = 'fill',
     strokeFill = 'strokeFill',
 }
-export class Polygon {
+export class Polygon extends Drawable {
     private centerCircle: Vec2;
     private radius: number;
     private polySides: number;
@@ -13,17 +14,18 @@ export class Polygon {
     private primaryColor: string;
     private secondaryColor: string;
 
-    constructor(center: Vec2, radius: number, polySides: number, type: string, primaryColor: string, secondaryColor: string) {
+    constructor(center: Vec2, radius: number, polySides: number, type: string, lineWidth: number, primaryColor: string, secondaryColor: string) {
+        super();
         this.centerCircle = center;
         this.radius = radius;
         this.polySides = polySides;
         this.type = type;
-        this.lineWidth = 1;
+        this.lineWidth = lineWidth;
         this.primaryColor = primaryColor;
         this.secondaryColor = secondaryColor;
     }
 
-    drawPolygon(ctx: CanvasRenderingContext2D): void {
+    draw(ctx: CanvasRenderingContext2D): void {
         const finalRadius = Math.abs(this.radius - this.lineWidth / 2 - this.lineWidth / this.polySides);
 
         ctx.beginPath();

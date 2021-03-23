@@ -9,8 +9,8 @@ export abstract class ToolShape extends Tool {
     protected firstPoint: Vec2;
     protected finalPoint: Vec2;
     selectType: string;
-    protected primaryColor: string;
-    protected secondaryColor: string;
+    primaryColor: string;
+    secondaryColor: string;
 
     constructor(protected drawingService: DrawingService) {
         super(drawingService);

@@ -14,7 +14,7 @@ export class UndoRedoService extends Tool {
     private redoStack: Stack<Drawable>;
     private toolsInUse: BehaviorSubject<boolean>;
 
-    loadedImage: BehaviorSubject<Drawable>;
+    loadImage: BehaviorSubject<Drawable>;
     undoStack: Stack<Drawable>;
 
     constructor(drawingService: DrawingService) {
@@ -22,7 +22,7 @@ export class UndoRedoService extends Tool {
         this.undoStack = new Stack<Drawable>();
         this.redoStack = new Stack<Drawable>();
         this.toolsInUse = new BehaviorSubject<boolean>(false);
-        this.loadedImage = new BehaviorSubject<Drawable>(new LoadedImage());
+        this.loadImage = new BehaviorSubject<Drawable>(new LoadedImage());
     }
 
     setToolInUse(inUse: boolean): void {
@@ -42,9 +42,9 @@ export class UndoRedoService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.baseCtx);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.drawingService.previewCtx.restore();
-        const startImg = this.loadedImage.getValue() as LoadedImage;
+        const startImg = this.loadImage.getValue() as LoadedImage;
         if (startImg.src) {
-            this.loadedImage.getValue().draw(this.drawingService.baseCtx);
+            this.loadImage.getValue().draw(this.drawingService.baseCtx);
         }
         for (const element of array) {
             if (element instanceof Resize) {

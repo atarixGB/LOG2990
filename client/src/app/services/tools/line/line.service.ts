@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Line } from '@app/classes/line';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
@@ -16,18 +18,20 @@ const NUMBER_SIGN_CHANGE = -1;
 export class LineService extends Tool {
     private pathData: Vec2[];
     private coordinates: Vec2[];
+    // private coordinateFinal: Vec2[];
 
     private hasPressedShiftKey: boolean;
     private closestPoint: Vec2 | undefined;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
-
+    line: Line;
     lineWidth: number;
     junctionType: TypeOfJunctions;
     junctionRadius: number;
+    pointJoin: boolean = false;
 
-    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
@@ -59,6 +63,12 @@ export class LineService extends Tool {
     onMouseDoubleClick(event: MouseEvent): void {
         this.clearPath();
         this.mouseDown = false;
+
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+        const line = new Line(this.coordinates, this.coordinates[this.coordinates.length - 1], color, 1, 5, this.mouseDown);
+        this.undoRedoService.addToStack(line);
+        this.undoRedoService.setToolInUse(false);
+        this.coordinates = [];
     }
 
     onMouseUp(event: MouseEvent): void {
