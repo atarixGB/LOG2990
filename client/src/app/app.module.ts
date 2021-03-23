@@ -44,9 +44,9 @@ import { PipetteComponent } from './components/sidebar/pipette-config/pipette.co
 import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { SprayAttributesComponent } from './components/sidebar/spray-attributes/spray-attributes.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -74,7 +74,6 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         PipetteComponent,
         PolygonConfigComponent,
         SprayConfigComponent,
-        SprayAttributesComponent,
         CarouselComponent,
         CarouselDrawingComponent,
     ],
