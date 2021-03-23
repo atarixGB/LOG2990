@@ -1,3 +1,4 @@
+// tslint:disable
 //import { ColorOrder } from './../../../interfaces-enums/color-order';
 import { TestBed } from '@angular/core/testing';
 //import { Vec2 } from '@app/classes/vec2';

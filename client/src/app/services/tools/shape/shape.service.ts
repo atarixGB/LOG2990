@@ -14,7 +14,6 @@ export abstract class ShapeService extends Tool {
     protected isShiftShape: boolean;
     protected size: Vec2;
     protected origin: Vec2;
-    
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
