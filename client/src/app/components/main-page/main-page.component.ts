@@ -19,7 +19,7 @@ export class MainPageComponent {
     handleKeyDown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === 'g') {
             event.preventDefault();
-            this.dialog.open(CarouselComponent, { data: true! });
+            this.dialog.open(CarouselComponent, {});
         }
     }
 }

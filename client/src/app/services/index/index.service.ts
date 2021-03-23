@@ -5,6 +5,7 @@ import { DrawingData } from '@common/communication/drawing-data';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+//tslint:disabled
 @Injectable({
     providedIn: 'root',
 })
@@ -22,8 +23,8 @@ export class IndexService {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
         const httpOptions = {
             headers: new HttpHeaders({
-                Accept: 'text/plain, */*',
                 'Content-Type': 'application/json',
+                Accept: 'text/plain, */*',
             }),
             responseType: 'text' as 'json',
         };
@@ -53,8 +54,9 @@ export class IndexService {
                     const drawingCard = [];
                     for (let i = 0; i < drawing.length; i++) {
                         const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawing[i]._id + this.PNG;
-                        if (imgURL !== undefined) {
-                            drawingCard[i] = new Drawing(drawing[i].title, drawing[i].labels!, imgURL);
+                        const labels = drawing[i].labels;
+                        if (labels !== undefined) {
+                            drawingCard[i] = new Drawing(drawing[i].title, labels, imgURL);
                         }
                     }
                     resolve(drawingCard);

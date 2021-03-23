@@ -14,6 +14,7 @@ import { Drawing } from '@common/communication/drawing';
 export class CarouselComponent implements AfterViewInit {
     private index: number;
     private mainDrawingURL: string;
+    readonly URL_POSITION: number = 4;
     isLoading: boolean;
     imageCards: Drawing[];
     placement: Drawing[];
@@ -74,7 +75,9 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     updateMainImageURL(): void {
-        this.mainDrawingURL = this.placement[1].imageURL!;
+        if (this.placement[1].imageURL !== undefined) {
+            this.mainDrawingURL = this.placement[1].imageURL;
+        }
     }
     nextImages(): void {
         this.index++;
@@ -100,7 +103,7 @@ export class CarouselComponent implements AfterViewInit {
     async deleteDrawing(): Promise<void> {
         const path = (url: string): string => {
             let parseUrl = new URL(url).pathname;
-            parseUrl = parseUrl.split('/')[4].split('.')[0];
+            parseUrl = parseUrl.split('/')[this.URL_POSITION].split('.')[0];
             return parseUrl;
         };
         this.indexService.deleteDrawingById(path(this.mainDrawingURL)).then(() => {

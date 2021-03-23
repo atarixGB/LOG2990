@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { DrawingData } from '@common/communication/drawing-data';
 import { IndexService } from './index.service';
 
-// tslint:disabled
+//tslint:disabled
 describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
