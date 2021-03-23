@@ -1,5 +1,5 @@
-import { fail } from 'assert';
 import * as chai from 'chai';
+import { expect } from 'chai';
 import 'chai-http';
 import * as sinon from 'sinon';
 import { testingContainer } from '../../test/test-utils';
@@ -11,7 +11,7 @@ import { DatabaseController } from './database.controller';
 chai.use(require('chai-http'));
 
 // tslint:disable
-// const HTTP_STATUS_OK = 200;
+const HTTP_OK = 200;
 
 describe('Database Controller', () => {
     let application: Application;
@@ -43,71 +43,58 @@ describe('Database Controller', () => {
     });
 
     it('should call addDrawing when accessing api/database/send with POST request', (done: Mocha.Done) => {
+        const stub = sinon.stub(DatabaseService.prototype, 'addDrawing');
         chai.request(application.app)
             .post('/api/database/send')
+            .set('content-type', 'application/json')
             .send(testDrawing)
-            .then((res) => {
-                chai.expect(res.status).to.be.equal(201);
-                testDrawing.should.have.property('title');
-                done();
-            })
-            .catch(fail);
+            .then(() => {
+                chai.expect(stub.called).to.equal(true);
+                stub.restore();
+            });
+        done();
     });
 
     it('should call deleteDrawingByIdName when accessing api/database/drawings/:id with DELETE request', (done: Mocha.Done) => {
+        const stub = sinon.stub(DatabaseService.prototype, 'deleteDrawingByIdName');
         chai.request(application.app)
             .delete(`/api/database/drawings/${testDrawing.title}.png`)
-            .then((res) => {
-                chai.expect(res.status).to.be.equal(204);
-                res.should.have.property('title');
-                done();
-            })
-            .catch(fail);
+            .then(() => {
+                chai.expect(stub.called).to.equal(true);
+                stub.restore();
+            });
+        done();
     });
 
-    it('should send json document when accessing api/database/drawings with GET request', (done: Mocha.Done) => {
+    it('should send HTTP status 200 when accessing api/database/drawings with GET request', (done: Mocha.Done) => {
+        chai.request(application.app)
+            .get(`/api/database/drawings`)
+            .set('content-type', 'application/json')
+            .end((error, response) => {
+                expect(response).to.equal(HTTP_OK);
+                response.body.should.be.a('json');
+            });
+        done();
+    });
+
+    it('should send HTTP status 200 when accessing api/database/drawings/:title with GET request', (done: Mocha.Done) => {
         chai.request(application.app)
             .get(`/api/database/drawings/${testDrawing.title}.png`)
             .end((error, response) => {
-                response.should.have.status(200);
-                response.body.should.be.a('json');
-                done();
-            })
-            .catch(fail);
+                response.should.have.status(HTTP_OK);
+                response.body.should.be.a('image/png');
+            });
+        done();
     });
 
     it('should call getDrawingByTags when accessing /drawings/filters/:tags? with GET request', (done: Mocha.Done) => {
         const stub = sinon.stub(DatabaseService.prototype, 'getDrawingByTags');
         chai.request(application.app)
-            .get('/api/database//drawings/filters/:tags?')
+            .get('/api/database/drawings/filters/:tags?')
             .then(() => {
                 chai.expect(stub.called).to.equal(true);
                 stub.restore();
-                done();
-            })
-            .catch(fail);
+            });
+        done();
     });
-
-    // it('should return time from dateservice on get request', async () => {
-    //     databaseService.drawingURLS = ['url1', 'url2'];
-    //     const expectedMessage: DrawingData = { title: 'Test', body: new Date().toString() } as DrawingData;
-
-    //     return supertest(app)
-    //         .get('/')
-    //         .expect(HTTP_STATUS_OK)
-    //         .then((response: any) => {
-    //             expect(response.body).to.deep.equal(expectedMessage);
-    //         });
-    // });
-
-    // it('should return an error as a message on service fail', async () => {
-    //     databaseService.currentTime.rejects(new Error('service error'));
-
-    //     return supertest(app)
-    //         .get('/api/date')
-    //         .expect(HTTP_STATUS_OK)
-    //         .then((response: any) => {
-    //             expect(response.body.title).to.equal('Error');
-    //         });
-    // });
 });

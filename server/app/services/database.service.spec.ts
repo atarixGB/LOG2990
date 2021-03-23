@@ -7,6 +7,8 @@ import { DrawingData } from '../classes/drawing-data';
 import { DatabaseService } from './database.service';
 chai.use(chaiAsPromised); // this allows us to test for rejection
 
+const HTTP_STATUS_NO_CONTENT = 204;
+
 describe('Database service', () => {
     let databaseService: DatabaseService;
     let mongoServer: MongoMemoryServer;
@@ -23,7 +25,7 @@ describe('Database service', () => {
         mongoServer = new MongoMemoryServer();
 
         validDrawing = {
-            _id: '123',
+            _id: '123456789101112131415161',
             title: 'title',
             labels: ['tag1', 'tag2'],
             height: 0,
@@ -72,10 +74,10 @@ describe('Database service', () => {
     });
 
     it('should delete drawing', (done: Mocha.Done) => {
-        const drawingToRemove: string = 'title';
-
-        databaseService.deleteDrawingByIdName(drawingToRemove).then((result) => {
-            return expect(result).to.equal(null);
+        databaseService.addDrawing(validDrawing).then(() => {
+            databaseService.deleteDrawingByIdName('123456789101112131415161').then((res) => {
+                return expect(res).to.equal(HTTP_STATUS_NO_CONTENT);
+            });
         });
         done();
     });
