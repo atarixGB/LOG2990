@@ -1,17 +1,17 @@
 import { Drawable } from './drawable';
 
 export class Spray extends Drawable {
-    private src: string;
-    constructor(src: string) {
+
+     image :ImageData;
+    constructor(image :ImageData) {
         super();
-        this.src = src;
+
+        this.image=image;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        const image = new Image();
-        image.src = this.src;
-        image.onload = () => {
-            ctx.drawImage(image, 0, 0);
-        };
+
+        ctx.putImageData(this.image, 0, 0);
+
     }
 }
