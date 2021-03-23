@@ -9,7 +9,7 @@ import { DOUBLE_MATH } from './../../../constants';
 import { TypeStyle } from './../../../interfaces-enums/type-style';
 import { PolygonService } from './polygon.service';
 
-fdescribe('PolygonService', () => {
+describe('PolygonService', () => {
     let polygonService: PolygonService;
     let canvasTestHelper: CanvasTestHelper;
     let mouseEvent: MouseEvent;
@@ -25,7 +25,12 @@ fdescribe('PolygonService', () => {
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
         canvasSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['lineTo']);
-        TestBed.configureTestingModule({ providers: [{ provide: DrawingService, useValue: drawServiceSpy },{ provide: CanvasRenderingContext2D, useValue: canvasSpy }] });
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: CanvasRenderingContext2D, useValue: canvasSpy },
+            ],
+        });
 
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -111,7 +116,7 @@ fdescribe('PolygonService', () => {
         polygonService['firstPoint'] = { x: 25, y: 25 };
         polygonService['finalPoint'] = { x: 0, y: 0 };
         polygonService['mouseDown'] = true;
-        
+
         polygonService['selectType'] = 'stroke';
 
         polygonService.onMouseMove(mouseEvent);
@@ -125,7 +130,7 @@ fdescribe('PolygonService', () => {
         polygonService['firstPoint'] = { x: 25, y: 25 };
         polygonService['finalPoint'] = { x: 0, y: 0 };
         polygonService['mouseDown'] = true;
-        
+
         polygonService['selectType'] = 'fill';
 
         polygonService.onMouseMove(mouseEvent);
@@ -139,7 +144,7 @@ fdescribe('PolygonService', () => {
         polygonService['firstPoint'] = { x: 25, y: 25 };
         polygonService['finalPoint'] = { x: 0, y: 0 };
         polygonService['mouseDown'] = true;
-        
+
         polygonService['selectType'] = 'strokeFill';
 
         polygonService.onMouseMove(mouseEvent);
@@ -166,12 +171,12 @@ fdescribe('PolygonService', () => {
     // });
     //=========================================
     // it('drawPolygon should update strokeStyle with secondary and fillStyle with primary', () => {
-        
+
     //     polygonService['firstPoint'] = { x: 25, y: 25 };
     //     polygonService['finalPoint'] = { x: 0, y: 0 };
     //     polygonService['pointCircleCenter'] = { x: 25, y: 25 };
     //     polygonService['lineWidth']=2;
-        
+
     //     polygonService['colorManager'].selectedColor[ColorOrder.PrimaryColor].inString='#FFFFFF';
     //     polygonService['colorManager'].selectedColor[ColorOrder.SecondaryColor].inString='#23AABB';
     //     polygonService.drawPolygon(baseCtxStub);
@@ -180,7 +185,7 @@ fdescribe('PolygonService', () => {
     //     expect(baseCtxStub.fillStyle).toEqual('#23AABB');
     //     expect(baseCtxStub.lineWidth).toEqual(2);
     //     expect(baseCtxStub.moveTo).toHaveBeenCalled();
-        
+
     // });
 
     // it('drawPolygon should call initializePolygoneVariables and changeSelectedType', () => {
@@ -190,14 +195,14 @@ fdescribe('PolygonService', () => {
     //     polygonService['finalPoint'] = { x: 0, y: 0 };
     //     polygonService['pointCircleCenter'] = { x: 25, y: 25 };
     //     polygonService['lineWidth']=2;
-        
+
     //     polygonService['colorManager'].selectedColor[ColorOrder.PrimaryColor].inString='#FFFFFF';
     //     polygonService['colorManager'].selectedColor[ColorOrder.SecondaryColor].inString='#23AABB';
     //     polygonService.drawPolygon(previewCtxStub);
     //     expect(initializePolygonVariablesSpy).toHaveBeenCalled();
     //     expect(changeSelectedTypeSpy).toHaveBeenCalled();
     // });
-//-----------------------------------------
+    //-----------------------------------------
     it('getCircleCenter should be called while initializing polygon Variables', () => {
         const getCircleCenterSpy = spyOn<any>(polygonService, 'getCircleCenter');
         polygonService['firstPoint'] = { x: 25, y: 25 };
@@ -209,7 +214,7 @@ fdescribe('PolygonService', () => {
     it('Radius value of polygone service should be correctly updated', () => {
         const firstPoint = { x: 25, y: 25 };
         const finalPoint = { x: 10, y: 10 };
-        const result = Math.abs(finalPoint.x-firstPoint.y)/DOUBLE_MATH;
+        const result = Math.abs(finalPoint.x - firstPoint.y) / DOUBLE_MATH;
         polygonService['firstPoint'] = firstPoint;
         polygonService['finalPoint'] = finalPoint;
         polygonService['initializePolygonVariables']();
@@ -236,5 +241,4 @@ fdescribe('PolygonService', () => {
         expect(polygonService.strokeValue).toEqual(true);
         expect(polygonService.fillValue).toEqual(true);
     });
-   
-})
+});
