@@ -61,6 +61,7 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseUp(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
+            this.drawingService.applyPreview();
             this.canvasData = this.drawingService.getCanvasData();
             this.updateSprayData();
         }
@@ -76,13 +77,14 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseLeave(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
+            this.drawingService.applyPreview();
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseCoord = this.getPositionFromMouse(event);
-            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.previewCtx);
+            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.baseCtx);
         }
     }
 
@@ -90,7 +92,6 @@ export class SprayService extends Tool implements OnDestroy {
         for (let i = sameSpray.density; i--; ) {
             const angle = sameSpray.getRandomNumber(0, Math.PI * 2);
             const radius = sameSpray.getRandomNumber(0, sameSpray.width);
-            ctx.globalAlpha = Math.random();
             ctx.strokeStyle = sameSpray.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
             ctx.fillStyle = sameSpray.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
             ctx.beginPath();
