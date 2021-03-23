@@ -50,7 +50,7 @@ export const mouseEventLClick = {
 export const mouseEventRClick = {
     x: 25,
     y: 25,
-    button: 1,
+    button: 2,
 } as MouseEvent;
 export const COLOR_WINDOW_WIDTH = '500px';
 
