@@ -20,15 +20,8 @@ export class IndexService {
     async postDrawing(message: DrawingData): Promise<void> {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
         return new Promise<void>((resolve, reject) => {
-            const httpOptions = {
-                headers: new HttpHeaders({
-                    'Content-Type': 'application/json',
-                    Accept: 'text/plain, */*',
-                }),
-                responseType: 'text' as 'json',
-            };
-
-            return this.http.post(url, message, httpOptions).subscribe(
+            const httpOptions = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
+            return this.http.post(url, message, { responseType: 'text' as 'json', headers: httpOptions }).subscribe(
                 (data) => resolve(),
                 (error) => reject(),
             );
