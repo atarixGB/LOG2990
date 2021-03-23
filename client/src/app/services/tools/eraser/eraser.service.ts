@@ -29,7 +29,6 @@ export class EraserService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.clearPath();
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
@@ -41,10 +40,9 @@ export class EraserService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
-            const eraser = new Eraser(this.eraserThickness, this.pathData);
-            this.undoRedoService.addToStack(eraser);
         }
-
+        const eraser = new Eraser(this.eraserThickness, this.pathData);
+        this.undoRedoService.addToStack(eraser);
         this.mouseDown = false;
         this.undoRedoService.setToolInUse(false);
         this.clearPath();
@@ -56,10 +54,9 @@ export class EraserService extends Tool {
             this.mouseMove = true;
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
-
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.baseCtx, this.pathData);
+            this.undoRedoService.setToolInUse(true);
         }
     }
 
