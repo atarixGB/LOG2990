@@ -52,15 +52,15 @@ export class SaveDrawingModalComponent {
             body: this.drawingService.canvas.toDataURL(),
         };
 
-        this.indexService.postDrawing(this.message).subscribe(
-            (response) => {
+        this.indexService
+            .postDrawing(this.message)
+            .then(() => {
                 this.matDialogRef.close();
                 alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
-            },
-            (error) => {
-                alert(`Problème de connexion avec le serveur de PolyDessin. Veuillez réessayer.\n${error}`);
-            },
-        );
+            })
+            .catch((error) => {
+                alert('Problème de connexion avec le serveur de PolyDessin. Veuillez réessayer. Erreur 503');
+            });
     }
 
     addTag(): void {

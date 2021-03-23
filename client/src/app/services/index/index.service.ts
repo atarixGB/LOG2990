@@ -1,9 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -18,17 +17,15 @@ export class IndexService {
 
     constructor(private http: HttpClient) {}
 
-    postDrawing(message: DrawingData): Observable<DrawingData> {
+    async postDrawing(message: DrawingData): Promise<void> {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
-        const httpOptions = {
-            headers: new HttpHeaders({
-                'Content-Type': 'application/json',
-                'Accept': 'text/plain, */*',
-            }),
-            responseType: 'text' as 'json',
-        };
-
-        return this.http.post<DrawingData>(url, message, httpOptions).pipe(catchError(this.handleError));
+        return new Promise<void>((resolve, reject) => {
+            const httpOptions = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
+            return this.http.post(url, message, { responseType: 'text', headers: httpOptions }).subscribe(
+                (data) => resolve(),
+                (error) => reject(),
+            );
+        });
     }
 
     async deleteDrawingById(id: string): Promise<void> {
@@ -50,21 +47,27 @@ export class IndexService {
             const url = this.BASE_URL + this.DATABASE_URL;
             return this.http.get<DrawingData[]>(url).subscribe(
                 (drawing: DrawingData[]) => {
-                    const drawingCard = [];
-                    for (let i = 0; i < drawing.length; i++) {
-                        const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawing[i]._id + this.PNG;
-                        const labels = drawing[i].labels;
-                        if (labels !== undefined) {
-                            drawingCard[i] = new Drawing(drawing[i].title, labels, imgURL);
-                        }
-                    }
-                    resolve(drawingCard);
+                    console.log(drawing);
+                    resolve(this.drawingDataToDrawing(drawing));
                 },
                 (error) => {
                     return throwError(error);
                 },
             );
         });
+    }
+
+    drawingDataToDrawing(drawings: DrawingData[]): Drawing[] {
+        const parseDrawing = [];
+        for (let i = 0; i < drawings.length; i++) {
+            const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawings[i]._id + this.PNG;
+            const labels = drawings[i].labels;
+            if (labels !== undefined) {
+                parseDrawing[i] = new Drawing(drawings[i].title, labels, imgURL);
+            }
+        }
+        console.log(parseDrawing);
+        return parseDrawing;
     }
 
     async searchByTags(tags: string[]): Promise<Drawing[]> {
@@ -76,7 +79,6 @@ export class IndexService {
                 }
                 this.http.get<Drawing[]>(url).subscribe((drawings: Drawing[]) => {
                     resolve(drawings);
-                    console.log(drawings);
                 });
             });
         } else {
@@ -88,13 +90,13 @@ export class IndexService {
         }
     }
 
-    private handleError(error: HttpErrorResponse): Observable<DrawingData> {
-        let errorMessage = 'Erreur inconnue';
-        if (error.error instanceof ErrorEvent) {
-            errorMessage = `Erreur: ${error.error.message}`;
-        } else {
-            errorMessage = `Erreur: ${error.status}\n${error.message}`;
-        }
-        return throwError(errorMessage);
-    }
+    // private handleError(error: HttpErrorResponse): Observable<DrawingData> {
+    //     let errorMessage = 'Erreur inconnue';
+    //     if (error.error instanceof ErrorEvent) {
+    //         errorMessage = `Erreur: ${error.error.message}`;
+    //     } else {
+    //         errorMessage = `Erreur: ${error.status}\n${error.message}`;
+    //     }
+    //     return throwError(errorMessage);
+    // }
 }
