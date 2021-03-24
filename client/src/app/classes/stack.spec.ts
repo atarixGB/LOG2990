@@ -1,8 +1,7 @@
 import { Stack } from './stack';
 
 
-// tslint:disable: no-any
-// tslint:disable: no-string-literal
+// tslint:disable
 describe('stackTest<T>', () => {
     let stack: Stack<string>;
 

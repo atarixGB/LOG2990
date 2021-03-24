@@ -8,7 +8,7 @@ export enum TypeStyle {
     StrokeFill = 'strokeFill',
 }
 
-// tslint:disable: no-any
+// tslint:disable
 describe('Rectangle ', () => {
     let canvasTestHelper:CanvasTestHelper;
     beforeEach(()=>{

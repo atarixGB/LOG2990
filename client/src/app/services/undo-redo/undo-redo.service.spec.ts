@@ -1,10 +1,11 @@
-import { Pencil } from '@app/classes/pencil';
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Drawable } from '@app/classes/drawable';
 import { LoadedImage } from '@app/classes/loaded-image';
+import { Pencil } from '@app/classes/pencil';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from './undo-redo.service';
+//tslint:disable
 describe('UndoRedoService', () => {
     let service: UndoRedoService;
     let drawServiceStub: DrawingService;

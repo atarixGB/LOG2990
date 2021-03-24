@@ -3,8 +3,8 @@ import { CanvasTestHelper } from './canvas-test-helper';
 import { Line } from './line';
 import { Vec2 } from './vec2';
 
-// tslint:disable: no-any
-// tslint:disable: no-magic-numbers
+// tslint:disable
+
 describe('Line', () => {
     let canvasTestHelper: CanvasTestHelper;
     beforeEach(() => {

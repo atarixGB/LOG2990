@@ -1,10 +1,10 @@
-import { CanvasTestHelper } from './canvas-test-helper';
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from './canvas-test-helper';
 import { Eraser } from './eraser';
 import { Vec2 } from './vec2';
 
-// tslint:disable: no-any
-// tslint:disable: no-magic-numbers
+// tslint:disable
+
 describe('Eraser', () => {
     let canvasTestHelper:CanvasTestHelper;
     beforeEach(()=>{

@@ -1,11 +1,10 @@
+import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { TypeStyle } from '@app/constants';
 import { Polygon } from './polygon';
 import { Vec2 } from './vec2';
-import { TestBed } from '@angular/core/testing';
-import { TypeStyle } from '@app/constants';
 
-// tslint:disable: no-any
-// tslint:disable: no-magic-numbers
+// tslint:disable
 describe('Polygon', () => {
     let canvasTestHelper:CanvasTestHelper;
     beforeEach(()=>{

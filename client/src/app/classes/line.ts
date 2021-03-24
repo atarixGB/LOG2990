@@ -24,7 +24,7 @@ export class Line extends Drawable {
             ctx.strokeStyle = this.color;
             ctx.lineWidth = this.width;
             for (const point of this.pathData) {
-                if (this.pointJoin ) {
+                if (this.pointJoin) {
                     ctx.lineTo(point.x, point.y);
                     ctx.fillStyle = this.color;
                     ctx.moveTo(point.x + this.radius, point.y);

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Spray } from '@app/classes/spray';
 import { CanvasTestHelper } from './canvas-test-helper';
-
+//tslint:disable
 describe('Spray', () => {
     let canvasTestHelper: CanvasTestHelper;
     beforeEach(() => {

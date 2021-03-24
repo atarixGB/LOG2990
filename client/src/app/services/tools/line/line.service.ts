@@ -11,7 +11,7 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
 const SECOND_LAST_INDEX = -2;
 const NEGATIVE_LINE_SLOPE = -1;
 const NUMBER_SIGN_CHANGE = -1;
-
+const LINE_RADIUS = 5;
 @Injectable({
     providedIn: 'root',
 })
@@ -46,7 +46,6 @@ export class LineService extends Tool {
         this.coordinates.push(this.mouseDownCoord);
 
         if (this.hasPressedShiftKey) {
-            
             this.closestPoint = this.calculatePosition(this.mouseDownCoord, this.basePoint);
             if (this.closestPoint) {
                 this.coordinates.push(this.closestPoint);
@@ -63,7 +62,7 @@ export class LineService extends Tool {
         this.mouseDown = false;
 
         const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-        const line = new Line(this.coordinates, color, 1, 5, this.mouseDown);
+        const line = new Line(this.coordinates, color, 1, LINE_RADIUS, this.mouseDown);
         this.undoRedoService.addToStack(line);
         this.undoRedoService.setToolInUse(false);
         this.coordinates = [];

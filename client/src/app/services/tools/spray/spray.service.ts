@@ -4,14 +4,14 @@ import { Tool } from '@app/classes/tool';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from 'src/app/classes/vec2';
 import {
-  MAX_SPRAY_DOT_WIDTH,
-  MAX_SPRAY_FREQUENCY,
-  MIN_SPRAY_DOT_WIDTH,
-  MIN_SPRAY_FREQUENCY,
-  MIN_SPRAY_WIDTH,
-  MouseButton,
-  ONE_SECOND,
-  SPRAY_DENSITY
+    MAX_SPRAY_DOT_WIDTH,
+    MAX_SPRAY_FREQUENCY,
+    MIN_SPRAY_DOT_WIDTH,
+    MIN_SPRAY_FREQUENCY,
+    MIN_SPRAY_WIDTH,
+    MouseButton,
+    ONE_SECOND,
+    SPRAY_DENSITY,
 } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
@@ -32,7 +32,7 @@ export class SprayService extends Tool implements OnDestroy {
     minToolWidth: number = MIN_SPRAY_WIDTH;
     maxToolWidth: number = 50;
     sprayData: SprayProperties;
-    spray :Spray;
+    spray: Spray;
     timeoutId: ReturnType<typeof setTimeout>;
     mouseCoord: Vec2;
     width: number = this.minToolWidth;
@@ -78,7 +78,6 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseCoord = this.getPositionFromMouse(event);
-
         }
     }
 
@@ -95,7 +94,7 @@ export class SprayService extends Tool implements OnDestroy {
             this.mouseCoord = this.getPositionFromMouse(event);
             this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.previewCtx);
             this.undoRedoService.setToolInUse(true);
-          }
+        }
     }
 
     drawSpray(sameSpray: SprayService, ctx: CanvasRenderingContext2D): void {
@@ -141,9 +140,6 @@ export class SprayService extends Tool implements OnDestroy {
     }
 
     updateSprayData(): void {
-        this.spray = new Spray(
-
-            this.canvasData
-        );
+        this.spray = new Spray(this.canvasData);
     }
 }

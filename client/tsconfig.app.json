@@ -7,7 +7,7 @@
   "files": [
     "src/main.ts",
     "src/polyfills.ts",
-    "node_modules/jqwidgets-scripts/jqwidgets-ts/angular_jqxbargauge.ts"
+    
   ],
   
     "include": ["src/**/*.d.ts"]
