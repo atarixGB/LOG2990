@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Eraser } from '@app/classes/Eraser';
+import { Eraser } from '@app/classes/eraser';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';

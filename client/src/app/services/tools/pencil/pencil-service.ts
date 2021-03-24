@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Pencil } from '@app/classes/Pencil';
+import { Pencil } from '@app/classes/pencil';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_LINE_THICKNESS, MouseButton } from '@app/constants';
@@ -55,7 +55,7 @@ export class PencilService extends Tool {
             const mousePosition = this.getPositionFromMouse(event);
             this.pathData.push(mousePosition);
 
-            // On dessine sur le canvas de prévisualisation et on l'efface à chaque déplacement de la souris
+           
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawLine(this.drawingService.previewCtx, this.pathData);
         }

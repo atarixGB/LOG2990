@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Spray } from '@app/classes/Spray';
+import { Spray } from '@app/classes/spray';
 import { Tool } from '@app/classes/tool';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from 'src/app/classes/vec2';
