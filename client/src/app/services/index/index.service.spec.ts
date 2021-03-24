@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { IndexService } from './index.service';
 
 //tslint:disable
-fdescribe('IndexService', () => {
+describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
     let mockDrawing: DrawingData;

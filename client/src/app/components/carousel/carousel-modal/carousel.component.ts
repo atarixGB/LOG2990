@@ -15,6 +15,7 @@ export class CarouselComponent implements AfterViewInit {
     private index: number;
     private mainDrawingURL: string;
     readonly URL_POSITION: number = 4;
+    private decision: boolean;
     isLoading: boolean;
     imageCards: Drawing[];
     placement: Drawing[];
@@ -39,6 +40,7 @@ export class CarouselComponent implements AfterViewInit {
         this.mainDrawingURL = '';
         this.isDisabled = true;
         this.tagInput = '';
+        this.decision = false;
     }
 
     async ngAfterViewInit(): Promise<void> {
@@ -56,10 +58,8 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     async searchbyTags(): Promise<void> {
-        console.log(this.tags);
         await this.indexService.searchByTags(this.tags).then((result) => {
             this.imageCards = result;
-            console.log(this.imageCards);
             this.updateImagePlacement();
         });
     }
@@ -116,8 +116,8 @@ export class CarouselComponent implements AfterViewInit {
             this.isCanvaEmpty = true;
         }
         if (!this.isCanvaEmpty) {
-            const decision = confirm('Voulez-vous abandonner votre dessin ?');
-            if (decision) {
+            this.decision = confirm('Voulez-vous abandonner votre dessin ?');
+            if (this.decision) {
                 this.openDrawing();
             }
         } else {
