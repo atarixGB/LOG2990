@@ -105,7 +105,6 @@ export class ExportService {
     private getCanvasRatio(): number {
         const width = this.drawingService.baseCtx.canvas.width;
         const height = this.drawingService.baseCtx.canvas.height;
-        console.log('width' + width, 'height:' + height);
         return width / height;
     }
 }
