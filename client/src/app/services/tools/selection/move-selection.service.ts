@@ -94,6 +94,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
                 event.preventDefault();
                 if (this.isArrowPressed()) {
+                    console.log('Entered to blabla');
                     this.handleKeyDownArrow(event);
                     return;
                 }
