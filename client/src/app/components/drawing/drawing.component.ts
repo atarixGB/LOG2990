@@ -44,6 +44,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.whiteBackgroundCanvas();
             }
         });
     }
@@ -70,10 +71,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
         this.cdr.detectChanges();
-        this.baseCtx.beginPath();
-        this.baseCtx.fillStyle = '#FFFFFF';
-        this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
-        this.baseCtx.closePath();
+        this.whiteBackgroundCanvas();
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
@@ -171,6 +169,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         }
 
         setTimeout(() => {
+            this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
         }, 0);
     }
@@ -185,5 +184,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
 
     get height(): number {
         return this.canvasSize.y;
+    }
+
+    private whiteBackgroundCanvas(): void {
+        this.baseCtx.beginPath();
+        this.baseCtx.fillStyle = '#FFFFFF';
+        this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
     }
 }
