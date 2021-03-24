@@ -11,7 +11,7 @@ import { TypeStyle } from './../../../interfaces-enums/type-style';
 import { PolygonService } from './polygon.service';
 
 
-fdescribe('PolygonService', () => {
+describe('PolygonService', () => {
     let polygonService: PolygonService;
     let canvasTestHelper: CanvasTestHelper;
     let mouseEvent: MouseEvent;

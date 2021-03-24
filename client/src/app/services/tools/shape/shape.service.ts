@@ -14,8 +14,10 @@ export abstract class ShapeService extends Tool {
     protected isShiftShape: boolean;
     protected size: Vec2;
     protected origin: Vec2;
+    colorPrime: string;
+    colorSecond: string;
 
-    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, protected colorManager: ColorManagerService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.fillValue = false;
@@ -55,18 +57,13 @@ export abstract class ShapeService extends Tool {
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.pathData.push(this.mouseDownCoord);
         }
+        this.colorPrime = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+        this.colorSecond = this.colorManager.selectedColor[ColorOrder.SecondaryColor].inString;
     }
 
     abstract onMouseUp(event: MouseEvent): void;
 
-    onMouseMove(event: MouseEvent): void {
-        if (this.mouseDown) {
-            const mousePosition = this.getPositionFromMouse(event);
-            this.pathData.push(mousePosition);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.drawShape(this.drawingService.previewCtx);
-        }
-    }
+    abstract onMouseMove(event: MouseEvent): void;
 
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Shift' && this.mouseDown) {
@@ -140,5 +137,21 @@ export abstract class ShapeService extends Tool {
         } else {
             throw new Error('No data in path');
         }
+    }
+    protected calculLeftpoint(startPoint: Vec2, endPoint: Vec2): Vec2 {
+        let x = startPoint.x;
+        let y = startPoint.y;
+
+        if (startPoint.x >= endPoint.x && startPoint.y >= endPoint.y) {
+            x = endPoint.x;
+            y = endPoint.y;
+        } else if (startPoint.x > endPoint.x && startPoint.y < endPoint.y) {
+            x = endPoint.x;
+            y = startPoint.y;
+        } else if (startPoint.x < endPoint.x && startPoint.y > endPoint.y) {
+            x = startPoint.x;
+            y = endPoint.y;
+        }
+        return { x, y };
     }
 }
