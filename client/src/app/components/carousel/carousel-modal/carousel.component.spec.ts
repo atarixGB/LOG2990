@@ -15,7 +15,6 @@ describe('CarouselComponent', () => {
             return;
         }),
     });
-    //let drawingMock: Drawing = new Drawing('equipe104', ['stress'], 'projet2.png');
     const dialogSpy = jasmine.createSpy('close');
     beforeEach(async(() => {
         TestBed.configureTestingModule({
@@ -90,13 +89,6 @@ describe('CarouselComponent', () => {
         component.loadImage();
         expect(component.isCanvaEmpty).toBeTruthy;
     });
-
-    // it('should open a new draw on request ', () => {
-    //     component.isCanvaEmpty = false;
-    //     component['decision'] = true;
-    //     component.loadImage();
-    //     expect(spyOn(component, 'openDrawing')).toHaveBeenCalled();
-    // });
 
     it('should update images when next', () => {
         component['index'] = 0;
@@ -181,5 +173,13 @@ describe('CarouselComponent', () => {
         searchByTag = spyOn(IndexService.prototype, 'searchByTags').and.returnValue(Promise.resolve([]));
         component.searchbyTags();
         expect(searchByTag).toHaveBeenCalled();
+    });
+
+    it('should delete drawing', async () => {
+        let deleteSpy: jasmine.Spy;
+        component['mainDrawingURL'] = 'http://localhost:3000/api/database/drawings/605a9a7be06fb909f0c904e5.png';
+        deleteSpy = spyOn(IndexService.prototype, 'deleteDrawingById').and.returnValue(Promise.resolve());
+        component.deleteDrawing();
+        expect(deleteSpy).toHaveBeenCalled();
     });
 });
