@@ -1,3 +1,4 @@
+//tslint:disable
 export class DrawingData {
     _id?: string;
     title: string;
