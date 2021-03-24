@@ -11,7 +11,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 })
 export class PolygonService extends ToolShape {
     private pointCircleCenter: Vec2;
-    private radius: number;
+    radius: number;
     sides: number = MIN_SIDE;
     fillValue: boolean = false;
     strokeValue: boolean = true;
@@ -65,7 +65,7 @@ export class PolygonService extends ToolShape {
         this.drawingService.previewCtx.closePath();
     }
 
-    protected drawPolygon(ctx: CanvasRenderingContext2D): void {
+    drawPolygon(ctx: CanvasRenderingContext2D): void {
         const radiusFinal = this.initializePolygonVariables();
         ctx.beginPath();
         ctx.lineWidth = this.lineWidth;

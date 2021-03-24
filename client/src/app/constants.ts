@@ -64,7 +64,7 @@ export const mouseEventLClick = {
 export const mouseEventRClick = {
     x: 25,
     y: 25,
-    button: 1,
+    button: 2,
 } as MouseEvent;
 export const COLOR_WINDOW_WIDTH = '500px';
 
@@ -137,4 +137,4 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
-export const ZOOM_PIXEL_SIZE = 1;
+export const ZOOM_RATIO = 0.2;

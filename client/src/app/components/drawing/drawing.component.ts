@@ -71,7 +71,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
         this.cdr.detectChanges();
-
         this.whiteBackgroundCanvas();
     }
 
