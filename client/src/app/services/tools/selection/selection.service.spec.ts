@@ -5,7 +5,7 @@ import { EllipseService } from '../ellipse/ellipse.service';
 import { RectangleService } from '../rectangle/rectangle.service';
 import { SelectionService } from './selection.service';
 
-fdescribe('SelectionService', () => {
+describe('SelectionService', () => {
     let service: SelectionService;
     let InitialiseToolSpy: jasmine.Spy<any>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
@@ -19,12 +19,13 @@ fdescribe('SelectionService', () => {
         rectangleServiceSpy = jasmine.createSpyObj('RectangleService', ['onMouseDown', 'onMouseMove', 'handleKeyDown', 'handleKeyUp']);
         ellipseServiceSpy = jasmine.createSpyObj('EllipseService', ['onMouseDown', 'onMouseMove', 'handleKeyDown', 'handleKeyUp']);
         canvasSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
-        
-        TestBed.configureTestingModule({
-            providers: [{ provide: RectangleService, useValue: rectangleServiceSpy },
-                { provide: EllipseService, useValue: ellipseServiceSpy }                ,
-                { provide: CanvasRenderingContext2D, useValue: canvasSpy }],
 
+        TestBed.configureTestingModule({
+            providers: [
+                { provide: RectangleService, useValue: rectangleServiceSpy },
+                { provide: EllipseService, useValue: ellipseServiceSpy },
+                { provide: CanvasRenderingContext2D, useValue: canvasSpy },
+            ],
         });
         service = TestBed.inject(SelectionService);
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
@@ -32,7 +33,7 @@ fdescribe('SelectionService', () => {
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         InitialiseToolSpy = spyOn<any>(service, 'initializeToolParameters').and.callThrough();
 
-        service['drawingService'].baseCtx = baseCtxStub; 
+        service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
     });
 
@@ -115,7 +116,7 @@ fdescribe('SelectionService', () => {
     it('onMouseUp should  change the parameters if mouse is  down ', () => {
         service.isEllipse = false;
         rectangleServiceSpy.pathData[0] = {x: 2, y: 3};
-        rectangleServiceSpy.pathData[1] = {x:4, y: 5}; 
+        rectangleServiceSpy.pathData[1] = {x:4, y: 5};
         service.activeSelection = false;
         service.mouseDown = true;
         service.onMouseUp();
@@ -126,7 +127,7 @@ fdescribe('SelectionService', () => {
         expect(service['resetParametersTools']).toHaveBeenCalled();
     });
     */
-    
+
     // OnMouseLeave
     it('onMouseLeave call onMouseUp if the mouse is down', () => {
         service.mouseDown = true;
@@ -174,11 +175,11 @@ fdescribe('SelectionService', () => {
         service.handleKeyUp(event);
         expect(ellipseServiceSpy.handleKeyUp).toHaveBeenCalled();
     });
-    
+
     it('mouseInselectionArea return true if is in the selection area', () => {
-        const origin = {x: 0, y: 0};
-        const destination = {x:5, y:5};
-        const mouseCoordTest = {x:2,y:2};
+        const origin = { x: 0, y: 0 };
+        const destination = { x: 5, y: 5 };
+        const mouseCoordTest = { x: 2, y: 2 };
 
         const result = service.mouseInSelectionArea(origin, destination, mouseCoordTest);
         expect(result).toEqual(result);
@@ -206,7 +207,7 @@ fdescribe('SelectionService', () => {
     */
 
     it('clearUnderneath shape clear in ellipse if it the selection form', () => {
-        const points = {x: 10, y: 10};
+        const points = { x: 10, y: 10 };
         const width = 10;
         const height = 10;
         service.origin = points;
@@ -221,7 +222,7 @@ fdescribe('SelectionService', () => {
     });
 
     it('clearUnderneath shape clear in rectangle if it the selection form', () => {
-        const points = {x: 10, y: 10};
+        const points = { x: 10, y: 10 };
         const width = 10;
         const height = 10;
         service.origin = points;
@@ -249,8 +250,7 @@ fdescribe('SelectionService', () => {
         expect(service.mouseDown).toEqual(true);
     });
 
-
-/*
+    /*
     it('terminateSelection terminate if its an activeSelection', () => {
         const imageData = new ImageData(10,10);
         //const clearCanvasSpy = spyOn(service['drawingService'], 'clearCanvas');
@@ -272,7 +272,7 @@ fdescribe('SelectionService', () => {
     });
 */
 
-/*
+    /*
     it('calculateDimensions reajust the origin and the destination with rectangle', () => {
         service.isEllipse = false;
         service['rectangleService'].pathData[0] = {x: 0, y:0};
@@ -285,37 +285,31 @@ fdescribe('SelectionService', () => {
     });
 */
     it('getSelectionData use the good range to select data', () => {
-        const origin = {x:0, y:0};
+        const origin = { x: 0, y: 0 };
         const width = 10;
         const height = 10;
         service.origin = origin;
         service['width'] = width;
         service['height'] = height;
-        const calculateSpy = spyOn<any>(service,'calculateDimension').and.stub();
+        const calculateSpy = spyOn<any>(service, 'calculateDimension').and.stub();
         service['getSelectionData'](canvasSpy);
-        expect(calculateSpy).toHaveBeenCalled()
+        expect(calculateSpy).toHaveBeenCalled();
         expect(canvasSpy.getImageData).toHaveBeenCalled();
     });
 
     it('getSelectionData check the pixels in ellipse', () => {
-        const origin = {x:0, y:0};
+        const origin = { x: 0, y: 0 };
         const width = 10;
         const height = 10;
         service.isEllipse = true;
         service.origin = origin;
         service['width'] = width;
         service['height'] = height;
-        const calculateSpy = spyOn<any>(service,'calculateDimension').and.stub();
-        const checkPixelSpy = spyOn<any>(service,'checkPixelInEllipse').and.stub();
+        const calculateSpy = spyOn<any>(service, 'calculateDimension').and.stub();
+        const checkPixelSpy = spyOn<any>(service, 'checkPixelInEllipse').and.stub();
         service['getSelectionData'](canvasSpy);
-        expect(calculateSpy).toHaveBeenCalled()
+        expect(calculateSpy).toHaveBeenCalled();
         expect(canvasSpy.getImageData).toHaveBeenCalled();
         expect(checkPixelSpy).toHaveBeenCalled();
     });
-
-
-
-
-
-
 });
