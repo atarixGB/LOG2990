@@ -1,43 +1,74 @@
 import { TestBed } from '@angular/core/testing';
-import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { mouseEventLClick, mouseEventRClick } from '@app/constants';
+// import { Vec2 } from '@app/classes/vec2';
+import { MouseButton,mouseEventLClick, mouseEventRClick } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PipetteService } from './pipette.service';
-//tslint:disable
+// tslint:disable
+
 fdescribe('PipetteService', () => {
     let service: PipetteService;
+    let canvas: HTMLCanvasElement;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let zoomCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
-    let zoomSpy: jasmine.SpyObj<HTMLCanvasElement>;
-    let canvasTestHelper: CanvasTestHelper;
-    let zoomCtxStub: CanvasRenderingContext2D;
     let pixelOnZoomSpy: jasmine.Spy<any>;
+    let zoomCtxStub: CanvasRenderingContext2D;
+    let zoomCanvasStub: HTMLCanvasElement;
+    let mouseEventLeft: MouseEvent;
+    // let mouseEventRight: MouseEvent;
+    // let pixelColor: string[];
+
+    let baseCtxStub: CanvasRenderingContext2D;
+    let previewCanvasStub: HTMLCanvasElement;
+    
+    const WIDTH_DRAWING_CANVAS = 100;
+    const HEIGHT_DRAWING_CANVAS = 100;
+    const WIDTH_ZOOM_CANVAS = 50;
+    const HEIGHT_ZOOM_CANVAS = 50;
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'getCanvasWidth', 'getCanvasHeight']);
-        zoomCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['arc', 'clip', 'drawImage', 'strokeRect']);
-        zoomSpy = jasmine.createSpyObj('HTMLCanvasElement', ['height', 'width']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'setIsToolInUse']);
+
+        canvas = document.createElement('canvas');
+        canvas.width = WIDTH_DRAWING_CANVAS;
+        canvas.height = HEIGHT_DRAWING_CANVAS;
+        //pixelColor = ['#000000', '255'];
+        baseCtxStub = canvas.getContext('2d') as CanvasRenderingContext2D;
+        previewCanvasStub = canvas as HTMLCanvasElement;
+     
+        baseCtxStub.fillStyle = '#000000';
+        baseCtxStub.fillRect(0, 0, canvas.width, canvas.height);
+        baseCtxStub.fill();
+        baseCtxStub.stroke();
+
+        const zoomCanvas = document.createElement('canvas') as HTMLCanvasElement;
+        zoomCanvas.width = WIDTH_ZOOM_CANVAS;
+        zoomCanvas.height = HEIGHT_ZOOM_CANVAS;
+        zoomCanvasStub = zoomCanvas;
+        zoomCtxStub = zoomCanvasStub.getContext('2d') as CanvasRenderingContext2D;
 
         TestBed.configureTestingModule({
-            providers: [
-                { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: CanvasRenderingContext2D, useValue: zoomCtxSpy },
-                { provide: HTMLCanvasElement, useValue: zoomSpy },
-            ],
+            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
         });
         service = TestBed.inject(PipetteService);
-        canvasTestHelper = TestBed.inject(CanvasTestHelper);
-        zoomCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
 
-        service['drawingService'].canvas = canvasTestHelper.canvas;
+        service['drawingService'].canvas = canvas;
+        service['drawingService'].baseCtx = baseCtxStub;
+        service['drawingService'].previewCanvas = previewCanvasStub;
+        
+        service.zoom = zoomCanvasStub;
         service.zoomCtx = zoomCtxStub;
         pixelOnZoomSpy = spyOn<any>(service, 'pixelOnZoom').and.callThrough();
+
+        mouseEventLeft = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
-    
+
     it('onMouseDown should emit a PrimaryColor with left click', () => {
         const imageData = new ImageData(10, 10);
         const expectedColor = imageData.data;
@@ -66,31 +97,54 @@ fdescribe('PipetteService', () => {
         expect(emitSpy).toHaveBeenCalled();
     });
 
-    it('mouse x > width should set isnearBorder to true', () => {
-        service['drawingService'].canvas.width = 50;
-        service['drawingService'].canvas.height = 50;
-        const clearCanvasSpy = spyOn(service, 'clearCanvas');
-        service.nearBorder({ x: 60, y: 25 });
-        expect(service.isNearBorder).toEqual(true);
-        expect(clearCanvasSpy).toHaveBeenCalled();
-    });
+    it(' mouseMove should call handleNearBorder', () => {
+        const drawOnZoomSpy = spyOn(service, 'drawOnZoom');
+        const nearBorderSpy = spyOn(service, 'nearBorder');
+        service.mouseDownCoord = { x: -1, y: -1 };
 
-    it('mouse y > height should set isnearBorder to true', () => {
-        service['drawingService'].canvas.width = 50;
-        service['drawingService'].canvas.height = 50;
-        const clearCanvasSpy = spyOn(service, 'clearCanvas');
-        service.nearBorder({ x: 25, y: 60 });
-        expect(service.isNearBorder).toEqual(true);
-        expect(clearCanvasSpy).toHaveBeenCalled();
-    });
-
-    it('mouse on the canvas should set isnearborder to false', () => {
-        service['drawingService'].canvas.width = 50;
-        service['drawingService'].canvas.height = 50;
-        const clearCanvasSpy = spyOn(service, 'clearCanvas');
-        service.nearBorder({ x: 25, y: 25 });
+        service.onMouseMove(mouseEventLeft);
+        expect(nearBorderSpy).toHaveBeenCalled();
         expect(service.isNearBorder).toEqual(false);
-        expect(clearCanvasSpy).not.toHaveBeenCalled();
+        expect(drawOnZoomSpy).toHaveBeenCalled();
     });
-    
+
+    it('Should return true when mouse near a border', () => {
+        const mouseDownCoord = { x: 0, y: 0 };
+        service.nearBorder(mouseDownCoord);
+        expect(service.isNearBorder).toEqual(true);
+    });
+
+    it('Should return true when mouse outside border', () => {
+        const mouseDownCoord = { x: 101, y: 101 };
+        service.nearBorder(mouseDownCoord);
+        expect(service.isNearBorder).toEqual(true);
+    });
+
+    it('Should return false when mouse inside the canvas', () => {
+        const mouseDownCoord = { x: 25, y: 25 };
+        service.nearBorder(mouseDownCoord);
+        expect(service.isNearBorder).toEqual(false);
+    });
+
+    it('Should call drawOnZoom when not near a border', () => {
+        const drawOnZoom = spyOn(service, 'drawOnZoom');
+        service.isNearBorder = false;
+        service.showZoom(mouseEventLeft);
+        expect(drawOnZoom).toHaveBeenCalled();
+    });
+
+    it('Should not call drawOnZoom when near a border', () => {
+        const drawOnZoom = spyOn(service, 'drawOnZoom');
+        service.isNearBorder = true;
+        service.showZoom(mouseEventLeft);
+        expect(drawOnZoom).not.toHaveBeenCalled();
+    });
+
+    it('Should clear zoom when mouse near a border', () => {
+        const clearCanvasSpy = spyOn(service, 'clearCanvas');
+        const mouseDownCoord = { x: 0, y: 0 };
+        service.nearBorder(mouseDownCoord);
+        expect(clearCanvasSpy).toHaveBeenCalled();
+    });
+
 });
