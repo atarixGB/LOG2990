@@ -1,4 +1,4 @@
-export interface Spray {
+export interface SprayProperties {
     type: string;
     imageData: ImageData;
 }

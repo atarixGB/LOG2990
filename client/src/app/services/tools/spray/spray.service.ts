@@ -1,5 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { Spray } from '@app/classes/spray';
 import { Tool } from '@app/classes/tool';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from 'src/app/classes/vec2';
 import {
     MAX_SPRAY_DOT_WIDTH,
@@ -12,7 +14,7 @@ import {
     SPRAY_DENSITY,
 } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-import { Spray } from 'src/app/interfaces-enums/spray-properties';
+import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 
@@ -29,7 +31,8 @@ export class SprayService extends Tool implements OnDestroy {
     maxFrequency: number = MAX_SPRAY_FREQUENCY;
     minToolWidth: number = MIN_SPRAY_WIDTH;
     maxToolWidth: number = 50;
-    sprayData: Spray;
+    sprayData: SprayProperties;
+    spray: Spray;
     timeoutId: ReturnType<typeof setTimeout>;
     mouseCoord: Vec2;
     width: number = this.minToolWidth;
@@ -37,7 +40,7 @@ export class SprayService extends Tool implements OnDestroy {
     sprayFrequency: number = this.minFrequency;
     canvasData: ImageData;
 
-    constructor(drawingService: DrawingService, public colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
     }
 
@@ -55,15 +58,19 @@ export class SprayService extends Tool implements OnDestroy {
             this.mouseCoord = this.getPositionFromMouse(event);
             clearTimeout(this.timeoutId);
             this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.baseCtx);
+            this.undoRedoService.setToolInUse(true);
         }
     }
 
     onMouseUp(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            this.drawingService.applyPreview();
+            // this.drawingService.applyPreview(
+            this.undoRedoService.setToolInUse(false);
             this.canvasData = this.drawingService.getCanvasData();
+
             this.updateSprayData();
+            this.undoRedoService.addToStack(this.spray);
         }
         this.mouseDown = false;
     }
@@ -77,14 +84,16 @@ export class SprayService extends Tool implements OnDestroy {
     onMouseLeave(): void {
         if (this.mouseDown) {
             clearTimeout(this.timeoutId);
-            this.drawingService.applyPreview();
+            // this.drawingService.applyPreview();
+            this.undoRedoService.setToolInUse(false);
         }
     }
 
     onMouseEnter(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseCoord = this.getPositionFromMouse(event);
-            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.baseCtx);
+            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.previewCtx);
+            this.undoRedoService.setToolInUse(true);
         }
     }
 
@@ -130,9 +139,6 @@ export class SprayService extends Tool implements OnDestroy {
     }
 
     updateSprayData(): void {
-        this.sprayData = {
-            type: 'fill',
-            imageData: this.canvasData,
-        };
+        this.spray = new Spray(this.canvasData);
     }
 }

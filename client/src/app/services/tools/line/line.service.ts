@@ -1,33 +1,35 @@
 import { Injectable } from '@angular/core';
+import { Line } from '@app/classes/line';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 const SECOND_LAST_INDEX = -2;
 const NEGATIVE_LINE_SLOPE = -1;
 const NUMBER_SIGN_CHANGE = -1;
-
+const LINE_RADIUS = 5;
 @Injectable({
     providedIn: 'root',
 })
 export class LineService extends Tool {
     private pathData: Vec2[];
     private coordinates: Vec2[];
-
     private hasPressedShiftKey: boolean;
     private closestPoint: Vec2 | undefined;
     private basePoint: Vec2;
 
     private lastCanvasImages: ImageData[];
-
+    line: Line;
     lineWidth: number;
     junctionType: TypeOfJunctions;
     junctionRadius: number;
+    pointJoin: boolean = false;
 
-    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
         this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.junctionRadius = DEFAULT_JUNCTION_RADIUS;
@@ -44,7 +46,6 @@ export class LineService extends Tool {
         this.coordinates.push(this.mouseDownCoord);
 
         if (this.hasPressedShiftKey) {
-            // Handle automatic junction when drawing constrained-angle lines
             this.closestPoint = this.calculatePosition(this.mouseDownCoord, this.basePoint);
             if (this.closestPoint) {
                 this.coordinates.push(this.closestPoint);
@@ -59,6 +60,12 @@ export class LineService extends Tool {
     onMouseDoubleClick(event: MouseEvent): void {
         this.clearPath();
         this.mouseDown = false;
+
+        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+        const line = new Line(this.coordinates, color, 1, LINE_RADIUS, this.mouseDown);
+        this.undoRedoService.addToStack(line);
+        this.undoRedoService.setToolInUse(false);
+        this.coordinates = [];
     }
 
     onMouseUp(event: MouseEvent): void {
