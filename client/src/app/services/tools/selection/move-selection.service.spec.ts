@@ -5,13 +5,6 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from './move-selection.service';
 import { SelectionService } from './selection.service';
 
-enum ArrowKeys {
-    Up = 1,
-    Down = 2,
-    Left = 3,
-    Right = 4,
-}
-
 // tslint:disable
 fdescribe('MoveSelectionService', () => {
     let service: MoveSelectionService;
@@ -38,7 +31,6 @@ fdescribe('MoveSelectionService', () => {
             'handleKeyUp',
             'mouseInSelectionArea',
             'selectAll',
-            'createBoundaryBox',
             'createControlPoints',
             'clearUnderneathShape',
             'terminateSelection',
@@ -109,14 +101,6 @@ fdescribe('MoveSelectionService', () => {
         expect(service.mouseDown).toBeFalse();
     });
 
-    it('should set mouseDown to false when onMouseUp is called', () => {
-        service.mouseDown = true;
-        service['origin'] = { x: 10, y: 10 };
-        service.onMouseUp(mouseEventLeft);
-        expect(selectionService.createBoundaryBox).toHaveBeenCalled();
-        expect(service.mouseDown).toBeFalse();
-    });
-
     it('should call handlekeyDownArrow when arrow left key is down', () => {
         selectionService.activeSelection = true;
         spyOn(window, 'setTimeout').and.stub();
@@ -155,51 +139,5 @@ fdescribe('MoveSelectionService', () => {
         keyboardEvent = { key: 'ArrowDown', preventDefault(): void {} } as KeyboardEvent;
         service.handleKeyDown(keyboardEvent);
         expect(handleKeyDownArrowSpy).toHaveBeenCalled();
-    });
-
-    it('should call handlekeyUpArrow when arrow left key is up', () => {
-        selectionService.activeSelection = true;
-        spyOn(window, 'setTimeout').and.stub();
-        let handleKeyUpArrow = spyOn<any>(service, 'handleKeyUpArrow').and.callThrough();
-        spyOn<any>(service, 'moveSelectionKeyboard').and.callThrough();
-        keyboardEvent = { key: 'ArrowLeft', preventDefault(): void {} } as KeyboardEvent;
-        service.handleKeyUp(keyboardEvent);
-        expect(handleKeyUpArrow).toHaveBeenCalled();
-        expect(selectionService.createBoundaryBox).toHaveBeenCalled();
-    });
-
-    it('should call handlekeyUpArrow when arrow key right is up', () => {
-        selectionService.activeSelection = true;
-        spyOn(window, 'setTimeout').and.stub();
-        let handleKeyUpArrow = spyOn<any>(service, 'handleKeyUpArrow').and.callThrough();
-        spyOn<any>(service, 'moveSelectionKeyboard').and.stub();
-        keyboardEvent = { key: 'ArrowRight', preventDefault(): void {} } as KeyboardEvent;
-        service.handleKeyUp(keyboardEvent);
-        expect(handleKeyUpArrow).toHaveBeenCalled();
-    });
-
-    it('should call handlekeyUpArrow when arrow key up is up', () => {
-        selectionService.activeSelection = true;
-        spyOn(window, 'setTimeout').and.stub();
-        let handleKeyUpArrow = spyOn<any>(service, 'handleKeyUpArrow').and.callThrough();
-        spyOn<any>(service, 'moveSelectionKeyboard').and.stub();
-        keyboardEvent = { key: 'ArrowUp', preventDefault(): void {} } as KeyboardEvent;
-        service.handleKeyUp(keyboardEvent);
-        expect(handleKeyUpArrow).toHaveBeenCalled();
-    });
-
-    it('should call handlekeyUpArrow when arrow key down is up', () => {
-        selectionService.activeSelection = true;
-        spyOn(window, 'setTimeout').and.stub();
-        let handleKeyUpArrow = spyOn<any>(service, 'handleKeyUpArrow').and.callThrough();
-        spyOn<any>(service, 'moveSelectionKeyboard').and.stub();
-        keyboardEvent = { key: 'ArrowDown', preventDefault(): void {} } as KeyboardEvent;
-        service.handleKeyUp(keyboardEvent);
-        expect(handleKeyUpArrow).toHaveBeenCalled();
-    });
-
-    it('should move selection with keyboard', () => {
-        service['keysDown'].set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, false);
-        service['newOrigin'] = { x: 10, y: 10 };
     });
 });
