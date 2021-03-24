@@ -22,7 +22,7 @@ export abstract class Tool {
     handleKeyUp(event: KeyboardEvent): void {}
 
     getPositionFromMouse(event: MouseEvent): Vec2 {
-        return this.mouseCoord;
+        return { x: event.offsetX, y: event.offsetY };
     }
     onMouseClick(event: MouseEvent): void {}
 
