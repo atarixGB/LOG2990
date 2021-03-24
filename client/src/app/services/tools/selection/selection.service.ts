@@ -113,6 +113,7 @@ export class SelectionService extends Tool {
 
         this.printMovedSelection();
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
+        this.createBoundaryBox();
     }
 
     createBoundaryBox(): void {
@@ -165,7 +166,15 @@ export class SelectionService extends Tool {
         this.drawingService.baseCtx.fillStyle = '#FFFFFF';
         if (this.isEllipse) {
             this.drawingService.baseCtx.beginPath();
-            this.drawingService.baseCtx.ellipse(this.origin.x, this.origin.y, this.width / 2, this.height / 2, 0, 2 * Math.PI, 0);
+            this.drawingService.baseCtx.ellipse(
+                this.origin.x + this.width / 2,
+                this.origin.y + this.height / 2,
+                this.width / 2,
+                this.height / 2,
+                0,
+                2 * Math.PI,
+                0,
+            );
             this.drawingService.baseCtx.fill();
             this.drawingService.baseCtx.closePath();
         } else {
@@ -184,6 +193,7 @@ export class SelectionService extends Tool {
 
             this.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.resetParametersTools();
         }
     }
 
@@ -220,7 +230,12 @@ export class SelectionService extends Tool {
                 const x = j - rectangleCenter.x;
                 const y = i - rectangleCenter.y;
 
-                if (Math.pow(x, 2) / Math.pow(rectangleCenter.x, 2) + Math.pow(y, 2) / Math.pow(rectangleCenter.y, 2) > 1) {
+                if (this.ellipseService.isShiftShape && Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(this.width / 2, 2)) {
+                    imageData[pixelCounter + pixelLenght - 1] = 0;
+                } else if (
+                    !this.ellipseService.isShiftShape &&
+                    Math.pow(x, 2) / Math.pow(rectangleCenter.x, 2) + Math.pow(y, 2) / Math.pow(rectangleCenter.y, 2) > 1
+                ) {
                     imageData[pixelCounter + pixelLenght - 1] = 0;
                 }
                 pixelCounter += pixelLenght;
@@ -231,8 +246,30 @@ export class SelectionService extends Tool {
     private printMovedSelection(): void {
         if (this.imageMoved) {
             this.imageMoved = false;
-            this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+            if (this.isEllipse) this.printEllipse();
+            else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
         }
+    }
+
+    private printEllipse(): void {
+        const canvas = document.createElement('canvas');
+        canvas.width = this.width;
+        canvas.height = this.height;
+        const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
+        tmp.putImageData(this.selection, 0, 0);
+        this.drawingService.baseCtx.ellipse(
+            this.origin.x + this.width / 2,
+            this.origin.y + this.height / 2,
+            this.width / 2,
+            this.height / 2,
+            0,
+            2 * Math.PI,
+            0,
+        );
+        this.drawingService.baseCtx.save();
+        this.drawingService.baseCtx.clip();
+        this.drawingService.baseCtx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
+        this.drawingService.baseCtx.restore();
     }
 
     private reajustOriginAndDestination(): void {

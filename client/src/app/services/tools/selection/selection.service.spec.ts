@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { mouseEventLClick, mouseEventRClick } from '@app/constants';
-import { EllipseService } from '../ellipse/ellipse.service';
-import { RectangleService } from '../rectangle/rectangle.service';
+import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { SelectionService } from './selection.service';
 
+// tslint:disable
 describe('SelectionService', () => {
     let service: SelectionService;
     let InitialiseToolSpy: jasmine.Spy<any>;
@@ -311,5 +312,26 @@ describe('SelectionService', () => {
         expect(calculateSpy).toHaveBeenCalled();
         expect(canvasSpy.getImageData).toHaveBeenCalled();
         expect(checkPixelSpy).toHaveBeenCalled();
+    });
+
+    it('resetParametersTools resets all the parameters ', () => {
+        const defaultLine = 10;
+        const newLine = 4;
+        service['previousLineWidthRectangle'] = defaultLine;
+        service['previousLineWidthEllipse'] = defaultLine;
+
+        service['rectangleService'].mouseDown = true;
+        service['rectangleService'].lineWidth = newLine;
+        service['rectangleService'].isSelection = true;
+        service['ellipseService'].mouseDown = true;
+        service['ellipseService'].lineWidth = newLine;
+        service['ellipseService'].isSelection = true;
+        service['resetParametersTools']();
+        expect(rectangleServiceSpy.mouseDown).toEqual(false);
+        expect(rectangleServiceSpy.lineWidth).toEqual(defaultLine);
+        expect(rectangleServiceSpy.isSelection).toEqual(false);
+        expect(ellipseServiceSpy.mouseDown).toEqual(false);
+        expect(ellipseServiceSpy.lineWidth).toEqual(defaultLine);
+        expect(ellipseServiceSpy.isSelection).toEqual(false);
     });
 });

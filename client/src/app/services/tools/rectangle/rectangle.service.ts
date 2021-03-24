@@ -56,7 +56,6 @@ export class RectangleService extends ShapeService {
         ctx.rect(this.pathData[0].x, this.pathData[0].y, width, length);
 
         if (isAnotherShapeBorder) {
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
             ctx.rect(this.pathData[0].x, this.pathData[0].y, width, length);
             ctx.stroke();
         } else {

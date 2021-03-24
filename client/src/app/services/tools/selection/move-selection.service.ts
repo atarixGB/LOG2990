@@ -7,7 +7,7 @@ import { SelectionService } from './selection.service';
 
 const DX = 3;
 const DY = 3;
-const LONG_DELAY = 5000;
+const LONG_DELAY = 500;
 const SHORT_DELAY = 100;
 
 enum ArrowKeys {
@@ -93,16 +93,21 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (this.selectionService.activeSelection) {
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
                 event.preventDefault();
+                if (this.isArrowPressed()) {
+                    this.handleKeyDownArrow(event);
+                    return;
+                }
+
+                this.handleKeyDownArrow(event);
                 this.initialSelection();
                 this.clearUnderneathShape();
-                this.handleKeyDownArrow(event);
                 this.moveSelectionKeyboard(this.drawingService.previewCtx);
 
                 setTimeout(() => {
                     if (this.isArrowPressed()) {
-                        if (!this.intervalId) {
-                            this.intervalId = setInterval(this.moveSelectionKeyboard, SHORT_DELAY, this, this.drawingService.previewCtx);
-                        }
+                        this.intervalId = setInterval(() => {
+                            this.moveSelectionKeyboard(this.drawingService.previewCtx);
+                        }, SHORT_DELAY);
                     }
                 }, LONG_DELAY);
             }
@@ -151,10 +156,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (this.keysDown.get(ArrowKeys.Up)) {
             this.newOrigin.y -= DY;
         }
-
-        // console.log('Waiting the delay');
-        // await this.delay(1000);
-        // console.log('Waiting done');
 
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
