@@ -1,11 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-// import { Vec2 } from '@app/classes/vec2';
-import { MouseButton,mouseEventLClick, mouseEventRClick } from '@app/constants';
+import { MouseButton, mouseEventLClick, mouseEventRClick } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PipetteService } from './pipette.service';
 // tslint:disable
 
-fdescribe('PipetteService', () => {
+describe('PipetteService', () => {
     let service: PipetteService;
     let canvas: HTMLCanvasElement;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -13,8 +12,7 @@ fdescribe('PipetteService', () => {
     let zoomCtxStub: CanvasRenderingContext2D;
     let zoomCanvasStub: HTMLCanvasElement;
     let mouseEventLeft: MouseEvent;
-    // let mouseEventRight: MouseEvent;
-    // let pixelColor: string[];
+    
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCanvasStub: HTMLCanvasElement;
@@ -30,7 +28,7 @@ fdescribe('PipetteService', () => {
         canvas = document.createElement('canvas');
         canvas.width = WIDTH_DRAWING_CANVAS;
         canvas.height = HEIGHT_DRAWING_CANVAS;
-        //pixelColor = ['#000000', '255'];
+     
         baseCtxStub = canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCanvasStub = canvas as HTMLCanvasElement;
      
