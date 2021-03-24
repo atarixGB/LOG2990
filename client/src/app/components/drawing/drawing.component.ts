@@ -78,11 +78,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy {
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
-
-        this.baseCtx.beginPath();
-        this.baseCtx.fillStyle = '#00FFFF';
-        this.baseCtx.fillRect(20, 20, 300, 300);
-        this.baseCtx.closePath();
     }
 
     mouseCoord(event: MouseEvent): Vec2 {

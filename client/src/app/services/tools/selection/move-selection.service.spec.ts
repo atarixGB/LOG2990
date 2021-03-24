@@ -4,6 +4,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from './move-selection.service';
 import { SelectionService } from './selection.service';
 
+// tslint:disable
 describe('MoveSelectionService', () => {
     let service: MoveSelectionService;
     let drawingServiceSpy: DrawingService;
