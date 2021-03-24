@@ -313,6 +313,27 @@ fdescribe('SelectionService', () => {
         expect(checkPixelSpy).toHaveBeenCalled();
     });
 
+    it('resetParametersTools resets all the parameters ', () => {
+        const defaultLine = 10;
+        const newLine = 4;
+        service['previousLineWidthRectangle'] = defaultLine;
+        service['previousLineWidthEllipse'] = defaultLine;
+
+        service['rectangleService'].mouseDown = true;
+        service['rectangleService'].lineWidth = newLine;
+        service['rectangleService'].isSelection = true;
+        service['ellipseService'].mouseDown = true;
+        service['ellipseService'].lineWidth = newLine;
+        service['ellipseService'].isSelection = true;
+        service['resetParametersTools']();
+        expect(rectangleServiceSpy.mouseDown).toEqual(false);
+        expect(rectangleServiceSpy.lineWidth).toEqual(defaultLine);
+        expect(rectangleServiceSpy.isSelection).toEqual(false);
+        expect(ellipseServiceSpy.mouseDown).toEqual(false);
+        expect(ellipseServiceSpy.lineWidth).toEqual(defaultLine);
+        expect(ellipseServiceSpy.isSelection).toEqual(false);
+    });
+
 
 
 
