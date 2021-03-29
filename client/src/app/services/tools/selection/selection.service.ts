@@ -16,6 +16,7 @@ export class SelectionService extends Tool {
     origin: Vec2;
     destination: Vec2;
     isEllipse: boolean;
+    isLasso: boolean;
     activeSelection: boolean;
     newSelection: boolean;
     initialSelection: boolean;
@@ -30,6 +31,7 @@ export class SelectionService extends Tool {
     constructor(protected drawingService: DrawingService, private rectangleService: RectangleService, private ellipseService: EllipseService) {
         super(drawingService);
         this.isEllipse = false;
+        this.isLasso = false;
         this.activeSelection = false;
         this.newSelection = true;
         this.initialSelection = true;

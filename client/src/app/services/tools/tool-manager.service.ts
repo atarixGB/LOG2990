@@ -51,6 +51,7 @@ export class ToolManagerService {
             .set(ToolList.Spray, this.sprayService)
             .set(ToolList.SelectionRectangle, this.selectionService)
             .set(ToolList.SelectionEllipse, this.selectionService)
+            .set(ToolList.Lasso, this.selectionService)
             .set(ToolList.MoveSelection, this.moveSelectionService);
 
         this.keyBindings = new Map<string, Tool>();
@@ -64,7 +65,8 @@ export class ToolManagerService {
             .set('3', this.polygonService)
             .set('a', this.sprayService)
             .set('r', this.selectionService)
-            .set('s', this.selectionService);
+            .set('s', this.selectionService)
+            .set('v', this.selectionService);
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {
@@ -87,10 +89,13 @@ export class ToolManagerService {
             this.currentTool = this.keyBindings.get(keyShortcut);
             if (keyShortcut === 's') {
                 this.currentToolEnum = ToolList.SelectionEllipse;
+            } else if (keyShortcut === 'v') {
+                this.currentToolEnum = ToolList.Lasso;
             } else {
                 this.currentToolEnum = this.getEnumFromMap(this.serviceBindings, this.currentTool);
             }
             this.isSelectionEllipse();
+            this.isLasso();
         }
     }
 
@@ -101,6 +106,7 @@ export class ToolManagerService {
             this.currentTool = this.serviceBindings.get(tool);
             this.currentToolEnum = tool;
             this.isSelectionEllipse();
+            this.isLasso();
         }
     }
 
@@ -147,5 +153,13 @@ export class ToolManagerService {
             return;
         }
         this.selectionService.isEllipse = false;
+    }
+
+    isLasso(): void {
+        if (this.currentToolEnum === ToolList.Lasso) {
+            this.selectionService.isLasso = true;
+            return;
+        }
+        this.selectionService.isLasso = false;
     }
 }
