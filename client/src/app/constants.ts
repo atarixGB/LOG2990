@@ -60,6 +60,7 @@ export enum ToolList {
     MoveSelection = 12,
     Undo = 13,
     Redo = 14,
+    Text = 15,
 }
 
 export const mouseEventLClick = {
