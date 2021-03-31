@@ -2,6 +2,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
@@ -12,6 +14,7 @@ describe('DrawingComponent', () => {
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
+    let activatedRouteSpy: jasmine.SpyObj<ActivatedRoute>;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
@@ -27,10 +30,11 @@ describe('DrawingComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
-            imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule],
+            imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule, RouterTestingModule],
             providers: [
                 { provide: DrawingService, useValue: drawingStub },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
+                { provide: ActivatedRoute, useValue: activatedRouteSpy },
             ],
         }).compileComponents();
     }));
