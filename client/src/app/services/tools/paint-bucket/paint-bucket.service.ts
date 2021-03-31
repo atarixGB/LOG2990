@@ -3,6 +3,7 @@
 // Available : http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
+import { MouseButton } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -28,6 +29,18 @@ export class PaintBucketService extends Tool {
         super(drawingService);
     }
 
+    onMouseDown(event: MouseEvent): void {
+      this.drawingService.baseCtx.filter = 'none';
+      this.drawingService.previewCtx.filter = 'none';
+      this.mouseDownCoord = this.getPositionFromMouse(event);
+      this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;;
+      if (event.button === MouseButton.Left) {
+          this.drawingService.baseCtx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+          this.contiguousFill();//method to enable bucket fill with contiguous pixels on left click
+      } else if (event.button === MouseButton.Right) {
+          this.fill(); //method to enable bucket to fill without contiguous pixels on right click
+      }
+  }
     setToleranceValue(newTolerance: number): void {
         this.tolerance = newTolerance;
     }
