@@ -11,7 +11,18 @@ export class TextService extends Tool {
 
     constructor(drawingService: DrawingService) {
         super(drawingService);
-        this.textInput = '';
+        this.textInput = '|';
+
+        /*
+        this.filtersBindings = new Map<FiltersList, string>();
+        this.filtersBindings
+            .set(FiltersList.None, 'none')
+            .set(FiltersList.Blur, 'blur')
+            .set(FiltersList.Brightness, 'brightness')
+            .set(FiltersList.Contrast, 'contrast')
+            .set(FiltersList.Invert, 'invert')
+            .set(FiltersList.Grayscale, 'grayscale');
+        */
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -23,14 +34,10 @@ export class TextService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        console.log('J écris');
-        console.log(this.textInput);
         if (event.key === 'Backspace') {
-            console.log('Problème backspace');
-            this.textInput = this.textInput.substring(0, this.textInput.length - 1);
-            console.log(this.textInput);
+            this.textInput = [this.textInput.substring(0, this.textInput.length - 1), this.textInput.substring(this.textInput.length - 1)].join('');
         } else {
-            this.textInput += event.key;
+            this.textInput = [this.textInput.substring(0, this.textInput.length - 1), event.key, this.textInput.substring(this.textInput.length - 1)].join('');
         }
         this.drawingService.previewCtx.fillStyle = 'black';
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
