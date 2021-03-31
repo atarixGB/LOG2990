@@ -12,7 +12,7 @@ export class IndexService {
     private readonly DRAWINGS_URL: string = '/drawings';
     private readonly SEND_URL: string = '/send';
     private readonly FILTER_URL: string = '/filters/';
-    private readonly PNG: string = '.png';
+    private readonly FILE_FORMAT: string = '.png';
 
     constructor(private http: HttpClient) {}
 
@@ -29,7 +29,7 @@ export class IndexService {
 
     async deleteDrawingById(id: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.png`;
+            const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.${this.FILE_FORMAT}`;
             this.http.delete(url, { responseType: 'text' }).subscribe(
                 () => {
                     resolve();
@@ -58,7 +58,7 @@ export class IndexService {
     drawingDataToDrawing(drawings: DrawingData[]): Drawing[] {
         const parseDrawing = [];
         for (let i = 0; i < drawings.length; i++) {
-            const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawings[i]._id + this.PNG;
+            const imgURL = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + '/' + drawings[i]._id + this.FILE_FORMAT;
             const labels = drawings[i].labels;
             if (labels !== undefined) {
                 parseDrawing[i] = new Drawing(drawings[i].title, labels, imgURL);

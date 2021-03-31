@@ -7,6 +7,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PolygonConfigComponent } from './polygon-config.component';
 
+// tslint:disable
 describe('PolygonConfigComponent', () => {
     let component: PolygonConfigComponent;
     let fixture: ComponentFixture<PolygonConfigComponent>;
