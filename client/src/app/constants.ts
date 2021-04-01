@@ -29,14 +29,6 @@ export enum ImageFormat {
     Jpg = 1,
 }
 
-export enum Font {
-    Arial = 0,
-    TimesNewRoman = 1,
-    CopperPlate = 2,
-    CourierNew  = 3,
-    LucidaHandwriting = 4,
-}
-
 export enum FiltersList {
     None = 0,
     Blur = 1,
@@ -154,3 +146,20 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
+
+// Text
+export enum Font {
+    Arial = 0,
+    TimesNewRoman = 1,
+    CopperPlate = 2,
+    CourierNew  = 3,
+    LucidaHandwriting = 4,
+}
+
+export enum CanvasType {
+    previewCtx = 0,
+    baseCtx = 1,
+}
+
+export const DEFAULT_TEXT_SIZE = "20";
+export const DEFAULT_FONT = 'Arial';
