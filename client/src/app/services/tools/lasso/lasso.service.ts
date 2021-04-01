@@ -25,6 +25,7 @@ export class LassoService extends Tool {
     private currentSegment: Vec2[];
     private polygonCoords: Vec2[];
     private nbSegments: number;
+    // private firstSegment: boolean;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
@@ -39,12 +40,12 @@ export class LassoService extends Tool {
         this.currentSegment.push(this.mouseDownCoord);
 
         // *** FOR DEBUG
-        let dx = Math.abs(this.polygonCoords[0].x - this.mouseDownCoord.x);
-        let dy = Math.abs(this.polygonCoords[0].y - this.mouseDownCoord.y);
-        console.log(`
-            init point: (${this.polygonCoords[0].x},${this.polygonCoords[0].y})
-            mouse: (${this.mouseDownCoord.x},${this.mouseDownCoord.y})
-            distance du point init:${Math.sqrt(dx * dx + dy * dy)}`);
+        // let dx = Math.abs(this.polygonCoords[0].x - this.mouseDownCoord.x);
+        // let dy = Math.abs(this.polygonCoords[0].y - this.mouseDownCoord.y);
+        // console.log(`
+        //     init point: (${this.polygonCoords[0].x},${this.polygonCoords[0].y})
+        //     mouse: (${this.mouseDownCoord.x},${this.mouseDownCoord.y})
+        //     distance du point init:${Math.sqrt(dx * dx + dy * dy)}`);
         // ***
 
         if (
@@ -67,10 +68,17 @@ export class LassoService extends Tool {
     onMouseMove(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
+        const segment2: Vec2[] = [this.polygonCoords[this.polygonCoords.length - 1], this.mouseDownCoord];
         if (this.mouseDown) {
-            this.currentSegment.push(this.mouseDownCoord);
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
+            if (this.polygonCoords.length > 1) {
+                for (let i = 0; i < this.polygonCoords.length - 1; i++) {
+                    let segment1: Vec2[] = [this.polygonCoords[i], this.polygonCoords[i + 1]];
+                    this.segmentIntersection(segment1, segment2);
+                    this.currentSegment.push(this.mouseDownCoord);
+                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                    this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
+                }
+            }
         }
     }
 
@@ -123,6 +131,62 @@ export class LassoService extends Tool {
         const dx = Math.abs(basePoint.x - mousePosition.x);
         const dy = Math.abs(basePoint.y - mousePosition.y);
         return Math.sqrt(dx * dx + dy * dy) <= radius;
+    }
+
+    private segmentIntersection(firstSegment: Vec2[], secondSegment: Vec2[]): boolean {
+        let m1, m2;
+        let b1, b2;
+        let xa;
+        const X1 = firstSegment[0].x;
+        const Y1 = firstSegment[0].y;
+        const X2 = firstSegment[1].x;
+        const Y2 = firstSegment[1].y;
+        const X3 = secondSegment[0].x;
+        const Y3 = secondSegment[0].y;
+        const X4 = secondSegment[1].x;
+        const Y4 = secondSegment[1].y;
+        console.log(X1, X2, X3, X4);
+        console.log(Y1, Y2, Y3, Y4);
+
+        try {
+            m1 = (Y1 - Y2) / (X1 - X2);
+            m2 = (Y3 - Y4) / (X3 - X4);
+            console.log('m1:' + m1, 'm2:' + m2);
+        } catch (error) {
+            console.log('division par zero pour m1 ou m2');
+        }
+
+        if (m1 && m2) {
+            b1 = Y1 - m1 * X1;
+            b2 = Y3 - m2 * X3;
+            console.log('b1:' + b1, 'b2:' + b2);
+
+            if (m1 == m2) {
+                console.log('m1 et m2 parallele');
+                return true;
+            }
+
+            try {
+                xa = (b2 - b1) / (m1 - m2);
+                console.log('xa:' + xa);
+            } catch {
+                console.log('division par zero');
+                return false;
+            }
+
+            if (xa < Math.max(Math.min(X1, X2), Math.min(X3, X4)) || xa > Math.min(Math.max(X1, X2), Math.max(X3, X4))) {
+                console.log('false');
+                return false;
+            } else {
+                console.log('true');
+                // this.drawingService.lassoPreviewCtx.beginPath();
+                // this.drawingService.lassoPreviewCtx.fillRect(0, 0, 20, 20);
+                // this.drawingService.lassoPreviewCtx.closePath();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private clearCurrentSegment(): void {
