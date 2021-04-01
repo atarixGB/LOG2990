@@ -5,6 +5,7 @@ import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
+import { LassoService } from '@app/services/tools/lasso/lasso.service';
 
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 
@@ -28,7 +29,12 @@ export class SelectionService extends Tool {
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
 
-    constructor(protected drawingService: DrawingService, private rectangleService: RectangleService, private ellipseService: EllipseService) {
+    constructor(
+        protected drawingService: DrawingService,
+        private rectangleService: RectangleService,
+        private ellipseService: EllipseService,
+        private lassoService: LassoService,
+    ) {
         super(drawingService);
         this.isEllipse = false;
         this.isLasso = false;
@@ -40,6 +46,10 @@ export class SelectionService extends Tool {
         this.selectionTerminated = false;
     }
 
+    onMouseClick(event: MouseEvent): void {
+        if (this.isLasso) this.lassoService.onMouseClick(event);
+    }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
@@ -49,15 +59,18 @@ export class SelectionService extends Tool {
 
             this.initializeToolParameters();
             this.printMovedSelection();
-            if (!this.isEllipse) this.rectangleService.onMouseDown(event);
-            else this.ellipseService.onMouseDown(event);
+
+            if (this.isEllipse) this.ellipseService.onMouseDown(event);
+            else if (this.isLasso) this.lassoService.onMouseDown(event);
+            else this.rectangleService.onMouseDown(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
-            if (!this.isEllipse) this.rectangleService.onMouseMove(event);
-            else this.ellipseService.onMouseMove(event);
+            if (this.isEllipse) this.ellipseService.onMouseMove(event);
+            else if (this.isLasso) this.lassoService.onMouseMove(event);
+            else this.rectangleService.onMouseMove(event);
         }
 
         if (this.activeSelection && !this.selectionTerminated) {
@@ -84,8 +97,9 @@ export class SelectionService extends Tool {
     }
 
     handleKeyDown(event: KeyboardEvent): void {
-        if (!this.isEllipse) this.rectangleService.handleKeyDown(event);
-        else this.ellipseService.handleKeyDown(event);
+        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
+        else if (this.isLasso) this.lassoService.handleKeyDown(event);
+        else this.rectangleService.handleKeyDown(event);
 
         if (event.key === 'Escape') {
             event.preventDefault();
@@ -94,8 +108,9 @@ export class SelectionService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        if (!this.isEllipse) this.rectangleService.handleKeyUp(event);
-        else this.ellipseService.handleKeyUp(event);
+        if (this.isEllipse) this.ellipseService.handleKeyUp(event);
+        else if (this.isLasso) this.lassoService.handleKeyUp(event);
+        else this.rectangleService.handleKeyUp(event);
     }
 
     mouseInSelectionArea(origin: Vec2, destination: Vec2, mouseCoord: Vec2): boolean {
@@ -125,6 +140,8 @@ export class SelectionService extends Tool {
             this.ellipseService.pathData.push(this.origin);
             this.ellipseService.pathData.push(this.destination);
             this.ellipseService.drawShape(this.drawingService.previewCtx);
+        } else if (this.isLasso) {
+            // TODO
         } else {
             this.rectangleService.clearPath();
             this.rectangleService.pathData.push(this.origin);
@@ -179,6 +196,8 @@ export class SelectionService extends Tool {
             );
             this.drawingService.baseCtx.fill();
             this.drawingService.baseCtx.closePath();
+        } else if (this.isLasso) {
+            // TODO
         } else {
             this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
             this.drawingService.baseCtx.closePath();
@@ -200,12 +219,14 @@ export class SelectionService extends Tool {
     }
 
     private calculateDimension(): void {
-        if (!this.isEllipse) {
-            this.origin = this.rectangleService.pathData[0];
-            this.destination = this.rectangleService.pathData[this.rectangleService.pathData.length - 1];
-        } else {
+        if (this.isEllipse) {
             this.origin = this.ellipseService.pathData[0];
             this.destination = this.ellipseService.pathData[this.ellipseService.pathData.length - 1];
+        } else if (this.isLasso) {
+            // TODO
+        } else {
+            this.origin = this.rectangleService.pathData[0];
+            this.destination = this.rectangleService.pathData[this.rectangleService.pathData.length - 1];
         }
         this.width = this.destination.x - this.origin.x;
         this.height = this.destination.y - this.origin.y;
@@ -218,6 +239,8 @@ export class SelectionService extends Tool {
 
         if (this.isEllipse) {
             this.checkPixelInEllipse();
+        } else if (this.isLasso) {
+            // TODO
         }
     }
 
