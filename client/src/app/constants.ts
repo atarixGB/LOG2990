@@ -156,6 +156,13 @@ export enum Font {
     Impact = 4,
 }
 
+export enum Emphasis{
+    Italic = 0,
+    Bold = 1,
+    ItalicBold = 2,
+    Normal = 3,
+}
+
 export enum CanvasType {
     previewCtx = 0,
     baseCtx = 1,
@@ -163,3 +170,4 @@ export enum CanvasType {
 
 export const DEFAULT_TEXT_SIZE = "20";
 export const DEFAULT_FONT = 'Arial';
+export const DEFAULT_EMPHASIS = 'normal'

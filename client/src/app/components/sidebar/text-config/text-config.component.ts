@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Font } from '@app/constants';
+import { Emphasis, Font } from '@app/constants';
 import { TextService } from '@app/services/tools/text/text.service';
 
 @Component({
@@ -9,6 +9,7 @@ import { TextService } from '@app/services/tools/text/text.service';
 })
 export class TextConfigComponent{
   Font: typeof Font = Font;
+  Emphasis: typeof Emphasis = Emphasis;
   constructor(public textService: TextService) { }
 
   formatLabel(value: number): string {

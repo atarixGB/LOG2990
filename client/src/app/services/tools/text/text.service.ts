@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { CanvasType, DEFAULT_FONT, DEFAULT_TEXT_SIZE, Font } from '@app/constants';
+import { CanvasType, DEFAULT_EMPHASIS, DEFAULT_FONT, DEFAULT_TEXT_SIZE, Emphasis, Font } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -18,10 +18,13 @@ export class TextService extends Tool {
     font : string = DEFAULT_FONT;
 
     selectFont: Font;
+    selectEmphasis : Emphasis;
 
     color: string;
     fontBinding: Map<Font, string>;
+    emphasisBinding: Map<Emphasis, string>;
     size: string = DEFAULT_TEXT_SIZE;
+    emphasis: string = DEFAULT_EMPHASIS;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -34,10 +37,18 @@ export class TextService extends Tool {
             .set(Font.CourierNew, 'Courier New')
             .set(Font.Impact, 'Impact')
 
+        this.emphasisBinding = new Map<Emphasis, string>();
+        this.emphasisBinding
+            .set(Emphasis.Bold, 'bold')
+            .set(Emphasis.Italic, 'italic')
+            .set(Emphasis.ItalicBold, 'bold italic')
+            .set(Emphasis.Normal, 'normal')
         
         this.textInput = '';
         this.cursorPosition = 0;
         this.isWriting = false;
+        this.selectFont = Font.Arial;
+        this.selectEmphasis = Emphasis.Normal;
     
     }
 
@@ -139,23 +150,27 @@ export class TextService extends Tool {
 
         if(ctx == CanvasType.baseCtx){
             this.drawingService.baseCtx.fillStyle = this.color;
-            this.drawingService.baseCtx.font = this.size+ "px " + this.font;
+            this.drawingService.baseCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
 
             this.drawingService.baseCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
         }
         else {
             this.drawingService.previewCtx.fillStyle = this.color;
-            this.drawingService.previewCtx.font = this.size+ "px " + this.font;
-            console.log('FOnt write preview :' , this.font);
+            this.drawingService.previewCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
             this.drawingService.previewCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
         }
 
     }
 
-    changeType(): void {
+    changeFont(): void {
         if (this.fontBinding.has(this.selectFont) && this.selectFont != undefined) {
             this.font = this.fontBinding.get(this.selectFont)!;
-            console.log('FOnt change type :' , this.font);
+        }
+    }
+
+    changeEmphasis() : void{
+        if (this.emphasisBinding.has(this.selectEmphasis) && this.selectEmphasis != undefined) {
+            this.emphasis = this.emphasisBinding.get(this.selectEmphasis)!;
         }
     }
 }

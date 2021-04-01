@@ -3,11 +3,21 @@
 
 <mat-form-field>
     <mat-label>Police de caractère</mat-label>
-    <mat-select class="white" [(ngModel)]="textService.selectFont" (selectionChange)="textService.changeType()">
+    <mat-select class="white" value = "textService.font" [(ngModel)]="textService.selectFont" (selectionChange)="textService.changeFont()">
       <mat-option [value] = "Font.Arial">Arial</mat-option>
       <mat-option [value] ="Font.TimesNewRoman">Times New Roman</mat-option>
       <mat-option [value] ="Font.ComicSansMs">Comic Sans Ms</mat-option>
       <mat-option [value] ="Font.CourierNew">Courier New</mat-option>
       <mat-option [value] ="Font.Impact">Impact</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Emphase</mat-label>
+    <mat-select class="white" value = "textService.emphasis" [(ngModel)]="textService.selectEmphasis" (selectionChange)="textService.changeEmphasis()">
+      <mat-option [value] = "Emphasis.Bold">Gras</mat-option>
+      <mat-option [value] ="Emphasis.Italic">Italique</mat-option>
+      <mat-option [value] ="Emphasis.ItalicBold">Gras et Italique</mat-option>
+      <mat-option [value] ="Emphasis.Normal">Normal</mat-option>
     </mat-select>
   </mat-form-field>
