@@ -17,6 +17,8 @@ export class TextService extends Tool {
     positionText: Vec2;
     font : string = DEFAULT_FONT;
 
+    selectFont: Font;
+
     color: string;
     fontBinding: Map<Font, string>;
     size: string = DEFAULT_TEXT_SIZE;
@@ -28,9 +30,9 @@ export class TextService extends Tool {
         this.fontBinding
             .set(Font.Arial, 'Arial')
             .set(Font.TimesNewRoman, 'Times New Roman')
-            .set(Font.CopperPlate, 'Copper Plate')
+            .set(Font.ComicSansMs, 'Comic Sans Ms')
             .set(Font.CourierNew, 'Courier New')
-            .set(Font.LucidaHandwriting, 'Lucida Handwriting')
+            .set(Font.Impact, 'Impact')
 
         
         this.textInput = '';
@@ -144,9 +146,16 @@ export class TextService extends Tool {
         else {
             this.drawingService.previewCtx.fillStyle = this.color;
             this.drawingService.previewCtx.font = this.size+ "px " + this.font;
-            console.log(this.size);
+            console.log('FOnt write preview :' , this.font);
             this.drawingService.previewCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
         }
 
+    }
+
+    changeType(): void {
+        if (this.fontBinding.has(this.selectFont) && this.selectFont != undefined) {
+            this.font = this.fontBinding.get(this.selectFont)!;
+            console.log('FOnt change type :' , this.font);
+        }
     }
 }

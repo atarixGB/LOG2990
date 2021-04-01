@@ -1,3 +1,13 @@
 <h4>size: {{ textService.size }} px</h4>
 <mat-slider thumbLabel [displayWith]="formatLabel" value = "textService.size" tickInterval="1000" min="1" max="50" [(ngModel)]="textService.size"></mat-slider>
 
+<mat-form-field>
+    <mat-label>Police de caractère</mat-label>
+    <mat-select class="white" [(ngModel)]="textService.selectFont" (selectionChange)="textService.changeType()">
+      <mat-option [value] = "Font.Arial">Arial</mat-option>
+      <mat-option [value] ="Font.TimesNewRoman">Times New Roman</mat-option>
+      <mat-option [value] ="Font.ComicSansMs">Comic Sans Ms</mat-option>
+      <mat-option [value] ="Font.CourierNew">Courier New</mat-option>
+      <mat-option [value] ="Font.Impact">Impact</mat-option>
+    </mat-select>
+  </mat-form-field>

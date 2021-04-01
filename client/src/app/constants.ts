@@ -151,9 +151,9 @@ export const ZOOM_RATIO = 0.2;
 export enum Font {
     Arial = 0,
     TimesNewRoman = 1,
-    CopperPlate = 2,
+    ComicSansMs = 2,
     CourierNew  = 3,
-    LucidaHandwriting = 4,
+    Impact = 4,
 }
 
 export enum CanvasType {

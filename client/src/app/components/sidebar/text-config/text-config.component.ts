@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Font } from '@app/constants';
 import { TextService } from '@app/services/tools/text/text.service';
 
 @Component({
@@ -7,8 +8,8 @@ import { TextService } from '@app/services/tools/text/text.service';
   styleUrls: ['./text-config.component.scss']
 })
 export class TextConfigComponent{
-
-  constructor(public textService: TextService) {}
+  Font: typeof Font = Font;
+  constructor(public textService: TextService) { }
 
   formatLabel(value: number): string {
     return value + 'px';
