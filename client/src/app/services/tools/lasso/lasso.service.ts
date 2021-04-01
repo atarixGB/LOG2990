@@ -25,6 +25,7 @@ export class LassoService extends Tool {
     private currentSegment: Vec2[];
     private polygonCoords: Vec2[];
     private nbSegments: number;
+    private areIntesected: boolean;
     // private firstSegment: boolean;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
@@ -32,6 +33,7 @@ export class LassoService extends Tool {
         this.currentSegment = [];
         this.polygonCoords = [];
         this.nbSegments = 0;
+        this.areIntesected = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -50,7 +52,8 @@ export class LassoService extends Tool {
 
         if (
             this.mousePositionIsInClosureArea(this.mouseDownCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) &&
-            this.nbSegments >= NB_MIN_SEGMENTS
+            this.nbSegments >= NB_MIN_SEGMENTS &&
+            !this.areIntesected
         ) {
             console.log('MOUSE IS IN CLOSURE AREA');
             const finalSegment: Vec2[] = [
@@ -71,7 +74,7 @@ export class LassoService extends Tool {
         const segment2: Vec2[] = [this.polygonCoords[this.polygonCoords.length - 1], this.mouseDownCoord];
         if (this.mouseDown) {
             if (this.polygonCoords.length > 1) {
-                for (let i = 0; i < this.polygonCoords.length - 1; i++) {
+                for (let i = 0; i < this.polygonCoords.length - 3; i++) {
                     let segment1: Vec2[] = [this.polygonCoords[i], this.polygonCoords[i + 1]];
                     this.segmentIntersection(segment1, segment2);
                     this.currentSegment.push(this.mouseDownCoord);
@@ -85,7 +88,7 @@ export class LassoService extends Tool {
     onMouseUp(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.areIntesected) {
             this.currentSegment.push(this.mouseDownCoord);
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, this.currentSegment, STYLES);
         }
@@ -145,8 +148,6 @@ export class LassoService extends Tool {
         const Y3 = secondSegment[0].y;
         const X4 = secondSegment[1].x;
         const Y4 = secondSegment[1].y;
-        console.log(X1, X2, X3, X4);
-        console.log(Y1, Y2, Y3, Y4);
 
         try {
             m1 = (Y1 - Y2) / (X1 - X2);
@@ -154,17 +155,13 @@ export class LassoService extends Tool {
             console.log('m1:' + m1, 'm2:' + m2);
         } catch (error) {
             console.log('division par zero pour m1 ou m2');
+            m1 = m2 = 0;
         }
 
         if (m1 && m2) {
             b1 = Y1 - m1 * X1;
             b2 = Y3 - m2 * X3;
             console.log('b1:' + b1, 'b2:' + b2);
-
-            if (m1 == m2) {
-                console.log('m1 et m2 parallele');
-                return true;
-            }
 
             try {
                 xa = (b2 - b1) / (m1 - m2);
@@ -176,9 +173,11 @@ export class LassoService extends Tool {
 
             if (xa < Math.max(Math.min(X1, X2), Math.min(X3, X4)) || xa > Math.min(Math.max(X1, X2), Math.max(X3, X4))) {
                 console.log('false');
+                this.areIntesected = false;
                 return false;
             } else {
                 console.log('true');
+                this.areIntesected = true;
                 // this.drawingService.lassoPreviewCtx.beginPath();
                 // this.drawingService.lassoPreviewCtx.fillRect(0, 0, 20, 20);
                 // this.drawingService.lassoPreviewCtx.closePath();
@@ -187,6 +186,47 @@ export class LassoService extends Tool {
         }
 
         return false;
+    }
+
+    // private segmentParameters(firstSegment: Vec2[], secondSegment: Vec2[]): void {
+    //     let m1, m2;
+    //     let b1, b2;
+    //     let xa;
+    //     const X1 = firstSegment[0].x;
+    //     const Y1 = firstSegment[0].y;
+    //     const X2 = firstSegment[1].x;
+    //     const Y2 = firstSegment[1].y;
+    //     const X3 = secondSegment[0].x;
+    //     const Y3 = secondSegment[0].y;
+    //     const X4 = secondSegment[1].x;
+    //     const Y4 = secondSegment[1].y;
+
+    // }
+
+    private segmentsConfused(firstSegment: Vec2[], secondSegment: Vec2[]): void {
+        let m1, m2;
+        const X1 = firstSegment[0].x;
+        const Y1 = firstSegment[0].y;
+        const X2 = firstSegment[1].x;
+        const Y2 = firstSegment[1].y;
+        const X3 = secondSegment[0].x;
+        const Y3 = secondSegment[0].y;
+        const X4 = secondSegment[1].x;
+        const Y4 = secondSegment[1].y;
+
+        try {
+            m1 = (Y1 - Y2) / (X1 - X2);
+            m2 = (Y3 - Y4) / (X3 - X4);
+            console.log('m1:' + m1, 'm2:' + m2);
+        } catch (error) {
+            console.log('division par zero pour m1 ou m2');
+        }
+
+        if (m1 && m2) {
+            if (m1 == m2) {
+                console.log('m1 et m2 parallele');
+            }
+        }
     }
 
     private clearCurrentSegment(): void {
