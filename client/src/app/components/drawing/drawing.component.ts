@@ -97,6 +97,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
+        this.baseCtx.beginPath();
+        this.baseCtx.fillStyle = '#00FFFF';
+        this.baseCtx.fillRect(0, 0, 300, 300);
+        this.baseCtx.closePath();
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
@@ -117,7 +121,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
             if (
                 this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
-                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse
+                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse ||
+                this.toolManagerService.currentToolEnum === ToolList.Lasso
             ) {
                 if (!this.selectionService.newSelection) {
                     this.toolManagerService.currentTool = this.moveSelectionService;

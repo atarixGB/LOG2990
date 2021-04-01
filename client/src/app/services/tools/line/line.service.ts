@@ -149,7 +149,6 @@ export class LineService extends Tool {
     }
 
     drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
-        console.log('drawconstrinedlibe');
         const mousePosition = this.getPositionFromMouse(event);
         this.basePoint = path[path.length - 1];
         this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);

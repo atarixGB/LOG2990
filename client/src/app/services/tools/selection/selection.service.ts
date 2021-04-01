@@ -47,7 +47,7 @@ export class SelectionService extends Tool {
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (this.isLasso) this.lassoService.onMouseClick(event);
+        if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseClick(event);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -67,7 +67,7 @@ export class SelectionService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        if (this.isLasso) this.lassoService.onMouseMove(event);
+        if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseMove(event);
 
         if (this.mouseDown) {
             if (this.isEllipse) this.ellipseService.onMouseMove(event);
@@ -84,8 +84,14 @@ export class SelectionService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        if (this.isLasso) this.lassoService.onMouseUp(event);
-        if (this.mouseDown) {
+        if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
+        if (this.lassoService.selectionOver) {
+            this.getSelectionData(this.drawingService.baseCtx);
+            this.createBoundaryBox();
+            this.activeSelection = true;
+        }
+
+        if (this.mouseDown && !this.isLasso) {
             this.activeSelection = true;
             this.mouseDown = false;
             this.getSelectionData(this.drawingService.baseCtx);
@@ -143,7 +149,11 @@ export class SelectionService extends Tool {
             this.ellipseService.pathData.push(this.destination);
             this.ellipseService.drawShape(this.drawingService.previewCtx);
         } else if (this.isLasso) {
-            // TODO
+            this.rectangleService.clearPath();
+            this.rectangleService.pathData.push(this.origin);
+            this.rectangleService.pathData.push(this.destination);
+            this.rectangleService.drawShape(this.drawingService.previewCtx);
+            this.lassoService.drawPolygon(this.drawingService.previewCtx);
         } else {
             this.rectangleService.clearPath();
             this.rectangleService.pathData.push(this.origin);
@@ -225,7 +235,8 @@ export class SelectionService extends Tool {
             this.origin = this.ellipseService.pathData[0];
             this.destination = this.ellipseService.pathData[this.ellipseService.pathData.length - 1];
         } else if (this.isLasso) {
-            // TODO
+            this.origin = this.lassoService.findMinCoord(this.lassoService.polygonCoords);
+            this.destination = this.lassoService.findMaxCoord(this.lassoService.polygonCoords);
         } else {
             this.origin = this.rectangleService.pathData[0];
             this.destination = this.rectangleService.pathData[this.rectangleService.pathData.length - 1];
@@ -242,7 +253,21 @@ export class SelectionService extends Tool {
         if (this.isEllipse) {
             this.checkPixelInEllipse();
         } else if (this.isLasso) {
-            // TODO
+            console.log('APPELER', this.width, this.height);
+
+            const imageData = this.selection.data;
+            const pixelLenght = 4;
+            let pixelCounter = 0;
+
+            for (let i = 0; i < this.height; i++) {
+                for (let j = 0; j < this.width; j++) {
+                    if (this.lassoService.pointInPolygon({ x: j, y: i })) {
+                        pixelCounter += pixelLenght;
+                    } else {
+                        imageData[pixelCounter + pixelLenght - 1] = 0;
+                    }
+                }
+            }
         }
     }
 
