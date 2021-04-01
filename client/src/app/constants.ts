@@ -29,6 +29,14 @@ export enum ImageFormat {
     Jpg = 1,
 }
 
+export enum Font {
+    Arial = 0,
+    TimesNewRoman = 1,
+    CopperPlate = 2,
+    CourierNew  = 3,
+    LucidaHandwriting = 4,
+}
+
 export enum FiltersList {
     None = 0,
     Blur = 1,
