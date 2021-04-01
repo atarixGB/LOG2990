@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { CanvasType, DEFAULT_EMPHASIS, DEFAULT_FONT, DEFAULT_TEXT_SIZE, Emphasis, Font } from '@app/constants';
+import { CanvasType, DEFAULT_EMPHASIS, DEFAULT_FONT, DEFAULT_TEXT_ALIGN, DEFAULT_TEXT_SIZE, Emphasis, Font, TextAlign } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -15,16 +15,20 @@ export class TextService extends Tool {
     cursorPosition: number;
     isWriting: boolean;
     positionText: Vec2;
-    font : string = DEFAULT_FONT;
 
     selectFont: Font;
     selectEmphasis : Emphasis;
+    selectAlign : TextAlign;
 
-    color: string;
     fontBinding: Map<Font, string>;
     emphasisBinding: Map<Emphasis, string>;
+    alignBinding: Map<TextAlign, string>;
+
+    color: string;
+    font : string = DEFAULT_FONT;
     size: string = DEFAULT_TEXT_SIZE;
     emphasis: string = DEFAULT_EMPHASIS;
+    align: string = DEFAULT_TEXT_ALIGN;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -43,12 +47,21 @@ export class TextService extends Tool {
             .set(Emphasis.Italic, 'italic')
             .set(Emphasis.ItalicBold, 'bold italic')
             .set(Emphasis.Normal, 'normal')
+
+        this.alignBinding = new Map<TextAlign, string>();
+        this.alignBinding
+            .set(TextAlign.Left, 'left')
+            .set(TextAlign.Center, 'center')
+            .set(TextAlign.Right, 'right')
+
         
         this.textInput = '';
         this.cursorPosition = 0;
         this.isWriting = false;
+
         this.selectFont = Font.Arial;
         this.selectEmphasis = Emphasis.Normal;
+        this.selectAlign = TextAlign.Left;
     
     }
 
@@ -151,12 +164,15 @@ export class TextService extends Tool {
         if(ctx == CanvasType.baseCtx){
             this.drawingService.baseCtx.fillStyle = this.color;
             this.drawingService.baseCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
+            this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
 
             this.drawingService.baseCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
         }
         else {
             this.drawingService.previewCtx.fillStyle = this.color;
             this.drawingService.previewCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
+            this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
+
             this.drawingService.previewCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
         }
 
@@ -171,6 +187,12 @@ export class TextService extends Tool {
     changeEmphasis() : void{
         if (this.emphasisBinding.has(this.selectEmphasis) && this.selectEmphasis != undefined) {
             this.emphasis = this.emphasisBinding.get(this.selectEmphasis)!;
+        }
+    }
+
+    changeAlign() : void{
+        if (this.alignBinding.has(this.selectAlign) && this.selectAlign != undefined) {
+            this.align = this.alignBinding.get(this.selectAlign)!;
         }
     }
 }

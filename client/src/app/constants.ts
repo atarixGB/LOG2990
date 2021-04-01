@@ -163,6 +163,12 @@ export enum Emphasis{
     Normal = 3,
 }
 
+export enum TextAlign{
+    Left = 0,
+    Center = 1,
+    Right = 2,
+}
+
 export enum CanvasType {
     previewCtx = 0,
     baseCtx = 1,
@@ -170,4 +176,5 @@ export enum CanvasType {
 
 export const DEFAULT_TEXT_SIZE = "20";
 export const DEFAULT_FONT = 'Arial';
-export const DEFAULT_EMPHASIS = 'normal'
+export const DEFAULT_EMPHASIS = 'normal';
+export const DEFAULT_TEXT_ALIGN = 'left';

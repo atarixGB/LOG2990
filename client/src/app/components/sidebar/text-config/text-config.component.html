@@ -21,3 +21,12 @@
       <mat-option [value] ="Emphasis.Normal">Normal</mat-option>
     </mat-select>
   </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Alignement</mat-label>
+    <mat-select class="white" value = "textService.align" [(ngModel)]="textService.selectAlign" (selectionChange)="textService.changeAlign()">
+      <mat-option [value] = "TextAlign.Left">Gauche</mat-option>
+      <mat-option [value] ="TextAlign.Center">Centre</mat-option>
+      <mat-option [value] ="TextAlign.Right">Droit</mat-option>
+    </mat-select>
+  </mat-form-field>
