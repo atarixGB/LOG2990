@@ -52,6 +52,7 @@ export class SelectionService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         if (this.mouseDown) {
             this.initialSelection = true;
             this.clearUnderneath = true;
@@ -61,15 +62,15 @@ export class SelectionService extends Tool {
             this.printMovedSelection();
 
             if (this.isEllipse) this.ellipseService.onMouseDown(event);
-            else if (this.isLasso) this.lassoService.onMouseDown(event);
             else this.rectangleService.onMouseDown(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
+        if (this.isLasso) this.lassoService.onMouseMove(event);
+
         if (this.mouseDown) {
             if (this.isEllipse) this.ellipseService.onMouseMove(event);
-            else if (this.isLasso) this.lassoService.onMouseMove(event);
             else this.rectangleService.onMouseMove(event);
         }
 
@@ -82,7 +83,8 @@ export class SelectionService extends Tool {
         }
     }
 
-    onMouseUp(): void {
+    onMouseUp(event: MouseEvent): void {
+        if (this.isLasso) this.lassoService.onMouseUp(event);
         if (this.mouseDown) {
             this.activeSelection = true;
             this.mouseDown = false;
@@ -92,8 +94,8 @@ export class SelectionService extends Tool {
         }
     }
 
-    onMouseLeave(): void {
-        if (this.mouseDown) this.onMouseUp();
+    onMouseLeave(event: MouseEvent): void {
+        if (this.mouseDown) this.onMouseUp(event);
     }
 
     handleKeyDown(event: KeyboardEvent): void {
