@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton } from '@app/constants';
+import { CONTROLPOINTSIZE, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
@@ -25,6 +25,7 @@ export class SelectionService extends Tool {
     imageMoved: boolean;
     clearUnderneath: boolean;
     selectionTerminated: boolean;
+    private controlPointsCoord: Vec2[];
     private width: number;
     private height: number;
     private previousLineWidthRectangle: number;
@@ -81,6 +82,7 @@ export class SelectionService extends Tool {
             } else {
                 this.newSelection = true;
             }
+            // console.log('SELECTIOON', this.newSelection);
         }
     }
 
@@ -162,9 +164,8 @@ export class SelectionService extends Tool {
 
     createControlPoints(): void {
         const ctx = this.drawingService.previewCtx;
-        const controlPointSize = 10;
-        const alignmentFactor = -controlPointSize / 2;
-        const controlPointCoord = [
+        const alignmentFactor = -CONTROLPOINTSIZE / 2;
+        this.controlPointsCoord = [
             { x: this.origin.x, y: this.origin.y },
             { x: this.destination.x, y: this.origin.y },
             { x: this.destination.x, y: this.destination.y },
@@ -173,16 +174,16 @@ export class SelectionService extends Tool {
             { x: this.destination.x, y: this.origin.y + this.height / 2 },
             { x: this.origin.x + this.width / 2, y: this.destination.y },
             { x: this.origin.x, y: this.origin.y + this.height / 2 },
-        ] as Vec2[];
+        ];
 
         ctx.beginPath();
         ctx.lineWidth = 1;
         ctx.fillStyle = '#FFFFFF';
 
-        for (const box of controlPointCoord) {
+        for (const box of this.controlPointsCoord) {
             box.x += alignmentFactor;
             box.y += alignmentFactor;
-            ctx.rect(box.x, box.y, controlPointSize, controlPointSize);
+            ctx.rect(box.x, box.y, CONTROLPOINTSIZE, CONTROLPOINTSIZE);
         }
         ctx.fill();
         ctx.stroke();
