@@ -121,6 +121,20 @@ export class TextService extends Tool {
                     this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
                 }
             }
+            else if(event.key === 'ArrowUp'){
+                if(this.currentLine != 0){
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+                    this.currentLine--;
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                }
+            }
+            else if(event.key === 'ArrowDown'){
+                if(this.currentLine != this.totalLine - 1){
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+                    this.currentLine++;
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                }
+            }
             else if(event.key === 'Enter'){
                 let nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
                 this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
