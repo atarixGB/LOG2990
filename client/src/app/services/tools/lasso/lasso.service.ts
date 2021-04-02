@@ -94,16 +94,11 @@ export class LassoService extends Tool {
         }
 
         this.polygonCoords.push(this.mouseDownCoord);
-        //
-        // console.log('/////////////');
-
-        // for (const i in this.polygonCoords) {
-        //     console.log('click', this.polygonCoords[i]);
-        // }
         this.nbSegments = this.polygonCoords.length - 1;
         this.mouseDown = false;
         this.clearCurrentSegment();
         this.mouseIsInClosureArea(this.mouseDownCoord);
+        console.log('mouse up lasso, selection over', this.selectionOver);
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -392,7 +387,7 @@ export class LassoService extends Tool {
 
     resetAttributes(): void {
         this.mouseDown = false;
-        this.selectionOver = false;
+        // this.selectionOver = false;
         this.nbSegments = 0;
         this.areIntesected = false;
         this.shiftKeyDown = false;
