@@ -94,17 +94,18 @@ export class TextService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
+        console.log('Position curseur Début key ', this.cursorPosition);
         if(this.isWriting){
             // Backspace -> effacer le charactère cureur - 1
             if (event.key === 'Backspace') {
                 if(this.cursorPosition != 0){
-                    this.textInput = [this.textInput.substring(0, this.cursorPosition - 1), this.textInput.substring(this.cursorPosition + 1, this.textInput.length - 1)].join('');
+                    this.textInput = this.textInput.substring(0, this.cursorPosition - 1) + this.textInput.substring(this.cursorPosition, this.textInput.length);
                     this.cursorPosition--;
                 }
             }
             // Delete -> effacer le charactère curseur + 1 
             else if(event.key === 'Delete'){
-                this.textInput = [this.textInput.substring(0, this.textInput.length - 1), this.textInput.substring(this.textInput.length - 1)].join('');  
+                this.textInput = this.textInput.substring(0, this.cursorPosition + 1) + this.textInput.substring(this.cursorPosition + 2, this.textInput.length);  
             }
             // Arrow Left -> curseur = curseur - 1 
             else if(event.key === 'ArrowLeft'){
@@ -135,10 +136,9 @@ export class TextService extends Tool {
             }
             // Ajout d'un caractère normal
             else if(this.cursorPosition != 0){
-                this.textInput = this.textInput.substring(0, this.cursorPosition) + event.key + this.textInput.substring(this.cursorPosition + 1, this.textInput.length - 1);
+                this.textInput = this.textInput.substring(0, this.cursorPosition) + event.key + this.textInput.substring(this.cursorPosition, this.textInput.length);
                 this.cursorPosition++;
             }
-            
             else{
                 this.textInput = event.key + this.textInput;
                 this.cursorPosition++;
@@ -147,7 +147,9 @@ export class TextService extends Tool {
             // Afficher sur le preview canvas 
             this.writeOnCanvas(CanvasType.previewCtx);
         }
-        console.log(this.textInput); 
+        console.log(this.textInput);
+        console.log('Position curseur fin key ', this.cursorPosition); 
+        console.log(event.key);
         
     }
 
