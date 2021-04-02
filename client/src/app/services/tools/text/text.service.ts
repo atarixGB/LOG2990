@@ -96,7 +96,7 @@ export class TextService extends Tool {
 
     handleKeyUp(event: KeyboardEvent): void {
         console.log('Position curseur Début key ', this.cursorPosition);
-        if(this.isWriting){
+        if(this.isWriting && event.key !== 'Shift' && event.key !== 'Control' && event.key !== 'Tab' && event.key !== 'Alt'){
             if (event.key === 'Backspace') {
                 if(this.cursorPosition != 0 || (this.cursorPosition != 0 && this.currentLine != 0)){
                     this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
