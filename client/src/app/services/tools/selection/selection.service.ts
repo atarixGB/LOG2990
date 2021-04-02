@@ -53,7 +53,7 @@ export class SelectionService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
 
-        if (this.mouseDown) {
+        if (this.mouseDown && !this.isLasso) {
             this.initialSelection = true;
             this.clearUnderneath = true;
             this.selectionTerminated = false;

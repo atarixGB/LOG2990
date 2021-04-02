@@ -22,7 +22,6 @@ const STYLES: DrawingContextStyle = {
 })
 export class LassoService extends Tool {
     private currentSegment: Vec2[];
-    private shiftKeyDown: boolean;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
@@ -58,21 +57,15 @@ export class LassoService extends Tool {
     handleKeyDown(event: KeyboardEvent): void {
         switch (event.key) {
             case 'Escape':
+                this.clearCurrentSegment();
+                this.mouseDown = false;
                 this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
-                break;
-            case 'Shift':
-                this.shiftKeyDown = true;
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;
         }
     }
 
-    handleKeyUp(event: KeyboardEvent): void {
-        switch (event.key) {
-            case 'Shift':
-                this.shiftKeyDown = false;
-                break;
-        }
-    }
+    handleKeyUp(event: KeyboardEvent): void {}
 
     // private pointIsInPolygon(point: Vec2, lines: Segment[]): boolean {
     //     // TODO
