@@ -13,15 +13,16 @@ const STYLES: DrawingContextStyle = {
     lineWidth: 1,
 };
 
-interface Segment {
-    points: Vec2[];
-}
+// interface Segment {
+//     points: Vec2[];
+// }
 
 @Injectable({
     providedIn: 'root',
 })
 export class LassoService extends Tool {
     private currentSegment: Vec2[];
+    private shiftKeyDown: boolean;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
@@ -48,35 +49,50 @@ export class LassoService extends Tool {
         const mousePosition = this.getPositionFromMouse(event);
         if (this.mouseDown) {
             this.currentSegment.push(mousePosition);
-            this.lineService.drawLine(this.drawingService.baseCtx, this.currentSegment, STYLES);
+            this.lineService.drawLine(this.drawingService.lassoPreviewCtx, this.currentSegment, STYLES);
         }
         this.mouseDown = false;
         this.clearCurrentSegment();
     }
 
-    handleKeyDown(event: KeyboardEvent): void {}
-
-    handleKeyUp(event: KeyboardEvent): void {}
-
-    private pointIsInPolygon(point: Vec2, lines: Segment[]): boolean {
-        // TODO
-        return false;
-    }
-
-    private pointIsInLine(point: Vec2, line: Vec2[]): boolean {
-        for (const p in line) {
-            if (point.x === line[p].x && point.y === line[p].y) {
-                return true;
-            }
+    handleKeyDown(event: KeyboardEvent): void {
+        switch (event.key) {
+            case 'Escape':
+                this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
+                break;
+            case 'Shift':
+                this.shiftKeyDown = true;
+                break;
         }
-        return false;
     }
 
-    private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
-        const dx = Math.abs(basePoint.x - mousePosition.x);
-        const dy = Math.abs(basePoint.y - mousePosition.y);
-        return Math.sqrt(dx * dx + dy * dy) <= radius;
+    handleKeyUp(event: KeyboardEvent): void {
+        switch (event.key) {
+            case 'Shift':
+                this.shiftKeyDown = false;
+                break;
+        }
     }
+
+    // private pointIsInPolygon(point: Vec2, lines: Segment[]): boolean {
+    //     // TODO
+    //     return false;
+    // }
+
+    // private pointIsInLine(point: Vec2, line: Vec2[]): boolean {
+    //     for (const p in line) {
+    //         if (point.x === line[p].x && point.y === line[p].y) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
+
+    // private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
+    //     const dx = Math.abs(basePoint.x - mousePosition.x);
+    //     const dy = Math.abs(basePoint.y - mousePosition.y);
+    //     return Math.sqrt(dx * dx + dy * dy) <= radius;
+    // }
 
     private clearCurrentSegment(): void {
         this.currentSegment = [];
