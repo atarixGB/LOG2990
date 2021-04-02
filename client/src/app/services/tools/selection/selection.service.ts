@@ -148,18 +148,13 @@ export class SelectionService extends Tool {
             this.ellipseService.pathData.push(this.origin);
             this.ellipseService.pathData.push(this.destination);
             this.ellipseService.drawShape(this.drawingService.previewCtx);
-        } else if (this.isLasso) {
-            this.rectangleService.clearPath();
-            this.rectangleService.pathData.push(this.origin);
-            this.rectangleService.pathData.push(this.destination);
-            this.rectangleService.drawShape(this.drawingService.previewCtx);
-            this.lassoService.drawPolygon(this.drawingService.previewCtx);
         } else {
             this.rectangleService.clearPath();
             this.rectangleService.pathData.push(this.origin);
             this.rectangleService.pathData.push(this.destination);
             this.rectangleService.drawShape(this.drawingService.previewCtx);
         }
+        if (this.isLasso) this.lassoService.drawPolygon(this.drawingService.previewCtx);
 
         this.createControlPoints();
     }
