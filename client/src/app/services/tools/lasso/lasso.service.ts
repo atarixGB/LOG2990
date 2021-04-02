@@ -7,6 +7,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from '../line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
+const NB_MIN_SEGMENTS = 3;
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
     fillStyle: 'black',
@@ -23,11 +24,13 @@ const STYLES: DrawingContextStyle = {
 export class LassoService extends Tool {
     private currentSegment: Vec2[];
     private polygonCoords: Vec2[];
+    private nbSegments: number;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
         this.currentSegment = [];
         this.polygonCoords = [];
+        this.nbSegments = 0;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -44,7 +47,10 @@ export class LassoService extends Tool {
             distance du point init:${Math.sqrt(dx * dx + dy * dy)}`);
         // ***
 
-        if (this.mousePositionIsInClosureArea(this.mouseDownCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) && this.polygonCoords.length > 1) {
+        if (
+            this.mousePositionIsInClosureArea(this.mouseDownCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) &&
+            this.nbSegments >= NB_MIN_SEGMENTS
+        ) {
             console.log('MOUSE IS IN CLOSURE AREA');
             const finalSegment: Vec2[] = [
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
@@ -59,25 +65,27 @@ export class LassoService extends Tool {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
+        this.mouseDownCoord = this.getPositionFromMouse(event);
 
         if (this.mouseDown) {
-            this.currentSegment.push(mousePosition);
+            this.currentSegment.push(this.mouseDownCoord);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
+        this.mouseDownCoord = this.getPositionFromMouse(event);
+
         if (this.mouseDown) {
-            this.currentSegment.push(mousePosition);
+            this.currentSegment.push(this.mouseDownCoord);
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, this.currentSegment, STYLES);
         }
 
-        this.polygonCoords.push(mousePosition);
+        this.polygonCoords.push(this.mouseDownCoord);
+        this.nbSegments = this.polygonCoords.length - 1;
         console.log('points polygone:', this.polygonCoords);
-        console.log('nbr de segments:', this.polygonCoords.length - 1);
+        console.log('nbr de segments:', this.nbSegments);
         this.mouseDown = false;
         this.clearCurrentSegment();
     }
@@ -89,6 +97,8 @@ export class LassoService extends Tool {
                 this.mouseDown = false;
                 this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                break;
+            case 'Backspace':
                 break;
         }
     }
