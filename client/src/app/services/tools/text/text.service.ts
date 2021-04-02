@@ -59,8 +59,6 @@ export class TextService extends Tool {
             .set(TextAlign.Center, 'center')
             .set(TextAlign.Right, 'right')
 
-        
-        this.textInput[this.currentLine] = '';
         this.cursorPosition = 0;
         this.isWriting = false;
 
@@ -71,33 +69,27 @@ export class TextService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        // Premier clic -> Écrire temporairement sur le Preview 
+
         if (this.isWriting === false) {
             console.log('Premier');
             this.textInput[this.currentLine] = '|';
-            // Position du début du texte
+            
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.positionText = this.mouseDownCoord;
-            // Propriétés
-            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-            // On est en train d'écrire
+            
             this.isWriting = true;
             
             this.writeOnCanvas(CanvasType.previewCtx);
 
-        // Deuxième clic -> Écrire définitivement sur le base
+        
         } else if(this.isWriting === true){
             console.log('Deuxième');
-            // Écrire sur le base canvas
+        
             this.write();
-
             this.cursorPosition = 0;
-
-            for(let line in this.textInput){
-                this.textInput[line] = '';
-            }
-            
-            // On est prêt pour un autre texte ailleurs 
+            this.textInput = ['']; 
+            this.currentLine = 0;
+            this.totalLine = 1;
             this.isWriting = false;
         }
     }
@@ -105,67 +97,64 @@ export class TextService extends Tool {
     handleKeyUp(event: KeyboardEvent): void {
         console.log('Position curseur Début key ', this.cursorPosition);
         if(this.isWriting){
-            // Backspace -> effacer le charactère cureur - 1
             if (event.key === 'Backspace') {
-                if(this.cursorPosition != 0){
-                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
+                if(this.cursorPosition != 0 || (this.cursorPosition != 0 && this.currentLine != 0)){
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
                     this.cursorPosition--;
                 }
             }
-            // Delete -> effacer le charactère curseur + 1 
             else if(event.key === 'Delete'){
-                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) + this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput.length);  
-            }
-            // Arrow Left -> curseur = curseur - 1 
+                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) + this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);  
+            } 
             else if(event.key === 'ArrowLeft'){
                 if(this.cursorPosition != 0){
-                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
                     this.cursorPosition--;
-                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
 
                 }
             }
-            // Arrow Left -> curseur = curseur + 1
             else if(event.key === 'ArrowRight'){
-                if(this.cursorPosition != this.textInput.length){
-                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput.length);
+                if(this.cursorPosition != this.textInput[this.currentLine].length){
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
                     this.cursorPosition++;
-                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
                 }
             }
-            // Enter -> changement de ligne
             else if(event.key === 'Enter'){
-                
+                let nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
+                this.currentLine ++;
+                this.totalLine++;
+                console.log('ici');
+            
+                this.textInput[this.currentLine] = nextLine + '|';
+                this.cursorPosition = this.textInput[this.currentLine].length - 1;
             }
-            // Escape -> annuler
             else if(event.key === 'Escape'){
-                for(let line in this.textInput){
-                    this.textInput[line] = '';
-                }
+                this.textInput = [''];
                 this.cursorPosition = 0;
                 this.isWriting = false;
             }
-            // Ajout d'un caractère normal
             else if(this.cursorPosition != 0){
-                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + event.key + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
+                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + event.key + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
                 this.cursorPosition++;
             }
             else{
-                this.textInput[this.currentLine] = event.key + this.textInput;
+                this.textInput[this.currentLine] = event.key + this.textInput[this.currentLine];
                 this.cursorPosition++;
             }
             
-            // Afficher sur le preview canvas 
             this.writeOnCanvas(CanvasType.previewCtx);
         }
+
         console.log(this.textInput);
         console.log('Position curseur fin key ', this.cursorPosition); 
         console.log(event.key);
-        
     }
 
     write(): void {
-        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput.length);
+        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
 
         this.writeOnCanvas(CanvasType.baseCtx);
     }
@@ -175,22 +164,28 @@ export class TextService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
         if(ctx == CanvasType.baseCtx){
+            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+
             this.drawingService.baseCtx.fillStyle = this.color;
             this.drawingService.baseCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
             this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
 
             let y = this.positionText.y;
+            
             for(let i = 0; i < this.totalLine; i++){
                 this.drawingService.baseCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
                 y += Number(this.size);
             }
         }
         else {
+            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+
             this.drawingService.previewCtx.fillStyle = this.color;
             this.drawingService.previewCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
             this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
 
             let y = this.positionText.y;
+
             for(let i = 0; i < this.totalLine; i++){
                 this.drawingService.previewCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
                 y += Number(this.size);
