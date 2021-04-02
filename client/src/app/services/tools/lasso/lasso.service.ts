@@ -148,7 +148,6 @@ export class LassoService extends Tool {
 
     handleKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
-            console.log(event);
             this.shiftKeyDown = false;
         }
     }
@@ -222,7 +221,6 @@ export class LassoService extends Tool {
         } while (i != 0);
 
         isInside = count % 2 === 1;
-
         return isInside;
     }
 
@@ -262,7 +260,6 @@ export class LassoService extends Tool {
         const areConfused = this.findAngleBetweenTwoSegments(segment1, segment2) <= ERROR;
 
         if (areConfused) {
-            console.log('segments are confused');
             this.areIntesected = true;
             return areConfused;
         }
@@ -294,7 +291,6 @@ export class LassoService extends Tool {
         const numerator: number = this.dotProduct(u, v);
         const denominator: number = this.getHypothenuse(u) * this.getHypothenuse(v);
         const angleInRadians: number = Math.acos(numerator / denominator);
-        console.log('angle=', this.radToDegree(angleInRadians));
         return this.radToDegree(angleInRadians);
     }
 

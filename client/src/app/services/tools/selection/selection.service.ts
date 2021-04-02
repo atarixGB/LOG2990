@@ -259,13 +259,12 @@ export class SelectionService extends Tool {
             const pixelLenght = 4;
             let pixelCounter = 0;
 
-            for (let i = 0; i < this.height; i++) {
-                for (let j = 0; j < this.width; j++) {
-                    if (this.lassoService.pointInPolygon({ x: j, y: i })) {
-                        pixelCounter += pixelLenght;
-                    } else {
+            for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
+                for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
+                    if (!this.lassoService.pointInPolygon({ x: j, y: i })) {
                         imageData[pixelCounter + pixelLenght - 1] = 0;
                     }
+                    pixelCounter += pixelLenght;
                 }
             }
         }
