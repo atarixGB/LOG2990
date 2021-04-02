@@ -30,6 +30,7 @@ export class SelectionService extends Tool {
     private height: number;
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
+    private clearSelectionData: ImageData;
 
     constructor(
         protected drawingService: DrawingService,
@@ -50,16 +51,18 @@ export class SelectionService extends Tool {
 
     onMouseClick(event: MouseEvent): void {
         if (this.isLasso && !this.lassoService.selectionOver) {
+            this.printMovedSelection();
             if (this.activeSelection) {
                 this.lassoService.resetAttributes();
                 this.activeSelection = false;
             }
-            this.printMovedSelection();
             this.lassoService.onMouseClick(event);
         }
     }
 
     onMouseDown(event: MouseEvent): void {
+        // console.log('mousedown', this.lassoService.selectionOver);
+
         this.mouseDown = event.button === MouseButton.Left;
 
         if (this.mouseDown && !this.isLasso) {
@@ -86,16 +89,18 @@ export class SelectionService extends Tool {
         if (this.activeSelection && !this.selectionTerminated) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.newSelection = false;
-                this.lassoService.selectionOver = true;
+                //this.lassoService.selectionOver = true;
             } else {
                 this.newSelection = true;
-                this.lassoService.selectionOver = false;
+                //this.lassoService.selectionOver = false;
             }
             // console.log('SELECTIOON', this.newSelection);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
+        // console.log(this.lassoService.selectionOver);
+
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
         if (this.lassoService.selectionOver) {
             this.getSelectionData(this.drawingService.baseCtx);
@@ -113,7 +118,7 @@ export class SelectionService extends Tool {
     }
 
     onMouseLeave(event: MouseEvent): void {
-        if (this.mouseDown) this.onMouseUp(event);
+        if (this.mouseDown && !this.isLasso) this.onMouseUp(event);
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -215,23 +220,20 @@ export class SelectionService extends Tool {
             this.drawingService.baseCtx.fill();
             this.drawingService.baseCtx.closePath();
         } else if (this.isLasso) {
-            this.lassoService.selectionData = this.selection;
+            const imageData = this.clearSelectionData.data;
+            let pixelCounter = 0;
 
-            // const imageData = this.lassoService.selectionData.data;
-            // console.log(imageData);
-
-            // let pixelCounter = 0;
-
-            // for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
-            //     for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
-            //         if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
-            //             for (let i = 0; i < PIXEL_LENGTH; i++) {
-            //                 imageData[pixelCounter + i] = 255;
-            //             }
-            //         }
-            //         pixelCounter += PIXEL_LENGTH;
-            //     }
-            // }
+            for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
+                for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
+                    if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
+                        for (let i = 0; i < PIXEL_LENGTH; i++) {
+                            imageData[pixelCounter + i] = 255;
+                        }
+                    }
+                    pixelCounter += PIXEL_LENGTH;
+                }
+            }
+            this.printPolygon(this.clearSelectionData);
         } else {
             this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
             this.drawingService.baseCtx.closePath();
@@ -271,6 +273,7 @@ export class SelectionService extends Tool {
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
         this.calculateDimension();
         this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
+        this.clearSelectionData = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
         if (this.isEllipse) {
             this.checkPixelInEllipse();
         } else if (this.isLasso) {
@@ -320,7 +323,7 @@ export class SelectionService extends Tool {
             this.imageMoved = false;
             if (this.isEllipse) this.printEllipse();
             else if (this.isLasso) {
-                this.printPolygon();
+                this.printPolygon(this.selection);
             } else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
         }
     }
@@ -346,19 +349,15 @@ export class SelectionService extends Tool {
         this.drawingService.baseCtx.restore();
     }
 
-    private printPolygon(): void {
-        console.log('PrintPolygon');
-
+    private printPolygon(imageData: ImageData): void {
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;
         const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
-        tmp.putImageData(this.selection, 0, 0);
-        console.log(tmp.putImageData(this.selection, 0, 0));
-
-        this.lassoService.drawPolygon(this.drawingService.previewCtx, this.origin);
+        tmp.putImageData(imageData, 0, 0);
         this.drawingService.baseCtx.save();
         this.drawingService.baseCtx.clip(this.lassoService.calculatePath2d());
+
         this.drawingService.baseCtx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
         this.drawingService.baseCtx.restore();
     }

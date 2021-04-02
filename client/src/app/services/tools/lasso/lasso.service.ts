@@ -45,15 +45,12 @@ export class LassoService extends Tool {
     }
 
     onMouseClick(event: MouseEvent): void {
-        console.log(this.getPositionFromMouse(event));
-
-        console.log('MOUSECLICK - COORDS', this.polygonCoords);
-
         this.mouseDown = event.button === MouseButton.Left;
+
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.currentSegment.push(this.mouseDownCoord);
 
-        if (this.selectionOver) this.selectionOver = false;
+        //if (this.selectionOver) this.selectionOver = false;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -97,6 +94,12 @@ export class LassoService extends Tool {
         }
 
         this.polygonCoords.push(this.mouseDownCoord);
+        //
+        // console.log('/////////////');
+
+        // for (const i in this.polygonCoords) {
+        //     console.log('click', this.polygonCoords[i]);
+        // }
         this.nbSegments = this.polygonCoords.length - 1;
         this.mouseDown = false;
         this.clearCurrentSegment();
@@ -207,19 +210,23 @@ export class LassoService extends Tool {
             ];
             this.lineService.drawLine(this.drawingService.previewCtx, segment, STYLES);
         }
+
+        const lastSegment = [
+            { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+            { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
+        ];
+        this.lineService.drawLine(this.drawingService.previewCtx, lastSegment, STYLES);
     }
 
     clearUnderneath(): void {}
 
     calculatePath2d(): Path2D {
         let polygon = new Path2D();
-
         polygon.moveTo(this.polygonCoords[0].x, this.polygonCoords[0].y);
         for (let i = 1; i < this.polygonCoords.length; i++) {
             polygon.lineTo(this.polygonCoords[i].x, this.polygonCoords[i].y);
         }
-        console.log('PATH :', polygon);
-
+        polygon.lineTo(this.polygonCoords[0].x, this.polygonCoords[0].y);
         return polygon;
     }
 
@@ -322,6 +329,7 @@ export class LassoService extends Tool {
 
     private mouseIsInClosureArea(mouseCoord: Vec2): void {
         if (this.pointInCircle(mouseCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) && this.nbSegments >= NB_MIN_SEGMENTS && !this.areIntesected) {
+            this.polygonCoords.pop();
             const finalSegment: Vec2[] = [
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
                 { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
@@ -332,7 +340,6 @@ export class LassoService extends Tool {
             this.mouseDown = false;
             this.selectionOver = true;
             this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
-            console.log('COORDS : ', this.polygonCoords);
         }
     }
 
