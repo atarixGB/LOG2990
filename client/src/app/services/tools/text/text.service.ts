@@ -11,7 +11,9 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
 })
 
 export class TextService extends Tool {
-    textInput: string;
+    textInput: string[];
+    currentLine: number;
+    totalLine: number;
     cursorPosition: number;
     isWriting: boolean;
     positionText: Vec2;
@@ -32,6 +34,9 @@ export class TextService extends Tool {
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
+        this.currentLine = 0;
+        this.textInput = [];
+        this.totalLine = 1;
         
         this.fontBinding = new Map<Font, string>();
         this.fontBinding
@@ -55,7 +60,7 @@ export class TextService extends Tool {
             .set(TextAlign.Right, 'right')
 
         
-        this.textInput = '';
+        this.textInput[this.currentLine] = '';
         this.cursorPosition = 0;
         this.isWriting = false;
 
@@ -69,7 +74,7 @@ export class TextService extends Tool {
         // Premier clic -> Écrire temporairement sur le Preview 
         if (this.isWriting === false) {
             console.log('Premier');
-            this.textInput = '|';
+            this.textInput[this.currentLine] = '|';
             // Position du début du texte
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.positionText = this.mouseDownCoord;
@@ -87,7 +92,11 @@ export class TextService extends Tool {
             this.write();
 
             this.cursorPosition = 0;
-            this.textInput = '';
+
+            for(let line in this.textInput){
+                this.textInput[line] = '';
+            }
+            
             // On est prêt pour un autre texte ailleurs 
             this.isWriting = false;
         }
@@ -99,29 +108,29 @@ export class TextService extends Tool {
             // Backspace -> effacer le charactère cureur - 1
             if (event.key === 'Backspace') {
                 if(this.cursorPosition != 0){
-                    this.textInput = this.textInput.substring(0, this.cursorPosition - 1) + this.textInput.substring(this.cursorPosition, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
                     this.cursorPosition--;
                 }
             }
             // Delete -> effacer le charactère curseur + 1 
             else if(event.key === 'Delete'){
-                this.textInput = this.textInput.substring(0, this.cursorPosition + 1) + this.textInput.substring(this.cursorPosition + 2, this.textInput.length);  
+                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) + this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput.length);  
             }
             // Arrow Left -> curseur = curseur - 1 
             else if(event.key === 'ArrowLeft'){
                 if(this.cursorPosition != 0){
-                    this.textInput = this.textInput.substring(0, this.cursorPosition) + this.textInput.substring(this.cursorPosition + 1, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput.length);
                     this.cursorPosition--;
-                    this.textInput = this.textInput.substring(0, this.cursorPosition) + '|' + this.textInput.substring(this.cursorPosition, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
 
                 }
             }
             // Arrow Left -> curseur = curseur + 1
             else if(event.key === 'ArrowRight'){
                 if(this.cursorPosition != this.textInput.length){
-                    this.textInput = this.textInput.substring(0, this.cursorPosition) + this.textInput.substring(this.cursorPosition + 1, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput.length);
                     this.cursorPosition++;
-                    this.textInput = this.textInput.substring(0, this.cursorPosition) + '|' + this.textInput.substring(this.cursorPosition, this.textInput.length);
+                    this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
                 }
             }
             // Enter -> changement de ligne
@@ -130,17 +139,19 @@ export class TextService extends Tool {
             }
             // Escape -> annuler
             else if(event.key === 'Escape'){
-                this.textInput = '';
+                for(let line in this.textInput){
+                    this.textInput[line] = '';
+                }
                 this.cursorPosition = 0;
                 this.isWriting = false;
             }
             // Ajout d'un caractère normal
             else if(this.cursorPosition != 0){
-                this.textInput = this.textInput.substring(0, this.cursorPosition) + event.key + this.textInput.substring(this.cursorPosition, this.textInput.length);
+                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + event.key + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput.length);
                 this.cursorPosition++;
             }
             else{
-                this.textInput = event.key + this.textInput;
+                this.textInput[this.currentLine] = event.key + this.textInput;
                 this.cursorPosition++;
             }
             
@@ -154,7 +165,7 @@ export class TextService extends Tool {
     }
 
     write(): void {
-        this.textInput = this.textInput.substring(0, this.cursorPosition) + this.textInput.substring(this.cursorPosition, this.textInput.length - 1);
+        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput.length);
 
         this.writeOnCanvas(CanvasType.baseCtx);
     }
@@ -168,14 +179,22 @@ export class TextService extends Tool {
             this.drawingService.baseCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
             this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
 
-            this.drawingService.baseCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
+            let y = this.positionText.y;
+            for(let i = 0; i < this.totalLine; i++){
+                this.drawingService.baseCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
+                y += Number(this.size);
+            }
         }
         else {
             this.drawingService.previewCtx.fillStyle = this.color;
             this.drawingService.previewCtx.font = this.emphasis + " " + this.size+ "px " + this.font;
             this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
 
-            this.drawingService.previewCtx.fillText(this.textInput, this.mouseDownCoord.x, this.mouseDownCoord.y);
+            let y = this.positionText.y;
+            for(let i = 0; i < this.totalLine; i++){
+                this.drawingService.previewCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
+                y += Number(this.size);
+            }
         }
 
     }
