@@ -1,5 +1,12 @@
 <div>
     <p>Tolérance du sceau</p>
-    <h4>Valeur: {{ paintBucketService.tolerance }} %</h4>
-    <mat-slider thumbLabel [displayWith]="formatLabel" min="0" max="100" tickInterval="1000" [(ngModel)]="paintBucketService.tolerance"> </mat-slider>
+    <app-slider
+        title="Tolérance"
+        [min]="paintBucketService.minTolerance"
+        [max]="paintBucketService.maxTolerance"
+        [step]="1"
+        [value]="tolerance"
+        (valueChange)="setToleranceValue($event)"
+    >
+    </app-slider>
 </div>

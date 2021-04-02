@@ -48,6 +48,8 @@ import { SelectionConfigComponent } from './components/sidebar/selection-config/
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+import { PaintConfigComponent } from './components/sidebar/paint-config/paint-config/paint-config.component';
+import { SliderComponent } from './components/sidebar/paint-config/paint-config/slider/slider/slider.component';
 
 @NgModule({
     declarations: [
@@ -80,6 +82,8 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         SaveDrawingModalComponent,
         CarouselComponent,
         CarouselDrawingComponent,
+        PaintConfigComponent,
+        SliderComponent,
     ],
     imports: [
         BrowserModule,

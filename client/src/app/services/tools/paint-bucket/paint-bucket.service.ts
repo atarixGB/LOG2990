@@ -3,78 +3,120 @@
 // Available : http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { MouseButton } from '@app/constants';
+import { MAX_BYTE_VALUE, MAX_PERCENT, MAX_TOLERANCE_VALUE, MIN_TOLERANCE_VALUE, MouseButton, RGBA_COMPONENTS} from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+
+import { PaintBucket } from './../../../classes/paint';
 import { Vec2 } from './../../../classes/vec2';
 import { ColorOrder } from './../../../interfaces-enums/color-order';
+import { RGBA,RGBA_INDEX } from './../../../interfaces-enums/rgba';
 
-const NUMBER_OF_RGB_COLORS = 3;
-const MAX_BYTE_VALUE = 255;
-const MAX_PERCENT = 100;
-const MAX_TOLERANCE_VALUE = 100;
-const MIN_TOLERANCE_VALUE = 0;
 @Injectable({
     providedIn: 'root',
 })
 export class PaintBucketService extends Tool {
-    private startPixelColor: Uint8ClampedArray;
-    private startPixelTolerance: number[];
+    startPixelColor: Uint8ClampedArray;
     maxTolerance: number = MAX_TOLERANCE_VALUE;
     minTolerance: number = MIN_TOLERANCE_VALUE;
     tolerance: number = this.minTolerance;
-
-    constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
+    mouseDownCoord: Vec2;
+    //rgba_index: RGBA;
+    canvasData: ImageData;
+    paintBucket: PaintBucket;
+    constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
     }
 
     onMouseDown(event: MouseEvent): void {
-      this.drawingService.baseCtx.filter = 'none';
-      this.drawingService.previewCtx.filter = 'none';
-      this.mouseDownCoord = this.getPositionFromMouse(event);
-      this.startPixelColor = this.drawingService.baseCtx.getImageData(this.mouseDownCoord.x, this.mouseDownCoord.y, 1, 1).data;;
-      if (event.button === MouseButton.Left) {
-          this.drawingService.baseCtx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-          this.contiguousFill();//method to enable bucket fill with contiguous pixels on left click
-      } else if (event.button === MouseButton.Right) {
-          this.fill(); //method to enable bucket to fill without contiguous pixels on right click
-      }
-  }
+        this.mouseDownCoord = this.getPositionFromMouse(event);
+        this.startPixelColor = this.drawingService.getPixelData(this.mouseDownCoord);
+        if (event.button === MouseButton.Left) {
+            this.drawingService.baseCtx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+            this.contiguousFill(); //method to enable bucket fill with contiguous pixels on left click
+        } else if (event.button === MouseButton.Right) {
+            this.fill(); //method to enable bucket to fill without contiguous pixels on right click
+        }
+        
+    }
     setToleranceValue(newTolerance: number): void {
         this.tolerance = newTolerance;
+        console.log('holaaa! changed tolerance');
     }
 
-    private getPixelColor(coordinates: Vec2): Uint8ClampedArray {
-        return this.drawingService.baseCtx.getImageData(coordinates.x, coordinates.y, 1, 1).data;
-    }
+    fill(): void {
+        const pixelData = this.drawingService.getPixelData(this.mouseDownCoord);
+        const canvasData = this.drawingService.getCanvasData();
 
-    private changePixelColor(coordinates: Vec2): void {
-        const pixelColor = this.drawingService.baseCtx.getImageData(coordinates.x, coordinates.y, 1, 1);
-        pixelColor.data[0] = this.colorManager.selectedColor[ColorOrder.PrimaryColor].Dec.Red;
-        pixelColor.data[1] = this.colorManager.selectedColor[ColorOrder.PrimaryColor].Dec.Green;
-        pixelColor.data[2] = this.colorManager.selectedColor[ColorOrder.PrimaryColor].Dec.Blue;
-        pixelColor.data[NUMBER_OF_RGB_COLORS] = this.colorManager.selectedColor[ColorOrder.PrimaryColor].Dec.Alpha;
-        this.drawingService.baseCtx.putImageData(pixelColor, coordinates.x, coordinates.y);
-    }
+        const rgbaPrimaryColor: RGBA = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
 
-    private matchesStartColor(coordinates: Vec2): boolean {
-        const pixelColor = this.getPixelColor(coordinates);
-        const rgbEquals = new Array<boolean>();
-        for (let i = 0; i < NUMBER_OF_RGB_COLORS; i++) {
-            rgbEquals[i] = pixelColor[i] >= this.startPixelTolerance[i * 2] && pixelColor[i] <= this.startPixelTolerance[i * 2 + 1];
+        let i;
+        for (i = 0; i < canvasData.data.length; i += RGBA_COMPONENTS) {
+            if (this.ToleranceRangeVerification(pixelData, canvasData, i)) {
+                canvasData.data[i + RGBA_INDEX.RED] = rgbaPrimaryColor.Dec.Red;
+                canvasData.data[i + RGBA_INDEX.GREEN] = rgbaPrimaryColor.Dec.Green;
+                canvasData.data[i + RGBA_INDEX.BLUE] = rgbaPrimaryColor.Dec.Blue;
+                canvasData.data[i + RGBA_INDEX.ALPHA] = rgbaPrimaryColor.Dec.Alpha;
+            }
         }
-        return rgbEquals[0] && rgbEquals[1] && rgbEquals[2];
+        this.canvasData = canvasData;
+        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
+       console.log('fill called');
     }
 
-    private getStartColor(coordinates: Vec2): void {
-        this.startPixelColor = this.getPixelColor(coordinates);
-        const toleranceFactor = MAX_BYTE_VALUE * (this.tolerance / MAX_PERCENT);
-        let colorFactor: number;
-        for (let i = 0; i < NUMBER_OF_RGB_COLORS; i++) {
-            colorFactor = this.startPixelColor[i] / MAX_BYTE_VALUE;
-            this.startPixelTolerance[i * 2] = this.startPixelColor[i] - toleranceFactor * colorFactor;
-            this.startPixelTolerance[i * 2 + 1] = this.startPixelColor[i] + toleranceFactor * (1 - colorFactor);
+    contiguousFill(): void {
+        const pixelData = this.drawingService.getPixelData(this.mouseDownCoord);
+        const stackPos: Vec2[] = [this.mouseCoord];
+        const coloredPixels: Map<string, boolean> = new Map();
+        const canvasData: ImageData = this.drawingService.getCanvasData();
+
+        const rgbaPrimaryColor: RGBA = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
+
+        while (stackPos.length) {
+            const selectedPixel = stackPos.pop() as Vec2;
+            const index = (selectedPixel.x + selectedPixel.y * this.drawingService.canvas.width) * RGBA_COMPONENTS;
+            if (coloredPixels.has(this.vec2ToString(selectedPixel))) {
+                continue;
+            } else if (this.ToleranceRangeVerification(pixelData, canvasData, index)) {
+                canvasData.data[index + RGBA_INDEX.RED] = rgbaPrimaryColor.Dec.Red;
+                canvasData.data[index + RGBA_INDEX.GREEN] = rgbaPrimaryColor.Dec.Green;
+                canvasData.data[index + RGBA_INDEX.BLUE] = rgbaPrimaryColor.Dec.Blue;
+                canvasData.data[index + RGBA_INDEX.ALPHA] = rgbaPrimaryColor.Dec.Alpha;
+                coloredPixels.set(this.vec2ToString(selectedPixel), true);
+                if (selectedPixel.y - 1 >= 0) {
+                    stackPos.push({ x: selectedPixel.x, y: selectedPixel.y - 1 });
+                }
+                if (selectedPixel.y + 1 < this.drawingService.canvas.height) {
+                    stackPos.push({ x: selectedPixel.x, y: selectedPixel.y + 1 });
+                }
+                if (selectedPixel.x + 1 < this.drawingService.canvas.width) {
+                    stackPos.push({ x: selectedPixel.x + 1, y: selectedPixel.y });
+                }
+                if (selectedPixel.x - 1 >= 0) {
+                    stackPos.push({ x: selectedPixel.x - 1, y: selectedPixel.y });
+                }
+            }
         }
+        this.canvasData = canvasData;
+        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
+       console.log('contiguous fill called');
+    }
+
+    vec2ToString(pixel: Vec2): string {
+        return pixel.x.toString() + ',' + pixel.y.toString();
+    }
+
+    ToleranceRangeVerification(pixelData: Uint8ClampedArray, canvasData: ImageData, index: number): boolean {
+        const diffRed: number = Math.abs(pixelData[RGBA_INDEX.RED] - canvasData.data[index + RGBA_INDEX.RED]);
+        const diffGreen: number = Math.abs(pixelData[RGBA_INDEX.GREEN] - canvasData.data[index + RGBA_INDEX.GREEN]);
+        const diffBlue: number = Math.abs(pixelData[RGBA_INDEX.BLUE] - canvasData.data[index + RGBA_INDEX.BLUE]);
+        const diffAlpha: number = Math.abs(pixelData[RGBA_INDEX.ALPHA] - canvasData.data[index + RGBA_INDEX.ALPHA]);
+
+        const diffPercentage: number = ((diffRed + diffGreen + diffBlue + diffAlpha) / (RGBA_COMPONENTS * MAX_BYTE_VALUE)) * MAX_PERCENT;
+
+        if (diffPercentage > this.tolerance) {
+            return false;
+        }
+        return true;
     }
 }

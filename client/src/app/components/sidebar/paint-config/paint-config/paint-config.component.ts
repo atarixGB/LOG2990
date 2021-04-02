@@ -8,16 +8,14 @@ import { Component } from '@angular/core';
 })
 export class PaintConfigComponent  {
   tolerance: number;
+  
   constructor(public paintBucketService:PaintBucketService) { 
     this.tolerance=paintBucketService.tolerance;
   }
 
-  changeTolerance(newValue:number){
+  setToleranceValue(newValue:number){
     this.tolerance=newValue;
     this.paintBucketService.setToleranceValue(this.tolerance);
   }
-  formatLabel(value: number): number {
-    return value;
-}
-
+  
 }

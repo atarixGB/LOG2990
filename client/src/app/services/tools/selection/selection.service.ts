@@ -12,8 +12,8 @@ const SELECTION_DEFAULT_LINE_THICKNESS = 3;
     providedIn: 'root',
 })
 export class SelectionService extends Tool {
-    selection: ImageData;
-    origin: Vec2;
+    selection: ImageData; 
+    origin: Vec2; 
     destination: Vec2;
     isEllipse: boolean;
     activeSelection: boolean;
@@ -21,7 +21,7 @@ export class SelectionService extends Tool {
     initialSelection: boolean;
     imageMoved: boolean;
     clearUnderneath: boolean;
-    selectionTerminated: boolean;
+    selectionTerminated: boolean; 
     private width: number;
     private height: number;
     private previousLineWidthRectangle: number;

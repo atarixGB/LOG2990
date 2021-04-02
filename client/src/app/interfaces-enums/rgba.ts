@@ -1,3 +1,4 @@
+
 export interface RGBA {
     Dec: {
         Red: number;
@@ -12,3 +13,17 @@ export interface RGBA {
     };
     inString: string;
 }
+
+export interface DecimalRGBA{
+    RED: number;
+    GREEN: number;
+    BLUE: number;
+    ALPHA: number;
+}
+
+export const RGBA_INDEX: DecimalRGBA = {
+    RED: 0,
+    GREEN: 1,
+    BLUE: 2,
+    ALPHA: 3,
+};

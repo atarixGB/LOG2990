@@ -55,7 +55,7 @@ export enum ToolList {
     Pipette = 7,
     SelectionRectangle = 8,
     SelectionEllipse = 9,
-    Sceau = 10,
+    PaintBucket = 10,
     Lasso = 11,
     MoveSelection = 12,
     Undo = 13,
@@ -145,3 +145,10 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
+// constants for bucket
+export const RGBA_COMPONENTS = 4;
+export const MAX_BYTE_VALUE = 255;
+export const MAX_PERCENT = 100;
+export const MAX_TOLERANCE_VALUE = 100;
+export const MIN_TOLERANCE_VALUE = 0;
+
