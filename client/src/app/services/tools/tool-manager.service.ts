@@ -100,6 +100,7 @@ export class ToolManagerService {
 
     switchTool(tool: ToolList): void {
         if (this.currentTool instanceof SelectionService) this.selectionService.terminateSelection();
+        if (this.currentTool instanceof TextService) this.textService.write();
 
         if (this.serviceBindings.has(tool)) {
             this.currentTool = this.serviceBindings.get(tool);
