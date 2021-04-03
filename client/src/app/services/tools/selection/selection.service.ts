@@ -54,10 +54,6 @@ export class SelectionService extends Tool {
     onMouseClick(event: MouseEvent): void {
         if (this.isLasso && !this.lassoService.selectionOver) {
             this.printMovedSelection();
-            if (this.activeSelection) {
-                this.lassoService.resetAttributes();
-                this.activeSelection = false;
-            }
             this.lassoService.onMouseClick(event);
         }
     }
@@ -77,9 +73,17 @@ export class SelectionService extends Tool {
             else this.rectangleService.onMouseDown(event);
         }
 
-        if (this.isLasso && this.newSelection) {
+        if (this.isLasso && this.newSelection && this.activeSelection) {
             this.lassoService.selectionOver = false;
+            this.terminateSelection();
         }
+
+        // if (this.isLasso ) {
+        //     console.log('reset attribut de lasso');
+
+        //     this.lassoService.resetAttributes();
+        //     this.activeSelection = false;
+        // }
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -96,6 +100,7 @@ export class SelectionService extends Tool {
             } else {
                 this.newSelection = true;
             }
+            console.log('selection', this.newSelection);
         }
     }
 
@@ -251,6 +256,7 @@ export class SelectionService extends Tool {
             this.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.resetParametersTools();
+            this.lassoService.resetAttributes();
         }
     }
 
@@ -272,6 +278,8 @@ export class SelectionService extends Tool {
 
     private getSelectionData(ctx: CanvasRenderingContext2D): void {
         this.calculateDimension();
+        console.log(this.origin, this.width, this.height);
+
         this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
         this.clearSelectionData = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
         if (this.isEllipse) {
@@ -350,6 +358,8 @@ export class SelectionService extends Tool {
     }
 
     private printPolygon(imageData: ImageData): void {
+        console.log('PRINT Polygon');
+
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;

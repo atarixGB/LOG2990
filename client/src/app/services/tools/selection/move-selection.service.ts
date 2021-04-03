@@ -69,6 +69,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             } else {
                 this.selectionService.newSelection = true;
             }
+            console.log('MOVE', this.selectionService.newSelection);
         }
     }
 

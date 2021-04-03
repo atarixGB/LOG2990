@@ -91,8 +91,6 @@ export class LassoService extends Tool {
 
         this.polygonCoords.push(this.mouseDownCoord);
         this.nbSegments = this.polygonCoords.length - 1;
-        console.log('nbSegmets', this.nbSegments);
-
         this.mouseDown = false;
         this.clearCurrentSegment();
 
@@ -187,15 +185,11 @@ export class LassoService extends Tool {
     }
 
     private mouseIsInClosureArea(mouseCoord: Vec2): void {
-        console.log('mouseCoords', mouseCoord);
-        console.log('centerCoords', this.polygonCoords[0]);
-        console.log('polygonCoords', this.polygonCoords);
         if (
             Utils.pointInCircle(mouseCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) &&
             this.nbSegments >= NB_MIN_SEGMENTS &&
             !this.areIntesected
         ) {
-            console.log('mouse IN CLOSURE AREA');
             this.polygonCoords.pop();
             const finalSegment: Vec2[] = [
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
@@ -207,7 +201,6 @@ export class LassoService extends Tool {
             this.mouseDown = false;
             this.selectionOver = true;
             this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
-            console.log('apres polygonCoords', this.polygonCoords);
         }
     }
 
