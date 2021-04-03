@@ -9,6 +9,7 @@ import { LineService } from '../line/line.service';
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
 const EPSILON = 0.5;
+const EXTREME = 10000;
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
     fillStyle: 'black',
@@ -202,6 +203,37 @@ export class LassoService extends Tool {
         return max;
     }
 
+    pointInPolygon(coordinates: Vec2[], nbVertices: number, point: Vec2): boolean {
+        if (NB_MIN_SEGMENTS) return false;
+
+        const extremePoint: Vec2 = { x: EXTREME, y: point.y };
+
+        let count = 0;
+        let i = 0;
+
+        do {
+            let next = (i + 1) % nbVertices;
+
+            let segment1 = {
+                initial: { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
+                final: { x: this.polygonCoords[next].x, y: this.polygonCoords[next].y },
+            };
+            let segment2 = {
+                initial: { x: point.x, y: point.y },
+                final: { x: extremePoint.x, y: point.y },
+            };
+            if (this.segmentsAreIntersecting(segment1, segment2)) {
+                if (this.findOrientation(segment1.initial, point, segment1.final) === 0) {
+                    return this.pointOnSegment(segment1.initial, point, segment1.final);
+                }
+                count = count + 1;
+            }
+            i = next;
+        } while (i != 0);
+
+        return false;
+    }
+
     private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
         const dx = Math.abs(basePoint.x - mousePosition.x);
         const dy = Math.abs(basePoint.y - mousePosition.y);
@@ -265,6 +297,17 @@ export class LassoService extends Tool {
             console.log(error);
         }
         return xa;
+    }
+
+    private findOrientation(p: Vec2, q: Vec2, r: Vec2): number {
+        let value: number = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+        if (value == 0) return 0;
+        return value > 0 ? 1 : 2;
+    }
+
+    private pointOnSegment(p: Vec2, q: Vec2, r: Vec2): boolean {
+        if (q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) && q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y)) return true;
+        return false;
     }
 
     private segmentsAreConfused(firstSegment: Segment, secondSegment: Segment): boolean {

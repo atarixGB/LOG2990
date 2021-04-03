@@ -70,4 +70,30 @@ fdescribe('LassoService', () => {
         let result = service.findMaxCoord(squareCoords, Axis.Y);
         expect(result).toEqual(expectedResult);
     });
+
+    it('should not be inside the polygon', () => {
+        const square: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        let n = square.length;
+        let p: Vec2 = { x: 20, y: 20 };
+        const result = service.pointInPolygon(square, n, p);
+        expect(result).toBeFalse();
+    });
+
+    it('should be inside the polygon', () => {
+        const square: Vec2[] = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        let n = square.length;
+        let p: Vec2 = { x: 5, y: 5 };
+        const result = service.pointInPolygon(square, n, p);
+        expect(result).toBeTrue();
+    });
 });
