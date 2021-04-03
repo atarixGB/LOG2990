@@ -13,7 +13,11 @@ export class ClipboardService {
     isEllipse: boolean;
     isLasso: boolean;
 
-    constructor(private drawingService: DrawingService, private selectionService: SelectionService, private toolManagerService: ToolManagerService) {}
+    pasteAvailable: boolean;
+
+    constructor(private drawingService: DrawingService, private selectionService: SelectionService, private toolManagerService: ToolManagerService) {
+        this.pasteAvailable = false;
+    }
 
     copy(): void {
         this.selectionData = this.selectionService.selection;
@@ -21,6 +25,7 @@ export class ClipboardService {
         this.height = this.selectionService.height;
         this.isEllipse = this.selectionService.isEllipse;
         this.isLasso = this.selectionService.isLasso;
+        this.pasteAvailable = true;
         this.toolManagerService.currentTool = this.selectionService;
     }
 
@@ -52,5 +57,10 @@ export class ClipboardService {
         this.selectionService.terminateSelection();
         this.selectionService.selectionDeleted = false;
         this.toolManagerService.currentTool = this.selectionService;
+    }
+
+    actionsAreAvailable(): boolean {
+        if (this.selectionService.activeSelection) return true;
+        return false;
     }
 }
