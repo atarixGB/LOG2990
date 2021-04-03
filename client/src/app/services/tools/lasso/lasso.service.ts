@@ -8,6 +8,7 @@ import { LineService } from '../line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
+
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
     fillStyle: 'black',
@@ -35,11 +36,6 @@ export class LassoService extends Tool {
         this.polygonCoords = [];
         this.nbSegments = 0;
         this.areIntesected = false;
-
-        // Just for testing
-        const s1: Segment = { initial: { x: 0, y: 0 }, final: { x: 1, y: 1 } };
-        const s2: Segment = { initial: { x: 3, y: 0 }, final: { x: 2, y: 2 } };
-        console.log('segments se croisent ?', this.segmentsAreIntersecting(s1, s2));
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -67,17 +63,31 @@ export class LassoService extends Tool {
     onMouseMove(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
-        // const segment2: Vec2[] = [this.polygonCoords[this.polygonCoords.length - 1], this.mouseDownCoord];
+        let segment1: Segment, segment2: Segment;
         if (this.mouseDown) {
-            // if (this.polygonCoords.length > 1) {
-            // for (let i = 0; i < this.polygonCoords.length - 3; i++) {
-            //     let segment1: Vec2[] = [this.polygonCoords[i], this.polygonCoords[i + 1]];
-            //     this.segmentIntersection(segment1, segment2);
+            for (let i = 1; i < this.polygonCoords.length - 1; i++) {
+                segment1 = {
+                    initial: { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
+                    final: { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
+                };
+                segment2 = {
+                    initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                    final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
+                };
+                console.log('----------------');
+                console.log(`segment ${i}: (${segment1.initial.x},${segment1.initial.y}) (${segment1.final.x},${segment1.final.y})`);
+                console.log(`segment souris: (${segment2.initial.x},${segment2.initial.y}) (${segment2.final.x},${segment2.final.y})`);
+
+                if (this.segmentsAreIntersecting(segment1, segment2)) {
+                    // Just for testing
+                    console.log('segments intersect');
+                } else {
+                    console.log('segments DO NOT intersect');
+                }
+            }
             this.currentSegment.push(this.mouseDownCoord);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
-            // }
-            // }
         }
     }
 
@@ -131,9 +141,9 @@ export class LassoService extends Tool {
             if (xa < Math.max(Math.min(x1, x2), Math.min(x3, x4)) || xa > Math.min(Math.max(x1, x2), Math.max(x3, x4))) {
                 this.areIntesected = false;
                 return false;
+            } else {
+                return true;
             }
-            this.areIntesected = true;
-            return true;
         }
         return false;
     }
@@ -166,13 +176,11 @@ export class LassoService extends Tool {
         const b2 = this.findVerticalIntercept(secondSegment);
         const m1 = this.findSlope(firstSegment);
         const m2 = this.findSlope(secondSegment);
-        console.log(`b1:${b1}\nm1:${m1}\nb2:${b2}\nm2:${m2}`);
         let xa;
 
         try {
             if (b1 != undefined && b2 != undefined && m1 != undefined && m2 != undefined) {
                 xa = (b2 - b1) / (m1 - m2);
-                console.log(`xa:${xa}`);
             }
         } catch (error) {
             console.log(error);
