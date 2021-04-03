@@ -18,17 +18,16 @@ const LINE_RADIUS = 5;
 })
 export class LineService extends Tool {
     currentSegment: Vec2[];
-    private coordinates: Vec2[];
-    private hasPressedShiftKey: boolean;
-    private closestPoint: Vec2 | undefined;
-    private basePoint: Vec2;
-
-    private lastCanvasImages: ImageData[];
+    closestPoint: Vec2 | undefined;
+    basePoint: Vec2;
     line: Line;
     lineWidth: number;
     junctionType: TypeOfJunctions;
     junctionRadius: number;
     pointJoin: boolean = false;
+    private coordinates: Vec2[];
+    private hasPressedShiftKey: boolean;
+    private lastCanvasImages: ImageData[];
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
@@ -133,6 +132,37 @@ export class LineService extends Tool {
         }
     }
 
+    calculatePosition(currentPoint: Vec2, basePoint: Vec2): Vec2 | undefined {
+        if (!currentPoint || !basePoint) {
+            return undefined;
+        }
+        return this.getNearestPoint(currentPoint, basePoint);
+    }
+
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle): void {
+        ctx.lineWidth = styles.lineWidth;
+        ctx.strokeStyle = styles.strokeStyle;
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
+        ctx.stroke();
+    }
+
+    drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
+        console.log('drawconstrinedlibe');
+        const mousePosition = this.getPositionFromMouse(event);
+        this.basePoint = path[path.length - 1];
+        this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
+        ctx.lineWidth = styles.lineWidth;
+        ctx.strokeStyle = styles.strokeStyle;
+        ctx.beginPath();
+        if (this.closestPoint) {
+            ctx.moveTo(this.basePoint.x, this.basePoint.y);
+            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
+            ctx.stroke();
+        }
+    }
+
     private getCanvasState(): void {
         if (this.currentSegment) {
             this.lastCanvasImages.push(
@@ -140,6 +170,7 @@ export class LineService extends Tool {
             );
         }
     }
+
     // Equation of a line: 0 = ax + by + c
     // Distance from a point A to a line L :  distance(A,L) =  abs(ax + by + c) / sqrt(a^2 + b^2)
     private getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
@@ -190,36 +221,6 @@ export class LineService extends Tool {
         return this.getProjectionOnClosestLine(currentPoint, nearestLine);
     }
 
-    private calculatePosition(currentPoint: Vec2, basePoint: Vec2): Vec2 | undefined {
-        if (!currentPoint || !basePoint) {
-            return undefined;
-        }
-        return this.getNearestPoint(currentPoint, basePoint);
-    }
-
-    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle): void {
-        ctx.lineWidth = styles.lineWidth;
-        ctx.strokeStyle = styles.strokeStyle;
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
-        ctx.stroke();
-    }
-
-    drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        this.basePoint = path[path.length - 1];
-        this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
-        ctx.lineWidth = styles.lineWidth;
-        ctx.strokeStyle = styles.strokeStyle;
-        ctx.beginPath();
-        if (this.closestPoint) {
-            ctx.moveTo(this.basePoint.x, this.basePoint.y);
-            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
-            ctx.stroke();
-        }
-    }
-
     private drawPoint(ctx: CanvasRenderingContext2D, position: Vec2): void {
         const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.fillStyle = color;
@@ -230,7 +231,7 @@ export class LineService extends Tool {
         ctx.fill();
     }
 
-    clearPath(): void {
+    private clearPath(): void {
         this.currentSegment = [];
     }
 }

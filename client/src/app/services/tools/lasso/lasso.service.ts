@@ -20,6 +20,11 @@ interface Segment {
     final: Vec2;
 }
 
+enum Axis {
+    X = 1,
+    Y = 2,
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -28,7 +33,7 @@ export class LassoService extends Tool {
     private polygonCoords: Vec2[];
     private nbSegments: number;
     private areIntesected: boolean;
-    // private firstSegment: boolean;
+    private shiftKeyDown: boolean;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
@@ -36,6 +41,7 @@ export class LassoService extends Tool {
         this.polygonCoords = [];
         this.nbSegments = 0;
         this.areIntesected = false;
+        this.shiftKeyDown = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -53,7 +59,6 @@ export class LassoService extends Tool {
                 { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
             ];
             this.clearCurrentSegment();
-            // this.clearPolygonCoords();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, finalSegment, STYLES);
             this.mouseDown = false;
@@ -74,16 +79,11 @@ export class LassoService extends Tool {
                     initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
                     final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
                 };
-                console.log('----------------');
-                console.log(`segment ${i}: (${segment1.initial.x},${segment1.initial.y}) (${segment1.final.x},${segment1.final.y})`);
-                console.log(`segment souris: (${segment2.initial.x},${segment2.initial.y}) (${segment2.final.x},${segment2.final.y})`);
+                // console.log('----------------');
+                // console.log(`segment ${i}: (${segment1.initial.x},${segment1.initial.y}) (${segment1.final.x},${segment1.final.y})`);
+                // console.log(`segment souris: (${segment2.initial.x},${segment2.initial.y}) (${segment2.final.x},${segment2.final.y})`);
 
-                if (this.segmentsAreIntersecting(segment1, segment2)) {
-                    // Just for testing
-                    console.log('segments intersect');
-                } else {
-                    console.log('segments DO NOT intersect');
-                }
+                this.segmentsAreIntersecting(segment1, segment2);
 
                 const adjacentSegment: Segment = {
                     initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
@@ -91,8 +91,7 @@ export class LassoService extends Tool {
                 };
 
                 if (this.segmentsAreConfused(adjacentSegment, segment2)) {
-                    console.log('segments are confused and parallel');
-                    return;
+                    this.areIntesected = true;
                 }
             }
 
@@ -102,18 +101,30 @@ export class LassoService extends Tool {
                 fillStyle: color,
                 lineWidth: 1,
             };
-            this.currentSegment.push(this.mouseDownCoord);
+
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, lineStyle);
+
+            if (this.shiftKeyDown) {
+                this.drawConstrainedLine(this.drawingService.previewCtx, this.polygonCoords, lineStyle, event);
+            } else {
+                this.currentSegment.push(this.mouseDownCoord);
+                this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, lineStyle);
+            }
         }
     }
 
     onMouseUp(event: MouseEvent): void {
+        console.log('onmouseup');
+
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
         if (this.mouseDown && !this.areIntesected) {
-            this.currentSegment.push(this.mouseDownCoord);
-            this.lineService.drawLine(this.drawingService.lassoPreviewCtx, this.currentSegment, STYLES);
+            if (this.shiftKeyDown) {
+                this.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.polygonCoords, STYLES, event);
+            } else {
+                this.currentSegment.push(this.mouseDownCoord);
+                this.lineService.drawLine(this.drawingService.lassoPreviewCtx, this.currentSegment, STYLES);
+            }
         }
 
         this.polygonCoords.push(this.mouseDownCoord);
@@ -126,6 +137,7 @@ export class LassoService extends Tool {
         switch (event.key) {
             case 'Escape':
                 this.clearCurrentSegment();
+                this.clearPolygonCoords();
                 this.mouseDown = false;
                 this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -133,10 +145,62 @@ export class LassoService extends Tool {
             case 'Backspace':
                 this.redrawPreviousState(event);
                 break;
+            case 'Shift':
+                this.shiftKeyDown = true;
+                break;
         }
     }
 
-    handleKeyUp(event: KeyboardEvent): void {}
+    handleKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Shift') {
+            console.log(event);
+            this.shiftKeyDown = false;
+        }
+    }
+
+    findMinCoord(coordinates: Vec2[], axis: Axis): number {
+        let min;
+
+        if (axis === Axis.X) {
+            min = coordinates[0].x;
+            for (let i = 0; i < coordinates.length; i++) {
+                if (coordinates[i].x < min) {
+                    min = coordinates[i].x;
+                }
+            }
+        } else {
+            min = coordinates[0].y;
+            for (let i = 0; i < coordinates.length; i++) {
+                if (coordinates[i].y < min) {
+                    min = coordinates[i].y;
+                }
+            }
+        }
+
+        return min;
+    }
+
+    findMaxCoord(coordinates: Vec2[], axis: Axis): number {
+        let max;
+
+        if (axis === Axis.X) {
+            max = coordinates[0].x;
+            for (let i = 0; i < coordinates.length; i++) {
+                if (coordinates[i].x > max) {
+                    max = coordinates[i].x;
+                }
+            }
+        } else {
+            max = coordinates[0].y;
+            for (let i = 0; i < coordinates.length; i++) {
+                if (coordinates[i].y > max) {
+                    max = coordinates[i].y;
+                }
+            }
+        }
+
+        return max;
+    }
 
     private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
         const dx = Math.abs(basePoint.x - mousePosition.x);
@@ -150,10 +214,6 @@ export class LassoService extends Tool {
         const x3 = secondSegment.initial.x;
         const x4 = secondSegment.final.x;
         const xa = this.findXCoordOfIntersection(firstSegment, secondSegment);
-
-        if (this.segmentsAreConfused(firstSegment, secondSegment)) {
-            return true;
-        }
 
         if (xa) {
             if (xa < Math.max(Math.min(x1, x2), Math.min(x3, x4)) || xa > Math.min(Math.max(x1, x2), Math.max(x3, x4))) {
@@ -212,7 +272,7 @@ export class LassoService extends Tool {
         const m2 = this.findSlope(secondSegment);
         if (m1 != undefined && m2 != undefined) {
             const delta = Math.abs(Math.abs(m1) - Math.abs(m2));
-            console.log(`m1=${m1}, m2=${m2}, delta=${delta}`);
+            // console.log(`m1=${m1}, m2=${m2}, delta=${delta}`);
             return delta < EPSILON;
         }
         return false;
@@ -222,7 +282,7 @@ export class LassoService extends Tool {
         console.log('redrawPreviousState');
         this.clearCurrentSegment();
         this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
-        console.log('pop:', this.polygonCoords.pop());
+        this.polygonCoords.pop();
         for (let i = 1; i < this.polygonCoords.length; i++) {
             let segment: Vec2[] = [
                 { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
@@ -230,6 +290,13 @@ export class LassoService extends Tool {
             ];
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, segment, STYLES);
         }
+    }
+
+    private drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        this.lineService.basePoint = path[path.length - 1];
+        this.lineService.closestPoint = this.lineService.calculatePosition(mousePosition, this.lineService.basePoint);
+        this.lineService.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.currentSegment, styles, event);
     }
 
     private clearCurrentSegment(): void {
