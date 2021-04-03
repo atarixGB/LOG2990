@@ -26,6 +26,8 @@ export class ClipboardService {
     }
 
     copy(): void {
+        console.log('copy');
+
         this.selectionData = this.selectionService.selection;
         this.width = this.selectionService.width;
         this.height = this.selectionService.height;
@@ -36,6 +38,8 @@ export class ClipboardService {
     }
 
     paste(): void {
+        console.log('paste');
+
         this.selectionService.printMovedSelection(this.drawingService.baseCtx);
         this.initializeSelectionParameters();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -45,12 +49,16 @@ export class ClipboardService {
     }
 
     cut(): void {
+        console.log('cut');
+
         this.copy();
         this.delete();
         this.toolManagerService.currentTool = this.selectionService;
     }
 
     delete(): void {
+        console.log('delete');
+
         this.selectionService.clearUnderneathShape();
         this.selectionService.selectionDeleted = true;
         this.selectionService.terminateSelection();

@@ -209,11 +209,7 @@ export class SelectionService extends Tool {
 
     terminateSelection(): void {
         if (this.activeSelection) {
-            console.log('iicic');
-
             if (!this.selectionDeleted) {
-                console.log('shit est entre...');
-
                 this.imageMoved = true;
                 this.printMovedSelection(this.drawingService.baseCtx);
             }
@@ -229,8 +225,6 @@ export class SelectionService extends Tool {
     }
 
     printMovedSelection(ctx: CanvasRenderingContext2D): void {
-        console.log('je print', this.imageMoved);
-
         if (this.imageMoved) {
             this.imageMoved = false;
             if (this.isEllipse) this.printEllipse(this.drawingService.baseCtx);

@@ -11,6 +11,7 @@ import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/sa
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
+import { ClipboardService } from '@app/services/selection/clipboard.service';
 import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
@@ -48,6 +49,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         public dialog: MatDialog,
         private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
+        private clipboardService: ClipboardService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
@@ -92,10 +94,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
-        this.baseCtx.beginPath();
-        this.baseCtx.fillStyle = '#FF00FF';
-        this.baseCtx.fillRect(0, 0, 300, 300);
-        this.baseCtx.closePath();
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
@@ -189,27 +187,16 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             this.undoRedoService.redo();
         }
 
-        if (event.ctrlKey && event.key === 'a') {
-            event.preventDefault();
-            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
-            this.selectionService.selectAll();
-            return;
-        }
-
-        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                this.moveSelectionService.handleKeyDown(event);
-            }
-        }
         this.modalHandler(event, NewDrawModalComponent, 'o');
         this.modalHandler(event, SaveDrawingModalComponent, 's');
         this.modalHandler(event, CarouselComponent, 'g');
         this.modalHandler(event, ExportModalComponent, 'e');
+
+        if (this.selectionToolKeyHandler(event)) return;
+
         if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
         }
-
-        this.toolManagerService.handleHotKeysShortcut(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
@@ -280,6 +267,38 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             }
             return;
         }
+    }
+
+    private selectionToolKeyHandler(event: KeyboardEvent): boolean {
+        if (event.ctrlKey && event.key === 'a') {
+            event.preventDefault();
+            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
+            this.selectionService.selectAll();
+        }
+
+        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
+            if (event.ctrlKey) {
+                switch (event.key) {
+                    case 'c':
+                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.copy();
+                        break;
+                    case 'x':
+                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.cut();
+                        break;
+                    case 'v':
+                        if (this.clipboardService.pasteAvailable) this.clipboardService.paste();
+                        break;
+                }
+                return true;
+            }
+
+            if (event.key === 'Delete' && this.clipboardService.actionsAreAvailable()) this.clipboardService.delete();
+
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                this.moveSelectionService.handleKeyDown(event);
+            }
+        }
+        return false;
     }
 
     async getNewImage(src: string): Promise<HTMLImageElement> {
