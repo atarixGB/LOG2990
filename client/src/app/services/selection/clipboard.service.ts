@@ -47,13 +47,10 @@ export class ClipboardService {
     }
 
     delete(): void {
-        this.selectionService.drawingService.clearCanvas(this.selectionService.drawingService.previewCtx);
-        if (!this.selectionService.imageMoved) {
-            this.selectionService.clearUnderneathShape();
-        }
-        //this.selectionService.terminateSelection();
-
-        // réinitialisé tous les parametres de la selection ou/pour empecher la print de la selection
+        this.selectionService.clearUnderneathShape();
+        this.selectionService.selectionDeleted = true;
+        this.selectionService.terminateSelection();
+        this.selectionService.selectionDeleted = false;
         this.toolManagerService.currentTool = this.selectionService;
     }
 }

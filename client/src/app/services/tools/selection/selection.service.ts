@@ -24,6 +24,7 @@ export class SelectionService extends Tool {
     imageMoved: boolean;
     clearUnderneath: boolean;
     selectionTerminated: boolean;
+    selectionDeleted: boolean;
     width: number;
     height: number;
     private previousLineWidthRectangle: number;
@@ -44,6 +45,7 @@ export class SelectionService extends Tool {
         this.imageMoved = false;
         this.clearUnderneath = true;
         this.selectionTerminated = false;
+        this.selectionDeleted = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -54,6 +56,7 @@ export class SelectionService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.initialSelection = true;
+            this.imageMoved = false;
             this.clearUnderneath = true;
             this.selectionTerminated = false;
 
@@ -182,8 +185,6 @@ export class SelectionService extends Tool {
     }
 
     clearUnderneathShape(): void {
-        console.log('appeler');
-
         this.drawingService.baseCtx.fillStyle = '#FFFFFF';
         if (this.isEllipse) {
             this.drawingService.baseCtx.beginPath();
@@ -214,7 +215,7 @@ export class SelectionService extends Tool {
             this.selectionTerminated = true;
             this.mouseDown = false;
 
-            this.printMovedSelection(this.drawingService.baseCtx);
+            if (!this.selectionDeleted) this.printMovedSelection(this.drawingService.baseCtx);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.resetParametersTools();
         }
