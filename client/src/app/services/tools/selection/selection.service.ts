@@ -121,14 +121,15 @@ export class SelectionService extends Tool {
     }
 
     handleKeyDown(event: KeyboardEvent): void {
-        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
-        else if (this.isLasso) this.lassoService.handleKeyDown(event);
-        else this.rectangleService.handleKeyDown(event);
-
         if (event.key === 'Escape') {
             event.preventDefault();
             this.terminateSelection();
+            return;
         }
+
+        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
+        else if (this.isLasso) this.lassoService.handleKeyDown(event);
+        else this.rectangleService.handleKeyDown(event);
     }
 
     handleKeyUp(event: KeyboardEvent): void {
@@ -250,6 +251,7 @@ export class SelectionService extends Tool {
             this.printMovedSelection();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.resetParametersTools();
+            this.lassoService.selectionOver = false;
             this.lassoService.resetAttributes();
         }
     }
