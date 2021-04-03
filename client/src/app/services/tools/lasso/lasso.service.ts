@@ -14,9 +14,10 @@ const STYLES: DrawingContextStyle = {
     lineWidth: 1,
 };
 
-// interface Segment {
-//     points: Vec2[];
-// }
+interface Segment {
+    initial: Vec2;
+    final: Vec2;
+}
 
 @Injectable({
     providedIn: 'root',
@@ -34,6 +35,11 @@ export class LassoService extends Tool {
         this.polygonCoords = [];
         this.nbSegments = 0;
         this.areIntesected = false;
+
+        // Just for testing
+        const s1: Segment = { initial: { x: 0, y: 0 }, final: { x: 1, y: 1 } };
+        const s2: Segment = { initial: { x: 3, y: 0 }, final: { x: 2, y: 2 } };
+        console.log('segments se croisent ?', this.segmentsAreIntersecting(s1, s2));
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -41,21 +47,11 @@ export class LassoService extends Tool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.currentSegment.push(this.mouseDownCoord);
 
-        // *** FOR DEBUG
-        // let dx = Math.abs(this.polygonCoords[0].x - this.mouseDownCoord.x);
-        // let dy = Math.abs(this.polygonCoords[0].y - this.mouseDownCoord.y);
-        // console.log(`
-        //     init point: (${this.polygonCoords[0].x},${this.polygonCoords[0].y})
-        //     mouse: (${this.mouseDownCoord.x},${this.mouseDownCoord.y})
-        //     distance du point init:${Math.sqrt(dx * dx + dy * dy)}`);
-        // ***
-
         if (
             this.mousePositionIsInClosureArea(this.mouseDownCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) &&
             this.nbSegments >= NB_MIN_SEGMENTS &&
             !this.areIntesected
         ) {
-            console.log('MOUSE IS IN CLOSURE AREA');
             const finalSegment: Vec2[] = [
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
                 { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
@@ -71,17 +67,17 @@ export class LassoService extends Tool {
     onMouseMove(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
-        const segment2: Vec2[] = [this.polygonCoords[this.polygonCoords.length - 1], this.mouseDownCoord];
+        // const segment2: Vec2[] = [this.polygonCoords[this.polygonCoords.length - 1], this.mouseDownCoord];
         if (this.mouseDown) {
-            if (this.polygonCoords.length > 1) {
-                for (let i = 0; i < this.polygonCoords.length - 3; i++) {
-                    let segment1: Vec2[] = [this.polygonCoords[i], this.polygonCoords[i + 1]];
-                    this.segmentIntersection(segment1, segment2);
-                    this.currentSegment.push(this.mouseDownCoord);
-                    this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                    this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
-                }
-            }
+            // if (this.polygonCoords.length > 1) {
+            // for (let i = 0; i < this.polygonCoords.length - 3; i++) {
+            //     let segment1: Vec2[] = [this.polygonCoords[i], this.polygonCoords[i + 1]];
+            //     this.segmentIntersection(segment1, segment2);
+            this.currentSegment.push(this.mouseDownCoord);
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
+            // }
+            // }
         }
     }
 
@@ -95,8 +91,6 @@ export class LassoService extends Tool {
 
         this.polygonCoords.push(this.mouseDownCoord);
         this.nbSegments = this.polygonCoords.length - 1;
-        console.log('points polygone:', this.polygonCoords);
-        console.log('nbr de segments:', this.nbSegments);
         this.mouseDown = false;
         this.clearCurrentSegment();
     }
@@ -116,117 +110,80 @@ export class LassoService extends Tool {
 
     handleKeyUp(event: KeyboardEvent): void {}
 
-    // private pointIsInPolygon(point: Vec2, lines: Segment[]): boolean {
-    //     // TODO
-    //     return false;
-    // }
-
-    // private pointIsInLine(point: Vec2, line: Vec2[]): boolean {
-    //     for (const p in line) {
-    //         if (point.x === line[p].x && point.y === line[p].y) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
     private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
         const dx = Math.abs(basePoint.x - mousePosition.x);
         const dy = Math.abs(basePoint.y - mousePosition.y);
         return Math.sqrt(dx * dx + dy * dy) <= radius;
     }
 
-    private segmentIntersection(firstSegment: Vec2[], secondSegment: Vec2[]): boolean {
-        let m1, m2;
-        let b1, b2;
-        let xa;
-        const X1 = firstSegment[0].x;
-        const Y1 = firstSegment[0].y;
-        const X2 = firstSegment[1].x;
-        const Y2 = firstSegment[1].y;
-        const X3 = secondSegment[0].x;
-        const Y3 = secondSegment[0].y;
-        const X4 = secondSegment[1].x;
-        const Y4 = secondSegment[1].y;
+    private segmentsAreIntersecting(firstSegment: Segment, secondSegment: Segment): boolean {
+        const x1 = firstSegment.initial.x;
+        const x2 = firstSegment.final.x;
+        const x3 = secondSegment.initial.x;
+        const x4 = secondSegment.final.x;
+        const xa = this.findXCoordOfIntersection(firstSegment, secondSegment);
 
-        try {
-            m1 = (Y1 - Y2) / (X1 - X2);
-            m2 = (Y3 - Y4) / (X3 - X4);
-            console.log('m1:' + m1, 'm2:' + m2);
-        } catch (error) {
-            console.log('division par zero pour m1 ou m2');
-            m1 = m2 = 0;
+        if (this.segmentsAreConfused(firstSegment, secondSegment)) {
+            return true;
         }
 
-        if (m1 && m2) {
-            b1 = Y1 - m1 * X1;
-            b2 = Y3 - m2 * X3;
-            console.log('b1:' + b1, 'b2:' + b2);
-
-            try {
-                xa = (b2 - b1) / (m1 - m2);
-                console.log('xa:' + xa);
-            } catch {
-                console.log('division par zero');
-                return false;
-            }
-
-            if (xa < Math.max(Math.min(X1, X2), Math.min(X3, X4)) || xa > Math.min(Math.max(X1, X2), Math.max(X3, X4))) {
-                console.log('false');
+        if (xa) {
+            if (xa < Math.max(Math.min(x1, x2), Math.min(x3, x4)) || xa > Math.min(Math.max(x1, x2), Math.max(x3, x4))) {
                 this.areIntesected = false;
                 return false;
-            } else {
-                console.log('true');
-                this.areIntesected = true;
-                // this.drawingService.lassoPreviewCtx.beginPath();
-                // this.drawingService.lassoPreviewCtx.fillRect(0, 0, 20, 20);
-                // this.drawingService.lassoPreviewCtx.closePath();
-                return true;
             }
+            this.areIntesected = true;
+            return true;
         }
-
         return false;
     }
 
-    // private segmentParameters(firstSegment: Vec2[], secondSegment: Vec2[]): void {
-    //     let m1, m2;
-    //     let b1, b2;
-    //     let xa;
-    //     const X1 = firstSegment[0].x;
-    //     const Y1 = firstSegment[0].y;
-    //     const X2 = firstSegment[1].x;
-    //     const Y2 = firstSegment[1].y;
-    //     const X3 = secondSegment[0].x;
-    //     const Y3 = secondSegment[0].y;
-    //     const X4 = secondSegment[1].x;
-    //     const Y4 = secondSegment[1].y;
-
-    // }
-
-    private segmentsConfused(firstSegment: Vec2[], secondSegment: Vec2[]): void {
-        let m1, m2;
-        const X1 = firstSegment[0].x;
-        const Y1 = firstSegment[0].y;
-        const X2 = firstSegment[1].x;
-        const Y2 = firstSegment[1].y;
-        const X3 = secondSegment[0].x;
-        const Y3 = secondSegment[0].y;
-        const X4 = secondSegment[1].x;
-        const Y4 = secondSegment[1].y;
+    private findSlope(segment: Segment): number | undefined {
+        let slope;
+        const dx = segment.final.x - segment.initial.x;
+        const dy = segment.final.y - segment.initial.y;
 
         try {
-            m1 = (Y1 - Y2) / (X1 - X2);
-            m2 = (Y3 - Y4) / (X3 - X4);
-            console.log('m1:' + m1, 'm2:' + m2);
+            slope = dy / dx;
         } catch (error) {
-            console.log('division par zero pour m1 ou m2');
+            console.log(error);
         }
+        return slope;
+    }
 
-        if (m1 && m2) {
-            if (m1 == m2) {
-                console.log('m1 et m2 parallele');
-            }
+    // Equation of a line: y = mx + b ==> b = y - mx
+    private findVerticalIntercept(segment: Segment): number | undefined {
+        const slope = this.findSlope(segment);
+        if (slope) {
+            const b = segment.initial.y - slope * segment.initial.x;
+            return b;
         }
+        return undefined;
+    }
+
+    private findXCoordOfIntersection(firstSegment: Segment, secondSegment: Segment): number | undefined {
+        const b1 = this.findVerticalIntercept(firstSegment);
+        const b2 = this.findVerticalIntercept(secondSegment);
+        const m1 = this.findSlope(firstSegment);
+        const m2 = this.findSlope(secondSegment);
+        console.log(`b1:${b1}\nm1:${m1}\nb2:${b2}\nm2:${m2}`);
+        let xa;
+
+        try {
+            if (b1 != undefined && b2 != undefined && m1 != undefined && m2 != undefined) {
+                xa = (b2 - b1) / (m1 - m2);
+                console.log(`xa:${xa}`);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+        return xa;
+    }
+
+    private segmentsAreConfused(firstSegment: Segment, secondSegment: Segment): boolean {
+        const m1 = this.findSlope(firstSegment);
+        const m2 = this.findSlope(secondSegment);
+        return m1 === m2;
     }
 
     private clearCurrentSegment(): void {
