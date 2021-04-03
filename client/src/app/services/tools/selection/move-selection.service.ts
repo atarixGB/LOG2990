@@ -50,9 +50,8 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.selectionService.imageMoved = true;
-
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
+            this.selectionService.imageMoved = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.moveSelectionMouse(this.drawingService.previewCtx);

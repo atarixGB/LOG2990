@@ -56,12 +56,12 @@ export class SelectionService extends Tool {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             this.initialSelection = true;
-            this.imageMoved = false;
             this.clearUnderneath = true;
             this.selectionTerminated = false;
 
             this.initializeToolParameters();
             this.printMovedSelection(this.drawingService.baseCtx);
+            this.selectionDeleted = false;
 
             if (this.isEllipse) this.ellipseService.onMouseDown(event);
             else if (this.isLasso) this.lassoService.onMouseDown(event);
@@ -211,11 +211,13 @@ export class SelectionService extends Tool {
         if (this.activeSelection) {
             this.activeSelection = false;
             this.newSelection = true;
-            this.imageMoved = true;
             this.selectionTerminated = true;
             this.mouseDown = false;
 
-            if (!this.selectionDeleted) this.printMovedSelection(this.drawingService.baseCtx);
+            if (!this.selectionDeleted) {
+                this.imageMoved = true;
+                this.printMovedSelection(this.drawingService.baseCtx);
+            }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.resetParametersTools();
         }
