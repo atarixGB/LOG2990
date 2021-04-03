@@ -1,0 +1,59 @@
+import { Injectable } from '@angular/core';
+import { DrawingService } from '../drawing/drawing.service';
+import { SelectionService } from '../tools/selection/selection.service';
+import { ToolManagerService } from '../tools/tool-manager.service';
+
+@Injectable({
+    providedIn: 'root',
+})
+export class ClipboardService {
+    selectionData: ImageData;
+    width: number;
+    height: number;
+    isEllipse: boolean;
+    isLasso: boolean;
+
+    constructor(private drawingService: DrawingService, private selectionService: SelectionService, private toolManagerService: ToolManagerService) {}
+
+    copy(): void {
+        this.selectionData = this.selectionService.selection;
+        this.width = this.selectionService.width;
+        this.height = this.selectionService.height;
+        this.isEllipse = this.selectionService.isEllipse;
+        this.isLasso = this.selectionService.isLasso;
+        this.toolManagerService.currentTool = this.selectionService;
+    }
+
+    paste(): void {
+        this.selectionService.selection = this.selectionData;
+        this.selectionService.origin = { x: 0, y: 0 };
+        this.selectionService.destination = { x: this.width, y: this.height };
+        this.selectionService.width = this.width;
+        this.selectionService.height = this.height;
+        this.selectionService.isEllipse = this.isEllipse;
+        this.selectionService.isLasso = this.isLasso;
+
+        this.selectionService.imageMoved = true;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.selectionService.printMovedSelection(this.drawingService.previewCtx);
+        this.selectionService.createBoundaryBox();
+        this.toolManagerService.currentTool = this.selectionService;
+    }
+
+    cut(): void {
+        this.copy();
+        this.delete();
+        this.toolManagerService.currentTool = this.selectionService;
+    }
+
+    delete(): void {
+        this.selectionService.drawingService.clearCanvas(this.selectionService.drawingService.previewCtx);
+        if (!this.selectionService.imageMoved) {
+            this.selectionService.clearUnderneathShape();
+        }
+        //this.selectionService.terminateSelection();
+
+        // réinitialisé tous les parametres de la selection ou/pour empecher la print de la selection
+        this.toolManagerService.currentTool = this.selectionService;
+    }
+}

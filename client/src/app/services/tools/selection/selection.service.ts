@@ -24,13 +24,13 @@ export class SelectionService extends Tool {
     imageMoved: boolean;
     clearUnderneath: boolean;
     selectionTerminated: boolean;
-    private width: number;
-    private height: number;
+    width: number;
+    height: number;
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
 
     constructor(
-        protected drawingService: DrawingService,
+        public drawingService: DrawingService,
         private rectangleService: RectangleService,
         private ellipseService: EllipseService,
         private lassoService: LassoService,
@@ -58,7 +58,7 @@ export class SelectionService extends Tool {
             this.selectionTerminated = false;
 
             this.initializeToolParameters();
-            this.printMovedSelection();
+            this.printMovedSelection(this.drawingService.baseCtx);
 
             if (this.isEllipse) this.ellipseService.onMouseDown(event);
             else if (this.isLasso) this.lassoService.onMouseDown(event);
@@ -128,7 +128,7 @@ export class SelectionService extends Tool {
         this.width = this.destination.x;
         this.height = this.destination.y;
 
-        this.printMovedSelection();
+        this.printMovedSelection(this.drawingService.baseCtx);
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
         this.createBoundaryBox();
     }
@@ -182,6 +182,8 @@ export class SelectionService extends Tool {
     }
 
     clearUnderneathShape(): void {
+        console.log('appeler');
+
         this.drawingService.baseCtx.fillStyle = '#FFFFFF';
         if (this.isEllipse) {
             this.drawingService.baseCtx.beginPath();
@@ -212,9 +214,17 @@ export class SelectionService extends Tool {
             this.selectionTerminated = true;
             this.mouseDown = false;
 
-            this.printMovedSelection();
+            this.printMovedSelection(this.drawingService.baseCtx);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.resetParametersTools();
+        }
+    }
+
+    printMovedSelection(ctx: CanvasRenderingContext2D): void {
+        if (this.imageMoved) {
+            this.imageMoved = false;
+            if (this.isEllipse) this.printEllipse(this.drawingService.baseCtx);
+            else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
         }
     }
 
@@ -268,15 +278,7 @@ export class SelectionService extends Tool {
         }
     }
 
-    private printMovedSelection(): void {
-        if (this.imageMoved) {
-            this.imageMoved = false;
-            if (this.isEllipse) this.printEllipse();
-            else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
-        }
-    }
-
-    private printEllipse(): void {
+    private printEllipse(ctx: CanvasRenderingContext2D): void {
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;
@@ -293,7 +295,7 @@ export class SelectionService extends Tool {
         );
         this.drawingService.baseCtx.save();
         this.drawingService.baseCtx.clip();
-        this.drawingService.baseCtx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
+        ctx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
         this.drawingService.baseCtx.restore();
     }
 

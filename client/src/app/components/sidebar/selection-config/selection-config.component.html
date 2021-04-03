@@ -1,28 +1,27 @@
 <mat-grid-list cols="2">
-  <mat-grid-tile>
-    <button mat-icon-button matTooltip="Tout sélectionner (Ctrl+A)" matTooltipPosition="above"
-      (click)="this.selectionService.selectAll()">
-      <mat-icon>select_all</mat-icon>
-    </button>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <button mat-icon-button matTooltip="Copier (Ctrl+C)" matTooltipPosition="above" (click)="(true)">
-      <mat-icon>content_copy</mat-icon>
-    </button>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <button mat-icon-button matTooltip="Coller (Ctrl+V)" matTooltipPosition="above" (click)="(true)">
-      <mat-icon>content_paste</mat-icon>
-    </button>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <button mat-icon-button matTooltip="Couper (Ctrl+X)" matTooltipPosition="above" (click)="(true)">
-      <mat-icon>content_cut</mat-icon>
-    </button>
-  </mat-grid-tile>
-  <mat-grid-tile>
-    <button mat-icon-button matTooltip="Supprimer (DELETE)" matTooltipPosition="above" (click)="(true)">
-      <mat-icon>delete</mat-icon>
-    </button>
-  </mat-grid-tile>
+    <mat-grid-tile>
+        <button mat-icon-button matTooltip="Tout sélectionner (Ctrl+A)" matTooltipPosition="above" (click)="this.selectionService.selectAll()">
+            <mat-icon>select_all</mat-icon>
+        </button>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <button mat-icon-button matTooltip="Copier (Ctrl+C)" matTooltipPosition="above" (click)="this.clipboardService.copy()">
+            <mat-icon>content_copy</mat-icon>
+        </button>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <button mat-icon-button matTooltip="Coller (Ctrl+V)" matTooltipPosition="above" (click)="this.clipboardService.paste()">
+            <mat-icon>content_paste</mat-icon>
+        </button>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <button mat-icon-button matTooltip="Couper (Ctrl+X)" matTooltipPosition="above" (click)="this.clipboardService.cut()">
+            <mat-icon>content_cut</mat-icon>
+        </button>
+    </mat-grid-tile>
+    <mat-grid-tile>
+        <button mat-icon-button matTooltip="Supprimer (DELETE)" matTooltipPosition="above" (click)="this.clipboardService.delete()">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </mat-grid-tile>
 </mat-grid-list>
