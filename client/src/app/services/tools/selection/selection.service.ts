@@ -209,21 +209,28 @@ export class SelectionService extends Tool {
 
     terminateSelection(): void {
         if (this.activeSelection) {
-            this.activeSelection = false;
-            this.newSelection = true;
-            this.selectionTerminated = true;
-            this.mouseDown = false;
+            console.log('iicic');
 
             if (!this.selectionDeleted) {
+                console.log('shit est entre...');
+
                 this.imageMoved = true;
                 this.printMovedSelection(this.drawingService.baseCtx);
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.resetParametersTools();
+
+            this.activeSelection = false;
+            this.newSelection = true;
+            this.imageMoved = false;
+            this.selectionTerminated = true;
+            this.mouseDown = false;
         }
     }
 
     printMovedSelection(ctx: CanvasRenderingContext2D): void {
+        console.log('je print', this.imageMoved);
+
         if (this.imageMoved) {
             this.imageMoved = false;
             if (this.isEllipse) this.printEllipse(this.drawingService.baseCtx);
