@@ -8,7 +8,7 @@ import { LineService } from '../line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
-
+const EPSILON = 0.5;
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
     fillStyle: 'black',
@@ -53,7 +53,7 @@ export class LassoService extends Tool {
                 { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
             ];
             this.clearCurrentSegment();
-            this.clearPolygonCoords();
+            // this.clearPolygonCoords();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, finalSegment, STYLES);
             this.mouseDown = false;
@@ -84,10 +84,27 @@ export class LassoService extends Tool {
                 } else {
                     console.log('segments DO NOT intersect');
                 }
+
+                const adjacentSegment: Segment = {
+                    initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                    final: { x: this.polygonCoords[this.polygonCoords.length - 2].x, y: this.polygonCoords[this.polygonCoords.length - 2].y },
+                };
+
+                if (this.segmentsAreConfused(adjacentSegment, segment2)) {
+                    console.log('segments are confused and parallel');
+                    return;
+                }
             }
+
+            let color = this.areIntesected ? 'red' : 'black';
+            const lineStyle: DrawingContextStyle = {
+                strokeStyle: color,
+                fillStyle: color,
+                lineWidth: 1,
+            };
             this.currentSegment.push(this.mouseDownCoord);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, STYLES);
+            this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, lineStyle);
         }
     }
 
@@ -114,6 +131,7 @@ export class LassoService extends Tool {
                 this.drawingService.clearCanvas(this.drawingService.previewCtx);
                 break;
             case 'Backspace':
+                this.redrawPreviousState(event);
                 break;
         }
     }
@@ -142,6 +160,7 @@ export class LassoService extends Tool {
                 this.areIntesected = false;
                 return false;
             } else {
+                this.areIntesected = true;
                 return true;
             }
         }
@@ -191,7 +210,26 @@ export class LassoService extends Tool {
     private segmentsAreConfused(firstSegment: Segment, secondSegment: Segment): boolean {
         const m1 = this.findSlope(firstSegment);
         const m2 = this.findSlope(secondSegment);
-        return m1 === m2;
+        if (m1 != undefined && m2 != undefined) {
+            const delta = Math.abs(Math.abs(m1) - Math.abs(m2));
+            console.log(`m1=${m1}, m2=${m2}, delta=${delta}`);
+            return delta < EPSILON;
+        }
+        return false;
+    }
+
+    private redrawPreviousState(event: KeyboardEvent): void {
+        console.log('redrawPreviousState');
+        this.clearCurrentSegment();
+        this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
+        console.log('pop:', this.polygonCoords.pop());
+        for (let i = 1; i < this.polygonCoords.length; i++) {
+            let segment: Vec2[] = [
+                { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
+                { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
+            ];
+            this.lineService.drawLine(this.drawingService.lassoPreviewCtx, segment, STYLES);
+        }
     }
 
     private clearCurrentSegment(): void {
