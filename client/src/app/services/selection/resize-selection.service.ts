@@ -40,11 +40,6 @@ export class ResizeSelectionService {
         return false;
     }
 
-    // identifyControlPointActivated(controlPointNumber: number): void {
-    // 	this.currentControlPoint = controlPointNumber;
-
-    // }
-
     controlPointInResize(): void {
         switch (this.currentControlPoint) {
             case ControlPoints.TopLeft:
@@ -73,6 +68,8 @@ export class ResizeSelectionService {
                 break;
         }
     }
+
+    resizeSelection(): void {}
 
     resizeTopLeft(mouseCoord: Vec2): void {
         this.origin = mouseCoord;
