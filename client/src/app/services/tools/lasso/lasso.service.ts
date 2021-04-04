@@ -8,7 +8,7 @@ import { LineService } from '../line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
-// const EPSILON = 0.5;
+// const ERROR = 0.05;
 const EXTREME = 10000;
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
@@ -65,18 +65,12 @@ export class LassoService extends Tool {
                     final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
                 };
 
-                if (this.segmentsAreIntersecting(segment1, segment2)) {
+                if (this.segmentsDoIntersect(segment1, segment2)) {
+                    this.areIntesected = true;
                     break;
+                } else {
+                    this.areIntesected = false;
                 }
-
-                // const adjacentSegment: Segment = {
-                //     initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
-                //     final: { x: this.polygonCoords[this.polygonCoords.length - 2].x, y: this.polygonCoords[this.polygonCoords.length - 2].y },
-                // };
-
-                // if (this.segmentsAreConfused(adjacentSegment, segment2)) {
-                //     this.areIntesected = true;
-                // }
             }
 
             let color = this.areIntesected ? 'red' : 'black';
@@ -136,11 +130,7 @@ export class LassoService extends Tool {
     handleKeyDown(event: KeyboardEvent): void {
         switch (event.key) {
             case 'Escape':
-                this.clearCurrentSegment();
-                this.clearPolygonCoords();
-                this.mouseDown = false;
-                this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                this.resetAttributes();
                 break;
             case 'Backspace':
                 this.redrawPreviousState(event);
@@ -200,18 +190,12 @@ export class LassoService extends Tool {
     }
 
     pointInPolygon(point: Vec2): boolean {
-        //console.log('entrer');
-
-        // if (NB_MIN_SEGMENTS) return false;
-
-        const extremePoint: Vec2 = { x: EXTREME, y: point.y };
-
+        const rayCastingLine: Vec2 = { x: EXTREME, y: point.y };
         let count = 0;
         let i = 0;
+        let isInside: boolean;
 
         do {
-            console.log('dododo');
-
             let next = (i + 1) % this.polygonCoords.length;
 
             let segment1 = {
@@ -220,22 +204,24 @@ export class LassoService extends Tool {
             };
             let segment2 = {
                 initial: { x: point.x, y: point.y },
-                final: { x: extremePoint.x, y: point.y },
+                final: { x: rayCastingLine.x, y: point.y },
             };
-            if (this.segmentsAreIntersecting(segment1, segment2)) {
+
+            if (this.segmentsDoIntersect(segment1, segment2)) {
                 if (this.findOrientation(segment1.initial, point, segment1.final) === 0) {
                     return this.pointOnSegment(segment1.initial, point, segment1.final);
                 }
                 count = count + 1;
             }
             i = next;
-            console.log(i);
         } while (i != 0);
 
-        console.log('count: ', count);
+        isInside = count % 2 === 1;
 
-        return count % 2 === 1;
+        return isInside;
     }
+
+    drawPolygon(ctx: CanvasRenderingContext2D): void {}
 
     private findOrientation(p: Vec2, q: Vec2, r: Vec2): number {
         let value: number = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
@@ -248,83 +234,30 @@ export class LassoService extends Tool {
         return false;
     }
 
-    drawPolygon(ctx: CanvasRenderingContext2D): void {}
+    private segmentsDoIntersect(segment1: Segment, segment2: Segment): boolean {
+        const p1: Vec2 = segment1.initial;
+        const q1: Vec2 = segment1.final;
+        const p2: Vec2 = segment2.initial;
+        const q2: Vec2 = segment2.final;
+
+        const o1 = this.findOrientation(p1, q1, p2);
+        const o2 = this.findOrientation(p1, q1, q2);
+        const o3 = this.findOrientation(p2, q2, p1);
+        const o4 = this.findOrientation(p2, q2, q1);
+
+        if (o1 != o2 && o3 != o4) return true;
+        if (o1 == 0 && this.pointOnSegment(p1, p2, q1)) return true;
+        if (o2 == 0 && this.pointOnSegment(p1, q2, q1)) return true;
+        if (o3 == 0 && this.pointOnSegment(p2, p1, q2)) return true;
+        if (o4 == 0 && this.pointOnSegment(p2, q1, q2)) return true;
+        return false;
+    }
 
     private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
         const dx = Math.abs(basePoint.x - mousePosition.x);
         const dy = Math.abs(basePoint.y - mousePosition.y);
         return Math.sqrt(dx * dx + dy * dy) <= radius;
     }
-
-    private segmentsAreIntersecting(firstSegment: Segment, secondSegment: Segment): boolean {
-        const x1 = firstSegment.initial.x;
-        const x2 = firstSegment.final.x;
-        const x3 = secondSegment.initial.x;
-        const x4 = secondSegment.final.x;
-        const xa = this.findXCoordOfIntersection(firstSegment, secondSegment);
-
-        if (xa) {
-            if (xa < Math.max(Math.min(x1, x2), Math.min(x3, x4)) || xa > Math.min(Math.max(x1, x2), Math.max(x3, x4))) {
-                this.areIntesected = false;
-                return false;
-            } else {
-                this.areIntesected = true;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private findSlope(segment: Segment): number | undefined {
-        let slope;
-        const dx = segment.final.x - segment.initial.x;
-        const dy = segment.final.y - segment.initial.y;
-
-        try {
-            slope = dy / dx;
-        } catch (error) {
-            console.log(error);
-        }
-        return slope;
-    }
-
-    // Equation of a line: y = mx + b ==> b = y - mx
-    private findVerticalIntercept(segment: Segment): number | undefined {
-        const slope = this.findSlope(segment);
-        if (slope) {
-            const b = segment.initial.y - slope * segment.initial.x;
-            return b;
-        }
-        return undefined;
-    }
-
-    private findXCoordOfIntersection(firstSegment: Segment, secondSegment: Segment): number | undefined {
-        const b1 = this.findVerticalIntercept(firstSegment);
-        const b2 = this.findVerticalIntercept(secondSegment);
-        const m1 = this.findSlope(firstSegment);
-        const m2 = this.findSlope(secondSegment);
-        let xa;
-
-        try {
-            if (b1 != undefined && b2 != undefined && m1 != undefined && m2 != undefined) {
-                xa = (b2 - b1) / (m1 - m2);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-        return xa;
-    }
-
-    // private segmentsAreConfused(firstSegment: Segment, secondSegment: Segment): boolean {
-    //     const m1 = this.findSlope(firstSegment);
-    //     const m2 = this.findSlope(secondSegment);
-    //     if (m1 != undefined && m2 != undefined) {
-    //         const delta = Math.abs(Math.abs(m1) - Math.abs(m2));
-    //         console.log(`m1=${m1}, m2=${m2}, delta=${delta}`);
-    //         return delta < EPSILON;
-    //     }
-    //     return false;
-    // }
 
     private redrawPreviousState(event: KeyboardEvent): void {
         this.clearCurrentSegment();
@@ -344,6 +277,18 @@ export class LassoService extends Tool {
         this.lineService.basePoint = path[path.length - 1];
         this.lineService.closestPoint = this.lineService.calculatePosition(mousePosition, this.lineService.basePoint);
         this.lineService.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.currentSegment, styles, event);
+    }
+
+    private resetAttributes(): void {
+        this.mouseDown = false;
+        this.selectionOver = false;
+        this.nbSegments = 0;
+        this.areIntesected = false;
+        this.shiftKeyDown = false;
+        this.clearCurrentSegment();
+        this.clearPolygonCoords();
+        this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
     private clearCurrentSegment(): void {
