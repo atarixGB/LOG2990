@@ -91,6 +91,7 @@ export class LassoService extends Tool {
                 this.drawConstrainedLine(this.drawingService.previewCtx, this.polygonCoords, lineStyle, event);
             } else {
                 this.currentSegment.push(this.mouseDownCoord);
+                this.drawingService.previewCtx.setLineDash([2]);
                 this.lineService.drawLine(this.drawingService.previewCtx, this.currentSegment, lineStyle);
             }
         }
@@ -106,6 +107,7 @@ export class LassoService extends Tool {
                 this.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.polygonCoords, STYLES, event);
             } else {
                 this.currentSegment.push(this.mouseDownCoord);
+                this.drawingService.lassoPreviewCtx.setLineDash([2]);
                 this.lineService.drawLine(this.drawingService.lassoPreviewCtx, this.currentSegment, STYLES);
             }
         }
@@ -224,7 +226,16 @@ export class LassoService extends Tool {
         return isInside;
     }
 
-    drawPolygon(ctx: CanvasRenderingContext2D): void {}
+    drawPolygon(ctx: CanvasRenderingContext2D): void {
+        ctx.setLineDash([2]);
+        for (let i = 1; i < this.polygonCoords.length; i++) {
+            let segment: Vec2[] = [
+                { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
+                { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
+            ];
+            this.lineService.drawLine(ctx, segment, STYLES);
+        }
+    }
 
     private findOrientation(p: Vec2, q: Vec2, r: Vec2): number {
         let value: number = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
