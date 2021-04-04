@@ -1,5 +1,4 @@
 <div class="grid">
-    
     <h3>Grille</h3>
 
     <mat-checkbox (change)="switchGridView($event.checked)" [checked]="isEnabled">Activer grille</mat-checkbox>
@@ -8,13 +7,7 @@
     <div id="section">
         <p>Taille des carrés</p>
         <div class="attributeContainer">
-            <input
-                type="text"
-                [(value)]="squareSize"
-                (change)="changeGridSize($event.target.value)"
-                [min]="minSquareSize"
-                [max]="maxSquareSize"
-            />
+            <input type="text" [(value)]="squareSize" (change)="changeGridSize($event.target.value)" [min]="minSquareSize" [max]="maxSquareSize" />
             <div>
                 <button (click)="changeGridSize(squareSize - 5)">-</button>
                 <button (click)="changeGridSize(squareSize + 5)">+</button>
@@ -26,18 +19,19 @@
     <div id="section">
         <p>Opacité des lignes</p>
         <div class="attributeContainer">
-            <input
-                type="text"
-                [(value)]="currentOpacity"
-                (change)="changeOpacity($event.target.value)"
-                [min]="minOpacity"
-                [max]="maxOpacity"
-            />
+            <input type="text" [(value)]="currentOpacity" (change)="changeOpacity($event.target.value)" [min]="minOpacity" [max]="maxOpacity" />
             <div>
                 <button (click)="changeOpacity(currentOpacity - 5)">-</button>
                 <button (click)="changeOpacity(currentOpacity + 5)">+</button>
             </div>
         </div>
-        
+        <mat-slider
+            thumbLabel
+            tickInterval="1000"
+            min="minOpacity"
+            max="maxOpacity"
+            [(ngModel)]="currentOpacity"
+            (change)="changeOpacity(currentOpacity)"
+        ></mat-slider>
     </div>
 </div>
