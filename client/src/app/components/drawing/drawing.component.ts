@@ -12,7 +12,7 @@ import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@ap
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ClipboardService } from '@app/services/selection/clipboard.service';
-import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
+import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
