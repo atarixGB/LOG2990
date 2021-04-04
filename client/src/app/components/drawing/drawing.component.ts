@@ -249,7 +249,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
-
+        
         setTimeout(() => {
             this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
@@ -304,6 +304,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         return !this.baseCtx.getImageData(0, 0, this.width, this.height).data.some((channel) => channel !== 0);
     }
     private whiteBackgroundCanvas(): void {
+        if(this.drawingService.isGridEnabled){
+            this.drawingService.setGrid();
+        }
         this.baseCtx.beginPath();
         this.baseCtx.fillStyle = '#FFFFFF';
         this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
