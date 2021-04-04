@@ -81,7 +81,7 @@ export class ToolManagerService {
     handleHotKeysShortcut(event: KeyboardEvent): void {
         if (this.currentTool && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
             this.currentTool.handleKeyDown(event);
-        } else if (this.currentTool != this.textService) {
+        } else if (this.textService.isWriting == false) {
             this.switchToolWithKeys(event.key);
         }
     }
