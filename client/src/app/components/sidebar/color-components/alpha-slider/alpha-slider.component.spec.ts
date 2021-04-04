@@ -4,6 +4,8 @@ import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CASES_ARRAY } from '@app/constants';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { AlphaSliderComponent } from './alpha-slider.component';
+
+// tslint:disable
 describe('AlphaSliderComponent', () => {
     let component: AlphaSliderComponent;
     let fixture: ComponentFixture<AlphaSliderComponent>;
