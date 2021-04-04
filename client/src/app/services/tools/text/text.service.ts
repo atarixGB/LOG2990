@@ -36,10 +36,12 @@ export class TextService extends Tool {
     alignBinding: Map<TextAlign, string>;
 
     color: string;
-    font: string = DEFAULT_FONT;
+    font: undefined | string = DEFAULT_FONT;
     size: string = DEFAULT_TEXT_SIZE;
-    emphasis: string = DEFAULT_EMPHASIS;
-    align: string = DEFAULT_TEXT_ALIGN;
+    emphasis: undefined | string = DEFAULT_EMPHASIS;
+    align: undefined | string = DEFAULT_TEXT_ALIGN;
+
+    keyBinding: Map<string, () => void>;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -71,11 +73,21 @@ export class TextService extends Tool {
         this.selectFont = Font.Arial;
         this.selectEmphasis = Emphasis.Normal;
         this.selectAlign = TextAlign.Left;
+
+        this.keyBinding = new Map<string, () => void>();
+        this.keyBinding
+            .set('Backspace', () => this.handleBackspace())
+            .set('Delete', () => this.handleDelete())
+            .set('ArrowLeft', () => this.handleArrowLeft())
+            .set('ArrowRight', () => this.handleArrowRight())
+            .set('ArrowUp', () => this.handleArrowUp())
+            .set('ArrowDown', () => this.handleArrowDown())
+            .set('Enter', () => this.handleEnter())
+            .set('Escape', () => this.handleEscape());
     }
 
     onMouseDown(event: MouseEvent): void {
         if (this.isWriting === false) {
-            console.log('Premier');
             this.textInput[this.currentLine] = '|';
 
             this.mouseDownCoord = this.getPositionFromMouse(event);
@@ -85,8 +97,6 @@ export class TextService extends Tool {
 
             this.writeOnCanvas(CanvasType.previewCtx);
         } else if (this.isWriting === true) {
-            console.log('Deuxième');
-
             this.write();
             this.cursorPosition = 0;
             this.textInput = [''];
@@ -97,101 +107,108 @@ export class TextService extends Tool {
     }
 
     handleKeyUp(event: KeyboardEvent): void {
-        console.log('Position curseur Début key ', this.cursorPosition);
         if (this.isWriting && event.key) {
-            if (event.key === 'Backspace') {
-                if (this.cursorPosition != 0 || (this.cursorPosition != 0 && this.currentLine != 0)) {
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
-                        this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                    this.cursorPosition--;
-                }
-            } else if (event.key === 'Delete') {
-                this.textInput[this.currentLine] =
-                    this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) +
-                    this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);
-            } else if (event.key === 'ArrowLeft') {
-                if (this.cursorPosition != 0) {
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-                    this.cursorPosition--;
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        '|' +
-                        this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                }
-            } else if (event.key === 'ArrowRight') {
-                if (this.cursorPosition != this.textInput[this.currentLine].length) {
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-                    this.cursorPosition++;
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        '|' +
-                        this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                }
-            } else if (event.key === 'ArrowUp') {
-                if (this.currentLine != 0) {
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-                    this.currentLine--;
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        '|' +
-                        this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                }
-            } else if (event.key === 'ArrowDown') {
-                if (this.currentLine != this.totalLine - 1) {
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-                    this.currentLine++;
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        '|' +
-                        this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                }
-            } else if (event.key === 'Enter') {
-                let nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-                this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
-                this.currentLine++;
-                this.totalLine++;
-                console.log('ici');
-
-                this.textInput[this.currentLine] = nextLine + '|';
-                this.cursorPosition = this.textInput[this.currentLine].length - 1;
-            } else if (event.key === 'Escape') {
-                this.textInput = [''];
-                this.cursorPosition = 0;
-                this.isWriting = false;
-            } else if (this.cursorPosition != 0) {
-                if (ACCEPTED_CHAR.test(event.key)) {
-                    this.textInput[this.currentLine] =
-                        this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                        event.key +
-                        this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                    this.cursorPosition++;
-                } else {
-                    console.log('oh non');
-                }
+            if (this.keyBinding.has(event.key)) {
+                const keyFunction = this.keyBinding.get(event.key);
+                if (keyFunction) keyFunction();
             } else {
-                if (ACCEPTED_CHAR.test(event.key)) {
-                    this.textInput[this.currentLine] = event.key + this.textInput[this.currentLine];
-                    this.cursorPosition++;
-                } else {
-                    console.log('oh non');
-                }
+                this.addCharacter(event);
             }
-
             this.writeOnCanvas(CanvasType.previewCtx);
         }
+    }
 
-        console.log(this.textInput);
-        console.log('Position curseur fin key ', this.cursorPosition);
-        console.log(event.key);
+    private addCharacter(event: KeyboardEvent): void {
+        if (this.cursorPosition !== 0) {
+            if (ACCEPTED_CHAR.test(event.key)) {
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    event.key +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                this.cursorPosition++;
+            }
+        } else {
+            if (ACCEPTED_CHAR.test(event.key)) {
+                this.textInput[this.currentLine] = event.key + this.textInput[this.currentLine];
+                this.cursorPosition++;
+            }
+        }
+    }
+
+    private handleBackspace(): void {
+        if (this.cursorPosition !== 0 || (this.cursorPosition !== 0 && this.currentLine !== 0)) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            this.cursorPosition--;
+        }
+    }
+    private handleDelete(): void {
+        this.textInput[this.currentLine] =
+            this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) +
+            this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);
+    }
+    private handleArrowLeft(): void {
+        if (this.cursorPosition !== 0) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.cursorPosition--;
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                '|' +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+        }
+    }
+
+    private handleEscape(): void {
+        this.textInput = [''];
+        this.cursorPosition = 0;
+        this.isWriting = false;
+    }
+    private handleEnter(): void {
+        const nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
+        this.currentLine++;
+        this.totalLine++;
+        this.textInput[this.currentLine] = nextLine + '|';
+        this.cursorPosition = this.textInput[this.currentLine].length - 1;
+    }
+    private handleArrowDown(): void {
+        if (this.currentLine !== this.totalLine - 1) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.currentLine++;
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                '|' +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+        }
+    }
+    private handleArrowUp(): void {
+        if (this.currentLine !== 0) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.currentLine--;
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                '|' +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+        }
+    }
+    private handleArrowRight(): void {
+        if (this.cursorPosition !== this.textInput[this.currentLine].length) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.cursorPosition++;
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                '|' +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+        }
     }
 
     write(): void {
@@ -205,13 +222,12 @@ export class TextService extends Tool {
     private writeOnCanvas(ctx: CanvasType): void {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
-        if (ctx == CanvasType.baseCtx) {
+        if (ctx === CanvasType.baseCtx) {
             this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
 
             this.drawingService.baseCtx.fillStyle = this.color;
             this.drawingService.baseCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
             this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
-
             let y = this.positionText.y;
 
             for (let i = 0; i < this.totalLine; i++) {
@@ -235,20 +251,21 @@ export class TextService extends Tool {
     }
 
     changeFont(): void {
-        if (this.fontBinding.has(this.selectFont) && this.selectFont != undefined) {
-            this.font = this.fontBinding.get(this.selectFont)!;
+        if (this.fontBinding.has(this.selectFont)) {
+            this.font = this.fontBinding.get(this.selectFont);
         }
     }
 
     changeEmphasis(): void {
-        if (this.emphasisBinding.has(this.selectEmphasis) && this.selectEmphasis != undefined) {
-            this.emphasis = this.emphasisBinding.get(this.selectEmphasis)!;
+        if (this.emphasisBinding.has(this.selectEmphasis)) {
+            this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
         }
     }
 
     changeAlign(): void {
-        if (this.alignBinding.has(this.selectAlign) && this.selectAlign != undefined) {
-            this.align = this.alignBinding.get(this.selectAlign)!;
+        if (this.alignBinding.has(this.selectAlign)) {
+            this.align = this.alignBinding.get(this.selectAlign);
+            console.log(this.align);
         }
     }
 }
