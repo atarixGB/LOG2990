@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
+import { SelectionTool } from '@app/classes/selection';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
+// import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { LassoService } from '@app/services/tools/lasso/lasso.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 
@@ -30,15 +32,16 @@ export class SelectionService extends Tool {
     height: number;
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
-    private isResizing: boolean;
+    // private isResizing: boolean;
     private controlPointsCoord: Vec2[];
+    private selectionObject: SelectionTool;
 
     constructor(
         public drawingService: DrawingService,
         private rectangleService: RectangleService,
         private ellipseService: EllipseService,
         private lassoService: LassoService,
-        private resizeSelectionService: ResizeSelectionService,
+        private undoRedoService: UndoRedoService, // private resizeSelectionService: ResizeSelectionService,
     ) {
         super(drawingService);
         this.isEllipse = false;
@@ -50,7 +53,7 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.selectionTerminated = false;
         this.selectionDeleted = false;
-        this.isResizing = false;
+        // this.isResizing = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -108,6 +111,16 @@ export class SelectionService extends Tool {
             this.getSelectionData(this.drawingService.baseCtx);
             this.createControlPoints();
             this.resetParametersTools();
+
+            this.selectionObject = new SelectionTool(
+                this.selection,
+                this.origin,
+                { x: 0, y: 0 },
+                this.width,
+                this.height,
+                this.isEllipse,
+                this.isLasso,
+            );
         }
     }
 
@@ -201,8 +214,8 @@ export class SelectionService extends Tool {
 
     clearUnderneathShape(): void {
         this.drawingService.baseCtx.fillStyle = '#FFFFFF';
+        this.drawingService.baseCtx.beginPath();
         if (this.isEllipse) {
-            this.drawingService.baseCtx.beginPath();
             this.drawingService.baseCtx.ellipse(
                 this.origin.x + this.width / 2,
                 this.origin.y + this.height / 2,
@@ -244,6 +257,9 @@ export class SelectionService extends Tool {
             this.imageMoved = false;
             if (this.isEllipse) this.printEllipse(this.drawingService.baseCtx);
             else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+            this.selectionObject.finalOrigin = this.origin;
+            this.undoRedoService.addToStack(this.selectionObject);
+            this.undoRedoService.setToolInUse(false);
         }
     }
 
@@ -356,4 +372,10 @@ export class SelectionService extends Tool {
         this.rectangleService.isSelection = false;
         this.ellipseService.isSelection = false;
     }
+
+    // private addToUndoStack(): void {
+    //     const selection = new SelectionTool(this.selection, this.origin, this.destination, this.width, this.height, this.isEllipse, this.isLasso);
+    //     this.undoRedoService.addToStack(selection);
+    //     this.undoRedoService.setToolInUse(false);
+    // }
 }
