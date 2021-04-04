@@ -152,18 +152,18 @@ export enum Font {
     Arial = 0,
     TimesNewRoman = 1,
     ComicSansMs = 2,
-    CourierNew  = 3,
+    CourierNew = 3,
     Impact = 4,
 }
 
-export enum Emphasis{
+export enum Emphasis {
     Italic = 0,
     Bold = 1,
     ItalicBold = 2,
     Normal = 3,
 }
 
-export enum TextAlign{
+export enum TextAlign {
     Left = 0,
     Center = 1,
     Right = 2,
@@ -174,7 +174,8 @@ export enum CanvasType {
     baseCtx = 1,
 }
 
-export const DEFAULT_TEXT_SIZE = "20";
+export const DEFAULT_TEXT_SIZE = '20';
 export const DEFAULT_FONT = 'Arial';
 export const DEFAULT_EMPHASIS = 'normal';
 export const DEFAULT_TEXT_ALIGN = 'left';
+export const ACCEPTED_CHAR = RegExp(/^[\S ]$/);
