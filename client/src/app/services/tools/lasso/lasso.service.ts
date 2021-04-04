@@ -8,8 +8,8 @@ import { LineService } from '../line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
-// const ERROR = 0.05;
-const EXTREME = 10000;
+const ERROR = 0.25;
+const INFINITY = 10000;
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
     fillStyle: 'black',
@@ -65,7 +65,12 @@ export class LassoService extends Tool {
                     final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
                 };
 
-                if (this.segmentsDoIntersect(segment1, segment2)) {
+                const adjacentSegment: Segment = {
+                    initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                    final: { x: this.polygonCoords[this.polygonCoords.length - 2].x, y: this.polygonCoords[this.polygonCoords.length - 2].y },
+                };
+
+                if (this.segmentsDoIntersect(segment1, segment2) || this.segmentsAreConfused(adjacentSegment, segment2)) {
                     this.areIntesected = true;
                     break;
                 } else {
@@ -190,7 +195,7 @@ export class LassoService extends Tool {
     }
 
     pointInPolygon(point: Vec2): boolean {
-        const rayCastingLine: Vec2 = { x: EXTREME, y: point.y };
+        const rayCastingLine: Vec2 = { x: INFINITY, y: point.y };
         let count = 0;
         let i = 0;
         let isInside: boolean;
@@ -251,6 +256,46 @@ export class LassoService extends Tool {
         if (o3 == 0 && this.pointOnSegment(p2, p1, q2)) return true;
         if (o4 == 0 && this.pointOnSegment(p2, q1, q2)) return true;
         return false;
+    }
+
+    private segmentsAreConfused(segment1: Segment, segment2: Segment): boolean {
+        const areConfused = this.findAngleBetweenTwoSegments(segment1, segment2) <= ERROR;
+
+        if (areConfused) {
+            console.log('segments are confused');
+            this.areIntesected = true;
+            return areConfused;
+        }
+        return false;
+    }
+
+    private getVector(segment: Segment): Vec2 {
+        const dx = segment.final.x - segment.initial.x;
+        const dy = segment.final.y - segment.initial.y;
+        const vector: Vec2 = { x: dx, y: dy };
+        return vector;
+    }
+
+    private getHypothenuse(vector: Vec2): number {
+        return Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+    }
+
+    private dotProduct(u: Vec2, v: Vec2): number {
+        return u.x * v.x + u.y * v.y;
+    }
+
+    private radToDegree(angleInRad: number): number {
+        return (angleInRad * 180) / Math.PI;
+    }
+
+    private findAngleBetweenTwoSegments(segment1: Segment, segment2: Segment): number {
+        const u: Vec2 = this.getVector(segment1);
+        const v: Vec2 = this.getVector(segment2);
+        const numerator: number = this.dotProduct(u, v);
+        const denominator: number = this.getHypothenuse(u) * this.getHypothenuse(v);
+        const angleInRadians: number = Math.acos(numerator / denominator);
+        console.log('angle=', this.radToDegree(angleInRadians));
+        return this.radToDegree(angleInRadians);
     }
 
     private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {

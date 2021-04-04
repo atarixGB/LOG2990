@@ -98,6 +98,18 @@ fdescribe('LassoService', () => {
         expect(result).toBeFalse();
     });
 
+    it('should return true if point is on a segment of the square', () => {
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        let pointToTest: Vec2 = { x: 10, y: 5 };
+        const result = service.pointInPolygon(pointToTest);
+        expect(result).toBeTrue();
+    });
+
     it('should return true if two segments intersect', () => {
         service['areIntesected'] = false;
         const segment1: Segment = {
@@ -141,5 +153,53 @@ fdescribe('LassoService', () => {
 
         const res = service['segmentsDoIntersect'](segment1, segment2);
         expect(res).toBeFalse();
+    });
+
+    it('should return true if two segments are confused', () => {
+        const segment1: Segment = {
+            initial: { x: 1, y: 4 },
+            final: { x: 2, y: 2 },
+        };
+        const segment2: Segment = {
+            initial: { x: 1, y: 4 },
+            final: { x: 2, y: 2 },
+        };
+        const result = service['segmentsAreConfused'](segment1, segment2);
+        expect(result).toBeTrue();
+    });
+
+    it('should return false if two segments are NOT confused', () => {
+        const segment1: Segment = {
+            initial: { x: 1, y: 4 },
+            final: { x: 2, y: 2 },
+        };
+        const segment2: Segment = {
+            initial: { x: 2, y: 2 },
+            final: { x: 4, y: 3 },
+        };
+        const result = service['segmentsAreConfused'](segment1, segment2);
+        expect(result).toBeFalse();
+    });
+
+    it('should clear current segment', () => {
+        service['currentSegment'] = [
+            { x: 0, y: 0 },
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+            { x: 3, y: 3 },
+        ];
+        service['clearCurrentSegment']();
+        expect(service['currentSegment'].length).toEqual(0);
+    });
+
+    it("should clear all polygon's coordinates", () => {
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        service['clearPolygonCoords']();
+        expect(service.polygonCoords.length).toEqual(0);
     });
 });
