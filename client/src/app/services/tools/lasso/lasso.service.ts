@@ -33,6 +33,8 @@ export class LassoService extends Tool {
     private nbSegments: number;
     private areIntesected: boolean;
     private shiftKeyDown: boolean;
+    private basePoint: Vec2 | undefined;
+    private closestPoint: Vec2 | undefined;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
@@ -96,12 +98,6 @@ export class LassoService extends Tool {
         }
 
         this.polygonCoords.push(this.mouseDownCoord);
-        //
-        // console.log('/////////////');
-
-        // for (const i in this.polygonCoords) {
-        //     console.log('click', this.polygonCoords[i]);
-        // }
         this.nbSegments = this.polygonCoords.length - 1;
         this.mouseDown = false;
         this.clearCurrentSegment();
@@ -358,13 +354,6 @@ export class LassoService extends Tool {
         }
     }
 
-    private drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        this.lineService.basePoint = path[path.length - 1];
-        this.lineService.closestPoint = this.lineService.calculatePosition(mousePosition, this.lineService.basePoint);
-        this.lineService.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.currentSegment, styles, event);
-    }
-
     private checkIfCurrentSegmentIntersectWithPolygon(): void {
         let segment1: Segment, segment2: Segment;
 
@@ -389,6 +378,20 @@ export class LassoService extends Tool {
             } else {
                 this.areIntesected = false;
             }
+        }
+    }
+
+    drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        this.basePoint = path[path.length - 1];
+        this.closestPoint = this.lineService.calculatePosition(mousePosition, this.basePoint);
+        ctx.lineWidth = styles.lineWidth;
+        ctx.strokeStyle = styles.strokeStyle;
+        ctx.beginPath();
+        if (this.closestPoint) {
+            ctx.moveTo(this.basePoint.x, this.basePoint.y);
+            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
+            ctx.stroke();
         }
     }
 
