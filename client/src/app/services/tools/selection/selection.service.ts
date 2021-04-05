@@ -61,8 +61,6 @@ export class SelectionService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
-        // console.log('mousedown', this.lassoService.selectionOver);
-
         this.mouseDown = event.button === MouseButton.Left;
 
         if (this.mouseDown && !this.isLasso) {
@@ -75,6 +73,12 @@ export class SelectionService extends Tool {
 
             if (this.isEllipse) this.ellipseService.onMouseDown(event);
             else this.rectangleService.onMouseDown(event);
+        }
+
+        console.log(this.newSelection, this.activeSelection, this.lassoService.selectionOver);
+
+        if (this.isLasso && this.newSelection) {
+            this.lassoService.selectionOver = false;
         }
     }
 
@@ -89,21 +93,19 @@ export class SelectionService extends Tool {
         if (this.activeSelection && !this.selectionTerminated) {
             if (this.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.newSelection = false;
-                //this.lassoService.selectionOver = true;
             } else {
                 this.newSelection = true;
-                //this.lassoService.selectionOver = false;
             }
-            // console.log('SELECTIOON', this.newSelection);
+            console.log('SELECTIOON', this.newSelection);
         }
     }
 
     onMouseUp(event: MouseEvent): void {
-        // console.log(this.lassoService.selectionOver);
-
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
         if (this.lassoService.selectionOver) {
             this.getSelectionData(this.drawingService.baseCtx);
+            console.log('lolololol');
+
             this.createBoundaryBox();
             this.activeSelection = true;
         }
