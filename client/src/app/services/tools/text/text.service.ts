@@ -10,7 +10,7 @@ import {
     DEFAULT_TEXT_SIZE,
     Emphasis,
     Font,
-    TextAlign,
+    TextAlign
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
@@ -96,7 +96,7 @@ export class TextService extends Tool {
             this.isWriting = true;
 
             this.writeOnCanvas(CanvasType.previewCtx);
-        } else if (this.isWriting === true) {
+        } else{
             this.write();
             this.cursorPosition = 0;
             this.textInput = [''];
@@ -265,7 +265,6 @@ export class TextService extends Tool {
     changeAlign(): void {
         if (this.alignBinding.has(this.selectAlign)) {
             this.align = this.alignBinding.get(this.selectAlign);
-            console.log(this.align);
         }
     }
 }

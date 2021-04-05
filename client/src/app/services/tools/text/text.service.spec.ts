@@ -1,28 +1,38 @@
 import { TestBed } from '@angular/core/testing';
+import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
-
 fdescribe('TextService', () => {
   let service: TextService;
-  let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
-  
+  let drawServiceSpy: jasmine.SpyObj<DrawingService>;
   const mouseEventClick = {
     x: 25,
     y: 25,
     button: 0,
-} as MouseEvent;
+  } as MouseEvent;
+  let canvasTestHelper: CanvasTestHelper;
+  let baseCtxStub: CanvasRenderingContext2D;
+  let previewCtxStub: CanvasRenderingContext2D;
+ // let baseCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
 
   beforeEach(() => {
+    drawServiceSpy = jasmine.createSpyObj('DrawingService',['clearCanvas']);
     TestBed.configureTestingModule({
-      providers: [
-          { provide: DrawingService, useValue: drawingServiceSpy },
+      providers: [ 
+         { provide: DrawingService, useValue: drawServiceSpy },
       ]
     });
+    canvasTestHelper = TestBed.inject(CanvasTestHelper);
+    baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+    previewCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
+   // baseCtxSpy = jasmine.createSpyObj('CanvasRenderingContext', ['fillText']);
     service = TestBed.inject(TextService);
-    drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+
+    service['drawingService'].baseCtx = baseCtxStub;
+    service['drawingService'].previewCtx = previewCtxStub;
   });
 
   it('should be created', () => {
@@ -270,11 +280,33 @@ fdescribe('TextService', () => {
 
   it('shoud write on baseCtx', () => {
     const ctx = CanvasType.baseCtx;
+    service['drawingService'].baseCtx.fillText = jasmine.createSpy('',service['drawingService'].baseCtx.fillText);
+    service['drawingService'].baseCtx.fillStyle = 'red';
+    service['drawingService'].baseCtx.font = 'Bold 10px Arial';
+    service['drawingService'].baseCtx.textAlign = 'center' as CanvasTextAlign;
+    service.positionText = {x:0,y:0} as Vec2;
+    service.mouseDownCoord = {x:0,y:0} as Vec2;
     
     service['writeOnCanvas'](ctx);
+  
+    expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+    expect(service['drawingService'].baseCtx.fillText).toHaveBeenCalled();
 
-    expect(drawingServiceSpy.clearCanvas).toHaveBeenCalled();
-    expect(drawingServiceSpy.baseCtx.fillText).toHaveBeenCalled();
+  });
+
+  it('shoud preview on baseCtx', () => {
+    const ctx = CanvasType.previewCtx;
+    service['drawingService'].previewCtx.fillText = jasmine.createSpy('',service['drawingService'].previewCtx.fillText);
+    service['drawingService'].previewCtx.fillStyle = 'red';
+    service['drawingService'].previewCtx.font = 'Bold 10px Arial';
+    service['drawingService'].previewCtx.textAlign = 'center' as CanvasTextAlign;
+    service.positionText = {x:0,y:0} as Vec2;
+    service.mouseDownCoord = {x:0,y:0} as Vec2;
+    
+    service['writeOnCanvas'](ctx);
+  
+    expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+   expect(service['drawingService'].previewCtx.fillText).toHaveBeenCalled();
 
   });
 
