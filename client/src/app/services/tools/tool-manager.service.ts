@@ -36,8 +36,8 @@ export class ToolManagerService {
         private selectionService: SelectionService,
         private moveSelectionService: MoveSelectionService,
     ) {
-        this.currentTool = this.pencilService;
-        this.currentToolEnum = ToolList.Pencil;
+        this.currentTool = this.selectionService;
+        this.currentToolEnum = ToolList.SelectionRectangle;
 
         this.serviceBindings = new Map<ToolList, Tool>();
         this.serviceBindings

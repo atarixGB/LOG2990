@@ -97,9 +97,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
+
         this.baseCtx.beginPath();
-        this.baseCtx.fillStyle = '#00FFFF';
-        this.baseCtx.fillRect(0, 0, 300, 300);
+        this.baseCtx.fillStyle = '#FF00FF';
+        this.baseCtx.fillRect(0, 0, 303, 300);
         this.baseCtx.closePath();
     }
 

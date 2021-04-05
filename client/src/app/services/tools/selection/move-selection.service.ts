@@ -44,6 +44,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
         }
@@ -64,11 +65,17 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
         if (!this.selectionService.selectionTerminated) {
             if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                // console.log('move = faux');
+
                 this.selectionService.newSelection = false;
+                // this.selectionService.lassoService.selectionOver = true;
             } else {
+                // console.log('move = vrai');
                 this.selectionService.newSelection = true;
+                // this.selectionService.lassoService.selectionOver = false;
             }
         }
+        // console.log('MOVE', this.selectionService.newSelection);
     }
 
     onMouseUp(event: MouseEvent): void {

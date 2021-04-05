@@ -28,6 +28,7 @@ interface Segment {
 export class LassoService extends Tool {
     selectionOver: boolean;
     polygonCoords: Vec2[];
+    selectionData: ImageData;
     private currentSegment: Vec2[];
     private nbSegments: number;
     private areIntesected: boolean;
@@ -45,12 +46,11 @@ export class LassoService extends Tool {
 
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         this.mouseDownCoord = this.getPositionFromMouse(event);
-        console.log(this.mouseDownCoord);
-        console.log('coords:', this.polygonCoords, 'length:', this.polygonCoords.length);
         this.currentSegment.push(this.mouseDownCoord);
 
-        if (this.selectionOver) this.selectionOver = false;
+        //if (this.selectionOver) this.selectionOver = false;
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -96,6 +96,12 @@ export class LassoService extends Tool {
         }
 
         this.polygonCoords.push(this.mouseDownCoord);
+        //
+        // console.log('/////////////');
+
+        // for (const i in this.polygonCoords) {
+        //     console.log('click', this.polygonCoords[i]);
+        // }
         this.nbSegments = this.polygonCoords.length - 1;
         this.mouseDown = false;
         this.clearCurrentSegment();
@@ -214,6 +220,31 @@ export class LassoService extends Tool {
         this.lineService.drawLine(this.drawingService.previewCtx, lastSegment, STYLES);
     }
 
+    clearUnderneath(): void {}
+
+    calculatePath2d(): Path2D {
+        let polygon = new Path2D();
+        polygon.moveTo(this.polygonCoords[0].x, this.polygonCoords[0].y);
+        for (let i = 1; i < this.polygonCoords.length; i++) {
+            polygon.lineTo(this.polygonCoords[i].x, this.polygonCoords[i].y);
+        }
+        polygon.lineTo(this.polygonCoords[0].x, this.polygonCoords[0].y);
+        return polygon;
+    }
+
+    // printPolygon(): void{
+    //     const canvas = document.createElement('canvas');
+    //     canvas.width = this.width;
+    //     canvas.height = this.height;
+    //     const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
+    //     tmp.putImageData(this.selection, 0, 0);
+    //     this.drawingService.baseCtx.ellipse();
+    //     this.drawingService.baseCtx.save();
+    //     this.drawingService.baseCtx.clip(this.calculatePath2d());
+    //     this.drawingService.baseCtx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
+    //     this.drawingService.baseCtx.restore();
+    // }
+
     private translatePolygon(oldOrigin: Vec2, newOrigin: Vec2): void {
         const dx = newOrigin.x - oldOrigin.x;
         const dy = newOrigin.y - oldOrigin.y;
@@ -305,7 +336,6 @@ export class LassoService extends Tool {
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
                 { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
             ];
-            // this.polygonCoords.push({ x: finalSegment[1].x, y: finalSegment[1].y });
             this.clearCurrentSegment();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, finalSegment, STYLES);
@@ -362,7 +392,7 @@ export class LassoService extends Tool {
         }
     }
 
-    private resetAttributes(): void {
+    resetAttributes(): void {
         this.mouseDown = false;
         this.selectionOver = false;
         this.nbSegments = 0;
