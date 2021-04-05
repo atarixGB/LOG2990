@@ -46,6 +46,8 @@ export class LassoService extends Tool {
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
+        console.log(this.mouseDownCoord);
+        console.log('coords:', this.polygonCoords, 'length:', this.polygonCoords.length);
         this.currentSegment.push(this.mouseDownCoord);
 
         if (this.selectionOver) this.selectionOver = false;
@@ -202,6 +204,12 @@ export class LassoService extends Tool {
             ];
             this.lineService.drawLine(this.drawingService.previewCtx, segment, STYLES);
         }
+
+        const lastSegment = [
+            { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+            { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
+        ];
+        this.lineService.drawLine(this.drawingService.previewCtx, lastSegment, STYLES);
     }
 
     private translatePolygon(oldOrigin: Vec2, newOrigin: Vec2): void {
@@ -290,10 +298,12 @@ export class LassoService extends Tool {
 
     private mouseIsInClosureArea(mouseCoord: Vec2): void {
         if (this.pointInCircle(mouseCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) && this.nbSegments >= NB_MIN_SEGMENTS && !this.areIntesected) {
+            this.polygonCoords.pop();
             const finalSegment: Vec2[] = [
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
                 { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
             ];
+            // this.polygonCoords.push({ x: finalSegment[1].x, y: finalSegment[1].y });
             this.clearCurrentSegment();
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.lineService.drawLine(this.drawingService.lassoPreviewCtx, finalSegment, STYLES);
