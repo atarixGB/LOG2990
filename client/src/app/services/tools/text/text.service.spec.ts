@@ -5,7 +5,8 @@ import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
-fdescribe('TextService', () => {
+//tslint:disable
+describe('TextService', () => {
   let service: TextService;
   let drawServiceSpy: jasmine.SpyObj<DrawingService>;
   const mouseEventClick = {
