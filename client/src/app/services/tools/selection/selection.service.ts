@@ -8,6 +8,7 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { LassoService } from '@app/services/tools/lasso/lasso.service';
 
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
+const PIXEL_LENGTH = 4;
 
 @Injectable({
     providedIn: 'root',
@@ -148,18 +149,13 @@ export class SelectionService extends Tool {
             this.ellipseService.pathData.push(this.origin);
             this.ellipseService.pathData.push(this.destination);
             this.ellipseService.drawShape(this.drawingService.previewCtx);
-        } else if (this.isLasso) {
-            this.rectangleService.clearPath();
-            this.rectangleService.pathData.push(this.origin);
-            this.rectangleService.pathData.push(this.destination);
-            this.rectangleService.drawShape(this.drawingService.previewCtx);
-            this.lassoService.drawPolygon(this.drawingService.previewCtx);
         } else {
             this.rectangleService.clearPath();
             this.rectangleService.pathData.push(this.origin);
             this.rectangleService.pathData.push(this.destination);
             this.rectangleService.drawShape(this.drawingService.previewCtx);
         }
+        if (this.isLasso) this.lassoService.drawPolygon(this.drawingService.previewCtx, this.origin);
 
         this.createControlPoints();
     }
@@ -253,26 +249,12 @@ export class SelectionService extends Tool {
         if (this.isEllipse) {
             this.checkPixelInEllipse();
         } else if (this.isLasso) {
-            console.log('APPELER', this.width, this.height);
-
-            const imageData = this.selection.data;
-            const pixelLenght = 4;
-            let pixelCounter = 0;
-
-            for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
-                for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
-                    if (!this.lassoService.pointInPolygon({ x: j, y: i })) {
-                        imageData[pixelCounter + pixelLenght - 1] = 0;
-                    }
-                    pixelCounter += pixelLenght;
-                }
-            }
+            this.checkPixelInPolygon();
         }
     }
 
     private checkPixelInEllipse(): void {
         const imageData = this.selection.data;
-        const pixelLenght = 4;
         let pixelCounter = 0;
 
         for (let i = 0; i < this.height; i++) {
@@ -282,14 +264,28 @@ export class SelectionService extends Tool {
                 const y = i - rectangleCenter.y;
 
                 if (this.ellipseService.isShiftShape && Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(this.width / 2, 2)) {
-                    imageData[pixelCounter + pixelLenght - 1] = 0;
+                    imageData[pixelCounter + PIXEL_LENGTH - 1] = 0;
                 } else if (
                     !this.ellipseService.isShiftShape &&
                     Math.pow(x, 2) / Math.pow(rectangleCenter.x, 2) + Math.pow(y, 2) / Math.pow(rectangleCenter.y, 2) > 1
                 ) {
-                    imageData[pixelCounter + pixelLenght - 1] = 0;
+                    imageData[pixelCounter + PIXEL_LENGTH - 1] = 0;
                 }
-                pixelCounter += pixelLenght;
+                pixelCounter += PIXEL_LENGTH;
+            }
+        }
+    }
+
+    private checkPixelInPolygon(): void {
+        const imageData = this.selection.data;
+        let pixelCounter = 0;
+
+        for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
+            for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
+                if (!this.lassoService.pointInPolygon({ x: j, y: i })) {
+                    imageData[pixelCounter + PIXEL_LENGTH - 1] = 0;
+                }
+                pixelCounter += PIXEL_LENGTH;
             }
         }
     }

@@ -8,8 +8,9 @@ import { LineService } from '../line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
-const ERROR = 0.25;
+const ERROR = 0.35;
 const INFINITY = 10000;
+const DASH_LINE = 2;
 const STYLES: DrawingContextStyle = {
     strokeStyle: 'black',
     fillStyle: 'black',
@@ -45,6 +46,8 @@ export class LassoService extends Tool {
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
+        console.log(this.mouseDownCoord);
+        console.log('coords:', this.polygonCoords, 'length:', this.polygonCoords.length);
         this.currentSegment.push(this.mouseDownCoord);
 
         if (this.selectionOver) this.selectionOver = false;
@@ -53,30 +56,8 @@ export class LassoService extends Tool {
     onMouseMove(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
-        let segment1: Segment, segment2: Segment;
         if (this.mouseDown) {
-            for (let i = 1; i < this.polygonCoords.length - 1; i++) {
-                segment1 = {
-                    initial: { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
-                    final: { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
-                };
-                segment2 = {
-                    initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
-                    final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
-                };
-
-                const adjacentSegment: Segment = {
-                    initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
-                    final: { x: this.polygonCoords[this.polygonCoords.length - 2].x, y: this.polygonCoords[this.polygonCoords.length - 2].y },
-                };
-
-                if (this.segmentsDoIntersect(segment1, segment2) || this.segmentsAreConfused(adjacentSegment, segment2)) {
-                    this.areIntesected = true;
-                    break;
-                } else {
-                    this.areIntesected = false;
-                }
-            }
+            this.checkIfCurrentSegmentIntersectWithPolygon();
 
             let color = this.areIntesected ? 'red' : 'black';
             const lineStyle: DrawingContextStyle = {
@@ -86,6 +67,7 @@ export class LassoService extends Tool {
             };
 
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.drawingService.previewCtx.setLineDash([DASH_LINE]);
 
             if (this.shiftKeyDown) {
                 this.drawConstrainedLine(this.drawingService.previewCtx, this.polygonCoords, lineStyle, event);
@@ -103,6 +85,7 @@ export class LassoService extends Tool {
         if (this.areIntesected) return;
 
         if (this.mouseDown) {
+            this.drawingService.lassoPreviewCtx.setLineDash([DASH_LINE]);
             if (this.shiftKeyDown) {
                 this.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.polygonCoords, STYLES, event);
             } else {
@@ -116,22 +99,7 @@ export class LassoService extends Tool {
         this.nbSegments = this.polygonCoords.length - 1;
         this.mouseDown = false;
         this.clearCurrentSegment();
-
-        if (
-            this.mousePositionIsInClosureArea(this.mouseDownCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) &&
-            this.nbSegments >= NB_MIN_SEGMENTS &&
-            !this.areIntesected
-        ) {
-            const finalSegment: Vec2[] = [
-                { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
-                { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
-            ];
-            this.clearCurrentSegment();
-            this.drawingService.clearCanvas(this.drawingService.previewCtx);
-            this.lineService.drawLine(this.drawingService.lassoPreviewCtx, finalSegment, STYLES);
-            this.mouseDown = false;
-            this.selectionOver = true;
-        }
+        this.mouseIsInClosureArea(this.mouseDownCoord);
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -226,14 +194,33 @@ export class LassoService extends Tool {
         return isInside;
     }
 
-    drawPolygon(ctx: CanvasRenderingContext2D): void {
-        ctx.setLineDash([2]);
+    drawPolygon(ctx: CanvasRenderingContext2D, origin: Vec2): void {
+        const polygonOrigin = this.findMinCoord(this.polygonCoords);
+        this.translatePolygon(polygonOrigin, origin);
+
+        ctx.setLineDash([DASH_LINE]);
         for (let i = 1; i < this.polygonCoords.length; i++) {
             let segment: Vec2[] = [
                 { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
                 { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
             ];
-            this.lineService.drawLine(ctx, segment, STYLES);
+            this.lineService.drawLine(this.drawingService.previewCtx, segment, STYLES);
+        }
+
+        const lastSegment = [
+            { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+            { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
+        ];
+        this.lineService.drawLine(this.drawingService.previewCtx, lastSegment, STYLES);
+    }
+
+    private translatePolygon(oldOrigin: Vec2, newOrigin: Vec2): void {
+        const dx = newOrigin.x - oldOrigin.x;
+        const dy = newOrigin.y - oldOrigin.y;
+
+        for (let i = 0; i < this.polygonCoords.length; i++) {
+            this.polygonCoords[i].x = this.polygonCoords[i].x + dx;
+            this.polygonCoords[i].y = this.polygonCoords[i].y + dy;
         }
     }
 
@@ -305,10 +292,27 @@ export class LassoService extends Tool {
         return this.radToDegree(angleInRadians);
     }
 
-    private mousePositionIsInClosureArea(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
+    private pointInCircle(mousePosition: Vec2, basePoint: Vec2, radius: number): boolean {
         const dx = Math.abs(basePoint.x - mousePosition.x);
         const dy = Math.abs(basePoint.y - mousePosition.y);
         return Math.sqrt(dx * dx + dy * dy) <= radius;
+    }
+
+    private mouseIsInClosureArea(mouseCoord: Vec2): void {
+        if (this.pointInCircle(mouseCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) && this.nbSegments >= NB_MIN_SEGMENTS && !this.areIntesected) {
+            this.polygonCoords.pop();
+            const finalSegment: Vec2[] = [
+                { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                { x: this.polygonCoords[0].x, y: this.polygonCoords[0].y },
+            ];
+            // this.polygonCoords.push({ x: finalSegment[1].x, y: finalSegment[1].y });
+            this.clearCurrentSegment();
+            this.drawingService.clearCanvas(this.drawingService.previewCtx);
+            this.lineService.drawLine(this.drawingService.lassoPreviewCtx, finalSegment, STYLES);
+            this.mouseDown = false;
+            this.selectionOver = true;
+            this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
+        }
     }
 
     private redrawPreviousState(event: KeyboardEvent): void {
@@ -329,6 +333,33 @@ export class LassoService extends Tool {
         this.lineService.basePoint = path[path.length - 1];
         this.lineService.closestPoint = this.lineService.calculatePosition(mousePosition, this.lineService.basePoint);
         this.lineService.drawConstrainedLine(this.drawingService.lassoPreviewCtx, this.currentSegment, styles, event);
+    }
+
+    private checkIfCurrentSegmentIntersectWithPolygon(): void {
+        let segment1: Segment, segment2: Segment;
+
+        for (let i = 1; i < this.polygonCoords.length - 1; i++) {
+            segment1 = {
+                initial: { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
+                final: { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
+            };
+            segment2 = {
+                initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
+            };
+
+            const adjacentSegment: Segment = {
+                initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                final: { x: this.polygonCoords[this.polygonCoords.length - 2].x, y: this.polygonCoords[this.polygonCoords.length - 2].y },
+            };
+
+            if (this.segmentsDoIntersect(segment1, segment2) || this.segmentsAreConfused(adjacentSegment, segment2)) {
+                this.areIntesected = true;
+                break;
+            } else {
+                this.areIntesected = false;
+            }
+        }
     }
 
     private resetAttributes(): void {
