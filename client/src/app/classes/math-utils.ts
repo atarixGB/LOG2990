@@ -108,10 +108,8 @@ export class Utils {
         const dy = newOrigin.y - oldOrigin.y;
 
         for (const i in polygon) {
-            if (polygon.hasOwnProperty('x') && polygon.hasOwnProperty('y')) {
-                polygon[i].x = polygon[i].x + dx;
-                polygon[i].y = polygon[i].y + dy;
-            }
+            polygon[i].x = polygon[i].x + dx;
+            polygon[i].y = polygon[i].y + dy;
         }
         return polygon;
     }
