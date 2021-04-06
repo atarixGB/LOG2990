@@ -60,6 +60,7 @@ export enum ToolList {
     MoveSelection = 12,
     Undo = 13,
     Redo = 14,
+    Text = 15,
 }
 
 export const mouseEventLClick = {
@@ -145,3 +146,36 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
+
+// Text
+export enum Font {
+    Arial = 0,
+    TimesNewRoman = 1,
+    ComicSansMs = 2,
+    CourierNew = 3,
+    Impact = 4,
+}
+
+export enum Emphasis {
+    Italic = 0,
+    Bold = 1,
+    ItalicBold = 2,
+    Normal = 3,
+}
+
+export enum TextAlign {
+    Left = 0,
+    Center = 1,
+    Right = 2,
+}
+
+export enum CanvasType {
+    previewCtx = 0,
+    baseCtx = 1,
+}
+
+export const DEFAULT_TEXT_SIZE = '20';
+export const DEFAULT_FONT = 'Arial';
+export const DEFAULT_EMPHASIS = 'normal';
+export const DEFAULT_TEXT_ALIGN = 'left';
+export const ACCEPTED_CHAR = RegExp(/^[\S ]$/);

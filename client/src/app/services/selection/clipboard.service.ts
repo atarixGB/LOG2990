@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { DrawingService } from '../drawing/drawing.service';
 import { SelectionService } from '../tools/selection/selection.service';
 import { ToolManagerService } from '../tools/tool-manager.service';
@@ -16,18 +15,11 @@ export class ClipboardService {
 
     pasteAvailable: boolean;
 
-    constructor(
-        private drawingService: DrawingService,
-        private selectionService: SelectionService,
-        private moveSelectionService: MoveSelectionService,
-        private toolManagerService: ToolManagerService,
-    ) {
+    constructor(private drawingService: DrawingService, private selectionService: SelectionService, private toolManagerService: ToolManagerService) {
         this.pasteAvailable = false;
     }
 
     copy(): void {
-        console.log('copy');
-
         this.selectionData = this.selectionService.selection;
         this.width = this.selectionService.width;
         this.height = this.selectionService.height;
@@ -38,27 +30,21 @@ export class ClipboardService {
     }
 
     paste(): void {
-        console.log('paste');
-
         this.selectionService.printMovedSelection(this.drawingService.baseCtx);
         this.initializeSelectionParameters();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.selectionService.printMovedSelection(this.drawingService.previewCtx);
+        this.selectionService.printMovedSelection(this.drawingService.baseCtx);
         this.selectionService.createBoundaryBox();
-        this.toolManagerService.currentTool = this.moveSelectionService;
+        this.toolManagerService.currentTool = this.selectionService;
     }
 
     cut(): void {
-        console.log('cut');
-
         this.copy();
         this.delete();
         this.toolManagerService.currentTool = this.selectionService;
     }
 
     delete(): void {
-        console.log('delete');
-
         this.selectionService.clearUnderneathShape();
         this.selectionService.selectionDeleted = true;
         this.selectionService.terminateSelection();

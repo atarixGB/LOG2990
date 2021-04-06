@@ -16,7 +16,7 @@ import { MoveSelectionService } from '@app/services/selection/move-selection.ser
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
@@ -69,9 +69,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
             const path = params.url;
-            this.getNewImage(path).then((img) => {
-                this.baseCtx.drawImage(img, 0, 0);
-            });
+            this.getNewImage(path)
+                .then((img) => {
+                    this.baseCtx.drawImage(img, 0, 0);
+                })
+                .catch((error) => {
+                    return throwError(error);
+                });
         });
     }
 
@@ -140,6 +144,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     }
 
+    onMouseLeave(event: MouseEvent): void {
+        this.toolManagerService.onMouseLeave(event);
+    }
+
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         const ELEMENT = event.target as HTMLElement;
@@ -151,10 +159,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
         this.toolManagerService.onMouseDoubleClick(event);
-    }
-
-    onMouseLeave(event: MouseEvent): void {
-        this.toolManagerService.onMouseLeave(event);
     }
 
     @HostListener('document:keyup', ['$event'])
@@ -171,22 +175,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
-            event.preventDefault();
-            this.undoRedoService.undo();
-        }
-
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.code === 'KeyZ' &&
-            this.undoRedoService.canRedo() &&
-            !this.toolManagerService.currentTool?.mouseDown
-        ) {
-            event.preventDefault();
-            this.undoRedoService.redo();
-        }
-
         this.modalHandler(event, NewDrawModalComponent, 'o');
         this.modalHandler(event, SaveDrawingModalComponent, 's');
         this.modalHandler(event, CarouselComponent, 'g');
@@ -197,6 +185,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
         }
+
+        this.undoRedoToolKeyHandler(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
@@ -301,6 +291,24 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         return false;
     }
 
+    private undoRedoToolKeyHandler(event: KeyboardEvent): void {
+        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
+            event.preventDefault();
+            this.undoRedoService.undo();
+        }
+
+        if (
+            event.ctrlKey &&
+            event.shiftKey &&
+            event.code === 'KeyZ' &&
+            this.undoRedoService.canRedo() &&
+            !this.toolManagerService.currentTool?.mouseDown
+        ) {
+            event.preventDefault();
+            this.undoRedoService.redo();
+        }
+    }
+
     async getNewImage(src: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -315,9 +323,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         });
     }
 
-    isCanvasBlank(): boolean {
+    private isCanvasBlank(): boolean {
         return !this.baseCtx.getImageData(0, 0, this.width, this.height).data.some((channel) => channel !== 0);
     }
+
     private whiteBackgroundCanvas(): void {
         this.baseCtx.beginPath();
         this.baseCtx.fillStyle = '#FFFFFF';

@@ -12,6 +12,7 @@ import { PipetteService } from './pipette/pipette.service';
 import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';
 import { SelectionService } from './selection/selection.service';
+import { TextService } from './text/text.service';
 
 @Injectable({
     providedIn: 'root',
@@ -35,6 +36,7 @@ export class ToolManagerService {
         private sprayService: SprayService,
         private selectionService: SelectionService,
         private moveSelectionService: MoveSelectionService,
+        private textService: TextService,
     ) {
         this.currentTool = this.pencilService;
         this.currentToolEnum = ToolList.Pencil;
@@ -51,8 +53,8 @@ export class ToolManagerService {
             .set(ToolList.Spray, this.sprayService)
             .set(ToolList.SelectionRectangle, this.selectionService)
             .set(ToolList.SelectionEllipse, this.selectionService)
-            .set(ToolList.Lasso, this.selectionService)
-            .set(ToolList.MoveSelection, this.moveSelectionService);
+            .set(ToolList.MoveSelection, this.moveSelectionService)
+            .set(ToolList.Text, this.textService);
 
         this.keyBindings = new Map<string, Tool>();
         this.keyBindings
@@ -66,7 +68,8 @@ export class ToolManagerService {
             .set('a', this.sprayService)
             .set('r', this.selectionService)
             .set('s', this.selectionService)
-            .set('v', this.selectionService);
+            .set('v', this.selectionService)
+            .set('t', this.textService);
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {
@@ -79,7 +82,7 @@ export class ToolManagerService {
     handleHotKeysShortcut(event: KeyboardEvent): void {
         if (this.currentTool && (event.key === 'Shift' || event.key === 'Backspace' || event.key === 'Escape')) {
             this.currentTool.handleKeyDown(event);
-        } else {
+        } else if (this.textService.isWriting === false) {
             this.switchToolWithKeys(event.key);
         }
     }
@@ -101,6 +104,8 @@ export class ToolManagerService {
 
     switchTool(tool: ToolList): void {
         if (this.currentTool instanceof SelectionService) this.selectionService.terminateSelection();
+
+        if (this.currentTool instanceof TextService) this.textService.write();
 
         if (this.serviceBindings.has(tool)) {
             this.currentTool = this.serviceBindings.get(tool);
