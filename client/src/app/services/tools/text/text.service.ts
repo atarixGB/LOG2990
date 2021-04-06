@@ -10,7 +10,7 @@ import {
     DEFAULT_TEXT_SIZE,
     Emphasis,
     Font,
-    TextAlign
+    TextAlign,
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
@@ -89,7 +89,7 @@ export class TextService extends Tool {
 
     write(): void {
         let isEmpty = true;
-        for (let line of this.textInput) {
+        for (const line of this.textInput) {
             if (line !== '') {
                 isEmpty = false;
             }
