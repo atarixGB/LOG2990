@@ -5,7 +5,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineService } from '../line/line.service';
+import { LineService } from '@app/services/tools/line/line.service';
 
 const CLOSURE_AREA_RADIUS = 20;
 const NB_MIN_SEGMENTS = 3;
@@ -54,7 +54,7 @@ export class LassoService extends Tool {
         if (this.mouseDown) {
             this.checkIfCurrentSegmentIntersectWithPolygon();
 
-            let color = this.areIntesected ? 'red' : 'black';
+            const color = this.areIntesected ? 'red' : 'black';
             const lineStyle: DrawingContextStyle = {
                 strokeStyle: color,
                 fillStyle: color,
@@ -124,7 +124,7 @@ export class LassoService extends Tool {
 
         ctx.setLineDash([DASH_LINE]);
         for (let i = 1; i < this.polygonCoords.length; i++) {
-            let segment: Vec2[] = [
+            const segment: Vec2[] = [
                 { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
                 { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
             ];
@@ -166,7 +166,7 @@ export class LassoService extends Tool {
     clearUnderneath(): void {}
 
     calculatePath2d(): Path2D {
-        let polygon = new Path2D();
+        const polygon = new Path2D();
         polygon.moveTo(this.polygonCoords[0].x, this.polygonCoords[0].y);
         for (let i = 1; i < this.polygonCoords.length; i++) {
             polygon.lineTo(this.polygonCoords[i].x, this.polygonCoords[i].y);
@@ -210,7 +210,7 @@ export class LassoService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
         this.polygonCoords.pop();
         for (let i = 1; i < this.polygonCoords.length; i++) {
-            let segment: Vec2[] = [
+            const segment: Vec2[] = [
                 { x: this.polygonCoords[i - 1].x, y: this.polygonCoords[i - 1].y },
                 { x: this.polygonCoords[i].x, y: this.polygonCoords[i].y },
             ];
@@ -219,7 +219,8 @@ export class LassoService extends Tool {
     }
 
     private checkIfCurrentSegmentIntersectWithPolygon(): void {
-        let segment1: Segment, segment2: Segment;
+        let segment1: Segment;
+        let segment2: Segment;
 
         for (let i = 1; i < this.polygonCoords.length - 1; i++) {
             segment1 = {

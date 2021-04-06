@@ -10,6 +10,7 @@ import { LassoService } from '@app/services/tools/lasso/lasso.service';
 
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 const PIXEL_LENGTH = 4;
+const MAX_RGB = 255;
 
 @Injectable({
     providedIn: 'root',
@@ -225,8 +226,8 @@ export class SelectionService extends Tool {
             for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
                 for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
                     if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
-                        for (let i = 0; i < PIXEL_LENGTH; i++) {
-                            imageData[pixelCounter + i] = 255;
+                        for (let k = 0; k < PIXEL_LENGTH; k++) {
+                            imageData[pixelCounter + k] = MAX_RGB;
                         }
                     }
                     pixelCounter += PIXEL_LENGTH;

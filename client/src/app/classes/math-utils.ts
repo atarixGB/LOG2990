@@ -1,7 +1,8 @@
 import { Vec2 } from './vec2';
 
 export const INFINITY = 10000;
-
+export const COLINEAR = 0;
+const ANGLE_PI_IN_DEGREES = 180;
 export interface Segment {
     initial: Vec2;
     final: Vec2;
@@ -9,8 +10,8 @@ export interface Segment {
 
 export class Utils {
     static findOrientation(p: Vec2, q: Vec2, r: Vec2): number {
-        let value: number = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
-        if (value == 0) return 0;
+        const value: number = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+        if (value === 0) return 0;
         return value > 0 ? 1 : 2;
     }
 
@@ -30,11 +31,11 @@ export class Utils {
         const o3 = this.findOrientation(p2, q2, p1);
         const o4 = this.findOrientation(p2, q2, q1);
 
-        if (o1 != o2 && o3 != o4) return true;
-        if (o1 == 0 && this.pointOnSegment(p1, p2, q1)) return true;
-        if (o2 == 0 && this.pointOnSegment(p1, q2, q1)) return true;
-        if (o3 == 0 && this.pointOnSegment(p2, p1, q2)) return true;
-        if (o4 == 0 && this.pointOnSegment(p2, q1, q2)) return true;
+        if (o1 !== o2 && o3 !== o4) return true;
+        if (o1 === COLINEAR && this.pointOnSegment(p1, p2, q1)) return true;
+        if (o2 === COLINEAR && this.pointOnSegment(p1, q2, q1)) return true;
+        if (o3 === COLINEAR && this.pointOnSegment(p2, p1, q2)) return true;
+        if (o4 === COLINEAR && this.pointOnSegment(p2, q1, q2)) return true;
         return false;
     }
 
@@ -54,7 +55,7 @@ export class Utils {
     }
 
     static radToDegree(angleInRad: number): number {
-        return (angleInRad * 180) / Math.PI;
+        return (angleInRad * ANGLE_PI_IN_DEGREES) / Math.PI;
     }
 
     static findAngleBetweenTwoSegments(segment1: Segment, segment2: Segment): number {
@@ -79,12 +80,12 @@ export class Utils {
         let isInside: boolean;
 
         do {
-            let next = (i + 1) % polygon.length;
-            let segment1 = {
+            const next = (i + 1) % polygon.length;
+            const segment1 = {
                 initial: { x: polygon[i].x, y: polygon[i].y },
                 final: { x: polygon[next].x, y: polygon[next].y },
             };
-            let segment2 = {
+            const segment2 = {
                 initial: { x: point.x, y: point.y },
                 final: { x: rayCastingLine.x, y: point.y },
             };
@@ -96,20 +97,23 @@ export class Utils {
                 count = count + 1;
             }
             i = next;
-        } while (i != 0);
+        } while (i !== 0);
 
         isInside = count % 2 === 1;
         return isInside;
     }
 
-    static translatePolygon(polygon: Vec2[], oldOrigin: Vec2, newOrigin: Vec2): void {
+    static translatePolygon(polygon: Vec2[], oldOrigin: Vec2, newOrigin: Vec2): Vec2[] {
         const dx = newOrigin.x - oldOrigin.x;
         const dy = newOrigin.y - oldOrigin.y;
 
-        for (let i = 0; i < polygon.length; i++) {
-            polygon[i].x = polygon[i].x + dx;
-            polygon[i].y = polygon[i].y + dy;
+        for (const i in polygon) {
+            if (polygon.hasOwnProperty('x') && polygon.hasOwnProperty('y')) {
+                polygon[i].x = polygon[i].x + dx;
+                polygon[i].y = polygon[i].y + dy;
+            }
         }
+        return polygon;
     }
 
     static findMinCoord(coordinates: Vec2[]): Vec2 {
@@ -117,14 +121,14 @@ export class Utils {
         let minY;
 
         minX = coordinates[0].x;
-        for (let i = 0; i < coordinates.length; i++) {
+        for (const i in coordinates) {
             if (coordinates[i].x < minX) {
                 minX = coordinates[i].x;
             }
         }
 
         minY = coordinates[0].y;
-        for (let i = 0; i < coordinates.length; i++) {
+        for (const i in coordinates) {
             if (coordinates[i].y < minY) {
                 minY = coordinates[i].y;
             }
@@ -137,14 +141,14 @@ export class Utils {
         let maxY;
 
         maxX = coordinates[0].x;
-        for (let i = 0; i < coordinates.length; i++) {
+        for (const i in coordinates) {
             if (coordinates[i].x > maxX) {
                 maxX = coordinates[i].x;
             }
         }
 
         maxY = coordinates[0].y;
-        for (let i = 0; i < coordinates.length; i++) {
+        for (const i in coordinates) {
             if (coordinates[i].y > maxY) {
                 maxY = coordinates[i].y;
             }
