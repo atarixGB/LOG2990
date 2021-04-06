@@ -43,7 +43,6 @@ export class LassoService extends Tool {
 
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
-
         this.mouseDownCoord = this.getPositionFromMouse(event);
         this.currentSegment.push(this.mouseDownCoord);
     }
@@ -92,10 +91,12 @@ export class LassoService extends Tool {
 
         this.polygonCoords.push(this.mouseDownCoord);
         this.nbSegments = this.polygonCoords.length - 1;
+        console.log('nbSegmets', this.nbSegments);
+
         this.mouseDown = false;
         this.clearCurrentSegment();
+
         this.mouseIsInClosureArea(this.mouseDownCoord);
-        console.log('mouse up lasso, selection over', this.selectionOver);
     }
 
     handleKeyDown(event: KeyboardEvent): void {
@@ -186,11 +187,15 @@ export class LassoService extends Tool {
     }
 
     private mouseIsInClosureArea(mouseCoord: Vec2): void {
+        console.log('mouseCoords', mouseCoord);
+        console.log('centerCoords', this.polygonCoords[0]);
+        console.log('polygonCoords', this.polygonCoords);
         if (
             Utils.pointInCircle(mouseCoord, this.polygonCoords[0], CLOSURE_AREA_RADIUS) &&
             this.nbSegments >= NB_MIN_SEGMENTS &&
             !this.areIntesected
         ) {
+            console.log('mouse IN CLOSURE AREA');
             this.polygonCoords.pop();
             const finalSegment: Vec2[] = [
                 { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
@@ -202,6 +207,7 @@ export class LassoService extends Tool {
             this.mouseDown = false;
             this.selectionOver = true;
             this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
+            console.log('apres polygonCoords', this.polygonCoords);
         }
     }
 
@@ -237,13 +243,46 @@ export class LassoService extends Tool {
                 final: { x: this.polygonCoords[this.polygonCoords.length - 2].x, y: this.polygonCoords[this.polygonCoords.length - 2].y },
             };
 
-            if (Utils.segmentsDoIntersect(segment1, segment2) || this.segmentsAreConfused(adjacentSegment, segment2)) {
+            if (
+                Utils.segmentsDoIntersect(segment1, segment2) ||
+                this.segmentsAreConfused(adjacentSegment, segment2) ||
+                this.segmentsOutsideCanvas(segment2)
+            ) {
                 this.areIntesected = true;
                 break;
             } else {
                 this.areIntesected = false;
             }
         }
+    }
+
+    private segmentsOutsideCanvas(currentSegment: Segment): boolean {
+        const canvasSegments: Segment[] = [
+            {
+                initial: { x: 0, y: 0 },
+                final: { x: this.drawingService.canvas.width, y: 0 },
+            },
+            {
+                initial: { x: this.drawingService.canvas.width, y: 0 },
+                final: { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height },
+            },
+            {
+                initial: { x: this.drawingService.canvas.width, y: this.drawingService.canvas.height },
+                final: { x: 0, y: this.drawingService.canvas.height },
+            },
+            {
+                initial: { x: 0, y: this.drawingService.canvas.height },
+                final: { x: 0, y: 0 },
+            },
+        ];
+
+        for (let i = 0; i < canvasSegments.length; i++) {
+            if (Utils.segmentsDoIntersect(currentSegment, canvasSegments[i])) {
+                this.areIntesected = true;
+                return true;
+            }
+        }
+        return false;
     }
 
     private clearCurrentSegment(): void {
