@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { MoveSelectionService } from './move-selection.service';
 
 @Injectable({
     providedIn: 'root',
@@ -16,12 +15,7 @@ export class ClipboardService {
 
     pasteAvailable: boolean;
 
-    constructor(
-        private drawingService: DrawingService,
-        private selectionService: SelectionService,
-        private moveSelectionService: MoveSelectionService,
-        private toolManagerService: ToolManagerService,
-    ) {
+    constructor(private drawingService: DrawingService, private selectionService: SelectionService, private toolManagerService: ToolManagerService) {
         this.pasteAvailable = false;
     }
 
@@ -39,9 +33,9 @@ export class ClipboardService {
         this.selectionService.printMovedSelection(this.drawingService.baseCtx);
         this.initializeSelectionParameters();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.selectionService.printMovedSelection(this.drawingService.previewCtx);
+        this.selectionService.printMovedSelection(this.drawingService.baseCtx);
         this.selectionService.createBoundaryBox();
-        this.toolManagerService.currentTool = this.moveSelectionService;
+        this.toolManagerService.currentTool = this.selectionService;
     }
 
     cut(): void {
