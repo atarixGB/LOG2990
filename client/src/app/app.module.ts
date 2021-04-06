@@ -48,6 +48,7 @@ import { RectangleConfigComponent } from './components/sidebar/rectangle-config/
 import { SelectionConfigComponent } from './components/sidebar/selection-config/selection-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
+import { TextConfigComponent } from './components/sidebar/text-config/text-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 
 @NgModule({
@@ -82,6 +83,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         CarouselComponent,
         CarouselDrawingComponent,
         GridComponent,
+        TextConfigComponent,
     ],
     imports: [
         BrowserModule,
