@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Utils } from '@app/classes/math-utils';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE, MouseButton } from '@app/constants';
@@ -75,8 +76,6 @@ export class SelectionService extends Tool {
             else this.rectangleService.onMouseDown(event);
         }
 
-        console.log(this.newSelection, this.activeSelection, this.lassoService.selectionOver);
-
         if (this.isLasso && this.newSelection) {
             this.lassoService.selectionOver = false;
         }
@@ -96,7 +95,6 @@ export class SelectionService extends Tool {
             } else {
                 this.newSelection = true;
             }
-            console.log('SELECTIOON', this.newSelection);
         }
     }
 
@@ -104,7 +102,6 @@ export class SelectionService extends Tool {
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
         if (this.lassoService.selectionOver) {
             this.getSelectionData(this.drawingService.baseCtx);
-            console.log('lolololol');
 
             this.createBoundaryBox();
             this.activeSelection = true;
@@ -261,8 +258,8 @@ export class SelectionService extends Tool {
             this.origin = this.ellipseService.pathData[0];
             this.destination = this.ellipseService.pathData[this.ellipseService.pathData.length - 1];
         } else if (this.isLasso) {
-            this.origin = this.lassoService.findMinCoord(this.lassoService.polygonCoords);
-            this.destination = this.lassoService.findMaxCoord(this.lassoService.polygonCoords);
+            this.origin = Utils.findMinCoord(this.lassoService.polygonCoords);
+            this.destination = Utils.findMaxCoord(this.lassoService.polygonCoords);
         } else {
             this.origin = this.rectangleService.pathData[0];
             this.destination = this.rectangleService.pathData[this.rectangleService.pathData.length - 1];
@@ -312,7 +309,7 @@ export class SelectionService extends Tool {
 
         for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
             for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
-                if (!this.lassoService.pointInPolygon({ x: j, y: i })) {
+                if (!Utils.pointInPolygon({ x: j, y: i }, this.lassoService.polygonCoords)) {
                     imageData[pixelCounter + PIXEL_LENGTH - 1] = 0;
                 }
                 pixelCounter += PIXEL_LENGTH;

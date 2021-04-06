@@ -70,7 +70,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
                 this.selectionService.newSelection = true;
             }
         }
-        console.log('MOVE', this.selectionService.newSelection);
     }
 
     onMouseUp(event: MouseEvent): void {
