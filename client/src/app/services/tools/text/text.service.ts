@@ -20,28 +20,29 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    private textInput: string[];
-    private currentLine: number;
-    private totalLine: number;
-    private cursorPosition: number;
-    private positionText: Vec2;
-    isWriting: boolean;
-
     selectFont: Font;
     selectEmphasis: Emphasis;
     selectAlign: TextAlign;
 
-    private fontBinding: Map<Font, string>;
-    private emphasisBinding: Map<Emphasis, string>;
-    private alignBinding: Map<TextAlign, string>;
-
-    private keyBinding: Map<string, () => void>;
+    isWriting: boolean;
 
     color: string;
     font: undefined | string = DEFAULT_FONT;
     size: string = DEFAULT_TEXT_SIZE;
     emphasis: undefined | string = DEFAULT_EMPHASIS;
     align: undefined | string = DEFAULT_TEXT_ALIGN;
+
+    private textInput: string[];
+    private currentLine: number;
+    private totalLine: number;
+    private cursorPosition: number;
+    private positionText: Vec2;
+
+    private fontBinding: Map<Font, string>;
+    private emphasisBinding: Map<Emphasis, string>;
+    private alignBinding: Map<TextAlign, string>;
+
+    private keyBinding: Map<string, () => void>;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -84,146 +85,6 @@ export class TextService extends Tool {
             .set('ArrowDown', () => this.handleArrowDown())
             .set('Enter', () => this.handleEnter())
             .set('Escape', () => this.handleEscape());
-    }
-
-    private addCharacter(event: KeyboardEvent): void {
-        if (this.cursorPosition !== 0) {
-            if (ACCEPTED_CHAR.test(event.key)) {
-                this.textInput[this.currentLine] =
-                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    event.key +
-                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                this.cursorPosition++;
-            }
-        } else {
-            if (ACCEPTED_CHAR.test(event.key)) {
-                this.textInput[this.currentLine] = event.key + this.textInput[this.currentLine];
-                this.cursorPosition++;
-            }
-        }
-    }
-
-    private handleBackspace(): void {
-        if (this.cursorPosition !== 0 || (this.cursorPosition !== 0 && this.currentLine !== 0)) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-            this.cursorPosition--;
-        }
-    }
-    private handleDelete(): void {
-        this.textInput[this.currentLine] =
-            this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) +
-            this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);
-    }
-    private handleArrowLeft(): void {
-        if (this.currentLine !== 0 || this.cursorPosition !== 0) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-            if (this.cursorPosition === 0) {
-                this.currentLine--;
-                this.cursorPosition = this.textInput[this.currentLine].length;
-                this.textInput[this.currentLine] = this.textInput[this.currentLine] + '|';
-            } else {
-                this.cursorPosition--;
-                this.textInput[this.currentLine] =
-                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    '|' +
-                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-            }
-        }
-    }
-
-    private handleEscape(): void {
-        for (let i = 0; i < this.totalLine; i++) {
-            this.textInput[i] = '';
-        }
-        this.cursorPosition = 0;
-        this.currentLine = 0;
-        this.totalLine = 1;
-        this.isWriting = false;
-    }
-    private handleEnter(): void {
-        const nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
-        this.currentLine++;
-        this.totalLine++;
-        this.textInput[this.currentLine] = nextLine + '|';
-        this.cursorPosition = this.textInput[this.currentLine].length - 1;
-    }
-    private handleArrowDown(): void {
-        if (this.currentLine !== this.totalLine - 1) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-            this.currentLine++;
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                '|' +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-        }
-    }
-    private handleArrowUp(): void {
-        if (this.currentLine !== 0) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-            this.currentLine--;
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                '|' +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-        }
-    }
-    private handleArrowRight(): void {
-        if (this.currentLine !== this.totalLine - 1 || this.cursorPosition !== this.textInput[this.currentLine].length - 1) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-            if (this.cursorPosition === this.textInput[this.currentLine].length) {
-                this.currentLine++;
-                this.cursorPosition = 0;
-                this.textInput[this.currentLine] = '|' + this.textInput[this.currentLine];
-            } else {
-                this.cursorPosition++;
-                this.textInput[this.currentLine] =
-                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    '|' +
-                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-            }
-        }
-    }
-
-    private writeOnCanvas(ctx: CanvasType): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
-
-        if (ctx === CanvasType.baseCtx) {
-            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-
-            this.drawingService.baseCtx.fillStyle = this.color;
-            this.drawingService.baseCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
-            let y = this.positionText.y;
-
-            for (let i = 0; i < this.totalLine; i++) {
-                this.drawingService.baseCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
-                y += Number(this.size);
-            }
-        } else {
-            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-
-            this.drawingService.previewCtx.fillStyle = this.color;
-            this.drawingService.previewCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
-
-            let y = this.positionText.y;
-
-            for (let i = 0; i < this.totalLine; i++) {
-                this.drawingService.previewCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
-                y += Number(this.size);
-            }
-        }
     }
 
     write(): void {
@@ -292,6 +153,152 @@ export class TextService extends Tool {
                 this.addCharacter(event);
             }
             this.writeOnCanvas(CanvasType.previewCtx);
+        }
+    }
+
+    private addCharacter(event: KeyboardEvent): void {
+        if (this.cursorPosition !== 0) {
+            if (ACCEPTED_CHAR.test(event.key)) {
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    event.key +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                this.cursorPosition++;
+            }
+        } else {
+            if (ACCEPTED_CHAR.test(event.key)) {
+                this.textInput[this.currentLine] = event.key + this.textInput[this.currentLine];
+                this.cursorPosition++;
+            }
+        }
+    }
+
+    private handleBackspace(): void {
+        if (this.cursorPosition !== 0 || (this.cursorPosition !== 0 && this.currentLine !== 0)) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            this.cursorPosition--;
+        }
+    }
+
+    private handleDelete(): void {
+        this.textInput[this.currentLine] =
+            this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) +
+            this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);
+    }
+
+    private handleArrowLeft(): void {
+        if (this.currentLine !== 0 || this.cursorPosition !== 0) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            if (this.cursorPosition === 0) {
+                this.currentLine--;
+                this.cursorPosition = this.textInput[this.currentLine].length;
+                this.textInput[this.currentLine] = this.textInput[this.currentLine] + '|';
+            } else {
+                this.cursorPosition--;
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
+        }
+    }
+
+    private handleEscape(): void {
+        for (let i = 0; i < this.totalLine; i++) {
+            this.textInput[i] = '';
+        }
+        this.cursorPosition = 0;
+        this.currentLine = 0;
+        this.totalLine = 1;
+        this.isWriting = false;
+    }
+
+    private handleEnter(): void {
+        const nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
+        this.currentLine++;
+        this.totalLine++;
+        this.textInput[this.currentLine] = nextLine + '|';
+        this.cursorPosition = this.textInput[this.currentLine].length - 1;
+    }
+
+    private handleArrowDown(): void {
+        if (this.currentLine !== this.totalLine - 1) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.currentLine++;
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                '|' +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+        }
+    }
+
+    private handleArrowUp(): void {
+        if (this.currentLine !== 0) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.currentLine--;
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                '|' +
+                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+        }
+    }
+
+    private handleArrowRight(): void {
+        if (this.currentLine !== this.totalLine - 1 || this.cursorPosition !== this.textInput[this.currentLine].length - 1) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            if (this.cursorPosition === this.textInput[this.currentLine].length) {
+                this.currentLine++;
+                this.cursorPosition = 0;
+                this.textInput[this.currentLine] = '|' + this.textInput[this.currentLine];
+            } else {
+                this.cursorPosition++;
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
+        }
+    }
+
+    private writeOnCanvas(ctx: CanvasType): void {
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+
+        if (ctx === CanvasType.baseCtx) {
+            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+
+            this.drawingService.baseCtx.fillStyle = this.color;
+            this.drawingService.baseCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
+            this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
+            let y = this.positionText.y;
+
+            for (let i = 0; i < this.totalLine; i++) {
+                this.drawingService.baseCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
+                y += Number(this.size);
+            }
+        } else {
+            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+
+            this.drawingService.previewCtx.fillStyle = this.color;
+            this.drawingService.previewCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
+            this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
+
+            let y = this.positionText.y;
+
+            for (let i = 0; i < this.totalLine; i++) {
+                this.drawingService.previewCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
+                y += Number(this.size);
+            }
         }
     }
 }
