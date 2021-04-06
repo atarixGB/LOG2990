@@ -7,6 +7,7 @@ export class DrawingService {
     baseCtx: CanvasRenderingContext2D;
     previewCtx: CanvasRenderingContext2D;
     cursorCtx: CanvasRenderingContext2D;
+    lassoPreviewCtx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
     previewCanvas: HTMLCanvasElement;
 

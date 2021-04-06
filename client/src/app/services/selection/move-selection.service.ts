@@ -44,6 +44,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
         }
