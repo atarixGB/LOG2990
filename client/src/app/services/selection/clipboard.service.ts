@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
+import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { DrawingService } from '../drawing/drawing.service';
-import { MoveSelectionService } from '../tools/selection/move-selection.service';
 import { SelectionService } from '../tools/selection/selection.service';
 import { ToolManagerService } from '../tools/tool-manager.service';
 
