@@ -60,6 +60,7 @@ export enum ToolList {
     MoveSelection = 12,
     Undo = 13,
     Redo = 14,
+    Stamp = 15,
 }
 
 export const mouseEventLClick = {
@@ -145,3 +146,15 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
+
+
+// constants for stamp
+export enum StampList {
+    Heart = 0,  
+    Star = 1,   
+    Hand = 2,   
+    Paw = 3,    
+    Smiley = 4, 
+}
+
+export const DEFAULT_STAMP_SIZE = 10;
