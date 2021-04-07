@@ -36,9 +36,9 @@ export class DatabaseService {
 
         if (!fs.existsSync(SAVED_DRAWINGS_PATH)) {
             fs.mkdirSync(SAVED_DRAWINGS_PATH);
-            console.log(`${SAVED_DRAWINGS_PATH} has been succesfully created!`);
+            console.log(`${SAVED_DRAWINGS_PATH} a été créé avec succès!`);
         } else {
-            console.log(`${SAVED_DRAWINGS_PATH} already exists on server.`);
+            console.log(`${SAVED_DRAWINGS_PATH} existe déjà sur le serveur.`);
         }
 
         this.readDrawingDirectory();
@@ -50,7 +50,7 @@ export class DatabaseService {
             this.db = this.client.db(DATABASE_NAME);
             this.drawingsCollection = this.db.collection(DATABASE_DRAWINGS_COLLECTION);
         } catch {
-            throw new Error('Database connection error');
+            throw new Error('Erreur de connexion avec la base de données.');
         }
 
         return this.client;
@@ -72,11 +72,11 @@ export class DatabaseService {
                 .then((result) => {
                     drawingData._id = result.insertedId.toHexString();
                     this.saveImageAsPNG(drawingData);
-                    console.log(`Drawing ${drawingData.title} has been successfully added!`);
+                    console.log(`Le dessin ${drawingData.title} a été ajouté avec succès!`);
                     return HTTP_STATUS_NO_CONTENT;
                 })
                 .catch((error: Error) => {
-                    console.error(`Failed to add drawing ${drawingData.title} to database`, error);
+                    console.error(`Échec de l'ajout du dessin ${drawingData.title} à la base de données`, error);
                     return HTTP_NOT_FOUND;
                 });
         }
@@ -90,11 +90,11 @@ export class DatabaseService {
             .findOneAndDelete({ _id: objectId })
             .then(() => {
                 this.deleteDrawingFromServer(id);
-                console.log(`Drawing with id:${id} has been successfully deleted from database.`);
+                console.log(`Le dessin avec le id:${id} a été supprimé de la base de données avec succès.`);
                 return HTTP_STATUS_NO_CONTENT;
             })
             .catch((error) => {
-                console.log(`Failed to delete drawing with id ${id}\n${error}`);
+                console.log(`Échec de la suppression du dessin ${id}\n${error}`);
                 return HTTP_NOT_FOUND;
             });
     }
@@ -149,7 +149,7 @@ export class DatabaseService {
             if (error) {
                 throw error;
             } else {
-                console.log(`Drawing with id ${id} has been successfully deleted from server.`);
+                console.log(`Le dessin avec l'id ${id} a été supprimé du serveur avec succès`);
                 this.readDrawingDirectory();
             }
         });
