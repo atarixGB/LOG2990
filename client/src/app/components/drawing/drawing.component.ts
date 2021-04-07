@@ -9,12 +9,14 @@ import { ExportModalComponent } from '@app/components/export-modal/export-modal.
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -41,13 +43,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     constructor(
         public toolManagerService: ToolManagerService,
         public moveSelectionService: MoveSelectionService,
+        public dialog: MatDialog,
         private route: ActivatedRoute,
         private drawingService: DrawingService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
-        public dialog: MatDialog,
         private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
+        private autoSaveService: AutoSaveService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
@@ -71,6 +74,17 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.baseCtx.drawImage(img, 0, 0);
             });
         });
+
+        window.onload = () => {
+            this.autoSaveService.loadImage();
+            const img: HTMLImageElement = new Image();
+            img.src = this.autoSaveService.localDrawing.body.replace(/^data:image\/\w+;base64,/, '');
+            console.log(img.src);
+            // console.log(this.autoSaveService.localDrawing.width, this.autoSaveService.localDrawing.height);
+            img.onload = () => {
+                this.baseCtx.drawImage(img, this.autoSaveService.localDrawing.width, this.autoSaveService.localDrawing.height);
+            };
+        };
     }
 
     ngAfterViewInit(): void {
@@ -144,6 +158,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseClick(event);
         }
+
+        const drawing: DrawingData = {
+            title: '',
+            width: this.drawingService.canvas.width,
+            height: this.drawingService.canvas.height,
+            body: this.drawingService.canvas.toDataURL(),
+        };
+        this.autoSaveService.saveCanvasState(drawing);
+        console.log(localStorage);
     }
 
     @HostListener('dblclick', ['$event'])
@@ -169,6 +192,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'F5') {
+            this.isF5Pressed = true;
+        }
         if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
             event.preventDefault();
             this.undoRedoService.undo();

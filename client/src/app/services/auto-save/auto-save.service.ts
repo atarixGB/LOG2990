@@ -7,15 +7,30 @@ import { DrawingData } from '@common/communication/drawing-data';
 export class AutoSaveService {
     readonly localName: string = 'local';
     localDrawing: DrawingData;
+    isEmpty: boolean;
 
-    save(drawing: DrawingData): void {
-        localStorage.setItem(this.localName, JSON.stringify(drawing));
+    constructor() {
+        this.localDrawing = new DrawingData();
+        console.log('local storage empty?', this.localStorageIsEmpty());
     }
 
-    load(): void {
-        const lastAutoSavedDrawing = localStorage.getItem(this.localName);
+    saveCanvasState(drawing: DrawingData): void {
+        window.localStorage.setItem(this.localName, JSON.stringify(drawing));
+    }
+
+    loadImage(): void {
+        const lastAutoSavedDrawing = window.localStorage.getItem(this.localName);
         if (lastAutoSavedDrawing) {
             this.localDrawing = JSON.parse(lastAutoSavedDrawing) as DrawingData;
         }
+    }
+
+    clearLocalStorage(): void {
+        window.localStorage.clear();
+    }
+
+    localStorageIsEmpty(): boolean {
+        const size = window.localStorage.length;
+        return size === 0;
     }
 }

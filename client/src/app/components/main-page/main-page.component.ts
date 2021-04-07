@@ -31,6 +31,7 @@ export class MainPageComponent {
     }
 
     continueDrawing(): void {
+        console.log(localStorage);
         const drawing: DrawingData = {
             title: this.autoSaveService.localDrawing.title,
             height: this.autoSaveService.localDrawing.height,
