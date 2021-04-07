@@ -48,6 +48,7 @@ export class ClipboardService {
         this.selectionService.clearUnderneathShape();
         this.selectionService.selectionDeleted = true;
         this.selectionService.terminateSelection();
+        this.selectionService.selectionDeleted = false;
         this.toolManagerService.currentTool = this.selectionService;
     }
 
