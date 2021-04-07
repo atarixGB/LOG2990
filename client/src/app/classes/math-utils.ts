@@ -81,7 +81,7 @@ export class Utils {
         let maxY = polygon[0].y;
 
         for (let i = 1; i < polygon.length; i++) {
-            let q = polygon[i];
+            const q = polygon[i];
             minX = Math.min(q.x, minX);
             maxX = Math.max(q.x, maxX);
             minY = Math.min(q.y, minY);
@@ -94,7 +94,7 @@ export class Utils {
 
         for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
             if (
-                polygon[i].y > p.y != polygon[j].y > p.y &&
+                polygon[i].y > p.y !== polygon[j].y > p.y &&
                 p.x < ((polygon[j].x - polygon[i].x) * (p.y - polygon[i].y)) / (polygon[j].y - polygon[i].y) + polygon[i].x
             ) {
                 isInside = !isInside;

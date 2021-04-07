@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { DrawingService } from '../drawing/drawing.service';
-import { SelectionService } from '../tools/selection/selection.service';
-import { ToolManagerService } from '../tools/tool-manager.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Injectable({
     providedIn: 'root',
