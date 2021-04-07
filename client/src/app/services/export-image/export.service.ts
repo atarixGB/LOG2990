@@ -7,6 +7,7 @@ const PREVIEW_ORIGIN_Y = 0;
 const PREVIEW_WIDTH = 400;
 const PREVIEW_HEIGHT = 250;
 const DEFAULT_INTENSITY = 50;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -89,6 +90,10 @@ export class ExportService {
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
         link.href = this.image.src;
         link.click();
+    }
+
+    uploadToImgur(): void {
+        // TODO
     }
 
     private getResizedCanvas(): void {

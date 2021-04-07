@@ -27,6 +27,11 @@ export class IndexService {
         });
     }
 
+    async postToImgur(data: string): Promise<void> {
+        const url = 'post-url-api-imgur';
+        return new Promise<void>((resolve, reject) => {});
+    }
+
     async deleteDrawingById(id: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.png`;
