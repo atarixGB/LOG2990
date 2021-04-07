@@ -103,7 +103,7 @@ export class LassoService extends Tool {
                 this.resetAttributes();
                 break;
             case 'Backspace':
-                this.redrawPreviousState(event);
+                this.redrawPreviousState();
                 break;
             case 'Shift':
                 this.shiftKeyDown = true;
@@ -162,8 +162,6 @@ export class LassoService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
     }
 
-    clearUnderneath(): void {}
-
     calculatePath2d(): Path2D {
         const polygon = new Path2D();
         polygon.moveTo(this.polygonCoords[0].x, this.polygonCoords[0].y);
@@ -204,7 +202,7 @@ export class LassoService extends Tool {
         }
     }
 
-    private redrawPreviousState(event: KeyboardEvent): void {
+    private redrawPreviousState(): void {
         this.clearCurrentSegment();
         this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
         this.polygonCoords.pop();

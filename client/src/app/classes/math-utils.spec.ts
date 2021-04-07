@@ -2,7 +2,7 @@ import { Segment, Utils } from './math-utils';
 import { Vec2 } from './vec2';
 
 // tslint:disable
-fdescribe('MathUtils', () => {
+describe('MathUtils', () => {
     it('should be created', () => {
         const utils = new Utils();
         expect(utils).toBeTruthy();
