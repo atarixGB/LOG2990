@@ -99,7 +99,6 @@ describe('ClipboardService', () => {
         expect(service.isEllipse).toEqual(selectionServiceSpy.isEllipse);
         expect(service.isLasso).toEqual(selectionServiceSpy.isLasso);
         expect(service.pasteAvailable).toBeTrue();
-        console.log(typeof service['toolManagerService'].currentTool);
         expect(service['toolManagerService'].currentTool).toEqual(selectionServiceSpy);
     });
 
