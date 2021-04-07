@@ -9,7 +9,7 @@ import { ToolManagerService } from '../tools/tool-manager.service';
 import { ClipboardService } from './clipboard.service';
 
 // tslint:disable
-fdescribe('ClipboardService', () => {
+describe('ClipboardService', () => {
     let service: ClipboardService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
