@@ -8,40 +8,27 @@ describe('MathUtils', () => {
         expect(utils).toBeTruthy();
     });
 
-    it('should return true if point is on segment and point q1 is on segment p1-p2', () => {
+    it('should return true if point p2 is on segment and is on segment p1-q1', () => {
         const segment1: Segment = {
             initial: { x: 0, y: 0 },
-            final: { x: 10, y: 0 },
+            final: { x: 5, y: 5 },
         };
         const segment2: Segment = {
-            initial: { x: 10, y: 0 },
-            final: { x: 0, y: 0 },
+            initial: { x: 2, y: 2 },
+            final: { x: -1, y: -1 },
         };
         const result = Utils.segmentsDoIntersect(segment1, segment2);
         expect(result).toBeTrue();
     });
 
-    it('should return true if point is on segment and point q2 is on segment p2-q1', () => {
+    it('should return true if point q2 is on segment and is on segment p1-q1', () => {
         const segment1: Segment = {
             initial: { x: 0, y: 0 },
-            final: { x: 10, y: 0 },
+            final: { x: 5, y: 5 },
         };
         const segment2: Segment = {
-            initial: { x: 10, y: 0 },
-            final: { x: 0, y: 0 },
-        };
-        const result = Utils.segmentsDoIntersect(segment1, segment2);
-        expect(result).toBeTrue();
-    });
-
-    it('should return true if point is on segment and point q1 is on segment p2-q2', () => {
-        const segment1: Segment = {
-            initial: { x: 0, y: 0 },
-            final: { x: 10, y: 0 },
-        };
-        const segment2: Segment = {
-            initial: { x: 10, y: 0 },
-            final: { x: 0, y: 0 },
+            initial: { x: -1, y: -1 },
+            final: { x: 2, y: 2 },
         };
         const result = Utils.segmentsDoIntersect(segment1, segment2);
         expect(result).toBeTrue();
