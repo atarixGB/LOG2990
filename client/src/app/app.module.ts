@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -39,7 +40,10 @@ import { ColorSliderComponent } from './components/sidebar/color-components/colo
 import { EllipseConfigComponent } from './components/sidebar/ellipse-config/ellipse-config.component';
 import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
+import { GridComponent } from './components/sidebar/grid-config/grid/grid.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
+import { PaintConfigComponent } from './components/sidebar/paint-config/paint-config/paint-config.component';
+import { SliderComponent } from './components/sidebar/paint-config/paint-config/slider/slider/slider.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { PipetteComponent } from './components/sidebar/pipette-config/pipette.component';
 import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
@@ -81,6 +85,9 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         SaveDrawingModalComponent,
         CarouselComponent,
         CarouselDrawingComponent,
+        PaintConfigComponent,
+        SliderComponent,
+        GridComponent,
         TextConfigComponent,
     ],
     imports: [
@@ -107,6 +114,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         BrowserAnimationsModule,
         MatSidenavModule,
         MatProgressSpinnerModule,
+        MatRadioModule,
     ],
     entryComponents: [ColorPopupComponent, ColorPickerComponent],
     providers: [],

@@ -89,7 +89,7 @@ export class TextService extends Tool {
 
     write(): void {
         let isEmpty = true;
-        for (const line in this.textInput) {
+        for (const line of this.textInput) {
             if (line !== '') {
                 isEmpty = false;
             }
@@ -122,6 +122,10 @@ export class TextService extends Tool {
             this.align = this.alignBinding.get(this.selectAlign);
             this.writeOnCanvas(CanvasType.previewCtx);
         }
+    }
+
+    changeSize(): void {
+        this.writeOnCanvas(CanvasType.previewCtx);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -174,7 +178,7 @@ export class TextService extends Tool {
     }
 
     private handleBackspace(): void {
-        if (this.cursorPosition !== 0 || (this.cursorPosition !== 0 && this.currentLine !== 0)) {
+        if (this.cursorPosition !== 0) {
             this.textInput[this.currentLine] =
                 this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
                 this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);

@@ -30,6 +30,7 @@ export class SelectionService extends Tool {
     selectionDeleted: boolean;
     width: number;
     height: number;
+    squareSize: number;
     private controlPointsCoord: Vec2[];
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
@@ -408,5 +409,9 @@ export class SelectionService extends Tool {
         this.drawingService.previewCtx.setLineDash([0]);
         this.rectangleService.isSelection = false;
         this.ellipseService.isSelection = false;
+    }
+
+    setGridSpaces(size: number): void {
+        this.squareSize = size;
     }
 }
