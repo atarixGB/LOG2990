@@ -12,6 +12,7 @@ export class RectangleService extends ShapeService {
     private shortestSide: number;
     private width: number;
     private height: number;
+
     constructor(protected drawingService: DrawingService, colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService, colorManager);
     }
@@ -45,6 +46,7 @@ export class RectangleService extends ShapeService {
 
         this.clearPath();
     }
+
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown) {
             this.undoRedoService.setToolInUse(true);

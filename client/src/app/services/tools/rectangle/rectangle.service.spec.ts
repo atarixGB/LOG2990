@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ShapeService } from '../shape/shape.service';
 import { RectangleService } from './rectangle.service';
 
 // tslint:disable
@@ -15,12 +16,27 @@ describe('RectangleService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
     let drawRectangleSpy: jasmine.Spy<any>;
     let drawSquareSpy: jasmine.Spy<any>;
+    let shapeServiceSpy: jasmine.SpyObj<ShapeService>;
     let mockPathData: Vec2[];
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
+        shapeServiceSpy = jasmine.createSpyObj('ShapeService', ['drawShape']);
+        previewCtxStub = jasmine.createSpyObj('CanvasRendringContext', [
+            'putImageData',
+            'beginPath',
+            'stroke',
+            'lineWidth',
+            'getImageData',
+            'moveTo',
+            'lineTo',
+        ]);
+
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ShapeService, useValue: shapeServiceSpy },
+            ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -73,6 +89,15 @@ describe('RectangleService', () => {
         let clearPathSpy = spyOn<any>(service, 'clearPath');
         service.onMouseUp(mouseEvent);
         expect(clearPathSpy).toHaveBeenCalled();
+    });
+
+    it('should draw shape on previewCtx', () => {
+        service.mouseDown = true;
+        const drawShapeSpy = spyOn<any>(service, 'drawShape');
+        drawServiceSpy.clearCanvas.and.stub();
+        service.onMouseMove(mouseEvent);
+        expect(drawShapeSpy).toHaveBeenCalled();
+        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('should adjust origin for a shape drawn on lower left', () => {
@@ -132,8 +157,17 @@ describe('RectangleService', () => {
     });
 
     it('should draw a rectangle as a border shape', () => {
+        const rectSpy = spyOn<any>(previewCtxStub, 'rect').and.stub();
+        const strokeSpy = spyOn<any>(previewCtxStub, 'stroke').and.stub();
         service.drawRectangle(previewCtxStub, true);
-        expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
+        expect(rectSpy).toHaveBeenCalled();
+        expect(strokeSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT draw a rectangle as a border shape', () => {
+        const updateBorderSpy = spyOn<any>(service, 'updateBorderType').and.stub();
+        service.drawRectangle(previewCtxStub, false);
+        expect(updateBorderSpy).toHaveBeenCalled();
     });
 
     it('setPath should be the one in parameter', () => {
