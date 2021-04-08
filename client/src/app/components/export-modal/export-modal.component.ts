@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FiltersList } from '@app/constants';
 import { ExportService } from '@app/services/export-image/export.service';
-import { IndexService } from '@app/services/index/index.service';
 
 const MIN_INPUT_SIZE = 0;
 const MAX_INPUT_SIZE = 15;
@@ -21,7 +20,7 @@ export class ExportModalComponent implements AfterViewInit {
     imgurIsSelected: boolean;
     private baseCtx: CanvasRenderingContext2D;
 
-    constructor(public matDialogRef: MatDialogRef<ExportModalComponent>, public exportService: ExportService, private indexService: IndexService) {
+    constructor(public matDialogRef: MatDialogRef<ExportModalComponent>, public exportService: ExportService) {
         this.maxLength = MAX_INPUT_SIZE;
     }
 
@@ -42,11 +41,19 @@ export class ExportModalComponent implements AfterViewInit {
     }
 
     uploadToImgur(): void {
-        console.log('Upload to Imgur');
+        this.exportService.uploadToImgur();
     }
 
     validateString(str: string): boolean {
         if (str.length > MIN_INPUT_SIZE) return ALPHANUMERIC_REGEX.test(str);
         return true;
+    }
+
+    changeImgurSelection(selection: boolean): void {
+        this.imgurIsSelected = selection;
+    }
+
+    closeModal(): void {
+        this.exportService.imgurURL = '';
     }
 }
