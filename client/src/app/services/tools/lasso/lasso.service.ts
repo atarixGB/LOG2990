@@ -30,6 +30,7 @@ export class LassoService extends Tool {
     private shiftKeyDown: boolean;
     private basePoint: Vec2 | undefined;
     private closestPoint: Vec2 | undefined;
+    private isOutside: boolean;
 
     constructor(drawingService: DrawingService, private lineService: LineService) {
         super(drawingService);
@@ -44,6 +45,8 @@ export class LassoService extends Tool {
     onMouseClick(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         this.mouseDownCoord = this.getPositionFromMouse(event);
+
+        if (this.isOutside) return;
         this.currentSegment.push(this.mouseDownCoord);
     }
 
@@ -51,6 +54,14 @@ export class LassoService extends Tool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
         if (this.mouseDown) {
+            const currentSegment = {
+                initial: { x: this.polygonCoords[this.polygonCoords.length - 1].x, y: this.polygonCoords[this.polygonCoords.length - 1].y },
+                final: { x: this.mouseDownCoord.x, y: this.mouseDownCoord.y },
+            };
+
+            if (this.currentSegmentIntersectsCanvas(currentSegment)) this.areIntesected = true;
+            else this.areIntesected = false;
+
             this.checkIfCurrentSegmentIntersectWithPolygon();
 
             const color = this.areIntesected ? 'red' : 'black';
@@ -77,6 +88,11 @@ export class LassoService extends Tool {
         this.mouseDownCoord = this.getPositionFromMouse(event);
 
         if (this.areIntesected) return;
+
+        if (this.mouseClickOutsideCanvas(event)) {
+            this.isOutside = true;
+            return;
+        }
 
         if (this.mouseDown) {
             this.drawingService.lassoPreviewCtx.setLineDash([DASH_LINE]);
@@ -174,7 +190,6 @@ export class LassoService extends Tool {
 
     private segmentsAreConfused(segment1: Segment, segment2: Segment): boolean {
         const areConfused = Utils.findAngleBetweenTwoSegments(segment1, segment2) <= ERROR;
-
         if (areConfused) {
             this.areIntesected = true;
             return areConfused;
@@ -237,7 +252,7 @@ export class LassoService extends Tool {
             if (
                 Utils.segmentsDoIntersect(segment1, segment2) ||
                 this.segmentsAreConfused(adjacentSegment, segment2) ||
-                this.segmentsOutsideCanvas(segment2)
+                this.currentSegmentIntersectsCanvas(segment2)
             ) {
                 this.areIntesected = true;
                 break;
@@ -247,7 +262,7 @@ export class LassoService extends Tool {
         }
     }
 
-    private segmentsOutsideCanvas(currentSegment: Segment): boolean {
+    private currentSegmentIntersectsCanvas(currentSegment: Segment): boolean {
         const canvasSegments: Segment[] = [
             {
                 initial: { x: 0, y: 0 },
@@ -267,13 +282,18 @@ export class LassoService extends Tool {
             },
         ];
 
-        for (let i = 0; i < canvasSegments.length; i++) {
-            if (Utils.segmentsDoIntersect(currentSegment, canvasSegments[i])) {
+        for (const segment of canvasSegments) {
+            if (Utils.segmentsDoIntersect(currentSegment, segment)) {
                 this.areIntesected = true;
                 return true;
             }
         }
         return false;
+    }
+
+    private mouseClickOutsideCanvas(event: MouseEvent): boolean {
+        const position = this.getPositionFromMouse(event);
+        return position.x > this.drawingService.canvas.width || position.y > this.drawingService.canvas.height;
     }
 
     private clearCurrentSegment(): void {

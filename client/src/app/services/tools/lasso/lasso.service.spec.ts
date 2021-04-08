@@ -5,10 +5,10 @@ import { Segment, Utils } from '@app/classes/math-utils';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { LineService } from '../line/line.service';
-import { LassoService } from './lasso.service';
+import { LassoService } from '@app/services/tools/lasso/lasso.service';
+import { LineService } from '@app/services/tools/line/line.service';
 
-// tslint:disable
+//tslint:disable
 describe('LassoService', () => {
     let service: LassoService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -63,6 +63,12 @@ describe('LassoService', () => {
             button: MouseButton.Left,
         } as MouseEvent;
         service.mouseDown = true;
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
         service['shiftKeyDown'] = true;
         const drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
         service.onMouseMove(leftMouseEvent);
@@ -76,6 +82,12 @@ describe('LassoService', () => {
             button: MouseButton.Left,
         } as MouseEvent;
         service.mouseDown = true;
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
         service['shiftKeyDown'] = false;
         service.onMouseMove(leftMouseEvent);
         expect(lineServiceSpy.drawLine).toHaveBeenCalled();
@@ -88,6 +100,12 @@ describe('LassoService', () => {
             button: MouseButton.Left,
         } as MouseEvent;
         service.mouseDown = true;
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
         service['shiftKeyDown'] = true;
         const drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
         service.onMouseUp(leftMouseEvent);
@@ -101,6 +119,12 @@ describe('LassoService', () => {
             button: MouseButton.Left,
         } as MouseEvent;
         service.mouseDown = true;
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
         service['shiftKeyDown'] = false;
         service.onMouseUp(leftMouseEvent);
         expect(lineServiceSpy.drawLine).toHaveBeenCalled();
@@ -335,7 +359,7 @@ describe('LassoService', () => {
         };
         service['areIntesected'] = false;
         spyOn<any>(Utils, 'segmentsDoIntersect').and.callThrough();
-        const result = service['segmentsOutsideCanvas'](segment);
+        const result = service['currentSegmentIntersectsCanvas'](segment);
         expect(service['areIntesected']).toBeTrue();
         expect(result).toBeTrue();
     });

@@ -107,9 +107,9 @@ export class Utils {
         const dx = newOrigin.x - oldOrigin.x;
         const dy = newOrigin.y - oldOrigin.y;
 
-        for (const i in polygon) {
-            polygon[i].x = polygon[i].x + dx;
-            polygon[i].y = polygon[i].y + dy;
+        for (const point of polygon) {
+            point.x = point.x + dx;
+            point.y = point.y + dy;
         }
         return polygon;
     }

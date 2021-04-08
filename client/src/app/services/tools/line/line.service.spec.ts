@@ -155,7 +155,7 @@ describe('LineService', () => {
         service.onMouseUp(leftMouseEvent);
 
         expect(getPositionFromMouseSpy).toHaveBeenCalledWith(leftMouseEvent);
-        expect(drawLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, pathData);
+        expect(drawLineSpy).toHaveBeenCalled();
     });
 
     // it('should call drawConstrainedLine on base context when onMouseUp is called and shift key is pressed', () => {
@@ -190,7 +190,7 @@ describe('LineService', () => {
         drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
 
         service.onMouseMove(leftMouseEvent);
-        expect(drawLineSpy).toHaveBeenCalledWith(service['drawingService'].previewCtx, pathData);
+        expect(drawLineSpy).toHaveBeenCalled();
     });
 
     it('should call drawContrainedLine on preview context when onMouseMove is called and shift key is pressed', () => {
