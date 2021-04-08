@@ -10,6 +10,7 @@ import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-m
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ExportService } from '@app/services/export-image/export.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
@@ -48,6 +49,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         public dialog: MatDialog,
         private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
+        public exportService: ExportService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
@@ -248,6 +250,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             if (this.dialog.openDialogs.length === 0) {
                 if (key === 'g') {
                     this.dialog.open(component, { data: this.isCanvasBlank() });
+                }
+                if (key === 'e') {
+                    this.dialog.open(component, {});
+                    this.exportService.imagePrevisualization();
+                    this.exportService.initializeExportParams();
                 } else {
                     this.dialog.open(component, {});
                 }

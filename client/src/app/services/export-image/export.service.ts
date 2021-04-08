@@ -130,4 +130,11 @@ export class ExportService {
         const height = this.drawingService.baseCtx.canvas.height;
         return width / height;
     }
+
+    initializeExportParams(): void {
+        this.drawingTitle = 'dessin';
+        this.selectedFilter = FiltersList.None;
+        this.currentFilter = 'none';
+        this.currentImageFormat = 'png';
+    }
 }
