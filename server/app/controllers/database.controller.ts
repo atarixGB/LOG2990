@@ -41,6 +41,22 @@ export class DatabaseController {
                 .catch((error) => res.send(error));
         });
 
+        /**
+         * @swagger
+         *
+         * /api/database/drawings/filters/:tags?:
+         *   get:
+         *     description: Retourne les dessins filtrés
+         *     tags:
+         *       - Dessin
+         *       - Base de données
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       200:
+         *         schema:
+         *           $ref: '#/definitions/Message'
+         */
         this.router.get('/drawings/filters/:tags?', (req: Request, res: Response, next: NextFunction) => {
             const params = req.params.tags;
             this.databaseService.getDrawingByTags(params).then((results) => {
@@ -133,7 +149,7 @@ export class DatabaseController {
          * @swagger
          *
          * /api/database/drawings/:id:
-         *   get:
+         *   delete:
          *     description: Supprime de la base de données le dessin avec l'id spécifié en paramètre
          *     tags:
          *       - Base de données

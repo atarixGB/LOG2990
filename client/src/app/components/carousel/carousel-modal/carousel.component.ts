@@ -58,10 +58,15 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     async searchbyTags(): Promise<void> {
-        await this.indexService.searchByTags(this.tags).then((result) => {
-            this.imageCards = result;
-            this.updateImagePlacement();
-        });
+        await this.indexService
+            .searchByTags(this.tags)
+            .then((result) => {
+                this.imageCards = result;
+                this.updateImagePlacement();
+            })
+            .catch((error) => {
+                alert(`Un problème de connexion au serveur est survenu. Veuillez réessayer.\n ${error}`);
+            });
     }
 
     mod(n: number, m: number): number {
@@ -106,9 +111,14 @@ export class CarouselComponent implements AfterViewInit {
             parseUrl = parseUrl.split('/')[this.URL_POSITION].split('.')[0];
             return parseUrl;
         };
-        this.indexService.deleteDrawingById(path(this.mainDrawingURL)).then(() => {
-            this.getDrawings();
-        });
+        this.indexService
+            .deleteDrawingById(path(this.mainDrawingURL))
+            .then(() => {
+                this.getDrawings();
+            })
+            .catch((error) => {
+                alert(`Un problème avec le serveur est survenu. Le dessin n'a pas pu être supprimé. Veuillez réessayer.\nError ${error}`);
+            });
     }
 
     loadImage(): void {
