@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
 //tslint:disable
-fdescribe('TextService', () => {
+describe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     const mouseEventClick = {
@@ -76,7 +76,7 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
-    it('should put arrow on left of letter using arrow left', () => {
+    it('should put cursor on left of letter using arrow left', () => {
         service.isWriting = true;
         service['textInput'][0] = 'abc';
         service['cursorPosition'] = 1;
@@ -89,7 +89,25 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
-    it('should put arrow on right of letter using arrow right', () => {
+    it('should put cursor on end of upper line when arrow left is pressed at beginning of line', () => {
+        service.isWriting = true;
+        service['currentLine'] = 1;
+        service['textInput'][0] = 'abc';
+        service['textInput'][1] = 'def';
+        service['cursorPosition'] = 0;
+        service['totalLine'] = 2;
+        const keyEvent = new KeyboardEvent('keyup', { key: 'ArrowLeft' });
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
+        service.handleKeyUp(keyEvent);
+
+        expect(service['cursorPosition']).toBe(3);
+        expect(service['currentLine']).toBe(0);
+        expect(service['textInput'][service['currentLine']]).toEqual('abc|');
+        expect(spyWriteCanvas).toHaveBeenCalled();
+    });
+
+    it('should put cursor on right of letter using arrow right', () => {
         service.isWriting = true;
         service['textInput'][0] = 'abc';
         service['cursorPosition'] = 1;
@@ -102,7 +120,25 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
-    it('should put arrow on upper position when using arrow up', () => {
+    it('should put cursor on lower position and first letter when using arrow right end of line', () => {
+        service.isWriting = true;
+        service['currentLine'] = 0;
+        service['textInput'][0] = 'abc';
+        service['textInput'][1] = 'def';
+        service['cursorPosition'] = 3;
+        service['totalLine'] = 2;
+        const keyEvent = new KeyboardEvent('keyup', { key: 'ArrowRight' });
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
+        service.handleKeyUp(keyEvent);
+
+        expect(service['cursorPosition']).toBe(0);
+        expect(service['currentLine']).toBe(1);
+        expect(service['textInput'][service['currentLine']]).toEqual('|def');
+        expect(spyWriteCanvas).toHaveBeenCalled();
+    });
+
+    it('should put cursor on upper position when using arrow up', () => {
         service.isWriting = true;
         service['currentLine'] = 1;
         service['textInput'][0] = 'abc';
@@ -118,7 +154,7 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
-    it('should put arrow on lower position when using arrow down', () => {
+    it('should put cursor on lower position when using arrow down', () => {
         service.isWriting = true;
         service['textInput'][0] = 'abc';
         service['textInput'][1] = 'def';

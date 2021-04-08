@@ -117,15 +117,21 @@ export class TextService extends Tool {
             this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);
     }
     private handleArrowLeft(): void {
-        if (this.cursorPosition !== 0) {
+        if (this.currentLine !== 0 || this.cursorPosition !== 0) {
             this.textInput[this.currentLine] =
                 this.textInput[this.currentLine].substring(0, this.cursorPosition) +
                 this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-            this.cursorPosition--;
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                '|' +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            if (this.cursorPosition === 0) {
+                this.currentLine--;
+                this.cursorPosition = this.textInput[this.currentLine].length;
+                this.textInput[this.currentLine] = this.textInput[this.currentLine] + '|';
+            } else {
+                this.cursorPosition--;
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
         }
     }
 
@@ -171,15 +177,21 @@ export class TextService extends Tool {
         }
     }
     private handleArrowRight(): void {
-        if (this.cursorPosition !== this.textInput[this.currentLine].length) {
+        if (this.currentLine !== this.totalLine - 1 || this.cursorPosition !== this.textInput[this.currentLine].length - 1) {
             this.textInput[this.currentLine] =
                 this.textInput[this.currentLine].substring(0, this.cursorPosition) +
                 this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-            this.cursorPosition++;
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                '|' +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            if (this.cursorPosition === this.textInput[this.currentLine].length) {
+                this.currentLine++;
+                this.cursorPosition = 0;
+                this.textInput[this.currentLine] = '|' + this.textInput[this.currentLine];
+            } else {
+                this.cursorPosition++;
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
         }
     }
 
@@ -216,7 +228,7 @@ export class TextService extends Tool {
 
     write(): void {
         let isEmpty = true;
-        for (let line in this.textInput) {
+        for (const line in this.textInput) {
             if (line !== '') {
                 isEmpty = false;
             }
