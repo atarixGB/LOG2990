@@ -11,12 +11,12 @@ export abstract class ShapeService extends Tool {
     selectType: TypeStyle;
     isSelection: boolean;
     isShiftShape: boolean;
+    colorPrime: string;
+    colorSecond: string;
     protected fillValue: boolean;
     protected strokeValue: boolean;
     protected size: Vec2;
     protected origin: Vec2;
-    colorPrime: string;
-    colorSecond: string;
 
     constructor(drawingService: DrawingService, protected colorManager: ColorManagerService) {
         super(drawingService);
@@ -30,6 +30,14 @@ export abstract class ShapeService extends Tool {
         this.isShiftShape = false;
         this.size = { x: 0, y: 0 };
     }
+
+    abstract onMouseUp(event: MouseEvent): void;
+    abstract onMouseMove(event: MouseEvent): void;
+    abstract drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void;
+    abstract lowerLeft(path: Vec2[]): void;
+    abstract upperLeft(path: Vec2[]): void;
+    abstract upperRight(path: Vec2[]): void;
+    abstract lowerRight(path: Vec2[]): void;
 
     changeType(): void {
         switch (this.selectType) {
@@ -63,10 +71,6 @@ export abstract class ShapeService extends Tool {
         this.colorSecond = this.colorManager.selectedColor[ColorOrder.SecondaryColor].inString;
     }
 
-    abstract onMouseUp(event: MouseEvent): void;
-
-    abstract onMouseMove(event: MouseEvent): void;
-
     handleKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Shift' && this.mouseDown) {
             this.isShiftShape = true;
@@ -84,8 +88,6 @@ export abstract class ShapeService extends Tool {
             }
         }
     }
-
-    abstract drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void;
 
     protected updateBorderType(ctx: CanvasRenderingContext2D): void {
         const filling = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
@@ -132,11 +134,6 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    abstract lowerLeft(path: Vec2[]): void;
-    abstract upperLeft(path: Vec2[]): void;
-    abstract upperRight(path: Vec2[]): void;
-    abstract lowerRight(path: Vec2[]): void;
-
     protected computeSize(): void {
         if (this.pathData.length > 0) {
             this.size.x = this.pathData[this.pathData.length - 1].x - this.pathData[0].x;
@@ -147,6 +144,7 @@ export abstract class ShapeService extends Tool {
             throw new Error('No data in path');
         }
     }
+
     protected calculLeftpoint(startPoint: Vec2, endPoint: Vec2): Vec2 {
         let x = startPoint.x;
         let y = startPoint.y;

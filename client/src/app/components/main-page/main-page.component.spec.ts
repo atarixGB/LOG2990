@@ -5,7 +5,7 @@ import { MainPageComponent } from './main-page.component';
 
 //tslint:disable
 describe('MainPageComponent', () => {
-    let component: MainPageComponent;
+    // let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
 
     beforeEach(async(() => {
@@ -17,7 +17,7 @@ describe('MainPageComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(MainPageComponent);
-        component = fixture.componentInstance;
+        // component = fixture.componentInstance;
         fixture.detectChanges();
     });
 });
