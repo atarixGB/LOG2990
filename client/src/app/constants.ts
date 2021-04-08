@@ -155,3 +155,4 @@ export const DEFAULT_GRID_SIZE = 5;
 export const GRID_STEP = 5;
 export const DEFAULT_GRID_OPACITY = 10;
 export const MAX_PERCENT=100;
+export const SQUARE_STEP=5;

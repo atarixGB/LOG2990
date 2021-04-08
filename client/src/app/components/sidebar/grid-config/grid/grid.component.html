@@ -12,6 +12,7 @@
             min="5"
             max="200"
             step="5"
+            [value]="squareSize"
             [(ngModel)]="squareSize"
             (change)="changeGridSize(squareSize)"
         ></mat-slider>

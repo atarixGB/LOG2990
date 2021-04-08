@@ -6,6 +6,7 @@ import {
     MAX_GRID_SQUARE_SIZE,
     MIN_GRID_OPACITY,
     MIN_GRID_SQUARE_SIZE,
+    SQUARE_STEP,
     TWO_DECIMAL_MULTIPLIER,
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -39,6 +40,7 @@ export class GridComponent {
     }
 
     changeGridSize(newSize: number): void {
+        newSize = Number(newSize);
         this.drawingService.gridSpaces = newSize;
         this.squareSize = newSize;
         this.selectionService.setGridSpaces(this.squareSize);
@@ -58,10 +60,33 @@ export class GridComponent {
     }
 
     @HostListener('window:keydown.g')
-    gIsClicked(): void{
-        this.isEnabled=!this.isEnabled;
-        this.drawingService.isGridEnabled=this.isEnabled;
+    gIsClicked(): void {
+        this.isEnabled = !this.isEnabled;
+        this.drawingService.isGridEnabled = this.isEnabled;
         if (this.isEnabled) this.drawingService.setGrid();
         else this.drawingService.clearCanvas(this.drawingService.gridCtx);
     }
+
+    @HostListener('window:keydown.=')
+    @HostListener('window:keydown.shift.+')
+    increase(): void {
+        if (this.isEnabled && this.squareSize < MAX_GRID_SQUARE_SIZE) {
+            this.squareSize += SQUARE_STEP;
+            this.drawingService.gridSpaces=this.squareSize;
+            this.selectionService.setGridSpaces(this.squareSize);
+            this.drawingService.setGrid();
+            
+        }
+    }
+    @HostListener('window:keydown.-')
+    decrease(): void {
+        if (this.isEnabled && this.squareSize < MAX_GRID_SQUARE_SIZE) {
+            this.squareSize -= SQUARE_STEP;
+            this.drawingService.gridSpaces=this.squareSize;
+            this.selectionService.setGridSpaces(this.squareSize);
+            this.drawingService.setGrid();
+            
+        }
+    }
+   
 }
