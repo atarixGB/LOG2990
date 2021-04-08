@@ -64,7 +64,8 @@ export class ToolManagerService {
             .set('3', this.polygonService)
             .set('a', this.sprayService)
             .set('r', this.selectionService)
-            .set('s', this.selectionService);
+            .set('s', this.selectionService)
+           
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {

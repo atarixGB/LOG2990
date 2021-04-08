@@ -48,6 +48,8 @@ import { SelectionConfigComponent } from './components/sidebar/selection-config/
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+import { GridComponent } from './components/sidebar/grid-config/grid/grid.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
     declarations: [
@@ -80,6 +82,8 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         SaveDrawingModalComponent,
         CarouselComponent,
         CarouselDrawingComponent,
+        GridComponent,
+       
     ],
     imports: [
         BrowserModule,
@@ -105,6 +109,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         BrowserAnimationsModule,
         MatSidenavModule,
         MatProgressSpinnerModule,
+        MatCheckboxModule,
     ],
     entryComponents: [ColorPopupComponent, ColorPickerComponent],
     providers: [],
