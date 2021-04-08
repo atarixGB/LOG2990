@@ -78,17 +78,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
                     return throwError(error);
                 });
         });
-
-        window.onload = () => {
-            this.autoSaveService.loadImage();
-            const img: HTMLImageElement = new Image();
-            img.src = this.autoSaveService.localDrawing.body.replace(/^data:image\/\w+;base64,/, '');
-            console.log(img.src);
-            // console.log(this.autoSaveService.localDrawing.width, this.autoSaveService.localDrawing.height);
-            img.onload = () => {
-                this.baseCtx.drawImage(img, this.autoSaveService.localDrawing.width, this.autoSaveService.localDrawing.height);
-            };
-        };
     }
 
     ngAfterViewInit(): void {
@@ -102,6 +91,20 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.cursorCtx = this.cursorCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+
+        window.onload = () => {
+            this.autoSaveService.loadImage();
+            const img: HTMLImageElement = new Image();
+            const data = window.localStorage.getItem(this.autoSaveService.localName);
+            if (data) {
+                img.src = this.autoSaveService.localDrawing.body;
+                console.log(img.src);
+                img.onload = () => {
+                    this.baseCtx.drawImage(img, 0, 0, this.autoSaveService.localDrawing.width, this.autoSaveService.localDrawing.height);
+                    // this.canvasSize = { x: this.autoSaveService.localDrawing.width, y: this.autoSaveService.localDrawing.height };
+                };
+            }
+        };
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
@@ -173,8 +176,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             height: this.drawingService.canvas.height,
             body: this.drawingService.canvas.toDataURL(),
         };
+
         this.autoSaveService.saveCanvasState(drawing);
-        console.log(localStorage);
     }
 
     @HostListener('dblclick', ['$event'])
