@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import {
     DEFAULT_GRID_OPACITY,
     DEFAULT_GRID_SIZE,
@@ -55,5 +55,13 @@ export class GridComponent {
         if (this.isEnabled) {
             this.drawingService.setGrid();
         }
+    }
+
+    @HostListener('window:keydown.g')
+    gIsClicked(): void{
+        this.isEnabled=!this.isEnabled;
+        this.drawingService.isGridEnabled=this.isEnabled;
+        if (this.isEnabled) this.drawingService.setGrid();
+        else this.drawingService.clearCanvas(this.drawingService.gridCtx);
     }
 }

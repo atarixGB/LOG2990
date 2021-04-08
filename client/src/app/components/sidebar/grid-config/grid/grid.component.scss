@@ -13,9 +13,10 @@ hr {
     margin: 0;
 }
 
-mat-checkbox {
+mat-slide-toggle {
     margin: 0px 5px 5px 5px;
     border-color: lightyellow;
+    font-size: smaller;
 }
 
 .attributeContainer {
@@ -31,12 +32,7 @@ mat-checkbox {
     line-height: 20px;
 }
 
-.attributeContainer button {
-    width: 26px;
-    line-height: 20px;
-    margin-left: 5px;
-    cursor: pointer;
-}
+
 
 p {
     margin: 5px 0px 0px 0px;
@@ -51,9 +47,7 @@ hr {
     width: 100%;
 }
 
-.bottomBorder {
-    margin: 1em 0 0 0;
-}
+
 
 h3 {
     text-align: center;
