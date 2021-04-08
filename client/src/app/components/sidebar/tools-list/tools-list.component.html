@@ -50,8 +50,11 @@
       </button>
     </mat-grid-tile>
     <mat-grid-tile>
-      <button [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Sceau }" mat-icon-button
+      <button [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Sceau }" mat-icon-button <<<<<<< HEAD
         matTooltip="Sceau de peinture (B)" matTooltipPosition="above" (click)="onTool(ToolList.Sceau)" disabled="true">
+        =======
+        matTooltip="Sceau de peinture (A)" matTooltipPosition="above" (click)="onTool(ToolList.Sceau)" disabled="true">
+        >>>>>>> c8488dd0d158f0e7361c72f9dde93a254d6048c6
         <mat-icon>format_color_fill</mat-icon>
       </button>
     </mat-grid-tile>

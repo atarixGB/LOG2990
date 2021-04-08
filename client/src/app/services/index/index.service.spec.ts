@@ -74,7 +74,7 @@ describe('IndexService', () => {
         });
     });
 
-    it('should research by tags on array with no tag', async () => {
+    xit('should research by tags on array with no tag', async () => {
         let tags: string[] = [];
         const tagSpy = spyOn(indexService['http'], 'get').and.returnValue(of(Drawing));
         const getAllDrawingSpy = spyOn(indexService, 'getAllDrawings');
