@@ -6,7 +6,7 @@ import { MainPageComponent } from './main-page.component';
 
 //tslint:disable
 describe('MainPageComponent', () => {
-    // let component: MainPageComponent;
+    let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
 
     const dialogSpy = jasmine.createSpy('open');
@@ -14,19 +14,17 @@ describe('MainPageComponent', () => {
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
-            providers: [
-                { provide: MatDialog, useValue: { open: dialogSpy} },
-            ],
+            providers: [{ provide: MatDialog, useValue: { open: dialogSpy } }],
         }).compileComponents();
     }));
 
     beforeEach(() => {
         fixture = TestBed.createComponent(MainPageComponent);
-        // component = fixture.componentInstance;
+        component = fixture.componentInstance;
         fixture.detectChanges();
     });
 
     it('should be created', () => {
         expect(component).toBeTruthy();
-      });
+    });
 });

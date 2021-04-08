@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
 //tslint:disable
-describe('TextService', () => {
+fdescribe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     const mouseEventClick = {
@@ -280,33 +280,49 @@ describe('TextService', () => {
     it('applyAlign should get the selected align and assign to current align', () => {
         service.selectAlign = TextAlign.Center;
         const alignSpy = spyOn(service['alignBinding'], 'get').and.callThrough();
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
         service.changeAlign();
+
         expect(alignSpy).toHaveBeenCalled();
         expect(service.align).toEqual('center');
+        expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
     });
 
     it('applyEmphasis should get the selected emphasis and assign to current emphasis', () => {
         service.selectEmphasis = Emphasis.Bold;
         const emphasisSpy = spyOn(service['emphasisBinding'], 'get').and.callThrough();
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
         service.changeEmphasis();
+
         expect(emphasisSpy).toHaveBeenCalled();
         expect(service.emphasis).toEqual('bold');
+        expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
     });
 
     it('applyFont should get the selected font and assign to current font', () => {
         service.selectFont = Font.Impact;
         const fontSpy = spyOn(service['fontBinding'], 'get').and.callThrough();
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
         service.changeFont();
+
         expect(fontSpy).toHaveBeenCalled();
         expect(service.font).toEqual('Impact');
+        expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
     });
 
     it('applyAlign should get the selected align and assign to current align', () => {
         service.selectAlign = TextAlign.Center;
         const alignSpy = spyOn(service['alignBinding'], 'get').and.callThrough();
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
         service.changeAlign();
+
         expect(alignSpy).toHaveBeenCalled();
         expect(service.align).toEqual('center');
+        expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
     });
 
     it('shoud write on baseCtx', () => {

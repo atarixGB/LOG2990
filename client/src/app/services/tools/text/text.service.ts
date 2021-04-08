@@ -245,18 +245,21 @@ export class TextService extends Tool {
     changeFont(): void {
         if (this.fontBinding.has(this.selectFont)) {
             this.font = this.fontBinding.get(this.selectFont);
+            this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeEmphasis(): void {
         if (this.emphasisBinding.has(this.selectEmphasis)) {
             this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
+            this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeAlign(): void {
         if (this.alignBinding.has(this.selectAlign)) {
             this.align = this.alignBinding.get(this.selectAlign);
+            this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
