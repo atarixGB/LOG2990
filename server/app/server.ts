@@ -26,9 +26,9 @@ export class Server {
 
         try {
             await this.databaseService.start();
-            console.log('Database connection successful !');
+            console.log('Réussite de la connexion avec la base de données !');
         } catch {
-            console.error('Database connection failed !');
+            console.error('Échec de la connexion avec la base de données.');
             process.exit(1);
         }
     }

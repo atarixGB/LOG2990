@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SelectionConfigComponent } from './selection-config.component';
 
+// tslint:disable
 describe('SelectionConfigComponent', () => {
     let component: SelectionConfigComponent;
     let fixture: ComponentFixture<SelectionConfigComponent>;
