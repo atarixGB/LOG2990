@@ -3,14 +3,14 @@
 // Available : http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
-import { MAX_BYTE_VALUE, MAX_PERCENT, MAX_TOLERANCE_VALUE, MIN_TOLERANCE_VALUE, MouseButton, RGBA_COMPONENTS} from '@app/constants';
+import { MAX_BYTE_VALUE, MAX_PERCENT, MAX_TOLERANCE_VALUE, MIN_TOLERANCE_VALUE, MouseButton, RGBA_COMPONENTS } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { PaintBucket } from './../../../classes/paint';
 import { Vec2 } from './../../../classes/vec2';
 import { ColorOrder } from './../../../interfaces-enums/color-order';
-import { RGBA,RGBA_INDEX } from './../../../interfaces-enums/rgba';
+import { RGBA, RGBA_INDEX } from './../../../interfaces-enums/rgba';
 
 @Injectable({
     providedIn: 'root',
@@ -21,10 +21,11 @@ export class PaintBucketService extends Tool {
     minTolerance: number = MIN_TOLERANCE_VALUE;
     tolerance: number = this.minTolerance;
     mouseDownCoord: Vec2;
-    //rgba_index: RGBA;
     canvasData: ImageData;
     paintBucket: PaintBucket;
-    constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService) {
+    isContiguous: boolean;
+
+    constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
     }
 
@@ -33,35 +34,33 @@ export class PaintBucketService extends Tool {
         this.startPixelColor = this.drawingService.getPixelData(this.mouseDownCoord);
         if (event.button === MouseButton.Left) {
             this.drawingService.baseCtx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-            this.contiguousFill(); //method to enable bucket fill with contiguous pixels on left click
+            this.contiguousFill();
+            //method to enable bucket fill with contiguous pixels on left click
         } else if (event.button === MouseButton.Right) {
             this.fill(); //method to enable bucket to fill without contiguous pixels on right click
         }
-        
     }
     setToleranceValue(newTolerance: number): void {
         this.tolerance = newTolerance;
-        console.log('holaaa! changed tolerance');
     }
 
     fill(): void {
         const pixelData = this.drawingService.getPixelData(this.mouseDownCoord);
         const canvasData = this.drawingService.getCanvasData();
-
         const rgbaPrimaryColor: RGBA = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
-
-        let i;
-        for (i = 0; i < canvasData.data.length; i += RGBA_COMPONENTS) {
+        for (let i = 0; i < canvasData.data.length; i += RGBA_COMPONENTS) {
             if (this.ToleranceRangeVerification(pixelData, canvasData, i)) {
                 canvasData.data[i + RGBA_INDEX.RED] = rgbaPrimaryColor.Dec.Red;
                 canvasData.data[i + RGBA_INDEX.GREEN] = rgbaPrimaryColor.Dec.Green;
                 canvasData.data[i + RGBA_INDEX.BLUE] = rgbaPrimaryColor.Dec.Blue;
-                canvasData.data[i + RGBA_INDEX.ALPHA] = rgbaPrimaryColor.Dec.Alpha;
+                canvasData.data[i + RGBA_INDEX.ALPHA] = 255;
             }
         }
         this.canvasData = canvasData;
         this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
-       console.log('fill called');
+        this.isContiguous = false;
+        const paintBucket = new PaintBucket(this.isContiguous, this.canvasData);
+        this.undoRedoService.addToStack(paintBucket);
     }
 
     contiguousFill(): void {
@@ -81,7 +80,7 @@ export class PaintBucketService extends Tool {
                 canvasData.data[index + RGBA_INDEX.RED] = rgbaPrimaryColor.Dec.Red;
                 canvasData.data[index + RGBA_INDEX.GREEN] = rgbaPrimaryColor.Dec.Green;
                 canvasData.data[index + RGBA_INDEX.BLUE] = rgbaPrimaryColor.Dec.Blue;
-                canvasData.data[index + RGBA_INDEX.ALPHA] = rgbaPrimaryColor.Dec.Alpha;
+                canvasData.data[index + RGBA_INDEX.ALPHA] = 255;
                 coloredPixels.set(this.vec2ToString(selectedPixel), true);
                 if (selectedPixel.y - 1 >= 0) {
                     stackPos.push({ x: selectedPixel.x, y: selectedPixel.y - 1 });
@@ -98,8 +97,10 @@ export class PaintBucketService extends Tool {
             }
         }
         this.canvasData = canvasData;
+        this.isContiguous = true;
+        const paintBucket = new PaintBucket(this.isContiguous, this.canvasData);
+        this.undoRedoService.addToStack(paintBucket);
         this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
-       console.log('contiguous fill called');
     }
 
     vec2ToString(pixel: Vec2): string {
