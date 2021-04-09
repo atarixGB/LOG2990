@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MAX_PERCENT } from './../../constants';
+import { MAX_PERCENT } from '@app/constants';
 
 @Injectable({
     providedIn: 'root',

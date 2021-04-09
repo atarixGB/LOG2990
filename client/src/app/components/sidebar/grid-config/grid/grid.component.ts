@@ -72,21 +72,18 @@ export class GridComponent {
     increase(): void {
         if (this.isEnabled && this.squareSize < MAX_GRID_SQUARE_SIZE) {
             this.squareSize += SQUARE_STEP;
-            this.drawingService.gridSpaces=this.squareSize;
+            this.drawingService.gridSpaces = this.squareSize;
             this.selectionService.setGridSpaces(this.squareSize);
             this.drawingService.setGrid();
-            
         }
     }
     @HostListener('window:keydown.-')
     decrease(): void {
         if (this.isEnabled && this.squareSize < MAX_GRID_SQUARE_SIZE) {
             this.squareSize -= SQUARE_STEP;
-            this.drawingService.gridSpaces=this.squareSize;
+            this.drawingService.gridSpaces = this.squareSize;
             this.selectionService.setGridSpaces(this.squareSize);
             this.drawingService.setGrid();
-            
         }
     }
-   
 }
