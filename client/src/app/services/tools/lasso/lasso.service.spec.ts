@@ -8,7 +8,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LassoService } from '@app/services/tools/lasso/lasso.service';
 import { LineService } from '@app/services/tools/line/line.service';
 
-//tslint:disable
+// tslint:disable
 describe('LassoService', () => {
     let service: LassoService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -56,6 +56,36 @@ describe('LassoService', () => {
         expect(service['currentSegment'].length).toEqual(1);
     });
 
+    it('should NOT add mouseDownCoord to current segment if isOutside attribute is true', () => {
+        const leftMouseEvent = {
+            x: 25,
+            y: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service['isOutside'] = true;
+
+        service.onMouseClick(leftMouseEvent);
+        expect(service['currentSegment'].length).toEqual(0);
+    });
+
+    it('should set areIntersected attribute to false if currentSegment is outside canvas', () => {
+        const leftMouseEvent = {
+            x: 25,
+            y: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service.mouseDown = true;
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+        spyOn<any>(service, 'currentSegmentIntersectsCanvas').and.returnValue(false);
+        service.onMouseMove(leftMouseEvent);
+        expect(service['areIntesected']).toBeFalse();
+    });
+
     it('should draw constrained line on preview context if Shift key is pressed', () => {
         const leftMouseEvent = {
             x: 25,
@@ -91,6 +121,19 @@ describe('LassoService', () => {
         service['shiftKeyDown'] = false;
         service.onMouseMove(leftMouseEvent);
         expect(lineServiceSpy.drawLine).toHaveBeenCalled();
+    });
+
+    it('should set isOutside attribute to true if mouse position is outside canvas', () => {
+        const leftMouseEvent = {
+            x: 200,
+            y: 200,
+            button: MouseButton.Left,
+        } as MouseEvent;
+        service['isOutside'] = false;
+        service['areIntesected'] = false;
+        spyOn<any>(service, 'mouseClickOutsideCanvas').and.returnValue(true);
+        service.onMouseUp(leftMouseEvent);
+        expect(service['isOutside']).toBeTrue();
     });
 
     it('should draw constrained line on lassoPreview context if Shift key is pressed', () => {

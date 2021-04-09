@@ -73,33 +73,34 @@ export class Utils {
         return Math.sqrt(dx * dx + dy * dy) <= radius;
     }
 
-    static pointInPolygon(point: Vec2, polygon: Vec2[]): boolean {
-        const rayCastingLine: Vec2 = { x: INFINITY, y: point.y };
-        let count = 0;
-        let i = 0;
-        let isInside: boolean;
+    static pointInPolygon(p: Vec2, polygon: Vec2[]): boolean {
+        let isInside = false;
+        let minX = polygon[0].x;
+        let maxX = polygon[0].x;
+        let minY = polygon[0].y;
+        let maxY = polygon[0].y;
 
-        do {
-            const next = (i + 1) % polygon.length;
-            const segment1 = {
-                initial: { x: polygon[i].x, y: polygon[i].y },
-                final: { x: polygon[next].x, y: polygon[next].y },
-            };
-            const segment2 = {
-                initial: { x: point.x, y: point.y },
-                final: { x: rayCastingLine.x, y: point.y },
-            };
+        for (let i = 1; i < polygon.length; i++) {
+            let q = polygon[i];
+            minX = Math.min(q.x, minX);
+            maxX = Math.max(q.x, maxX);
+            minY = Math.min(q.y, minY);
+            maxY = Math.max(q.y, maxY);
+        }
 
-            if (Utils.segmentsDoIntersect(segment1, segment2)) {
-                if (Utils.findOrientation(segment1.initial, point, segment1.final) === 0) {
-                    return Utils.pointOnSegment(segment1.initial, point, segment1.final);
-                }
-                count = count + 1;
+        if (p.x < minX || p.x > maxX || p.y < minY || p.y > maxY) {
+            return false;
+        }
+
+        for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            if (
+                polygon[i].y > p.y != polygon[j].y > p.y &&
+                p.x < ((polygon[j].x - polygon[i].x) * (p.y - polygon[i].y)) / (polygon[j].y - polygon[i].y) + polygon[i].x
+            ) {
+                isInside = !isInside;
             }
-            i = next;
-        } while (i !== 0);
+        }
 
-        isInside = count % 2 === 1;
         return isInside;
     }
 

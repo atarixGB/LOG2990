@@ -173,7 +173,7 @@ describe('MathUtils', () => {
         ];
         let pointToTest: Vec2 = { x: 10, y: 5 };
         const result = Utils.pointInPolygon(pointToTest, polygonCoords);
-        expect(result).toBeTrue();
+        expect(result).toBeFalse();
     });
 
     it('should translate square diagonally if dx and dy increase', () => {

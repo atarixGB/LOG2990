@@ -220,6 +220,7 @@ export class LassoService extends Tool {
     private redrawPreviousState(): void {
         this.clearCurrentSegment();
         this.drawingService.clearCanvas(this.drawingService.lassoPreviewCtx);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.polygonCoords.pop();
         for (let i = 1; i < this.polygonCoords.length; i++) {
             const segment: Vec2[] = [
