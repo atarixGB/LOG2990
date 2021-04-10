@@ -153,8 +153,11 @@ export enum StampList {
     Heart = 0,  
     Star = 1,   
     Hand = 2,   
-    Paw = 3,    
+    Crown = 3,    
     Smiley = 4, 
 }
 
-export const DEFAULT_STAMP_SIZE = 10;
+export const SCALE_FACTOR_STAMP = 2;
+export const ROTATION_STEP_STAMP = 15;
+export const MAX_ANGLE = 360;
+export const ANGLE_HALF_TURN = 180;
