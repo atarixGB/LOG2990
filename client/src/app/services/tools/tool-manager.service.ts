@@ -69,7 +69,6 @@ export class ToolManagerService {
             .set('r', this.selectionService)
             .set('s', this.selectionService)
             .set('d', this.stampService);
-
     }
 
     private getEnumFromMap(map: Map<ToolList, Tool>, searchValue: Tool | undefined): ToolList | undefined {
@@ -140,6 +139,10 @@ export class ToolManagerService {
 
     onMouseLeave(event: MouseEvent): void {
         if (this.currentTool) this.currentTool.onMouseLeave(event);
+    }
+
+    onWheel(event: WheelEvent): void {
+        if (this.currentTool) this.currentTool.onWheelEvent(event);
     }
 
     handleKeyUp(event: KeyboardEvent): void {
