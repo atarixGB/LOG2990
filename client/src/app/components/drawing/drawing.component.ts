@@ -94,16 +94,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
         window.onload = () => {
             this.autoSaveService.loadImage();
-            const img: HTMLImageElement = new Image();
-            const data = window.localStorage.getItem(this.autoSaveService.localName);
-            if (data) {
-                img.src = this.autoSaveService.localDrawing.body;
-                console.log(img.src);
-                img.onload = () => {
-                    this.baseCtx.drawImage(img, 0, 0, this.autoSaveService.localDrawing.width, this.autoSaveService.localDrawing.height);
-                    // this.canvasSize = { x: this.autoSaveService.localDrawing.width, y: this.autoSaveService.localDrawing.height };
-                };
-            }
         };
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
@@ -156,6 +146,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         const ELEMENT = event.target as HTMLElement;
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseUp(event, this.mouseCoord(event));
+            const drawing: DrawingData = {
+                title: '',
+                width: this.drawingService.canvas.width,
+                height: this.drawingService.canvas.height,
+                body: this.drawingService.canvas.toDataURL(),
+            };
+            this.autoSaveService.saveCanvasState(drawing);
         }
     }
 
@@ -169,15 +166,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseClick(event);
         }
-
-        const drawing: DrawingData = {
-            title: '',
-            width: this.drawingService.canvas.width,
-            height: this.drawingService.canvas.height,
-            body: this.drawingService.canvas.toDataURL(),
-        };
-
-        this.autoSaveService.saveCanvasState(drawing);
     }
 
     @HostListener('dblclick', ['$event'])

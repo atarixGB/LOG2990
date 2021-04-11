@@ -35,5 +35,6 @@ export class MainPageComponent implements OnInit {
 
     continueDrawing(): void {
         this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor']));
+        this.autoSaveService.loadImage();
     }
 }

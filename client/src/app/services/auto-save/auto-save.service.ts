@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DrawingData } from '@common/communication/drawing-data';
 
 @Injectable({
@@ -9,9 +10,8 @@ export class AutoSaveService {
     localDrawing: DrawingData;
     isEmpty: boolean;
 
-    constructor() {
+    constructor(private drawingService: DrawingService) {
         this.localDrawing = new DrawingData();
-        console.log('local storage empty?', this.localStorageIsEmpty());
     }
 
     saveCanvasState(drawing: DrawingData): void {
@@ -20,8 +20,14 @@ export class AutoSaveService {
 
     loadImage(): void {
         const lastAutoSavedDrawing = window.localStorage.getItem(this.localName);
+        const img: HTMLImageElement = new Image();
+
         if (lastAutoSavedDrawing) {
             this.localDrawing = JSON.parse(lastAutoSavedDrawing) as DrawingData;
+            img.src = this.localDrawing.body;
+            img.onload = () => {
+                this.drawingService.baseCtx.drawImage(img, 0, 0, this.localDrawing.width, this.localDrawing.height);
+            };
         }
     }
 
