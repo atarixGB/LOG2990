@@ -11,6 +11,7 @@ import {
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { TextService } from '@app/services/tools/text/text.service';
 
 @Component({
     selector: 'app-grid',
@@ -26,7 +27,7 @@ export class GridComponent {
     squareSize: number = DEFAULT_GRID_SIZE;
     currentOpacity: number = DEFAULT_GRID_OPACITY;
 
-    constructor(public drawingService: DrawingService, public selectionService: SelectionService) {
+    constructor(public drawingService: DrawingService, public selectionService: SelectionService, private textService: TextService) {
         this.drawingService.gridSpaces = this.squareSize;
         this.selectionService.setGridSpaces(this.squareSize);
         this.drawingService.gridOpacity = this.currentOpacity;
@@ -61,10 +62,12 @@ export class GridComponent {
 
     @HostListener('window:keydown.g')
     gIsClicked(): void {
-        this.isEnabled = !this.isEnabled;
-        this.drawingService.isGridEnabled = this.isEnabled;
-        if (this.isEnabled) this.drawingService.setGrid();
-        else this.drawingService.clearCanvas(this.drawingService.gridCtx);
+        if (!this.textService.isWriting) {
+            this.isEnabled = !this.isEnabled;
+            this.drawingService.isGridEnabled = this.isEnabled;
+            if (this.isEnabled) this.drawingService.setGrid();
+            else this.drawingService.clearCanvas(this.drawingService.gridCtx);
+        }
     }
 
     @HostListener('window:keydown.=')
