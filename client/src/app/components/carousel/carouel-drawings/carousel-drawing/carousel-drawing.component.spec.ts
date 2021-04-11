@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CarouselDrawingComponent } from './carousel-drawing.component';
 
 // tslint:disable
-fdescribe('CarouselDrawingComponent', () => {
+describe('CarouselDrawingComponent', () => {
     let component: CarouselDrawingComponent;
     let fixture: ComponentFixture<CarouselDrawingComponent>;
 

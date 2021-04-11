@@ -89,8 +89,8 @@ export class TextService extends Tool {
 
     write(): void {
         let isEmpty = true;
-        for (let i=0;i<this.textInput.length;i++) {
-            if (this.textInput[i] !== '') {
+        for (let line of this.textInput) {
+            if (line !== '') {
                 isEmpty = false;
             }
         }
@@ -124,7 +124,7 @@ export class TextService extends Tool {
         }
     }
 
-    changeSize():void{
+    changeSize(): void {
         this.writeOnCanvas(CanvasType.previewCtx);
     }
 
@@ -178,7 +178,7 @@ export class TextService extends Tool {
     }
 
     private handleBackspace(): void {
-        if (this.cursorPosition !== 0 ) {
+        if (this.cursorPosition !== 0) {
             this.textInput[this.currentLine] =
                 this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
                 this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);

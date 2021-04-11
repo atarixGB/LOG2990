@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
 //tslint:disable
-fdescribe('TextService', () => {
+describe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     const mouseEventClick = {
