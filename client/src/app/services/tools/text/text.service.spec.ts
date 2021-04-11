@@ -507,4 +507,12 @@ fdescribe('TextService', () => {
         expect(spyAddCharacter).not.toHaveBeenCalled();
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
+
+    it('should update preview canvas when change size', () => {
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
+        service.changeSize();
+
+        expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
+    });
 });
