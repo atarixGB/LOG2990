@@ -156,3 +156,16 @@ export const GRID_STEP = 5;
 export const DEFAULT_GRID_OPACITY = 10;
 export const MAX_PERCENT = 100;
 export const SQUARE_STEP = 5;
+
+// constants for magnetism
+export enum SelectionBox {
+    TopLeft = 1,
+    TopRight = 2,
+    BottomRight = 3,
+    BottomLeft = 4,
+    TopMiddle = 5,
+    BottomMiddle = 6,
+    LeftMiddle = 7,
+    RightMiddle = 8,
+    Center = 9,
+}
