@@ -69,14 +69,22 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
-            const path = params.url;
-            this.getNewImage(path)
-                .then((img) => {
-                    this.baseCtx.drawImage(img, 0, 0);
-                })
-                .catch((error) => {
-                    return throwError(error);
-                });
+            if (params.url) {
+                const path = params.url;
+                this.getNewImage(path)
+                    .then((img) => {
+                        this.baseCtx.drawImage(img, 0, 0);
+                    })
+                    .catch((error) => {
+                        return throwError(error);
+                    });
+            }
+            // console.log(params.height, params.width);
+
+            // if (params.height && params.width) {
+            //     this.canvasSize.x = params.width;
+            //     this.canvasSize.y = params.height;
+            // }
         });
     }
 
@@ -92,17 +100,31 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.drawingService.cursorCtx = this.cursorCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
 
-        window.onload = () => {
-            this.autoSaveService.loadImage();
-        };
-
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
+
+        window.onload = () => {
+            this.autoSaveService.loadImage();
+            this.canvasSize.x = this.autoSaveService.localDrawing.width;
+            this.canvasSize.y = this.autoSaveService.localDrawing.height;
+        };
+
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
+    }
+
+    ngOnChanges(): void {
+        this.route.params.subscribe((params) => {
+            console.log(params.height, params.width);
+
+            if (params.height && params.width) {
+                this.canvasSize.x = params.width;
+                this.canvasSize.y = params.height;
+            }
+        });
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
