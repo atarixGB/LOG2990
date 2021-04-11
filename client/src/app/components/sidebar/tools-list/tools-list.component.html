@@ -74,6 +74,12 @@
       </button>
     </mat-grid-tile>
     <mat-grid-tile>
+      <button [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Text }" mat-icon-button
+        matTooltip="Texte (T)" matTooltipPosition="above" (click)="onTool(ToolList.Text)">
+        <mat-icon>title</mat-icon>
+      </button>
+    </mat-grid-tile>
+    <mat-grid-tile>
       <button mat-icon-button matTooltip="Annuler (Ctrl+Z)" matTooltipPosition="above" (click)="undo()"
         [disabled]="!undoRedoService.canUndo()">
         <mat-icon>undo</mat-icon>
