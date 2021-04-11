@@ -68,6 +68,19 @@ describe('LassoService', () => {
         expect(service['currentSegment'].length).toEqual(0);
     });
 
+    it('should NOT draw line at all on previewCtx if left mouse button was not down', () => {
+        const righttMouseEvent = {
+            x: 25,
+            y: 25,
+            button: MouseButton.Right,
+        } as MouseEvent;
+        service.onMouseMove(righttMouseEvent);
+        const drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
+        lineServiceSpy.drawLine.and.stub();
+        expect(drawConstrainedLineSpy).not.toHaveBeenCalled();
+        expect(lineServiceSpy.drawLine).not.toHaveBeenCalled();
+    });
+
     it('should set areIntersected attribute to false if currentSegment is outside canvas', () => {
         const leftMouseEvent = {
             x: 25,
@@ -153,6 +166,19 @@ describe('LassoService', () => {
         const drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
         service.onMouseUp(leftMouseEvent);
         expect(drawConstrainedLineSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT draw line at all on lassoPreviewCtx if left mouse button was not down', () => {
+        const righttMouseEvent = {
+            x: 25,
+            y: 25,
+            button: MouseButton.Right,
+        } as MouseEvent;
+        service.onMouseUp(righttMouseEvent);
+        const drawConstrainedLineSpy = spyOn<any>(service, 'drawConstrainedLine').and.stub();
+        lineServiceSpy.drawLine.and.stub();
+        expect(drawConstrainedLineSpy).not.toHaveBeenCalled();
+        expect(lineServiceSpy.drawLine).not.toHaveBeenCalled();
     });
 
     it('should draw normal line on lassoPreview context if Shift key is up', () => {
@@ -324,6 +350,15 @@ describe('LassoService', () => {
         expect(service['shiftKeyDown']).toBeTrue();
     });
 
+    it('should NOT set shiftKeyDown attribute to true if Shift key is not pressed', () => {
+        service['shiftKeyDown'] = false;
+        const otherKeyEvent = new KeyboardEvent('keyup', {
+            key: 'Escape',
+        });
+        service.handleKeyUp(otherKeyEvent);
+        expect(service['shiftKeyDown']).toBeFalse();
+    });
+
     it('should set shiftKeyDown attribute to false if Shift key is up', () => {
         service['shiftKeyDown'] = true;
         const shiftKeyEvent = new KeyboardEvent('keyup', {
@@ -427,5 +462,31 @@ describe('LassoService', () => {
         ];
         service['clearPolygonCoords']();
         expect(service.polygonCoords.length).toEqual(0);
+    });
+
+    it('should NOT draw constrained line if closestPoint is not defined', () => {
+        const lefttMouseEvent = {
+            x: 25,
+            y: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+
+        service.polygonCoords = [
+            { x: 0, y: 0 },
+            { x: 1, y: 1 },
+            { x: 2, y: 2 },
+            { x: 3, y: 3 },
+        ];
+        const styles: DrawingContextStyle = {
+            strokeStyle: 'black',
+            fillStyle: 'black',
+            lineWidth: 1,
+        } as DrawingContextStyle;
+
+        lineServiceSpy.calculatePosition.and.returnValue(undefined);
+        service['drawConstrainedLine'](service['drawingService'].baseCtx, service.polygonCoords, styles, lefttMouseEvent);
+        expect(previewCtxSpy.moveTo).not.toHaveBeenCalled();
+        expect(previewCtxSpy.lineTo).not.toHaveBeenCalled();
+        expect(previewCtxSpy.stroke).not.toHaveBeenCalled();
     });
 });
