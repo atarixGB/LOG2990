@@ -10,7 +10,7 @@ import {
     DEFAULT_TEXT_SIZE,
     Emphasis,
     Font,
-    TextAlign,
+    TextAlign
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
@@ -104,7 +104,7 @@ export class TextService extends Tool {
     }
 
     private handleBackspace(): void {
-        if (this.cursorPosition !== 0 || (this.cursorPosition !== 0 && this.currentLine !== 0)) {
+        if (this.cursorPosition !== 0 ) {
             this.textInput[this.currentLine] =
                 this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
                 this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
@@ -228,8 +228,8 @@ export class TextService extends Tool {
 
     write(): void {
         let isEmpty = true;
-        for (const line in this.textInput) {
-            if (line !== '') {
+        for (let i=0; i<this.textInput.length; i++) {
+            if (this.textInput[i] !== '') {
                 isEmpty = false;
             }
         }
