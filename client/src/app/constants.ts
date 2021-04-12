@@ -150,14 +150,14 @@ export const ZOOM_RATIO = 0.2;
 
 // constants for stamp
 export enum StampList {
-    Heart = 0,  
-    Star = 1,   
-    Hand = 2,   
-    Crown = 3,    
-    Smiley = 4, 
+    Surprised = 0,  
+    Happy = 1,   
+    Sad = 2,   
+    Glasses = 3,    
+    Dead = 4, 
 }
 
-export const SCALE_FACTOR_STAMP = 2;
+export const SCALE_FACTOR_STAMP = 10;
 export const ROTATION_STEP_STAMP = 15;
 export const MAX_ANGLE = 360;
 export const ANGLE_HALF_TURN = 180;

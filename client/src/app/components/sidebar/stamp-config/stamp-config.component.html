@@ -1,14 +1,13 @@
-<h4>size: {{ stampService.size }} </h4>
-<mat-slider thumbLabel value = "textService.size" tickInterval="1000" min="1" max="10" [(ngModel)]="stampService.size"></mat-slider>
+<mat-slider thumbLabel min="1" max="10" [(ngModel)]="stampService.resizeFactor"></mat-slider>
 
 <mat-form-field>
     <mat-label>Étampe</mat-label>
     <mat-select class="white" value = "stampService.currentStamp" [(ngModel)]="stampService.selectStamp" (selectionChange)="stampService.changeStamp()">
-      <mat-option [value] = "StampList.Heart">Coeur</mat-option>
-      <mat-option [value] ="StampList.Star">Étoile</mat-option>
-      <mat-option [value] ="StampList.Hand">Main</mat-option>
-      <mat-option [value] ="StampList.Crown">Couronne</mat-option>
-      <mat-option [value] ="StampList.Smiley">Sourire</mat-option>
+      <mat-option [value] = "StampList.Surprised">Surprised</mat-option>
+      <mat-option [value] ="StampList.Happy">Heureux</mat-option>
+      <mat-option [value] ="StampList.Sad">Triste</mat-option>
+      <mat-option [value] ="StampList.Glasses">Lunette</mat-option>
+      <mat-option [value] ="StampList.Dead">Mort</mat-option>
     </mat-select>
   </mat-form-field>
 
