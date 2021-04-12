@@ -60,7 +60,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Polygon }"
                 mat-icon-button
-                matTooltip="Polygon (P)"
+                matTooltip="Polygone (3)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.Polygon)"
             >
@@ -91,12 +91,11 @@
         </mat-grid-tile>
         <mat-grid-tile>
             <button
-                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Sceau }"
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.PaintBucket }"
                 mat-icon-button
-                matTooltip="Sceau de peinture (A)"
+                matTooltip="Sceau de peinture (B)"
                 matTooltipPosition="above"
-                (click)="onTool(ToolList.Sceau)"
-                disabled="true"
+                (click)="onTool(ToolList.PaintBucket)"
             >
                 <mat-icon>format_color_fill</mat-icon>
             </button>
@@ -105,7 +104,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.SelectionRectangle }"
                 mat-icon-button
-                matTooltip="Selection Rectangle (R)"
+                matTooltip="Sélection Rectangle (R)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.SelectionRectangle)"
             >
@@ -116,7 +115,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.SelectionEllipse }"
                 mat-icon-button
-                matTooltip="Selection Ellipse (S)"
+                matTooltip="Sélection Ellipse (S)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.SelectionEllipse)"
             >
@@ -127,10 +126,9 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Lasso }"
                 mat-icon-button
-                matTooltip="Lasso polygonal (L)"
+                matTooltip="Lasso polygonal (V)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.Lasso)"
-                disabled="true"
             >
                 <mat-icon>signal_cellular_connected_no_internet_0_bar</mat-icon>
             </button>
@@ -139,7 +137,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Text }"
                 mat-icon-button
-                matTooltip="Text (T)"
+                matTooltip="Texte (T)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.Text)"
             >

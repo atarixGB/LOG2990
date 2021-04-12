@@ -3,7 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SelectionService } from './selection.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 const DX = 3;
 const DY = 3;
@@ -44,15 +44,15 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.selectionService.imageMoved = true;
-
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
+            this.selectionService.imageMoved = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.moveSelectionMouse(this.drawingService.previewCtx);
