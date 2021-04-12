@@ -158,10 +158,15 @@ export class TextService extends Tool {
                 this.textInput[this.currentLine].substring(0, this.cursorPosition) +
                 this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
             this.currentLine++;
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                '|' +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            if (this.textInput[this.currentLine] === '') {
+                this.textInput[this.currentLine] = '|';
+                this.cursorPosition = 0;
+            } else {
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
         }
     }
     private handleArrowUp(): void {
@@ -170,10 +175,15 @@ export class TextService extends Tool {
                 this.textInput[this.currentLine].substring(0, this.cursorPosition) +
                 this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
             this.currentLine--;
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                '|' +
-                this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            if (this.textInput[this.currentLine] === '') {
+                this.textInput[this.currentLine] = '|';
+                this.cursorPosition = 0;
+            } else {
+                this.textInput[this.currentLine] =
+                    this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
         }
     }
     private handleArrowRight(): void {
