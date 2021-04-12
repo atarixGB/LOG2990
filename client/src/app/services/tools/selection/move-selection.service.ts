@@ -1,4 +1,3 @@
-import { Size } from './../../../interfaces-enums/size';
 import { MagnetismService } from './magnetism.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Tool } from '@app/classes/tool';
