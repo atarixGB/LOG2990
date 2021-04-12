@@ -70,7 +70,6 @@ export class ColorManagerService {
     }
 
     updatePixelColor(colorOrder: ColorOrder, colorPixel: Uint8ClampedArray): void {
-        console.log('colorPixel');
         this.selectedColor[colorOrder].Dec.Red = colorPixel[0];
         this.selectedColor[colorOrder].Dec.Green = colorPixel[1];
         this.selectedColor[colorOrder].Dec.Blue = colorPixel[2];
