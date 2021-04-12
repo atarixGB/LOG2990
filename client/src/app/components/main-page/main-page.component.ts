@@ -1,6 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { CarouselComponent } from '@app/components/carousel/carousel-modal/carousel.component';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 
@@ -13,7 +12,7 @@ export class MainPageComponent implements OnInit {
     readonly title: string = 'Poly-Dessin';
     isDisabled: boolean;
 
-    constructor(public dialog: MatDialog, private router: Router, private autoSaveService: AutoSaveService) {
+    constructor(public dialog: MatDialog, private autoSaveService: AutoSaveService) {
         this.isDisabled = true;
     }
 
@@ -34,11 +33,15 @@ export class MainPageComponent implements OnInit {
     }
 
     continueDrawing(): void {
-        const params = {
-            width: this.autoSaveService.localDrawing.width,
-            height: this.autoSaveService.localDrawing.height,
-        };
-        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
+        // const params = {
+        //     width: this.autoSaveService.localDrawing.width,
+        //     height: this.autoSaveService.localDrawing.height,
+        // };
+        // this.router.navigate(['editor', params]);
         this.autoSaveService.loadImage();
+        window.location.replace('http://localhost:4200/editor');
+
+        // this.router.navigate(['/'], { skipLocationChange: true }).then(() => {
+        // });
     }
 }
