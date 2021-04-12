@@ -6,6 +6,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorSliderComponent } from './color-slider.component';
 
+// tslint:disable
 describe('ColorSliderComponent', () => {
     let component: ColorSliderComponent;
     let fixture: ComponentFixture<ColorSliderComponent>;

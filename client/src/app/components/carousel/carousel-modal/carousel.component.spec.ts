@@ -87,7 +87,7 @@ describe('CarouselComponent', () => {
     it('should change isCanvaEmpty to true when null', () => {
         component.isCanvaEmpty = null!;
         component.loadImage();
-        expect(component.isCanvaEmpty).toBeTruthy;
+        expect(component.isCanvaEmpty).toBeTrue();
     });
 
     it('should update images when next', () => {

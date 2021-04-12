@@ -7,6 +7,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPaletteComponent } from './color-palette.component';
 
+// tslint:disable
 describe('ColorPaletteComponent', () => {
     let component: ColorPaletteComponent;
     let fixture: ComponentFixture<ColorPaletteComponent>;

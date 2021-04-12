@@ -3,7 +3,10 @@ mat-label {
     margin-top: 60px;
 }
 
-div{
-    
+div {
     margin-bottom: 30px;
+}
+
+::ng-deep .white .mat-select-value {
+    color: rgb(247, 247, 247);
 }

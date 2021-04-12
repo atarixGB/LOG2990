@@ -15,7 +15,7 @@ import { MoveSelectionService } from '@app/services/tools/selection/move-selecti
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { Subscription } from 'rxjs';
+import { Subscription, throwError } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
@@ -25,12 +25,14 @@ import { Subscription } from 'rxjs';
 export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
 
     dragPosition: Vec2 = { x: 0, y: 0 };
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
+    private gridCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
     private currentDrawing: ImageData;
@@ -55,6 +57,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.drawingService.gridCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.whiteBackgroundCanvas();
             }
         });
@@ -67,9 +70,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
             const path = params.url;
-            this.getNewImage(path).then((img) => {
-                this.baseCtx.drawImage(img, 0, 0);
-            });
+            this.getNewImage(path)
+                .then((img) => {
+                    this.baseCtx.drawImage(img, 0, 0);
+                })
+                .catch((error) => {
+                    return throwError(error);
+                });
         });
     }
 
@@ -80,10 +87,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.cursorCtx = this.cursorCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
@@ -138,6 +148,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     }
 
+    onMouseLeave(event: MouseEvent): void {
+        this.toolManagerService.onMouseLeave(event);
+    }
+
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         const ELEMENT = event.target as HTMLElement;
@@ -149,10 +163,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     @HostListener('dblclick', ['$event'])
     onMouseDoubleClick(event: MouseEvent): void {
         this.toolManagerService.onMouseDoubleClick(event);
-    }
-
-    onMouseLeave(event: MouseEvent): void {
-        this.toolManagerService.onMouseLeave(event);
     }
 
     @HostListener('document:keyup', ['$event'])
@@ -169,43 +179,17 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
-            event.preventDefault();
-            this.undoRedoService.undo();
-        }
-
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.code === 'KeyZ' &&
-            this.undoRedoService.canRedo() &&
-            !this.toolManagerService.currentTool?.mouseDown
-        ) {
-            event.preventDefault();
-            this.undoRedoService.redo();
-        }
-
-        if (event.ctrlKey && event.key === 'a') {
-            event.preventDefault();
-            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
-            this.selectionService.selectAll();
-            return;
-        }
-
-        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                this.moveSelectionService.handleKeyDown(event);
-            }
-        }
-        this.modalHandler(event, NewDrawModalComponent, 'o');
-        this.modalHandler(event, SaveDrawingModalComponent, 's');
-        this.modalHandler(event, CarouselComponent, 'g');
-        this.modalHandler(event, ExportModalComponent, 'e');
         if (this.dialog.openDialogs.length < 1) {
             this.toolManagerService.handleHotKeysShortcut(event);
         }
 
-        this.toolManagerService.handleHotKeysShortcut(event);
+        this.modalHandler(event, NewDrawModalComponent, 'o');
+        this.modalHandler(event, SaveDrawingModalComponent, 's');
+        this.modalHandler(event, CarouselComponent, 'g');
+        this.modalHandler(event, ExportModalComponent, 'e');
+
+        this.undoRedoToolKeyHandler(event);
+        this.selectionToolKeyHandler(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
@@ -217,10 +201,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
         if (resizeX && this.positionX > MIN_SIZE) {
             this.previewCanvas.nativeElement.width = this.positionX;
+            this.gridCanvas.nativeElement.width=this.positionX;
         }
 
         if (resizeY && this.positionY > MIN_SIZE) {
             this.previewCanvas.nativeElement.height = this.positionY;
+            this.gridCanvas.nativeElement.height=this.positionY;
         }
     }
 
@@ -241,7 +227,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
-
+        
         setTimeout(() => {
             this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
@@ -278,6 +264,39 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         }
     }
 
+    private selectionToolKeyHandler(event: KeyboardEvent): void {
+        if (event.ctrlKey && event.key === 'a') {
+            event.preventDefault();
+            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
+            this.selectionService.selectAll();
+            return;
+        }
+
+        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+                this.moveSelectionService.handleKeyDown(event);
+            }
+        }
+    }
+
+    private undoRedoToolKeyHandler(event: KeyboardEvent): void {
+        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
+            event.preventDefault();
+            this.undoRedoService.undo();
+        }
+
+        if (
+            event.ctrlKey &&
+            event.shiftKey &&
+            event.code === 'KeyZ' &&
+            this.undoRedoService.canRedo() &&
+            !this.toolManagerService.currentTool?.mouseDown
+        ) {
+            event.preventDefault();
+            this.undoRedoService.redo();
+        }
+    }
+
     async getNewImage(src: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -292,10 +311,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         });
     }
 
-    isCanvasBlank(): boolean {
+    private isCanvasBlank(): boolean {
         return !this.baseCtx.getImageData(0, 0, this.width, this.height).data.some((channel) => channel !== 0);
     }
+
     private whiteBackgroundCanvas(): void {
+        if(this.drawingService.isGridEnabled){
+            this.drawingService.setGrid();
+        }
         this.baseCtx.beginPath();
         this.baseCtx.fillStyle = '#FFFFFF';
         this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
