@@ -25,7 +25,6 @@ canvas {
 }
 
 .add-btn {
-    // margin-left: 10px;
     color: rgb(2, 187, 2);
 }
 
@@ -51,6 +50,10 @@ canvas {
     margin: 20px;
 }
 
+.export-opt {
+    margin: 10px;
+}
+
 li {
     list-style: none;
     display: inline-block;
@@ -62,4 +65,12 @@ li {
 
 li:hover {
     background-color: rgb(182, 182, 182);
+}
+
+#imgur {
+    margin-top: 20px;
+}
+
+#url-title {
+    margin-bottom: 0;
 }

@@ -14,12 +14,10 @@ const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
 })
 export class ExportModalComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-
     matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
     FiltersList: typeof FiltersList = FiltersList;
-
     maxLength: number;
-
+    imgurIsSelected: boolean;
     private baseCtx: CanvasRenderingContext2D;
 
     constructor(public matDialogRef: MatDialogRef<ExportModalComponent>, public exportService: ExportService) {
@@ -30,6 +28,7 @@ export class ExportModalComponent implements AfterViewInit {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.exportService.baseCtx = this.baseCtx;
         this.exportService.canvas = this.baseCanvas.nativeElement;
+        this.imgurIsSelected = false;
     }
 
     exportDrawing(): void {
@@ -41,8 +40,20 @@ export class ExportModalComponent implements AfterViewInit {
         this.exportService.exportDrawing();
     }
 
+    uploadToImgur(): void {
+        this.exportService.uploadToImgur();
+    }
+
     validateString(str: string): boolean {
         if (str.length > MIN_INPUT_SIZE) return ALPHANUMERIC_REGEX.test(str);
         return true;
+    }
+
+    changeImgurSelection(selection: boolean): void {
+        this.imgurIsSelected = selection;
+    }
+
+    closeModal(): void {
+        this.exportService.imgurURL = '';
     }
 }

@@ -7,6 +7,7 @@ const PREVIEW_ORIGIN_Y = 0;
 const PREVIEW_WIDTH = 400;
 const PREVIEW_HEIGHT = 250;
 const DEFAULT_INTENSITY = 50;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -24,6 +25,8 @@ export class ExportService {
     filterIntensity: number;
 
     filtersBindings: Map<FiltersList, string>;
+
+    imgurURL: string;
 
     private image: HTMLImageElement;
 
@@ -45,6 +48,8 @@ export class ExportService {
         this.filterIntensity = DEFAULT_INTENSITY;
 
         this.image = new Image();
+
+        this.imgurURL = '';
     }
 
     imagePrevisualization(): void {
@@ -91,6 +96,24 @@ export class ExportService {
         link.click();
     }
 
+    async uploadToImgur(): Promise<void> {
+        let url = this.canvas.toDataURL('image/' + this.currentImageFormat);
+        url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
+        return new Promise<void>((resolve, reject) => {
+            fetch('https://api.imgur.com/3/image', {
+                method: 'post',
+                headers: {
+                    Authorization: 'Client-ID 13c4ad7558b3e6b',
+                },
+                body: url,
+            })
+                .then((data) => data.json())
+                .then((data) => {
+                    this.imgurURL = data.data.link;
+                });
+        });
+    }
+
     private getResizedCanvas(): void {
         const ratio: number = this.getCanvasRatio();
         this.resizeWidth = PREVIEW_WIDTH;
@@ -106,5 +129,12 @@ export class ExportService {
         const width = this.drawingService.baseCtx.canvas.width;
         const height = this.drawingService.baseCtx.canvas.height;
         return width / height;
+    }
+
+    initializeExportParams(): void {
+        this.drawingTitle = 'dessin';
+        this.selectedFilter = FiltersList.None;
+        this.currentFilter = 'none';
+        this.currentImageFormat = 'png';
     }
 }
