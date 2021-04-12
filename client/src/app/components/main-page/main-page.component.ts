@@ -21,7 +21,7 @@ export class MainPageComponent implements OnInit {
     handleKeyDown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === 'g') {
             event.preventDefault();
-            this.dialog.open(CarouselComponent, {});
+            this.dialog.open(CarouselComponent);
         }
     }
 
