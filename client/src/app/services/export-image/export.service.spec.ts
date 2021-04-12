@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
 
 // tslint:disable
-describe('ExportService', () => {
+fdescribe('ExportService', () => {
     let service: ExportService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -21,6 +21,8 @@ describe('ExportService', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
         previewCtxStub = canvasTestHelper.drawCanvas.getContext('2d') as CanvasRenderingContext2D;
         service = TestBed.inject(ExportService);
+        service.baseCtx = baseCtxStub;
+        drawServiceSpy.canvas = canvasTestHelper.canvas;
         service['drawingService'].baseCtx = baseCtxStub;
         service['drawingService'].previewCtx = previewCtxStub;
     });
@@ -44,5 +46,23 @@ describe('ExportService', () => {
         service['getResizedCanvas']();
         expect(service.resizeHeight).toEqual(250);
         expect(service.resizeWidth).toEqual(250);
+    });
+
+    fit('should show the image on canvas on a smaller one', () => {
+        spyOn(drawServiceSpy.canvas, 'toDataURL').and.returnValue(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        );
+        //service.baseCtx = baseCtxStub;
+        let drawImageSpy = spyOn(service.baseCtx, 'drawImage').and.stub();
+        service.imagePrevisualization();
+        if (service['image'].onload) {
+            service['image'].onload({} as any);
+        }
+        console.log('OKOK');
+        expect(drawImageSpy).toHaveBeenCalled();
+    });
+
+    it('should save the canva image locally', () => {
+        //service.exportDrawing();
     });
 });
