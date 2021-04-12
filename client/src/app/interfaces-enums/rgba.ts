@@ -1,4 +1,3 @@
-
 export interface RGBA {
     Dec: {
         Red: number;
@@ -14,7 +13,7 @@ export interface RGBA {
     inString: string;
 }
 
-export interface DecimalRGBA{
+export interface DecimalRGBA {
     RED: number;
     GREEN: number;
     BLUE: number;

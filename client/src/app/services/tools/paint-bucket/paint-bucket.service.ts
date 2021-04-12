@@ -19,7 +19,7 @@ export class PaintBucketService extends Tool {
     startPixelColor: Uint8ClampedArray;
     maxTolerance: number = MAX_TOLERANCE_VALUE;
     minTolerance: number = MIN_TOLERANCE_VALUE;
-    tolerance: number = this.minTolerance;
+    tolerance: number = MIN_TOLERANCE_VALUE;
     mouseDownCoord: Vec2;
     canvasData: ImageData;
     paintBucket: PaintBucket;
@@ -31,10 +31,15 @@ export class PaintBucketService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDownCoord = this.getPositionFromMouse(event);
+
         this.startPixelColor = this.drawingService.getPixelData(this.mouseDownCoord);
         if (event.button === MouseButton.Left) {
+            console.log('allo');
+            console.log(this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString);
             this.drawingService.baseCtx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+
             this.contiguousFill();
+
             //method to enable bucket fill with contiguous pixels on left click
         } else if (event.button === MouseButton.Right) {
             this.fill(); //method to enable bucket to fill without contiguous pixels on right click
@@ -101,6 +106,7 @@ export class PaintBucketService extends Tool {
         const paintBucket = new PaintBucket(this.isContiguous, this.canvasData);
         this.undoRedoService.addToStack(paintBucket);
         this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
+        console.log('fin');
     }
 
     vec2ToString(pixel: Vec2): string {
