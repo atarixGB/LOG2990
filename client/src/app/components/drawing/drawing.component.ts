@@ -1,6 +1,6 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ComponentType } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
@@ -9,6 +9,7 @@ import { ExportModalComponent } from '@app/components/export-modal/export-modal.
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
@@ -17,6 +18,7 @@ import { MoveSelectionService } from '@app/services/selection/move-selection.ser
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription, throwError } from 'rxjs';
 
 @Component({
@@ -24,7 +26,7 @@ import { Subscription, throwError } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
@@ -43,6 +45,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     private subscription: Subscription;
     private positionX: number;
     private positionY: number;
+    private drawing: DrawingData;
 
     constructor(
         public toolManagerService: ToolManagerService,
@@ -55,6 +58,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         private newDrawingService: NewDrawingService,
         private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
+        private autoSaveService: AutoSaveService,
         private clipboardService: ClipboardService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
@@ -76,14 +80,16 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
-            const path = params.url;
-            this.getNewImage(path)
-                .then((img) => {
-                    this.baseCtx.drawImage(img, 0, 0);
-                })
-                .catch((error) => {
-                    return throwError(error);
-                });
+            if (params.url) {
+                const path = params.url;
+                this.getNewImage(path)
+                    .then((img) => {
+                        this.baseCtx.drawImage(img, 0, 0);
+                    })
+                    .catch((error) => {
+                        return throwError(error);
+                    });
+            }
         });
     }
 
@@ -108,9 +114,27 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
+
+        window.onload = () => {
+            this.autoSaveService.loadImage();
+            this.canvasSize.x = this.autoSaveService.localDrawing.width;
+            this.canvasSize.y = this.autoSaveService.localDrawing.height;
+        };
+
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
+    }
+
+    ngOnChanges(): void {
+        this.route.params.subscribe((params) => {
+            console.log(params.height, params.width);
+
+            if (params.height && params.width) {
+                this.canvasSize.x = params.width;
+                this.canvasSize.y = params.height;
+            }
+        });
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
@@ -156,6 +180,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseUp(event, this.mouseCoord(event));
         }
+        this.drawing = {
+            title: '',
+            width: this.drawingService.canvas.width,
+            height: this.drawingService.canvas.height,
+            body: this.drawingService.canvas.toDataURL(),
+        };
+        this.autoSaveService.saveCanvasState(this.drawing);
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -242,6 +273,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         setTimeout(() => {
             this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
+            this.drawing = {
+                title: '',
+                width: this.drawingService.canvas.width,
+                height: this.drawingService.canvas.height,
+                body: this.drawingService.canvas.toDataURL(),
+            };
+            this.autoSaveService.saveCanvasState(this.drawing);
         }, 0);
     }
 
