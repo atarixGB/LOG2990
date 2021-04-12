@@ -23,10 +23,11 @@ export class SelectionService extends Tool {
     clearUnderneath: boolean;
     selectionTerminated: boolean;
     squareSize: number;
-    private width: number;
-    private height: number;
+    width: number;
+    height: number;
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
+    
 
     constructor(protected drawingService: DrawingService, private rectangleService: RectangleService, private ellipseService: EllipseService) {
         super(drawingService);
@@ -66,6 +67,7 @@ export class SelectionService extends Tool {
                 this.newSelection = true;
             }
         }
+        
     }
 
     onMouseUp(): void {

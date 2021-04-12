@@ -50,6 +50,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { TextConfigComponent } from './components/sidebar/text-config/text-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
+import { MagnetismConfigComponent } from './components/sidebar/selection-config/magnetism-config/magnetism-config/magnetism-config.component';
 
 @NgModule({
     declarations: [
@@ -84,6 +85,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         CarouselDrawingComponent,
         GridComponent,
         TextConfigComponent,
+        MagnetismConfigComponent,
     ],
     imports: [
         BrowserModule,
