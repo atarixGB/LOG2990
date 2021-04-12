@@ -70,6 +70,7 @@ export class ColorManagerService {
     }
 
     updatePixelColor(colorOrder: ColorOrder, colorPixel: Uint8ClampedArray): void {
+        console.log('colorPixel');
         this.selectedColor[colorOrder].Dec.Red = colorPixel[0];
         this.selectedColor[colorOrder].Dec.Green = colorPixel[1];
         this.selectedColor[colorOrder].Dec.Blue = colorPixel[2];
@@ -100,5 +101,9 @@ export class ColorManagerService {
         this.selectedColor[colorOrder].Dec = colorElement.Dec;
         this.updateColorString(colorOrder);
         this.updateColorLasts(colorOrder, shouldDeleteLast);
+    }
+
+    getColor(): RGBA {
+        return this.selectedColor[ColorOrder.PrimaryColor];
     }
 }
