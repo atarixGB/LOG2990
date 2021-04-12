@@ -65,14 +65,14 @@ export class StampService extends Tool{
   }
 
   onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'Alt') {
-        event.preventDefault();
+    if (event.altKey === true) {
+        //event.preventDefault();
         this.isKeyAltDown = true;
     }
   }
 
   onKeyUp(event: KeyboardEvent): void {
-      if (event.key === 'Alt') {
+      if (event.altKey === false) {
           this.isKeyAltDown = false;
       }
   }

@@ -157,7 +157,7 @@ export enum StampList {
     Dead = 4, 
 }
 
-export const SCALE_FACTOR_STAMP = 10;
+export const SCALE_FACTOR_STAMP = 1;
 export const ROTATION_STEP_STAMP = 15;
 export const MAX_ANGLE = 360;
 export const ANGLE_HALF_TURN = 180;
