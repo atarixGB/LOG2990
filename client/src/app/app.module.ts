@@ -39,6 +39,7 @@ import { ColorSliderComponent } from './components/sidebar/color-components/colo
 import { EllipseConfigComponent } from './components/sidebar/ellipse-config/ellipse-config.component';
 import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
+import { GridComponent } from './components/sidebar/grid-config/grid/grid.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { PipetteComponent } from './components/sidebar/pipette-config/pipette.component';
@@ -47,6 +48,7 @@ import { RectangleConfigComponent } from './components/sidebar/rectangle-config/
 import { SelectionConfigComponent } from './components/sidebar/selection-config/selection-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
+import { TextConfigComponent } from './components/sidebar/text-config/text-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
 import { PaintConfigComponent } from './components/sidebar/paint-config/paint-config/paint-config.component';
 import { SliderComponent } from './components/sidebar/paint-config/paint-config/slider/slider/slider.component';
@@ -84,6 +86,8 @@ import { SliderComponent } from './components/sidebar/paint-config/paint-config/
         CarouselDrawingComponent,
         PaintConfigComponent,
         SliderComponent,
+        GridComponent,
+        TextConfigComponent,
     ],
     imports: [
         BrowserModule,

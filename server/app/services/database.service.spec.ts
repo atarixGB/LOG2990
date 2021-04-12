@@ -1,7 +1,6 @@
 import * as chai from 'chai';
 import { expect } from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
-import { describe } from 'mocha';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { DrawingData } from '../classes/drawing-data';
 import { DatabaseService } from './database.service';
@@ -9,7 +8,7 @@ chai.use(chaiAsPromised); // this allows us to test for rejection
 
 const HTTP_STATUS_NO_CONTENT = 204;
 
-describe('Database service', () => {
+xdescribe('Database service', () => {
     let databaseService: DatabaseService;
     let mongoServer: MongoMemoryServer;
     let validDrawing: DrawingData;

@@ -60,7 +60,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Polygon }"
                 mat-icon-button
-                matTooltip="Polygon (P)"
+                matTooltip="Polygone (P)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.Polygon)"
             >
@@ -91,9 +91,20 @@
         </mat-grid-tile>
         <mat-grid-tile>
             <button
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.PaintBucket }"
+                mat-icon-button
+                matTooltip="Sceau de peinture (B)"
+                matTooltipPosition="above"
+                (click)="onTool(ToolList.PaintBucket)"
+            >
+                <mat-icon>format_color_fill</mat-icon>
+            </button>
+        </mat-grid-tile>
+        <mat-grid-tile>
+            <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.SelectionRectangle }"
                 mat-icon-button
-                matTooltip="Selection Rectangle (R)"
+                matTooltip="Sélection Rectangle (R)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.SelectionRectangle)"
             >
@@ -104,7 +115,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.SelectionEllipse }"
                 mat-icon-button
-                matTooltip="Selection Ellipse (S)"
+                matTooltip="Sélection Ellipse (S)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.SelectionEllipse)"
             >
@@ -115,7 +126,7 @@
             <button
                 [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Lasso }"
                 mat-icon-button
-                matTooltip="Lasso polygonal (L)"
+                matTooltip="Lasso polygonal (V)"
                 matTooltipPosition="above"
                 (click)="onTool(ToolList.Lasso)"
                 disabled="true"
@@ -125,14 +136,13 @@
         </mat-grid-tile>
         <mat-grid-tile>
             <button
-                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.PaintBucket }"
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Text }"
                 mat-icon-button
-                matTooltip="Sceau de peinture (B)"
+                matTooltip="Texte (T)"
                 matTooltipPosition="above"
-                (click)="onTool(ToolList.PaintBucket)"
-                
+                (click)="onTool(ToolList.Text)"
             >
-                <mat-icon>format_color_fill</mat-icon>
+                <mat-icon>title</mat-icon>
             </button>
         </mat-grid-tile>
         <mat-grid-tile>
