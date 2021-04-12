@@ -90,14 +90,14 @@ export class ExportService {
 
     exportDrawing(): void {
         const link = document.createElement('a');
-        this.image.src = this.canvas.toDataURL('image/' + this.currentImageFormat);
+        this.image.src = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
         link.href = this.image.src;
         link.click();
     }
 
     async uploadToImgur(): Promise<void> {
-        let url = this.canvas.toDataURL('image/' + this.currentImageFormat);
+        let url = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
         return new Promise<void>((resolve, reject) => {
             fetch('https://api.imgur.com/3/image', {
