@@ -1,6 +1,6 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ComponentType } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
@@ -24,15 +24,17 @@ import { Subscription, throwError } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
 
     dragPosition: Vec2 = { x: 0, y: 0 };
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
+    private gridCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
     private currentDrawing: ImageData;
@@ -58,6 +60,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.drawingService.gridCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.whiteBackgroundCanvas();
             }
         });
@@ -79,12 +82,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
                         return throwError(error);
                     });
             }
-            // console.log(params.height, params.width);
-
-            // if (params.height && params.width) {
-            //     this.canvasSize.x = params.width;
-            //     this.canvasSize.y = params.height;
-            // }
         });
     }
 
@@ -95,10 +92,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.cursorCtx = this.cursorCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
@@ -231,10 +231,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
         if (resizeX && this.positionX > MIN_SIZE) {
             this.previewCanvas.nativeElement.width = this.positionX;
+            this.gridCanvas.nativeElement.width = this.positionX;
         }
 
         if (resizeY && this.positionY > MIN_SIZE) {
             this.previewCanvas.nativeElement.height = this.positionY;
+            this.gridCanvas.nativeElement.height = this.positionY;
         }
     }
 
@@ -344,6 +346,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     private whiteBackgroundCanvas(): void {
+        if (this.drawingService.isGridEnabled) {
+            this.drawingService.setGrid();
+        }
         this.baseCtx.beginPath();
         this.baseCtx.fillStyle = '#FFFFFF';
         this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);

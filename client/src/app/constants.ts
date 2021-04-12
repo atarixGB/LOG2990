@@ -147,6 +147,29 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
 
+// constants for grid
+export const MIN_GRID_SQUARE_SIZE = 5;
+export const MAX_GRID_SQUARE_SIZE = 200;
+export const MIN_GRID_OPACITY = 10;
+export const MAX_GRID_OPACITY = 100;
+export const DEFAULT_GRID_SIZE = 5;
+export const GRID_STEP = 5;
+export const DEFAULT_GRID_OPACITY = 10;
+export const MAX_PERCENT = 100;
+export const SQUARE_STEP = 5;
+
+// constants for magnetism
+export enum SelectionBox {
+    TopLeft = 1,
+    TopRight = 2,
+    BottomRight = 3,
+    BottomLeft = 4,
+    TopMiddle = 5,
+    BottomMiddle = 6,
+    LeftMiddle = 7,
+    RightMiddle = 8,
+    Center = 9,
+}
 // Text
 export enum Font {
     Arial = 0,

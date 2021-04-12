@@ -39,6 +39,7 @@ import { ColorSliderComponent } from './components/sidebar/color-components/colo
 import { EllipseConfigComponent } from './components/sidebar/ellipse-config/ellipse-config.component';
 import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser-config.component';
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
+import { GridComponent } from './components/sidebar/grid-config/grid/grid.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { PipetteComponent } from './components/sidebar/pipette-config/pipette.component';
@@ -81,6 +82,7 @@ import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.c
         SaveDrawingModalComponent,
         CarouselComponent,
         CarouselDrawingComponent,
+        GridComponent,
         TextConfigComponent,
     ],
     imports: [
