@@ -42,6 +42,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
     private subscription: Subscription;
     private positionX: number;
     private positionY: number;
+    private drawing: DrawingData;
 
     constructor(
         public toolManagerService: ToolManagerService,
@@ -170,14 +171,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         const ELEMENT = event.target as HTMLElement;
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseUp(event, this.mouseCoord(event));
-            const drawing: DrawingData = {
-                title: '',
-                width: this.drawingService.canvas.width,
-                height: this.drawingService.canvas.height,
-                body: this.drawingService.canvas.toDataURL(),
-            };
-            this.autoSaveService.saveCanvasState(drawing);
         }
+        this.drawing = {
+            title: '',
+            width: this.drawingService.canvas.width,
+            height: this.drawingService.canvas.height,
+            body: this.drawingService.canvas.toDataURL(),
+        };
+        this.autoSaveService.saveCanvasState(this.drawing);
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -263,6 +264,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         setTimeout(() => {
             this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
+            this.drawing = {
+                title: '',
+                width: this.drawingService.canvas.width,
+                height: this.drawingService.canvas.height,
+                body: this.drawingService.canvas.toDataURL(),
+            };
+            this.autoSaveService.saveCanvasState(this.drawing);
         }, 0);
     }
 
