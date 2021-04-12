@@ -101,4 +101,8 @@ export class ColorManagerService {
         this.updateColorString(colorOrder);
         this.updateColorLasts(colorOrder, shouldDeleteLast);
     }
+
+    getColor(): RGBA {
+        return this.selectedColor[ColorOrder.PrimaryColor];
+    }
 }

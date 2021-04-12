@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Vec2 } from '@app/classes/vec2';
 import { MAX_PERCENT } from '@app/constants';
 
 @Injectable({
@@ -28,6 +29,10 @@ export class DrawingService {
 
     getCanvasData(): ImageData {
         return this.baseCtx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    }
+
+    getPixelData(pixelCoord: Vec2): Uint8ClampedArray {
+        return this.baseCtx.getImageData(pixelCoord.x, pixelCoord.y, 1, 1).data;
     }
 
     setGrid(): void {
