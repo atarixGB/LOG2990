@@ -153,7 +153,6 @@ export const MAX_PERCENT = 100;
 export const MAX_TOLERANCE_VALUE = 100;
 export const MIN_TOLERANCE_VALUE = 0;
 
-
 // constants for grid
 export const MIN_GRID_SQUARE_SIZE = 5;
 export const MAX_GRID_SQUARE_SIZE = 200;

@@ -1,7 +1,7 @@
 import { Drawable } from './drawable';
 
 export class PaintBucket extends Drawable {
-    public isContiguous: boolean;
+    isContiguous: boolean;
     private image: ImageData;
 
     constructor(isContiguous: boolean, img: ImageData) {
