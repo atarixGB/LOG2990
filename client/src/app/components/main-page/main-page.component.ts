@@ -10,6 +10,7 @@ import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 })
 export class MainPageComponent implements OnInit {
     readonly title: string = 'Poly-Dessin';
+    readonly EDITOR_ROUTE = 'http://localhost:4200/editor';
     isDisabled: boolean;
 
     constructor(public dialog: MatDialog, private autoSaveService: AutoSaveService) {
@@ -33,15 +34,7 @@ export class MainPageComponent implements OnInit {
     }
 
     continueDrawing(): void {
-        // const params = {
-        //     width: this.autoSaveService.localDrawing.width,
-        //     height: this.autoSaveService.localDrawing.height,
-        // };
-        // this.router.navigate(['editor', params]);
         this.autoSaveService.loadImage();
-        window.location.replace('http://localhost:4200/editor');
-
-        // this.router.navigate(['/'], { skipLocationChange: true }).then(() => {
-        // });
+        window.location.replace(this.EDITOR_ROUTE);
     }
 }
