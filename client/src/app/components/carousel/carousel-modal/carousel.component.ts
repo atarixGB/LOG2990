@@ -146,6 +146,7 @@ export class CarouselComponent implements AfterViewInit {
         };
         this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
         this.dialogRef.close();
+
         const drawing: DrawingData = {
             title: '',
             width: this.drawingService.canvas.width,

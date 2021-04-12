@@ -10,7 +10,7 @@ import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 })
 export class MainPageComponent implements OnInit {
     readonly title: string = 'Poly-Dessin';
-    readonly EDITOR_ROUTE = 'http://localhost:4200/editor';
+    readonly EDITOR_ROUTE: string = 'http://localhost:4200/editor';
     isDisabled: boolean;
 
     constructor(public dialog: MatDialog, private autoSaveService: AutoSaveService) {
