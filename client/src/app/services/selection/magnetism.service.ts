@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Vec2 } from './../../classes/vec2';
-import { SelectionBox } from './../../constants';
+import { Vec2 } from '@app/classes/vec2';
+import { SelectionBox } from '@app/constants';
 
 @Injectable({
     providedIn: 'root',
