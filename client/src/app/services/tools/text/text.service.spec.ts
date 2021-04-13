@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
 import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants';
+import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
@@ -9,6 +10,7 @@ import { TextService } from './text.service';
 fdescribe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
+    let colorManagerSpy: jasmine.SpyObj<DrawingService>;
     const mouseEventClick = {
         x: 25,
         y: 25,
@@ -20,11 +22,11 @@ fdescribe('TextService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        // const spy = spyOn(service['colorManager'], 'changeColorObserver');
+        colorManagerSpy = jasmine.createSpyObj('ColorManager', ['changeColorObserver']);
         TestBed.configureTestingModule({
             providers: [
                 { provide: DrawingService, useValue: drawServiceSpy },
-                // { provide: ColorManagerService, useValue: spy },
+                { provide: ColorManagerService, useValue: colorManagerSpy },
             ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
@@ -560,8 +562,18 @@ fdescribe('TextService', () => {
     });
 
     it('should change color when color change using color manager', () => {
-        // service.isWriting = true;
-        // TestBed.createComponent(ColorManagerService);
-        // expect(service['colorManager'].changeColorObserver().subscribe).toHaveBeenCalled();
+        service.isWriting = true;
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+        const actionFuncReturn = () => {
+            return {
+                subscribe: (f: () => void) => {
+                    f();
+                },
+            };
+        };
+        spyOn(service['colorManager'], 'changeColorObserver').and.returnValue({
+            onAction: actionFuncReturn,
+        } as any);
+        expect(spyWriteCanvas).toHaveBeenCalled();
     });
 });
