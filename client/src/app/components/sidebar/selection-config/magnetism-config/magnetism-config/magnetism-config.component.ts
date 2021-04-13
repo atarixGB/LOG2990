@@ -1,5 +1,6 @@
-import { MoveSelectionService } from '@app/services/tools/selection/move-selection.service';
-import { SelectionBox } from './../../../../../constants';
+import { MagnetismService } from '@app/services/selection/magnetism.service';
+import { MoveSelectionService } from '@app/services/selection/move-selection.service';
+import { SelectionBox } from '@app/constants';
 import { Component } from '@angular/core';
 
 @Component({
@@ -8,16 +9,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./magnetism-config.component.scss']
 })
 export class MagnetismConfigComponent {
-  anchorPoint:SelectionBox=1;
+  SelectionBox: typeof SelectionBox=SelectionBox;
   isMagnetismEnabled: boolean = false;
+  magnetismService:MagnetismService;
   
   constructor(public moveSelectionService:MoveSelectionService) {
     this.isMagnetismEnabled=moveSelectionService.isMagnetism;
-    this.anchorPoint=moveSelectionService.magnetismService.anchorPoint;
    }
 
    enableGridMagnetism(isChecked:boolean):void{
      this.isMagnetismEnabled=isChecked;
+     this.moveSelectionService.isMagnetism=isChecked;
      this.moveSelectionService.enableMagnetism(isChecked);
     
    }

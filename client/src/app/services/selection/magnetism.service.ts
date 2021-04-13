@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Vec2 } from './../../../classes/vec2';
-import { MIN_GRID_SQUARE_SIZE, SelectionBox } from './../../../constants';
+import { Vec2 } from './../../classes/vec2';
+import { SelectionBox } from './../../constants';
 
 @Injectable({
     providedIn: 'root',
 })
 export class MagnetismService {
-    squareSize: number = MIN_GRID_SQUARE_SIZE;
+    squareSize: number = 50;
     anchorPoint: SelectionBox = SelectionBox.TopLeft;
 
     constructor() {}
@@ -63,6 +63,10 @@ export class MagnetismService {
         }
 
         return intersectionCoord;
+    }
+    
+    setGridSpaces(size: number): void {
+        this.squareSize = size;
     }
     private calculateClosestIntersection(topLeftPoint: Vec2, height: number, width: number) {
         const intersectionCoord = this.locateAnchorPoint(topLeftPoint, height, width);

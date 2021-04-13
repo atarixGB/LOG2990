@@ -1,11 +1,10 @@
-import { MagnetismService } from './magnetism.service';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SelectionService } from './selection.service';
-
+import { MagnetismService } from '@app/services/selection/magnetism.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 const DX = 3;
 const DY = 3;
@@ -30,9 +29,9 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     private selectionData: ImageData;
     private keysDown: Map<ArrowKeys, boolean>;
     private intervalId: ReturnType<typeof setTimeout> | undefined = undefined;
-    isMagnetism: boolean=false;
+    isMagnetism: boolean = false;
 
-    constructor(drawingService: DrawingService, private selectionService: SelectionService, public magnetismService:MagnetismService) {
+    constructor(drawingService: DrawingService, private selectionService: SelectionService, public magnetismService: MagnetismService) {
         super(drawingService);
         this.keysDown = new Map<ArrowKeys, boolean>();
 
@@ -45,20 +44,20 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         }
     }
 
-    enableMagnetism(isChecked:boolean):void{
-        this.isMagnetism=isChecked;
+    enableMagnetism(isChecked: boolean): void {
+        this.isMagnetism = isChecked;
     }
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
         }
     }
 
     onMouseMove(event: MouseEvent): void {
-        this.selectionService.imageMoved = true;
-
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
+            this.selectionService.imageMoved = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.moveSelectionMouse(this.drawingService.previewCtx);
@@ -145,18 +144,13 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
+        if (this.isMagnetism) {
+            this.newOrigin = this.magnetismService.activateMagnetism(this.newOrigin, this.selectionService.height, this.selectionService.width);
+        }
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
     }
 
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D): void {
-        // this.newOrigin = this.selectionService.origin;
-        // let offsetMvt:number=DX;
-        // if(this.isMagnetism){
-        //     const magnetismPoint=this.magnetismService.activateMagnetism(this.newOrigin,this.selectionService.height,this.selectionService.width);
-        //     offsetMvt=this.magnetismService.squareSize;
-        //     this.newOrigin.x=magnetismPoint.x;
-        //     this.newOrigin.y=magnetismPoint.y;
-        // }
         if (this.keysDown.get(ArrowKeys.Right)) {
             this.newOrigin.x += DX;
         }
@@ -172,6 +166,9 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
+        if (this.isMagnetism) {
+            this.newOrigin = this.magnetismService.activateMagnetism(this.newOrigin, this.selectionService.height, this.selectionService.width);
+        }
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
         this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
         this.origin = this.newOrigin;

@@ -1,6 +1,6 @@
 <div class="modal-container">
     <h1 mat-dialog-title>Exporter un dessin</h1>
-    <div mat-dialog-content>Veuillez choisir un nom pour votre dessin.</div>
+    <div mat-dialog-content>Veuillez choisir un nom pour votre dessin :</div>
 
     <mat-form-field>
         <input matInput placeholder="Titre du dessin" type="text" [(ngModel)]="exportService.drawingTitle" [maxlength]="this.maxLength" required />
@@ -10,7 +10,16 @@
     <div class="warning-msg" *ngIf="!this.validateString(exportService.drawingTitle)">
         Le titre du dessin <span class="underline">ne doit pas</span> comporter de caractères spéciaux ni d'espaces.
     </div>
-
+    <div mat-dialog-content>
+        Veuillez choisir une option pour l'exportation :
+        <br />
+        <mat-radio-group>
+            <mat-radio-button [checked]="this.imgurIsSelected == false" class="export-opt" [value]="0" (click)="this.changeImgurSelection(false)"
+                >PC</mat-radio-button
+            >
+            <mat-radio-button class="export-opt" [value]="1" (click)="this.changeImgurSelection(true)">Imgur</mat-radio-button>
+        </mat-radio-group>
+    </div>
     <br />
     <mat-form-field>
         <mat-label>Format de l'image</mat-label>
@@ -53,6 +62,12 @@
 
     <div mat-dialog-actions>
         <button mat-button mat-dialog-close>Annuler</button>
-        <button mat-button mat-dialog-close (click)="exportDrawing()">Exporter</button>
+        <button *ngIf="imgurIsSelected === true" mat-button (click)="uploadToImgur()">Téléverser sur Imgur</button>
+        <button *ngIf="imgurIsSelected === false" mat-button mat-dialog-close (click)="exportDrawing()">Exporter localement</button>
+        <br />
+    </div>
+    <div id="imgur" *ngIf="this.exportService.imgurURL != ''">
+        L'url de votre image sur Imgur est :
+        <a [href]="this.exportService.imgurURL" target="_blank" mat-dialog-close (click)="this.closeModal()">{{ this.exportService.imgurURL }}</a>
     </div>
 </div>

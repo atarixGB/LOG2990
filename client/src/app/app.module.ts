@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -11,6 +12,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -41,16 +43,18 @@ import { EraserConfigComponent } from './components/sidebar/eraser-config/eraser
 import { FileMenuComponent } from './components/sidebar/file-menu/file-menu.component';
 import { GridComponent } from './components/sidebar/grid-config/grid/grid.component';
 import { LineConfigComponent } from './components/sidebar/line-config/line-config.component';
+import { PaintConfigComponent } from './components/sidebar/paint-config/paint-config/paint-config.component';
+import { SliderComponent } from './components/sidebar/paint-config/paint-config/slider/slider/slider.component';
 import { PencilConfigComponent } from './components/sidebar/pencil-config/pencil-config.component';
 import { PipetteComponent } from './components/sidebar/pipette-config/pipette.component';
 import { PolygonConfigComponent } from './components/sidebar/polygon-config/polygon-config.component';
 import { RectangleConfigComponent } from './components/sidebar/rectangle-config/rectangle-config.component';
+import { MagnetismConfigComponent } from './components/sidebar/selection-config/magnetism-config/magnetism-config/magnetism-config.component';
 import { SelectionConfigComponent } from './components/sidebar/selection-config/selection-config.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { SprayConfigComponent } from './components/sidebar/spray-config/spray-config.component';
 import { TextConfigComponent } from './components/sidebar/text-config/text-config.component';
 import { ToolsListComponent } from './components/sidebar/tools-list/tools-list.component';
-import { MagnetismConfigComponent } from './components/sidebar/selection-config/magnetism-config/magnetism-config/magnetism-config.component';
 
 @NgModule({
     declarations: [
@@ -83,6 +87,8 @@ import { MagnetismConfigComponent } from './components/sidebar/selection-config/
         SaveDrawingModalComponent,
         CarouselComponent,
         CarouselDrawingComponent,
+        PaintConfigComponent,
+        SliderComponent,
         GridComponent,
         TextConfigComponent,
         MagnetismConfigComponent,
@@ -111,6 +117,8 @@ import { MagnetismConfigComponent } from './components/sidebar/selection-config/
         BrowserAnimationsModule,
         MatSidenavModule,
         MatProgressSpinnerModule,
+        MatRadioModule,
+        MatCheckboxModule,
     ],
     entryComponents: [ColorPopupComponent, ColorPickerComponent],
     providers: [],
