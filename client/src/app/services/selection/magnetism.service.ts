@@ -10,7 +10,7 @@ export class MagnetismService {
     anchorPoint: SelectionBox;
 
     constructor() {
-        this.anchorPoint = SelectionBox.Center;
+        this.anchorPoint = SelectionBox.TopLeft;
     }
 
     activateMagnetism(topLeftPoint: Vec2, height: number, width: number): Vec2 {
