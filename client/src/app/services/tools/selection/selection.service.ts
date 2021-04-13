@@ -5,7 +5,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE, MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-// import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
+import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { LassoService } from '@app/services/tools/lasso/lasso.service';
@@ -37,7 +37,7 @@ export class SelectionService extends Tool {
     private controlPointsCoord: Vec2[];
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
-    // private isResizing: boolean;
+    private isResizing: boolean;
     private selectionObject: SelectionTool;
     private clearSelectionData: ImageData;
 
@@ -46,7 +46,8 @@ export class SelectionService extends Tool {
         private rectangleService: RectangleService,
         private ellipseService: EllipseService,
         private lassoService: LassoService,
-        private undoRedoService: UndoRedoService, // private resizeSelectionService: ResizeSelectionService,
+        private undoRedoService: UndoRedoService,
+        private resizeSelectionService: ResizeSelectionService,
     ) {
         super(drawingService);
         this.isEllipse = false;
@@ -58,7 +59,7 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.selectionTerminated = false;
         this.selectionDeleted = false;
-        // this.isResizing = false;
+        this.isResizing = false;
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -71,10 +72,10 @@ export class SelectionService extends Tool {
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
-            // if (this.activeSelection) {
-            //     this.resizeSelectionService.controlPointsCoord = this.controlPointsCoord;
-            //     this.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
-            //     return;
+            if (this.activeSelection) {
+                this.resizeSelectionService.controlPointsCoord = this.controlPointsCoord;
+                this.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
+            }
         }
 
         if (this.mouseDown && !this.isLasso) {
@@ -100,10 +101,23 @@ export class SelectionService extends Tool {
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseMove(event);
 
         if (this.mouseDown) {
-            // if (this.isResizing) {
-            //     this.resizeSelectionService.resizeTopLeft(this.mouseCoord);
-            //     return;
-            // }
+            if (this.isResizing) {
+                this.selectionObject = this.resizeSelectionService.onMouseMove(this.getPositionFromMouse(event), this.selectionObject);
+
+                // this.origin = this.selectionObject.finalOrigin;
+                // this.destination = this.selectionObject.destination;
+                // this.width = this.selectionObject.width;
+                // this.height = this.selectionObject.height;
+                this.drawingService.clearCanvas(this.drawingService.previewCtx);
+                // console.log(this.origin, this.destination, this.width, this.height);
+
+                this.clearUnderneathShape();
+                // this.imageMoved = true;
+                // this.printMovedSelection(this.drawingService.previewCtx);
+                this.resizeSelectionService.printResize();
+                this.createBoundaryBox();
+                return;
+            }
 
             if (this.isEllipse) this.ellipseService.onMouseMove(event);
             else this.rectangleService.onMouseMove(event);
@@ -132,14 +146,22 @@ export class SelectionService extends Tool {
         if (this.mouseDown && !this.isLasso) {
             this.activeSelection = true;
             this.mouseDown = false;
+
+            if (this.isResizing) {
+                this.isResizing = false;
+                return;
+            }
+
             this.getSelectionData(this.drawingService.baseCtx);
             this.createControlPoints();
             this.resetParametersTools();
+            // console.log('avant', this.origin, this.destination, this.width, this.height);
 
             this.selectionObject = new SelectionTool(
                 this.selection,
                 this.origin,
-                { x: 0, y: 0 },
+                this.destination,
+                this.origin,
                 this.width,
                 this.height,
                 this.isEllipse,
@@ -237,6 +259,8 @@ export class SelectionService extends Tool {
     }
 
     clearUnderneathShape(): void {
+        console.log('opopop');
+
         this.drawingService.baseCtx.fillStyle = '#FFFFFF';
         this.drawingService.baseCtx.beginPath();
         if (this.isEllipse) {
@@ -267,6 +291,7 @@ export class SelectionService extends Tool {
             }
             this.printPolygon(this.clearSelectionData);
         } else {
+            console.log(this.origin, this.destination, this.width, this.height);
             this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
             this.drawingService.baseCtx.closePath();
         }

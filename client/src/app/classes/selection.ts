@@ -2,19 +2,29 @@ import { Drawable } from './drawable';
 import { Vec2 } from './vec2';
 
 export class SelectionTool extends Drawable {
-    private selection: ImageData;
-    private initialOrigin: Vec2;
+    selection: ImageData;
     finalOrigin: Vec2;
-    private destination: Vec2;
-    private width: number;
-    private height: number;
+    destination: Vec2;
+    width: number;
+    height: number;
+    private initialOrigin: Vec2;
     private isEllipse: boolean;
     private isLasso: boolean;
 
-    constructor(selection: ImageData, initialOrigin: Vec2, finalOrigin: Vec2, width: number, height: number, isEllipse: boolean, isLasso: boolean) {
+    constructor(
+        selection: ImageData,
+        initialOrigin: Vec2,
+        destination: Vec2,
+        finalOrigin: Vec2,
+        width: number,
+        height: number,
+        isEllipse: boolean,
+        isLasso: boolean,
+    ) {
         super();
         this.selection = selection;
         this.initialOrigin = initialOrigin;
+        this.destination = destination;
         this.finalOrigin = finalOrigin;
         this.width = width;
         this.height = height;
@@ -31,8 +41,6 @@ export class SelectionTool extends Drawable {
     }
 
     private clearUnderneathShape(ctx: CanvasRenderingContext2D): void {
-        console.log('undraw');
-
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
         if (this.isEllipse) {
@@ -50,7 +58,6 @@ export class SelectionTool extends Drawable {
         } else if (this.isLasso && this.destination) {
             // TODO
         } else {
-            console.log('opo');
             ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.width, this.height);
             ctx.closePath();
         }
