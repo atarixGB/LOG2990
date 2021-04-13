@@ -8,6 +8,7 @@ import { RectangleService } from '@app/services/tools//rectangle/rectangle.servi
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { LassoService } from '@app/services/tools/lasso/lasso.service';
 
+// tslint:disable
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 const PIXEL_LENGTH = 4;
 const MAX_RGB = 255;
@@ -30,7 +31,6 @@ export class SelectionService extends Tool {
     selectionDeleted: boolean;
     width: number;
     height: number;
-    squareSize: number;
     private controlPointsCoord: Vec2[];
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
@@ -98,6 +98,7 @@ export class SelectionService extends Tool {
                 this.newSelection = true;
             }
         }
+        
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -411,7 +412,5 @@ export class SelectionService extends Tool {
         this.ellipseService.isSelection = false;
     }
 
-    setGridSpaces(size: number): void {
-        this.squareSize = size;
-    }
+    
 }
