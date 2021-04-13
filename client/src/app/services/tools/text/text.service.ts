@@ -35,6 +35,7 @@ export class TextService extends Tool {
     private totalLine: number;
     private cursorPosition: number;
     private positionText: Vec2;
+
     private fontBinding: Map<Font, string>;
     private emphasisBinding: Map<Emphasis, string>;
     private alignBinding: Map<TextAlign, string>;
@@ -90,6 +91,79 @@ export class TextService extends Tool {
         });
     }
 
+    write(): void {
+        let isEmpty = true;
+        for (const line of this.textInput) {
+            if (line !== '') {
+                isEmpty = false;
+            }
+        }
+        if (!isEmpty) {
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+
+            this.writeOnCanvas(CanvasType.baseCtx);
+        }
+    }
+
+    changeFont(): void {
+        if (this.fontBinding.has(this.selectFont)) {
+            this.font = this.fontBinding.get(this.selectFont);
+            this.writeOnCanvas(CanvasType.previewCtx);
+        }
+    }
+
+    changeEmphasis(): void {
+        if (this.emphasisBinding.has(this.selectEmphasis)) {
+            this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
+            this.writeOnCanvas(CanvasType.previewCtx);
+        }
+    }
+
+    changeAlign(): void {
+        if (this.alignBinding.has(this.selectAlign)) {
+            this.align = this.alignBinding.get(this.selectAlign);
+            this.writeOnCanvas(CanvasType.previewCtx);
+        }
+    }
+
+    changeSize(): void {
+        this.writeOnCanvas(CanvasType.previewCtx);
+    }
+
+    onMouseDown(event: MouseEvent): void {
+        if (this.isWriting === false) {
+            this.textInput[this.currentLine] = '|';
+
+            this.mouseDownCoord = this.getPositionFromMouse(event);
+            this.positionText = this.mouseDownCoord;
+
+            this.isWriting = true;
+
+            this.writeOnCanvas(CanvasType.previewCtx);
+        } else {
+            this.write();
+            this.cursorPosition = 0;
+            this.textInput = [''];
+            this.currentLine = 0;
+            this.totalLine = 1;
+            this.isWriting = false;
+        }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+        if (this.isWriting && event.key) {
+            if (this.keyBinding.has(event.key)) {
+                const keyFunction = this.keyBinding.get(event.key);
+                if (keyFunction) keyFunction();
+            } else {
+                this.addCharacter(event);
+            }
+            this.writeOnCanvas(CanvasType.previewCtx);
+        }
+    }
+
     private addCharacter(event: KeyboardEvent): void {
         if (this.cursorPosition !== 0) {
             if (ACCEPTED_CHAR.test(event.key)) {
@@ -108,18 +182,20 @@ export class TextService extends Tool {
     }
 
     private handleBackspace(): void {
-        if (this.cursorPosition !== 0 || (this.cursorPosition !== 0 && this.currentLine !== 0)) {
+        if (this.cursorPosition !== 0) {
             this.textInput[this.currentLine] =
                 this.textInput[this.currentLine].substring(0, this.cursorPosition - 1) +
                 this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
             this.cursorPosition--;
         }
     }
+
     private handleDelete(): void {
         this.textInput[this.currentLine] =
             this.textInput[this.currentLine].substring(0, this.cursorPosition + 1) +
             this.textInput[this.currentLine].substring(this.cursorPosition + 2, this.textInput[this.currentLine].length);
     }
+
     private handleArrowLeft(): void {
         if (this.currentLine !== 0 || this.cursorPosition !== 0) {
             this.textInput[this.currentLine] =
@@ -148,6 +224,7 @@ export class TextService extends Tool {
         this.totalLine = 1;
         this.isWriting = false;
     }
+
     private handleEnter(): void {
         const nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
         this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
@@ -156,6 +233,7 @@ export class TextService extends Tool {
         this.textInput[this.currentLine] = nextLine + '|';
         this.cursorPosition = this.textInput[this.currentLine].length - 1;
     }
+
     private handleArrowDown(): void {
         if (this.currentLine !== this.totalLine - 1) {
             this.textInput[this.currentLine] =
@@ -173,6 +251,7 @@ export class TextService extends Tool {
             }
         }
     }
+
     private handleArrowUp(): void {
         if (this.currentLine !== 0) {
             this.textInput[this.currentLine] =
@@ -190,6 +269,7 @@ export class TextService extends Tool {
             }
         }
     }
+
     private handleArrowRight(): void {
         if (this.currentLine !== this.totalLine - 1 || this.cursorPosition !== this.textInput[this.currentLine].length - 1) {
             this.textInput[this.currentLine] =
@@ -237,75 +317,6 @@ export class TextService extends Tool {
                 this.drawingService.previewCtx.fillText(this.textInput[i], this.mouseDownCoord.x, y);
                 y += Number(this.size);
             }
-        }
-    }
-
-    write(): void {
-        let isEmpty = true;
-        for (const line in this.textInput) {
-            if (line !== '') {
-                isEmpty = false;
-            }
-        }
-        if (!isEmpty) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-
-            this.writeOnCanvas(CanvasType.baseCtx);
-        }
-    }
-
-    changeFont(): void {
-        if (this.fontBinding.has(this.selectFont)) {
-            this.font = this.fontBinding.get(this.selectFont);
-            this.writeOnCanvas(CanvasType.previewCtx);
-        }
-    }
-
-    changeEmphasis(): void {
-        if (this.emphasisBinding.has(this.selectEmphasis)) {
-            this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
-            this.writeOnCanvas(CanvasType.previewCtx);
-        }
-    }
-
-    changeAlign(): void {
-        if (this.alignBinding.has(this.selectAlign)) {
-            this.align = this.alignBinding.get(this.selectAlign);
-            this.writeOnCanvas(CanvasType.previewCtx);
-        }
-    }
-
-    onMouseDown(event: MouseEvent): void {
-        if (this.isWriting === false) {
-            this.textInput[this.currentLine] = '|';
-
-            this.mouseDownCoord = this.getPositionFromMouse(event);
-            this.positionText = this.mouseDownCoord;
-
-            this.isWriting = true;
-
-            this.writeOnCanvas(CanvasType.previewCtx);
-        } else {
-            this.write();
-            this.cursorPosition = 0;
-            this.textInput = [''];
-            this.currentLine = 0;
-            this.totalLine = 1;
-            this.isWriting = false;
-        }
-    }
-
-    handleKeyUp(event: KeyboardEvent): void {
-        if (this.isWriting && event.key) {
-            if (this.keyBinding.has(event.key)) {
-                const keyFunction = this.keyBinding.get(event.key);
-                if (keyFunction) keyFunction();
-            } else {
-                this.addCharacter(event);
-            }
-            this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 }

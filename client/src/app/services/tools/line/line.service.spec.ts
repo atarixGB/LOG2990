@@ -140,12 +140,12 @@ describe('LineService', () => {
         let clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
         service.onMouseDoubleClick(leftMouseEvent);
         expect(clearPathSpy).toHaveBeenCalled();
-        expect(service['pathData'].length).toEqual(0);
+        expect(service['currentSegment'].length).toEqual(0);
     });
 
     it('should call drawLine on base context when onMouseUp is called and shift key is not pressed', () => {
         const mockMousePosition: Vec2 = { x: 25, y: 25 };
-        service['pathData'] = pathData;
+        service['currentSegment'] = pathData;
         service.mouseDown = true;
         service['hasPressedShiftKey'] = false;
 
@@ -155,7 +155,7 @@ describe('LineService', () => {
         service.onMouseUp(leftMouseEvent);
 
         expect(getPositionFromMouseSpy).toHaveBeenCalledWith(leftMouseEvent);
-        expect(drawLineSpy).toHaveBeenCalledWith(service['drawingService'].baseCtx, pathData);
+        expect(drawLineSpy).toHaveBeenCalled();
     });
 
     // it('should call drawConstrainedLine on base context when onMouseUp is called and shift key is pressed', () => {
@@ -179,22 +179,22 @@ describe('LineService', () => {
         let clearPathSpy = spyOn<any>(service, 'clearPath').and.callThrough();
         service.onMouseUp(leftMouseEvent);
         expect(clearPathSpy).toHaveBeenCalled();
-        expect(service['pathData'].length).toEqual(0);
+        expect(service['currentSegment'].length).toEqual(0);
     });
 
     it('should call drawLine on preview context when onMouseMove is called and shift key is not pressed', () => {
         service.mouseDown = true;
         service['hasPressedShiftKey'] = false;
-        service['pathData'] = pathData;
+        service['currentSegment'] = pathData;
 
         drawLineSpy = spyOn<any>(service, 'drawLine').and.stub();
 
         service.onMouseMove(leftMouseEvent);
-        expect(drawLineSpy).toHaveBeenCalledWith(service['drawingService'].previewCtx, pathData);
+        expect(drawLineSpy).toHaveBeenCalled();
     });
 
     it('should call drawContrainedLine on preview context when onMouseMove is called and shift key is pressed', () => {
-        service['pathData'] = pathData;
+        service['currentSegment'] = pathData;
         service.mouseDown = true;
         service['hasPressedShiftKey'] = true;
 

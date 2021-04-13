@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ClipboardService } from '@app/services/selection/clipboard.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 @Component({
@@ -7,5 +8,5 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
     styleUrls: ['./selection-config.component.scss'],
 })
 export class SelectionConfigComponent {
-    constructor(public selectionService: SelectionService) {}
+    constructor(public selectionService: SelectionService, public clipboardService: ClipboardService) {}
 }

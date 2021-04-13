@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
-import { FiltersList } from '@app/constants';
 import { ExportService } from '@app/services/export-image/export.service';
 import { IndexService } from '@app/services/index/index.service';
 import { BehaviorSubject } from 'rxjs';
@@ -25,10 +24,7 @@ export class FileMenuComponent {
         this.dialog.open(ExportModalComponent, {});
         this.exportService.imagePrevisualization();
 
-        this.exportService.drawingTitle = 'dessin';
-        this.exportService.selectedFilter = FiltersList.None;
-        this.exportService.currentFilter = 'none';
-        this.exportService.currentImageFormat = 'png';
+        this.exportService.initializeExportParams();
     }
 
     handleSaveDrawing(): void {
