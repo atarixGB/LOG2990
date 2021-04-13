@@ -34,8 +34,20 @@ describe('ExportService', () => {
         spyOn<any>(service, 'getResizedCanvas').and.stub();
         const filterGetSpy = spyOn(service.filtersBindings, 'get').and.callThrough();
         service.applyFilter();
+        if (service['image'].onload) {
+            service['image'].onload({} as any);
+        }
         expect(filterGetSpy).toHaveBeenCalled();
         expect(service.currentFilter).toEqual('blur');
+    });
+
+    it('should not apply filter if doesnt exist in list', () => {
+        spyOn(service['filtersBindings'], 'has').and.returnValue(false);
+        const filterGetSpy = spyOn<any>(service['filtersBindings'], 'get').and.stub();
+
+        service.applyFilter();
+
+        expect(filterGetSpy).not.toHaveBeenCalled();
     });
 
     it('getResizedCanvas should resize if the ratio is too big', () => {
@@ -44,5 +56,22 @@ describe('ExportService', () => {
         service['getResizedCanvas']();
         expect(service.resizeHeight).toEqual(250);
         expect(service.resizeWidth).toEqual(250);
+    });
+
+    it('should show the image on canvas on a smaller one', () => {
+        spyOn(drawServiceSpy.canvas, 'toDataURL').and.returnValue(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAADElEQVQImWNgoBMAAABpAAFEI8ARAAAAAElFTkSuQmCC',
+        );
+
+        let drawImageSpy = spyOn(service.baseCtx, 'drawImage').and.stub();
+        service.imagePrevisualization();
+        if (service['image'].onload) {
+            service['image'].onload({} as any);
+        }
+        expect(drawImageSpy).toHaveBeenCalled();
+    });
+
+    it('should save the canva image locally', () => {
+        //service.exportDrawing();
     });
 });

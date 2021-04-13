@@ -67,9 +67,6 @@ export class ExportService {
 
         if (this.filtersBindings.has(this.selectedFilter)) {
             this.currentFilter = this.filtersBindings.get(this.selectedFilter);
-        }
-
-        if (this.currentFilter != undefined) {
             this.image.src = this.currentDrawing;
 
             this.image.onload = () => {
@@ -82,7 +79,7 @@ export class ExportService {
                 } else {
                     this.baseCtx.filter = this.currentFilter + '(' + this.filterIntensity + '%)';
                 }
-
+                this.currentFilter = this.baseCtx.filter;
                 this.baseCtx.drawImage(this.image, PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, this.resizeWidth, this.resizeHeight);
             };
         }
@@ -90,14 +87,23 @@ export class ExportService {
 
     exportDrawing(): void {
         const link = document.createElement('a');
-        this.image.src = this.canvas.toDataURL('image/' + this.currentImageFormat);
+        if (this.currentFilter) {
+            this.drawingService.baseCtx.filter = this.currentFilter;
+        }
+        console.log(this.currentFilter);
+        console.log(this.baseCtx);
+        this.image.src = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
         link.href = this.image.src;
         link.click();
     }
 
     async uploadToImgur(): Promise<void> {
-        let url = this.canvas.toDataURL('image/' + this.currentImageFormat);
+        console.log(this.currentFilter);
+        if (this.currentFilter) {
+            this.drawingService.baseCtx.filter = this.currentFilter;
+        }
+        let url = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
         return new Promise<void>((resolve, reject) => {
             fetch('https://api.imgur.com/3/image', {
