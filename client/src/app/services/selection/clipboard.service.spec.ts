@@ -132,7 +132,7 @@ describe('ClipboardService', () => {
 
         service.delete();
 
-        expect(selectionServiceSpy.selectionDeleted).toBeTrue();
+        expect(selectionServiceSpy.selectionDeleted).toBeFalse();
         expect(selectionServiceSpy.clearUnderneathShape).toHaveBeenCalled();
         expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
     });
