@@ -7,9 +7,11 @@ import { SelectionBox } from './../../constants';
 })
 export class MagnetismService {
     squareSize: number = 50;
-    anchorPoint: SelectionBox = SelectionBox.TopLeft;
+    anchorPoint: SelectionBox;
 
-    constructor() {}
+    constructor() {
+        this.anchorPoint = SelectionBox.Center;
+    }
 
     activateMagnetism(topLeftPoint: Vec2, height: number, width: number): Vec2 {
         const intersectionCoord = this.calculateClosestIntersection(topLeftPoint, height, width);
@@ -64,7 +66,7 @@ export class MagnetismService {
 
         return intersectionCoord;
     }
-    
+
     setGridSpaces(size: number): void {
         this.squareSize = size;
     }
