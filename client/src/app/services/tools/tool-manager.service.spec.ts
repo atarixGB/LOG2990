@@ -30,7 +30,7 @@ describe('ToolManagerService', () => {
     });
 
     it('should be pencilService by default', () => {
-        expect(service.currentTool instanceof PencilService).toBeTrue();
+        expect(service.currentTool).toBeInstanceOf(PencilService);
     });
 
     it('should call mouse move of current tool if tool is not undefine', () => {

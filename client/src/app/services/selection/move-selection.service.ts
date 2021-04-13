@@ -3,6 +3,7 @@ import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 
 const DX = 3;
@@ -28,8 +29,9 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     private selectionData: ImageData;
     private keysDown: Map<ArrowKeys, boolean>;
     private intervalId: ReturnType<typeof setTimeout> | undefined = undefined;
+    isMagnetism: boolean = false;
 
-    constructor(drawingService: DrawingService, private selectionService: SelectionService) {
+    constructor(drawingService: DrawingService, private selectionService: SelectionService, public magnetismService: MagnetismService) {
         super(drawingService);
         this.keysDown = new Map<ArrowKeys, boolean>();
 
@@ -42,8 +44,12 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         }
     }
 
+    enableMagnetism(isChecked: boolean): void {
+        this.isMagnetism = isChecked;
+    }
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
+
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
         }
@@ -138,11 +144,13 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
+        if (this.isMagnetism) {
+            this.newOrigin = this.magnetismService.activateMagnetism(this.newOrigin, this.selectionService.height, this.selectionService.width);
+        }
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
     }
 
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D): void {
-        this.newOrigin = this.selectionService.origin;
         if (this.keysDown.get(ArrowKeys.Right)) {
             this.newOrigin.x += DX;
         }
@@ -158,6 +166,9 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
         this.clearUnderneathShape();
         this.drawingService.clearCanvas(ctx);
+        if (this.isMagnetism) {
+            this.newOrigin = this.magnetismService.activateMagnetism(this.newOrigin, this.selectionService.height, this.selectionService.width);
+        }
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
         this.selectionData = ctx.getImageData(this.newOrigin.x, this.newOrigin.y, this.selectionData.width, this.selectionData.height);
         this.origin = this.newOrigin;

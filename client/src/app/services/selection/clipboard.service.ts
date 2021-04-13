@@ -48,6 +48,7 @@ export class ClipboardService {
         this.selectionService.clearUnderneathShape();
         this.selectionService.selectionDeleted = true;
         this.selectionService.terminateSelection();
+        this.selectionService.selectionDeleted = false;
         this.toolManagerService.currentTool = this.selectionService;
     }
 
@@ -64,7 +65,6 @@ export class ClipboardService {
         this.selectionService.height = this.height;
         this.selectionService.isEllipse = this.isEllipse;
         this.selectionService.isLasso = this.isLasso;
-
         this.selectionService.activeSelection = true;
         this.selectionService.initialSelection = true;
         this.selectionService.imageMoved = true;

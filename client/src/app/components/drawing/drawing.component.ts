@@ -1,6 +1,6 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ComponentType } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
@@ -9,13 +9,16 @@ import { ExportModalComponent } from '@app/components/export-modal/export-modal.
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ExportService } from '@app/services/export-image/export.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
 import { ClipboardService } from '@app/services/selection/clipboard.service';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
+import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription, throwError } from 'rxjs';
 
 @Component({
@@ -23,32 +26,39 @@ import { Subscription, throwError } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
+    @ViewChild('lassoPreviewCanvas', { static: false }) lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
 
     dragPosition: Vec2 = { x: 0, y: 0 };
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
+    private gridCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
+    private lassoPreviewCtx: CanvasRenderingContext2D;
     private canvasSize: Vec2;
     private currentDrawing: ImageData;
     private subscription: Subscription;
     private positionX: number;
     private positionY: number;
+    private drawing: DrawingData;
 
     constructor(
         public toolManagerService: ToolManagerService,
         public moveSelectionService: MoveSelectionService,
+        public exportService: ExportService,
+        public dialog: MatDialog,
         private route: ActivatedRoute,
         private drawingService: DrawingService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
-        public dialog: MatDialog,
         private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
+        private autoSaveService: AutoSaveService,
         private clipboardService: ClipboardService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
@@ -57,6 +67,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
                 this.drawingService.baseCtx.beginPath();
                 this.drawingService.baseCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.drawingService.previewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.drawingService.lassoPreviewCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
+                this.drawingService.gridCtx.clearRect(0, 0, this.canvasSize.x, this.canvasSize.y);
                 this.whiteBackgroundCanvas();
             }
         });
@@ -68,14 +80,16 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
     ngOnInit(): void {
         this.route.params.subscribe((params) => {
-            const path = params.url;
-            this.getNewImage(path)
-                .then((img) => {
-                    this.baseCtx.drawImage(img, 0, 0);
-                })
-                .catch((error) => {
-                    return throwError(error);
-                });
+            if (params.url) {
+                const path = params.url;
+                this.getNewImage(path)
+                    .then((img) => {
+                        this.baseCtx.drawImage(img, 0, 0);
+                    })
+                    .catch((error) => {
+                        return throwError(error);
+                    });
+            }
         });
     }
 
@@ -86,15 +100,27 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.lassoPreviewCtx = this.lassoPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingService.baseCtx = this.baseCtx;
         this.drawingService.previewCtx = this.previewCtx;
         this.drawingService.cursorCtx = this.cursorCtx;
+        this.drawingService.lassoPreviewCtx = this.lassoPreviewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
+
+        window.onload = () => {
+            this.autoSaveService.loadImage();
+            this.canvasSize.x = this.autoSaveService.localDrawing.width;
+            this.canvasSize.y = this.autoSaveService.localDrawing.height;
+        };
+
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
@@ -102,6 +128,17 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         this.baseCtx.fillStyle = '#FF00FF';
         this.baseCtx.fillRect(0, 0, 300, 300);
         this.baseCtx.closePath();
+    }
+
+    ngOnChanges(): void {
+        this.route.params.subscribe((params) => {
+            console.log(params.height, params.width);
+
+            if (params.height && params.width) {
+                this.canvasSize.x = params.width;
+                this.canvasSize.y = params.height;
+            }
+        });
     }
 
     mouseCoord(event: MouseEvent): Vec2 {
@@ -122,7 +159,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
             if (
                 this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
-                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse
+                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse ||
+                this.toolManagerService.currentToolEnum === ToolList.Lasso
             ) {
                 if (!this.selectionService.newSelection) {
                     this.toolManagerService.currentTool = this.moveSelectionService;
@@ -146,6 +184,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         if (!ELEMENT.className.includes('box')) {
             this.toolManagerService.onMouseUp(event, this.mouseCoord(event));
         }
+        this.drawing = {
+            title: '',
+            width: this.drawingService.canvas.width,
+            height: this.drawingService.canvas.height,
+            body: this.drawingService.canvas.toDataURL(),
+        };
+        this.autoSaveService.saveCanvasState(this.drawing);
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -202,10 +247,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
 
         if (resizeX && this.positionX > MIN_SIZE) {
             this.previewCanvas.nativeElement.width = this.positionX;
+            this.gridCanvas.nativeElement.width = this.positionX;
         }
 
         if (resizeY && this.positionY > MIN_SIZE) {
             this.previewCanvas.nativeElement.height = this.positionY;
+            this.gridCanvas.nativeElement.height = this.positionY;
         }
     }
 
@@ -230,6 +277,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
         setTimeout(() => {
             this.whiteBackgroundCanvas();
             this.baseCtx.putImageData(this.currentDrawing, 0, 0);
+            this.drawing = {
+                title: '',
+                width: this.drawingService.canvas.width,
+                height: this.drawingService.canvas.height,
+                body: this.drawingService.canvas.toDataURL(),
+            };
+            this.autoSaveService.saveCanvasState(this.drawing);
         }, 0);
     }
 
@@ -255,6 +309,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
             if (this.dialog.openDialogs.length === 0) {
                 if (key === 'g') {
                     this.dialog.open(component, { data: this.isCanvasBlank() });
+                }
+                if (key === 'e') {
+                    this.dialog.open(component, {});
+                    this.exportService.imagePrevisualization();
+                    this.exportService.initializeExportParams();
                 } else {
                     this.dialog.open(component, {});
                 }
@@ -332,6 +391,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit {
     }
 
     private whiteBackgroundCanvas(): void {
+        if (this.drawingService.isGridEnabled) {
+            this.drawingService.setGrid();
+        }
         this.baseCtx.beginPath();
         this.baseCtx.fillStyle = '#FFFFFF';
         this.baseCtx.fillRect(0, 0, this.canvasSize.x, this.canvasSize.y);
