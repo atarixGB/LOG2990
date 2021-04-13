@@ -108,28 +108,30 @@ export class TextService extends Tool {
     }
 
     changeFont(): void {
-        if (this.fontBinding.has(this.selectFont)) {
+        if (this.fontBinding.has(this.selectFont) && this.isWriting == true) {
             this.font = this.fontBinding.get(this.selectFont);
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeEmphasis(): void {
-        if (this.emphasisBinding.has(this.selectEmphasis)) {
+        if (this.emphasisBinding.has(this.selectEmphasis) && this.isWriting == true) {
             this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeAlign(): void {
-        if (this.alignBinding.has(this.selectAlign)) {
+        if (this.alignBinding.has(this.selectAlign) && this.isWriting == true) {
             this.align = this.alignBinding.get(this.selectAlign);
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeSize(): void {
-        this.writeOnCanvas(CanvasType.previewCtx);
+        if (this.isWriting == true) {
+            this.writeOnCanvas(CanvasType.previewCtx);
+        }
     }
 
     onMouseDown(event: MouseEvent): void {

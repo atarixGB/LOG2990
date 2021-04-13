@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { TextService } from './text.service';
 
 //tslint:disable
-describe('TextService', () => {
+fdescribe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     const mouseEventClick = {
@@ -20,8 +20,12 @@ describe('TextService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        // const spy = spyOn(service['colorManager'], 'changeColorObserver');
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                // { provide: ColorManagerService, useValue: spy },
+            ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -57,7 +61,7 @@ describe('TextService', () => {
         const keyEvent = new KeyboardEvent('keyup', { key: 'Shift' });
         const spyAddCharacter = spyOn<any>(service, 'addCharacter').and.callThrough();
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
-       
+
         service.handleKeyUp(keyEvent);
 
         expect(service['textInput']).toEqual(['']);
@@ -391,6 +395,7 @@ describe('TextService', () => {
     });
 
     it('applyAlign should get the selected align and assign to current align', () => {
+        service.isWriting = true;
         service.selectAlign = TextAlign.Center;
         const alignSpy = spyOn(service['alignBinding'], 'get').and.callThrough();
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
@@ -403,6 +408,7 @@ describe('TextService', () => {
     });
 
     it('should not apply align when not a defined align', () => {
+        service.isWriting = true;
         spyOn(service['alignBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
@@ -412,6 +418,7 @@ describe('TextService', () => {
     });
 
     it('applyEmphasis should get the selected emphasis and assign to current emphasis', () => {
+        service.isWriting = true;
         service.selectEmphasis = Emphasis.Bold;
         const emphasisSpy = spyOn(service['emphasisBinding'], 'get').and.callThrough();
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
@@ -424,6 +431,7 @@ describe('TextService', () => {
     });
 
     it('should not apply emphasis when not a defined empphasis', () => {
+        service.isWriting = true;
         spyOn(service['emphasisBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
@@ -433,6 +441,7 @@ describe('TextService', () => {
     });
 
     it('applyFont should get the selected font and assign to current font', () => {
+        service.isWriting = true;
         service.selectFont = Font.Impact;
         const fontSpy = spyOn(service['fontBinding'], 'get').and.callThrough();
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
@@ -445,13 +454,14 @@ describe('TextService', () => {
     });
 
     it('should not apply font when not a defined font', () => {
+        service.isWriting = true;
         spyOn(service['fontBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
         service.changeFont();
 
         expect(spyWriteCanvas).not.toHaveBeenCalled();
-    });    
+    });
 
     it('shoud write on baseCtx', () => {
         const ctx = CanvasType.baseCtx;
@@ -509,10 +519,49 @@ describe('TextService', () => {
     });
 
     it('should update preview canvas when change size', () => {
+        service.isWriting = true;
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
         service.changeSize();
 
         expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
+    });
+
+    it('should place cursor at position zero when current line is empty when after using arrow up', () => {
+        service.isWriting = true;
+        service['currentLine'] = 1;
+        service['textInput'][0] = '';
+        service['textInput'][1] = 'def';
+        service['cursorPosition'] = 0;
+        const keyEvent = new KeyboardEvent('keyup', { key: 'ArrowUp' });
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
+        service.handleKeyUp(keyEvent);
+
+        expect(service['currentLine']).toBe(0);
+        expect(service['cursorPosition']).toBe(0);
+        expect(spyWriteCanvas).toHaveBeenCalled();
+    });
+
+    it('should place cursor at position zero when current line is empty after when using arrow down', () => {
+        service.isWriting = true;
+        service['textInput'][0] = 'abc';
+        service['textInput'][1] = '';
+        service['currentLine'] = 0;
+        service['cursorPosition'] = 0;
+        service['totalLine'] = 2;
+        const keyEvent = new KeyboardEvent('keyup', { key: 'ArrowDown' });
+        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
+        service.handleKeyUp(keyEvent);
+
+        expect(service['currentLine']).toBe(1);
+        expect(spyWriteCanvas).toHaveBeenCalled();
+    });
+
+    it('should change color when color change using color manager', () => {
+        // service.isWriting = true;
+        // TestBed.createComponent(ColorManagerService);
+        // expect(service['colorManager'].changeColorObserver().subscribe).toHaveBeenCalled();
     });
 });
