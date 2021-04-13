@@ -8,6 +8,7 @@ import { RectangleService } from '@app/services/tools//rectangle/rectangle.servi
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { LassoService } from '@app/services/tools/lasso/lasso.service';
 
+// tslint:disable
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 const PIXEL_LENGTH = 4;
 const MAX_RGB = 255;
