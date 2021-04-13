@@ -149,14 +149,14 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     }
 
     private moveSelectionKeyboard(ctx: CanvasRenderingContext2D): void {
-        this.newOrigin = this.selectionService.origin;
-        let offsetMvt:number=DX;
-        if(this.isMagnetism){
-            const magnetismPoint=this.magnetismService.activateMagnetism(this.newOrigin,this.selectionService.height,this.selectionService.width);
-            offsetMvt=this.magnetismService.squareSize;
-            this.newOrigin.x=magnetismPoint.x;
-            this.newOrigin.y=magnetismPoint.y;
-        }
+        // this.newOrigin = this.selectionService.origin;
+        // let offsetMvt:number=DX;
+        // if(this.isMagnetism){
+        //     const magnetismPoint=this.magnetismService.activateMagnetism(this.newOrigin,this.selectionService.height,this.selectionService.width);
+        //     offsetMvt=this.magnetismService.squareSize;
+        //     this.newOrigin.x=magnetismPoint.x;
+        //     this.newOrigin.y=magnetismPoint.y;
+        // }
         if (this.keysDown.get(ArrowKeys.Right)) {
             this.newOrigin.x += DX;
         }

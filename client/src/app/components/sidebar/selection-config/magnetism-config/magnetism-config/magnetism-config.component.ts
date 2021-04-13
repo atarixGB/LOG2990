@@ -19,6 +19,7 @@ export class MagnetismConfigComponent {
    enableGridMagnetism(isChecked:boolean):void{
      this.isMagnetismEnabled=isChecked;
      this.moveSelectionService.enableMagnetism(isChecked);
+    
    }
 
    
