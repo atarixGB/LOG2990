@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
 import { Line } from '@app/classes/line';
+import { Utils } from '@app/classes/math-utils';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
@@ -10,9 +11,8 @@ import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
 const SECOND_LAST_INDEX = -2;
-const NEGATIVE_LINE_SLOPE = -1;
-const NUMBER_SIGN_CHANGE = -1;
 const LINE_RADIUS = 5;
+
 @Injectable({
     providedIn: 'root',
 })
@@ -136,7 +136,7 @@ export class LineService extends Tool {
         if (!currentPoint || !basePoint) {
             return undefined;
         }
-        return this.getNearestPoint(currentPoint, basePoint);
+        return Utils.getNearestPoint(currentPoint, basePoint);
     }
 
     drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle): void {
@@ -162,64 +162,6 @@ export class LineService extends Tool {
         }
     }
 
-    private getCanvasState(): void {
-        if (this.currentSegment) {
-            this.lastCanvasImages.push(
-                this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
-            );
-        }
-    }
-
-    // Equation of a line: 0 = ax + by + c
-    // Distance from a point A to a line L :  distance(A,L) =  abs(ax + by + c) / sqrt(a^2 + b^2)
-    private getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
-        const numerator: number = Math.abs(lines[0] * point.x + lines[1] * point.y + lines[2]);
-        const denominator: number = Math.sqrt(lines[0] * lines[0] + lines[1] * lines[1]);
-        return numerator / denominator;
-    }
-
-    private getClosestLine(currentPoint: Vec2, basePoint: Vec2): number[] {
-        const lineList = [
-            [1, 1, NUMBER_SIGN_CHANGE * (basePoint.x + basePoint.y)], // ascending diagonal
-            [1, NEGATIVE_LINE_SLOPE, NUMBER_SIGN_CHANGE * (basePoint.x - basePoint.y)], // descending diagonal
-            [1, 0, -basePoint.x], // x axis
-            [0, 1, -basePoint.y], // y axis
-        ];
-        const distance: number[] = lineList.map((line) => this.getDistanceBetweenPointAndLine(currentPoint, line));
-        const maxDistance: number = Math.min(...distance);
-        const maxIndex: number = distance.indexOf(maxDistance);
-        return lineList[maxIndex];
-    }
-
-    // Cramer's Rule is used for solving the linear system equation
-    //    ax + by = e
-    //    cx + dy = f
-    private solveLinearEquationsSystem(a: number, b: number, c: number, d: number, e: number, f: number): Vec2 {
-        const determinant: number = a * d - b * c;
-        const point: Vec2 = {
-            x: (d * e - b * f) / determinant,
-            y: (a * f - c * e) / determinant,
-        };
-        return point;
-    }
-
-    private getProjectionOnClosestLine(point: Vec2, line: number[]): Vec2 {
-        const projection: Vec2 = this.solveLinearEquationsSystem(
-            line[0],
-            line[1],
-            -line[1],
-            line[0],
-            -line[2],
-            line[0] * point.y - line[1] * point.x,
-        );
-        return projection;
-    }
-
-    private getNearestPoint(currentPoint: Vec2, basePoint: Vec2): Vec2 {
-        const nearestLine: number[] = this.getClosestLine(currentPoint, basePoint);
-        return this.getProjectionOnClosestLine(currentPoint, nearestLine);
-    }
-
     private drawPoint(ctx: CanvasRenderingContext2D, position: Vec2): void {
         const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.fillStyle = color;
@@ -228,6 +170,14 @@ export class LineService extends Tool {
         ctx.arc(position.x, position.y, this.junctionRadius, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.fill();
+    }
+
+    private getCanvasState(): void {
+        if (this.currentSegment) {
+            this.lastCanvasImages.push(
+                this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
+            );
+        }
     }
 
     private clearPath(): void {
