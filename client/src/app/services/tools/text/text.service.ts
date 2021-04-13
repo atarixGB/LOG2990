@@ -20,28 +20,25 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
     providedIn: 'root',
 })
 export class TextService extends Tool {
-    private textInput: string[];
-    private currentLine: number;
-    private totalLine: number;
-    private cursorPosition: number;
-    private positionText: Vec2;
-    isWriting: boolean;
-
     selectFont: Font;
     selectEmphasis: Emphasis;
     selectAlign: TextAlign;
-
-    private fontBinding: Map<Font, string>;
-    private emphasisBinding: Map<Emphasis, string>;
-    private alignBinding: Map<TextAlign, string>;
-
-    private keyBinding: Map<string, () => void>;
-
     color: string;
     font: undefined | string = DEFAULT_FONT;
     size: string = DEFAULT_TEXT_SIZE;
     emphasis: undefined | string = DEFAULT_EMPHASIS;
     align: undefined | string = DEFAULT_TEXT_ALIGN;
+    isWriting: boolean;
+
+    private textInput: string[];
+    private currentLine: number;
+    private totalLine: number;
+    private cursorPosition: number;
+    private positionText: Vec2;
+    private fontBinding: Map<Font, string>;
+    private emphasisBinding: Map<Emphasis, string>;
+    private alignBinding: Map<TextAlign, string>;
+    private keyBinding: Map<string, () => void>;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -84,6 +81,13 @@ export class TextService extends Tool {
             .set('ArrowDown', () => this.handleArrowDown())
             .set('Enter', () => this.handleEnter())
             .set('Escape', () => this.handleEscape());
+
+        colorManager.changeColorObserver().subscribe(() => {
+            if (this.isWriting) {
+                this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+                this.writeOnCanvas(CanvasType.previewCtx);
+            }
+        });
     }
 
     private addCharacter(event: KeyboardEvent): void {
