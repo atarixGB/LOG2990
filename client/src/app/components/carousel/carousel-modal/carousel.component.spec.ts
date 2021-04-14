@@ -1,6 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -25,7 +26,7 @@ describe('CarouselComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['']);
 
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, RouterTestingModule, MatDialogModule],
+            imports: [HttpClientTestingModule, RouterTestingModule, MatDialogModule, MatProgressSpinnerModule],
             declarations: [CarouselComponent],
             providers: [
                 { provide: MatDialogRef, useValue: { close: dialogSpy } },
