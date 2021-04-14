@@ -4,7 +4,7 @@ import { mouseEventLClick, mouseEventRClick, StampList } from '@app/constants';
 import { StampService } from './stamp.service';
 
 
-fdescribe('StampService', () => {
+describe('StampService', () => {
   let service: StampService;
   let canvasTestHelper: CanvasTestHelper;
   let baseCtxStub: CanvasRenderingContext2D;
