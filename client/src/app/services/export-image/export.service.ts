@@ -52,6 +52,12 @@ export class ExportService {
         this.imgurURL = '';
     }
 
+    initializeExportParams(): void {
+        this.drawingTitle = 'dessin';
+        this.selectedFilter = FiltersList.None;
+        this.currentFilter = 'none';
+        this.currentImageFormat = 'png';
+    }
     imagePrevisualization(): void {
         this.currentDrawing = this.drawingService.canvas.toDataURL();
         this.image.src = this.currentDrawing;
@@ -103,6 +109,7 @@ export class ExportService {
             canvasCtx.filter = this.currentFilter;
         }
         canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
+
         return canvasCtx;
     }
 
@@ -110,7 +117,7 @@ export class ExportService {
         const tempCanva = this.previsualizationToBiggerCanvas();
         let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(() => {
             fetch('https://api.imgur.com/3/image', {
                 method: 'post',
                 headers: {
@@ -140,12 +147,5 @@ export class ExportService {
         const width = this.drawingService.baseCtx.canvas.width;
         const height = this.drawingService.baseCtx.canvas.height;
         return width / height;
-    }
-
-    initializeExportParams(): void {
-        this.drawingTitle = 'dessin';
-        this.selectedFilter = FiltersList.None;
-        this.currentFilter = 'none';
-        this.currentImageFormat = 'png';
     }
 }
