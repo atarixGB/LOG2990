@@ -35,13 +35,6 @@ describe('ConfigPanelComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should toggle config panel', () => {
-        component.isOpened = false;
-
-        component.toggleConfigPanel();
-        expect(component.isOpened).toEqual(true);
-    });
-
     it('should not include color configuration if currentToolEnum is Eraser, Selection or Lasso ', () => {
         toolManagerServiceSpy.currentToolEnum = ToolList.Eraser;
         const result = component.includesColorConfiguration();
