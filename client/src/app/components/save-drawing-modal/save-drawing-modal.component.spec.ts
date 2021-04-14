@@ -22,7 +22,6 @@ describe('SaveDrawingModalComponent', () => {
     };
 
     beforeEach(async(() => {
-        drawingServiceSpy = new DrawingService();
         indexServiceSpy = jasmine.createSpyObj('IndexService', ['postDrawing']);
 
         TestBed.configureTestingModule({
@@ -73,21 +72,24 @@ describe('SaveDrawingModalComponent', () => {
         expect(component.tags.length).toEqual(expectedValue.length);
     });
 
-    xit('sendToServer should close matdialog if drawing has been sent', () => {
-        // // drawingServiceSpy.canvas = new CanvasTestHelper().canvas;
-        // // console.log(drawingServiceSpy.canvas);
-        // // spyOn(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('data');
-        // indexServiceSpy.postDrawing.and.returnValue(of(null));
-        // spyOn(component, 'validateString').and.returnValue(true);
-        // component.message = {
-        //     title: 'title',
-        //     labels: ['tags'],
-        //     height: 0,
-        //     width: 0,
-        //     body: 'data',
-        // };
-        // component.sendToServer();
-        // expect(mockDialogRef.close).toHaveBeenCalled();
+    it('addTag should not add tag if string is not valid', () => {
+        spyOn<any>(component, 'validateNumberOfTags').and.returnValue(false);
+        component.addTag();
+        expect(component.tags.length).toEqual(0);
+    });
+
+    it('sendToServer should close matdialog if drawing has been sent', () => {
+        indexServiceSpy.postDrawing.and.returnValue(of(null));
+        spyOn(component, 'validateString').and.returnValue(true);
+        component.message = {
+            title: 'title',
+            labels: ['tags'],
+            height: 0,
+            width: 0,
+            body: 'data',
+        };
+        component.sendToServer();
+        expect(indexServiceSpy.postDrawing).toHaveBeenCalled();
     });
 
     it('sendToServer should not close matdialog if drawing has not been sent', () => {
