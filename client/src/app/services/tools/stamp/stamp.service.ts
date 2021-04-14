@@ -80,7 +80,7 @@ export class StampService extends Tool {
     handleKeyDown(event: KeyboardEvent): void {
         console.log('onkeydown alt');
         if (event.key === 'Alt') {
-            //event.preventDefault();
+            event.preventDefault();
             this.isKeyAltDown = true;
         }
     }
@@ -100,7 +100,6 @@ export class StampService extends Tool {
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         let rotationStep = ROTATION_STEP_STAMP;
         if (this.isKeyAltDown) {
-            console.log('ALT');
             rotationStep = 1;
         }
         this.changeAngle(this.angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep);
@@ -141,6 +140,8 @@ export class StampService extends Tool {
     }
 
     previewCursor(event: Vec2): void {
+        console.log("Event x: " , event.x , "Event y : ", event.y);
+
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
         if (this.srcBinding.has(this.currentStamp)) {
@@ -148,10 +149,10 @@ export class StampService extends Tool {
         }
 
         const path = new Path2D(this.imageSrc);
-        const center: Vec2 = { x: event.x + this.size / 2, y: event.y + this.size / 2 };
+        const center: Vec2 = { x: event.x + this.size / 2, y: event.y - this.size / 2 };
+        console.log("Centre x: " , center.x , "Centre y : ", center.y);
 
         this.drawingService.cursorCtx.translate(center.x, center.y);
-
         this.drawingService.cursorCtx.rotate(-((this.angle * Math.PI) / ANGLE_HALF_TURN));
         this.drawingService.cursorCtx.translate(-this.size / 2, -this.size / 2);
 

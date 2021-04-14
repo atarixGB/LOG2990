@@ -2,6 +2,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Params } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
@@ -27,10 +29,21 @@ describe('DrawingComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
-            imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule],
+            imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule, RouterTestingModule],
             providers: [
                 { provide: DrawingService, useValue: drawingStub },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        params: {
+                            subscribe: (fn: (value: Params) => void) =>
+                                fn({
+                                    url: 'url',
+                                }),
+                        },
+                    },
+                },
             ],
         }).compileComponents();
     }));
@@ -129,7 +142,7 @@ describe('DrawingComponent', () => {
         const event = new KeyboardEvent('keydown', { key: 'o', ctrlKey: true });
         let handleModalSpy = spyOn<any>(component, 'modalHandler');
         component.handleKeyDown(event);
-        expect(handleModalSpy).toHaveBeenCalledTimes(2);
+        expect(handleModalSpy).toHaveBeenCalledTimes(4);
     });
 
     it('should return canvas width', () => {

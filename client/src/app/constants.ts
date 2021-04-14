@@ -55,12 +55,13 @@ export enum ToolList {
     Pipette = 7,
     SelectionRectangle = 8,
     SelectionEllipse = 9,
-    Sceau = 10,
+    PaintBucket = 10,
     Lasso = 11,
     MoveSelection = 12,
     Undo = 13,
     Redo = 14,
     Stamp = 15,
+    Text = 16,
 }
 
 export const mouseEventLClick = {
@@ -103,6 +104,9 @@ export const SECONDARYCOLORINITIAL: RGBA = {
     Hex: { Red: '0', Green: 'ff', Blue: '0' },
     inString: 'rgba(0, 255, 0, 1)',
 };
+
+// constants for selection
+export const CONTROLPOINTSIZE = 10;
 
 // in the following we find testing constants
 export const FIRST_CASE = 75;
@@ -161,3 +165,64 @@ export const SCALE_FACTOR_STAMP = 1;
 export const ROTATION_STEP_STAMP = 15;
 export const MAX_ANGLE = 360;
 export const ANGLE_HALF_TURN = 180;
+// constants for bucket
+export const RGBA_COMPONENTS = 4;
+export const MAX_BYTE_VALUE = 255;
+export const MAX_PERCENT = 100;
+export const MAX_TOLERANCE_VALUE = 100;
+export const MIN_TOLERANCE_VALUE = 0;
+
+// constants for grid
+export const MIN_GRID_SQUARE_SIZE = 5;
+export const MAX_GRID_SQUARE_SIZE = 200;
+export const MIN_GRID_OPACITY = 10;
+export const MAX_GRID_OPACITY = 100;
+export const DEFAULT_GRID_SIZE = 5;
+export const GRID_STEP = 5;
+export const DEFAULT_GRID_OPACITY = 10;
+export const SQUARE_STEP = 5;
+
+// constants for magnetism
+export enum SelectionBox {
+    TopLeft = 1,
+    TopRight = 2,
+    BottomRight = 3,
+    BottomLeft = 4,
+    TopMiddle = 5,
+    BottomMiddle = 6,
+    LeftMiddle = 7,
+    RightMiddle = 8,
+    Center = 9,
+}
+// Text
+export enum Font {
+    Arial = 0,
+    TimesNewRoman = 1,
+    ComicSansMs = 2,
+    CourierNew = 3,
+    Impact = 4,
+}
+
+export enum Emphasis {
+    Italic = 0,
+    Bold = 1,
+    ItalicBold = 2,
+    Normal = 3,
+}
+
+export enum TextAlign {
+    Left = 0,
+    Center = 1,
+    Right = 2,
+}
+
+export enum CanvasType {
+    previewCtx = 0,
+    baseCtx = 1,
+}
+
+export const DEFAULT_TEXT_SIZE = '20';
+export const DEFAULT_FONT = 'Arial';
+export const DEFAULT_EMPHASIS = 'normal';
+export const DEFAULT_TEXT_ALIGN = 'left';
+export const ACCEPTED_CHAR = RegExp(/^[\S ]$/);
