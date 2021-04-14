@@ -28,6 +28,7 @@ export class SelectionConfigComponent {
         this.moveSelectionService.isMagnetism = isChecked;
         this.moveSelectionService.enableMagnetism(isChecked);
     }
+
     @HostListener('window:keydown.m')
     gIsClicked(): void {
         if (!this.textService.isWriting) {
