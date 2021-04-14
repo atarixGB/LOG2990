@@ -67,9 +67,6 @@ export class ExportService {
 
         if (this.filtersBindings.has(this.selectedFilter)) {
             this.currentFilter = this.filtersBindings.get(this.selectedFilter);
-        }
-
-        if (this.currentFilter != undefined) {
             this.image.src = this.currentDrawing;
 
             this.image.onload = () => {
@@ -82,22 +79,36 @@ export class ExportService {
                 } else {
                     this.baseCtx.filter = this.currentFilter + '(' + this.filterIntensity + '%)';
                 }
-
+                this.currentFilter = this.baseCtx.filter;
                 this.baseCtx.drawImage(this.image, PREVIEW_ORIGIN_X, PREVIEW_ORIGIN_Y, this.resizeWidth, this.resizeHeight);
             };
         }
     }
 
     exportDrawing(): void {
+        const tempCanva = this.previsualizationToBiggerCanvas();
         const link = document.createElement('a');
-        this.image.src = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
+        this.image.src = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
         link.href = this.image.src;
         link.click();
     }
 
+    previsualizationToBiggerCanvas(): CanvasRenderingContext2D {
+        const canvas = document.createElement('canvas');
+        const canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        canvas.width = this.drawingService.canvas.width;
+        canvas.height = this.drawingService.canvas.height;
+        if (this.currentFilter) {
+            canvasCtx.filter = this.currentFilter;
+        }
+        canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
+        return canvasCtx;
+    }
+
     async uploadToImgur(): Promise<void> {
-        let url = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
+        const tempCanva = this.previsualizationToBiggerCanvas();
+        let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
         return new Promise<void>((resolve, reject) => {
             fetch('https://api.imgur.com/3/image', {
