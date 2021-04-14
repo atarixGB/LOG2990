@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { mouseEventLClick, mouseEventRClick, StampList } from '@app/constants';
+import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { StampService } from './stamp.service';
 
-fdescribe('StampService', () => {
+describe('StampService', () => {
     let service: StampService;
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -44,11 +45,10 @@ fdescribe('StampService', () => {
         expect(service.selectStamp).toEqual(StampList.Happy);
     });
 
-    /*
-  it('stamp color should be initalized with the principal color', () => {
-
-  });
-  */
+    it('stamp color should be initalized with the principal color', () => {
+        const colorManagerService = new ColorManagerService();
+        expect(service.color).toEqual(colorManagerService.selectedColor[0].inString);
+    });
 
     it('Initial angle should be 0', () => {
         const expectedAngle = 0;
@@ -194,14 +194,12 @@ fdescribe('StampService', () => {
         expect(setTransformSpy).toHaveBeenCalledWith(1, 0, 0, 1, 0, 0);
     });
 
-    /*
-  it('drawStamp should match the principal color', () => {
-    const color = '#ffffff';
-    service.drawStamp({x:0, y:0});
-    expect(baseCtxStub.strokeStyle).toEqual(color);
-    expect(baseCtxStub.fillStyle).toEqual(color);
-  });
-  */
+    it('drawStamp should match the principal color', () => {
+        const color = '#ff0000';
+        service.drawStamp({ x: 0, y: 0 });
+        expect(baseCtxStub.strokeStyle).toEqual(color);
+        expect(baseCtxStub.fillStyle).toEqual(color);
+    });
 
     it('previewCursor should not change the stamp if undefined', () => {
         const test = 'test';
