@@ -78,7 +78,6 @@ export class StampService extends Tool {
     }
 
     handleKeyDown(event: KeyboardEvent): void {
-        console.log('onkeydown alt');
         if (event.key === 'Alt') {
             event.preventDefault();
             this.isKeyAltDown = true;
@@ -107,9 +106,11 @@ export class StampService extends Tool {
 
     changeAngle(newAngle: number): void {
         newAngle %= MAX_ANGLE;
+        
         if (newAngle < 0) {
             newAngle += MAX_ANGLE;
         }
+        
         this.angle = newAngle;
         this.angleObservable.next(this.angle);
     }
@@ -140,9 +141,8 @@ export class StampService extends Tool {
     }
 
     previewCursor(event: Vec2): void {
-        console.log("Event x: " , event.x , "Event y : ", event.y);
 
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.drawingService.clearCanvas(this.drawingService.cursorCtx);
 
         if (this.srcBinding.has(this.currentStamp)) {
             this.imageSrc = this.srcBinding.get(this.currentStamp)!;
@@ -150,7 +150,6 @@ export class StampService extends Tool {
 
         const path = new Path2D(this.imageSrc);
         const center: Vec2 = { x: event.x + this.size / 2, y: event.y - this.size / 2 };
-        console.log("Centre x: " , center.x , "Centre y : ", center.y);
 
         this.drawingService.cursorCtx.translate(center.x, center.y);
         this.drawingService.cursorCtx.rotate(-((this.angle * Math.PI) / ANGLE_HALF_TURN));
