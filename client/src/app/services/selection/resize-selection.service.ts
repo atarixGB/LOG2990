@@ -98,7 +98,7 @@ export class ResizeSelectionService {
                 selectionImage,
                 -this.selectionObject.origin.x,
                 this.selectionObject.origin.y,
-                this.resizeWidth,
+                -this.resizeWidth,
                 this.resizeHeight,
             );
         } else if (this.resizeHeight < 0 && this.resizeWidth > 0) {
@@ -108,7 +108,7 @@ export class ResizeSelectionService {
                 this.selectionObject.origin.x,
                 -this.selectionObject.origin.y,
                 this.resizeWidth,
-                this.resizeHeight,
+                -this.resizeHeight,
             );
         } else {
             this.drawingService.previewCtx.drawImage(

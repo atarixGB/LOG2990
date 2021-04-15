@@ -121,6 +121,8 @@ export class SelectionService extends Tool {
     }
 
     resizeSelection(event: MouseEvent): void {
+        console.log(this.selectionObject.origin, this.selectionObject.width, this.selectionObject.height);
+
         this.resizeSelectionService.onMouseMove(this.getPositionFromMouse(event), this.selectionObject);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
@@ -128,7 +130,6 @@ export class SelectionService extends Tool {
         this.width = this.resizeSelectionService.setResizedDimensions().x;
         this.height = this.resizeSelectionService.setResizedDimensions().y;
         this.destination = { x: this.origin.x + this.width, y: this.origin.y + this.height };
-        this.reajustOriginAndDestination();
 
         if (this.clearUnderneath) {
             this.clearUnderneathShape();
