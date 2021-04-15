@@ -73,20 +73,20 @@ export class GridComponent {
     @HostListener('window:keydown.=')
     @HostListener('window:keydown.shift.+')
     increase(): void {
-        if (this.isEnabled && this.squareSize < MAX_GRID_SQUARE_SIZE) {
+        if ( this.squareSize < MAX_GRID_SQUARE_SIZE) {
             this.squareSize += SQUARE_STEP;
             this.drawingService.gridSpaces = this.squareSize;
             this.magnetismService.setGridSpaces(this.squareSize);
-            this.drawingService.setGrid();
+            if (this.isEnabled) this.drawingService.setGrid();
         }
     }
     @HostListener('window:keydown.-')
     decrease(): void {
-        if (this.isEnabled && this.squareSize > MIN_GRID_SQUARE_SIZE) {
+        if ( this.squareSize > MIN_GRID_SQUARE_SIZE) {
             this.squareSize -= SQUARE_STEP;
             this.drawingService.gridSpaces = this.squareSize;
             this.magnetismService.setGridSpaces(this.squareSize);
-            this.drawingService.setGrid();
+            if (this.isEnabled) this.drawingService.setGrid();
         }
     }
 }
