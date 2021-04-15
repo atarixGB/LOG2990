@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { SelectionTool } from '@app/classes/selection';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,7 +17,12 @@ export class ClipboardService {
 
     pasteAvailable: boolean;
 
-    constructor(private drawingService: DrawingService, private selectionService: SelectionService, private toolManagerService: ToolManagerService) {
+    constructor(
+        private drawingService: DrawingService,
+        private selectionService: SelectionService,
+        private toolManagerService: ToolManagerService,
+        private selectionUtilsService: SelectionUtilsService,
+    ) {
         this.pasteAvailable = false;
     }
 
@@ -34,7 +41,8 @@ export class ClipboardService {
         this.initializeSelectionParameters();
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         this.selectionService.printMovedSelection(this.drawingService.baseCtx);
-        this.selectionService.createBoundaryBox();
+        const selection = new SelectionTool({ x: 0, y: 0 }, { x: this.width, y: this.height }, this.width, this.height);
+        this.selectionUtilsService.createBoundaryBox(selection);
         this.toolManagerService.currentTool = this.selectionService;
     }
 
@@ -45,7 +53,7 @@ export class ClipboardService {
     }
 
     delete(): void {
-        this.selectionService.clearUnderneathShape();
+        // this.selectionUtilsService.clearUnderneathShape();
         this.selectionService.selectionDeleted = true;
         this.selectionService.terminateSelection();
         this.selectionService.selectionDeleted = false;

@@ -64,7 +64,7 @@ export class ResizeSelectionService {
         canvas.width = this.selectionObject.width;
         canvas.height = this.selectionObject.height;
         const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
-        tmp.putImageData(this.selectionObject.selection, 0, 0);
+        tmp.putImageData(this.selectionObject.image, 0, 0);
 
         this.drawingService.previewCtx.save();
         this.checkForMirroirEffect(tmp.canvas);

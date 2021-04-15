@@ -1,10 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { SelectionTool } from '@app/classes/selection';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { SelectionUtilsService } from '../utils/selection-utils.service';
 import { ResizeSelectionService } from './resize-selection.service';
 
 const DX = 3;
@@ -23,6 +25,8 @@ enum ArrowKeys {
     providedIn: 'root',
 })
 export class MoveSelectionService extends Tool implements OnDestroy {
+    isMagnetism: boolean;
+    private selectionObject: SelectionTool;
     private initialMousePosition: Vec2;
     private origin: Vec2;
     private newOrigin: Vec2;
@@ -30,17 +34,17 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     private selectionData: ImageData;
     private keysDown: Map<ArrowKeys, boolean>;
     private intervalId: ReturnType<typeof setTimeout> | undefined = undefined;
-    isMagnetism: boolean = false;
 
     constructor(
         drawingService: DrawingService,
         private selectionService: SelectionService,
         private magnetismService: MagnetismService,
         private resizeSelectionService: ResizeSelectionService,
+        private selectionUtilsService: SelectionUtilsService,
     ) {
         super(drawingService);
+        this.isMagnetism = false;
         this.keysDown = new Map<ArrowKeys, boolean>();
-
         this.keysDown.set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, false);
     }
 
@@ -59,7 +63,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
-            this.resizeSelectionService.controlPointsCoord = this.selectionService.controlPointsCoord;
+            this.resizeSelectionService.controlPointsCoord = this.selectionUtilsService.controlPointsCoord;
             this.selectionService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
         }
     }
@@ -67,7 +71,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             if (this.selectionService.isResizing) {
-                this.selectionService.resizeSelection(event);
+                this.selectionUtilsService.resizeSelection(this.getPositionFromMouse(event), this.selectionObject);
                 return;
             }
             this.selectionService.imageMoved = true;
@@ -81,7 +85,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         this.initialSelection();
 
         if (!this.selectionService.selectionTerminated) {
-            if (this.selectionService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+            if (this.selectionUtilsService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.selectionService.newSelection = false;
             } else {
                 this.selectionService.newSelection = true;
@@ -101,7 +105,10 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
             this.selectionService.destination = this.destination;
-            this.selectionService.createBoundaryBox();
+            //revoir
+            this.selectionObject.origin = this.origin;
+            this.selectionObject.destination = this.destination;
+            this.selectionUtilsService.createBoundaryBox(this.selectionObject);
         }
     }
 
@@ -122,7 +129,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
                 this.handleKeyDownArrow(event);
                 this.initialSelection();
-                this.clearUnderneathShape();
                 this.moveSelectionKeyboard(this.drawingService.previewCtx);
 
                 setTimeout(() => {
@@ -139,7 +145,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     handleKeyUp(event: KeyboardEvent): void {
         if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
             event.preventDefault();
-            this.clearUnderneathShape();
             this.handleKeyUpArrow(event);
 
             if (this.intervalId) {
@@ -152,7 +157,10 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
             this.selectionService.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
-            this.selectionService.createBoundaryBox();
+            //revoir
+            this.selectionObject.origin = this.origin;
+            this.selectionObject.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
+            this.selectionUtilsService.createBoundaryBox(this.selectionObject);
         }
     }
 
@@ -203,6 +211,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     private initialSelection(): void {
         if (this.selectionService.initialSelection) {
+            this.selectionObject = this.selectionService.selectionObject;
             this.origin = this.selectionService.origin;
             this.destination = this.selectionService.destination;
             this.selectionData = this.selectionService.selection;
@@ -212,7 +221,8 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     private clearUnderneathShape(): void {
         if (this.selectionService.clearUnderneath) {
-            this.selectionService.clearUnderneathShape();
+            this.selectionObject.origin = this.origin;
+            this.selectionUtilsService.clearUnderneathShape(this.selectionObject);
             this.selectionService.clearUnderneath = false;
         }
     }
