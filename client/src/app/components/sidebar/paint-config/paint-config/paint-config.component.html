@@ -1,12 +1,13 @@
 <div>
-    <p>Tolérance du sceau</p>
-    <app-slider
-        title="Tolérance"
-        [min]="paintBucketService.minTolerance"
-        [max]="paintBucketService.maxTolerance"
-        [step]="1"
-        [value]="tolerance"
-        (valueChange)="setToleranceValue($event)"
-    >
-    </app-slider>
+    <p>Tolérance du sceau: {{tolerance}}% </p>
+    <mat-slider
+            thumbLabel
+            tickInterval="10"
+            min="0"
+            max="100"
+            step="1"
+            [value]="tolerance"
+            [(ngModel)]="tolerance"
+            (change)="setToleranceValue(tolerance)"
+        ></mat-slider>
 </div>

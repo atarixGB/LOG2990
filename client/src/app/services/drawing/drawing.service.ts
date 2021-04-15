@@ -34,7 +34,7 @@ export class DrawingService {
     getPixelData(pixelCoord: Vec2): Uint8ClampedArray {
         return this.baseCtx.getImageData(pixelCoord.x, pixelCoord.y, 1, 1).data;
     }
-    
+
     setGrid(): void {
         this.clearCanvas(this.gridCtx);
         const canvasWidth = this.canvas.width;

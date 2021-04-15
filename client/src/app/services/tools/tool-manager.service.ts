@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -15,7 +14,6 @@ import { RectangleService } from './rectangle/rectangle.service';
 import { MoveSelectionService } from './selection/move-selection.service';
 import { SelectionService } from './selection/selection.service';
 import { TextService } from './text/text.service';
-
 
 @Injectable({
     providedIn: 'root',
@@ -57,7 +55,7 @@ export class ToolManagerService {
             .set(ToolList.Spray, this.sprayService)
             .set(ToolList.SelectionRectangle, this.selectionService)
             .set(ToolList.SelectionEllipse, this.selectionService)
-            .set(ToolList.PaintBucket,this.paintBucketService)
+            .set(ToolList.PaintBucket, this.paintBucketService)
             .set(ToolList.MoveSelection, this.moveSelectionService)
             .set(ToolList.Text, this.textService);
 
@@ -73,7 +71,7 @@ export class ToolManagerService {
             .set('a', this.sprayService)
             .set('r', this.selectionService)
             .set('s', this.selectionService)
-            .set('b',this.paintBucketService)
+            .set('b', this.paintBucketService)
             .set('t', this.textService);
     }
 

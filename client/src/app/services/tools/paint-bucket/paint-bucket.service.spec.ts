@@ -7,7 +7,9 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PaintBucketService } from './paint-bucket.service';
 
 import SpyObj = jasmine.SpyObj;
-fdescribe('PaintBucketService', () => {
+
+// tslint:disable
+describe('PaintBucketService', () => {
     let service: PaintBucketService;
     let drawingServiceSpy: SpyObj<DrawingService>;
     let colorManagerServiceSpy: SpyObj<ColorManagerService>;
