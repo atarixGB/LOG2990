@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { DrawingData } from '@common/communication/drawing-data';
-import { DrawingService } from '../drawing/drawing.service';
 import { AutoSaveService } from './auto-save.service';
 
 // tslint:disable

@@ -36,16 +36,16 @@ describe('MainPageComponent', () => {
 
     it('should open Carousel modal when Ctrl+G are pressed', () => {
         const keyboardEvent = { ctrlKey: true, key: 'g', preventDefault(): void {} } as KeyboardEvent;
-        dialogOpenSpy.and.stub();
+        const openCarouselSpy = spyOn<any>(component, 'openCarousel').and.stub();
         component.handleKeyDown(keyboardEvent);
-        expect(dialogOpenSpy).toHaveBeenCalled();
+        expect(openCarouselSpy).toHaveBeenCalled();
     });
 
-    it('should NOT open Carousel modal when Ctrl+G key are NOT pressed', () => {
-        const keyboardEvent = { ctrlKey: false, key: 'g', preventDefault(): void {} } as KeyboardEvent;
-        dialogOpenSpy.and.stub();
+    it('should NOT open Carousel modal if Ctrl+G key are NOT pressed', () => {
+        const keyboardEvent = { ctrlKey: false, key: 'f', preventDefault(): void {} } as KeyboardEvent;
+        const openCarouselSpy = spyOn<any>(component, 'openCarousel').and.stub();
         component.handleKeyDown(keyboardEvent);
-        expect(dialogOpenSpy).not.toHaveBeenCalled();
+        expect(openCarouselSpy).not.toHaveBeenCalled();
     });
 
     it('should open Carousel modal when clicking on "Ouvrir le carousel de dessins" button', () => {
@@ -54,11 +54,11 @@ describe('MainPageComponent', () => {
         expect(dialogOpenSpy).toHaveBeenCalled();
     });
 
-    xit('should redirect page to editor when clicking on "Continuer un dessin"', () => {
-        // autoSaveServiceSpy.loadImage.and.stub();
-        // const replaceSpy = spyOn<any>(window.location, 'replace').and.stub();
-        // component.continueDrawing();
-        // expect(autoSaveServiceSpy.loadImage).toHaveBeenCalled();
-        // expect(replaceSpy).toHaveBeenCalledWith('http://localhost:4200/editor');
+    it('should redirect page to editor when clicking on "Continuer un dessin"', () => {
+        autoSaveServiceSpy.loadImage.and.stub();
+        const changeLocationSpy = spyOn<any>(component, 'changeLocation').and.callFake(() => {});
+        component.continueDrawing();
+        expect(autoSaveServiceSpy.loadImage).toHaveBeenCalled();
+        expect(changeLocationSpy).toHaveBeenCalled();
     });
 });
