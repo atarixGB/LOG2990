@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE } from '@app/constants';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 
 enum ControlPoints {
     TopLeft = 0,

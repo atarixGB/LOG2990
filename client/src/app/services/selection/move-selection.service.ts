@@ -91,9 +91,9 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
+            this.mouseDown = false;
             if (this.selectionService.isResizing) {
                 this.selectionService.isResizing = false;
-                this.mouseDown = false;
                 return;
             }
             this.origin = this.newOrigin;
@@ -103,7 +103,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.selectionService.destination = this.destination;
             this.selectionService.createBoundaryBox();
         }
-        this.mouseDown = false;
     }
 
     handleKeyDown(event: KeyboardEvent): void {

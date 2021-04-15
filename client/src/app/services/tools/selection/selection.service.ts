@@ -128,8 +128,8 @@ export class SelectionService extends Tool {
         this.width = this.resizeSelectionService.setResizedDimensions().x;
         this.height = this.resizeSelectionService.setResizedDimensions().y;
         this.destination = { x: this.origin.x + this.width, y: this.origin.y + this.height };
-
         this.reajustOriginAndDestination();
+
         if (this.clearUnderneath) {
             this.clearUnderneathShape();
             this.clearUnderneath = false;
