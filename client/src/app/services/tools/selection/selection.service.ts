@@ -63,7 +63,7 @@ export class SelectionService extends Tool {
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (this.isLasso && !this.lassoService.selectionOver && this.newSelection) {
+        if (this.isLasso && !this.lassoService.selectionOver && this.newSelection && !this.isResizing) {
             this.selectionTerminated = false;
             this.lassoService.onMouseClick(event);
         }
@@ -75,6 +75,7 @@ export class SelectionService extends Tool {
             if (this.activeSelection) {
                 this.resizeSelectionService.controlPointsCoord = this.controlPointsCoord;
                 this.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
+                this.clearUnderneath = true;
             }
         }
 
@@ -120,9 +121,19 @@ export class SelectionService extends Tool {
     }
 
     resizeSelection(event: MouseEvent): void {
-        this.selectionObject = this.resizeSelectionService.onMouseMove(this.getPositionFromMouse(event), this.selectionObject);
+        this.resizeSelectionService.onMouseMove(this.getPositionFromMouse(event), this.selectionObject);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.clearUnderneathShape();
+
+        this.origin = this.selectionObject.origin;
+        this.width = this.resizeSelectionService.setResizedDimensions().x;
+        this.height = this.resizeSelectionService.setResizedDimensions().y;
+        this.destination = { x: this.origin.x + this.width, y: this.origin.y + this.height };
+
+        this.reajustOriginAndDestination();
+        if (this.clearUnderneath) {
+            this.clearUnderneathShape();
+            this.clearUnderneath = false;
+        }
         this.resizeSelectionService.printResize();
         this.createBoundaryBox();
     }
@@ -150,7 +161,6 @@ export class SelectionService extends Tool {
             this.getSelectionData(this.drawingService.baseCtx);
             this.createControlPoints();
             this.resetParametersTools();
-            // console.log('avant', this.origin, this.destination, this.width, this.height);
 
             this.selectionObject = new SelectionTool(
                 this.selection,
