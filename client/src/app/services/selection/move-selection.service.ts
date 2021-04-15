@@ -5,6 +5,7 @@ import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { ResizeSelectionService } from './resize-selection.service';
 
 const DX = 3;
 const DY = 3;
@@ -31,7 +32,12 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     private intervalId: ReturnType<typeof setTimeout> | undefined = undefined;
     isMagnetism: boolean = false;
 
-    constructor(drawingService: DrawingService, private selectionService: SelectionService, public magnetismService: MagnetismService) {
+    constructor(
+        drawingService: DrawingService,
+        private selectionService: SelectionService,
+        private magnetismService: MagnetismService,
+        private resizeSelectionService: ResizeSelectionService,
+    ) {
         super(drawingService);
         this.keysDown = new Map<ArrowKeys, boolean>();
 
@@ -47,16 +53,23 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     enableMagnetism(isChecked: boolean): void {
         this.isMagnetism = isChecked;
     }
+
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
 
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
+            this.resizeSelectionService.controlPointsCoord = this.selectionService.controlPointsCoord;
+            this.selectionService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
+            if (this.selectionService.isResizing) {
+                this.selectionService.resizeSelection(event);
+                return;
+            }
             this.selectionService.imageMoved = true;
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
@@ -78,6 +91,11 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
+            if (this.selectionService.isResizing) {
+                this.selectionService.isResizing = false;
+                this.mouseDown = false;
+                return;
+            }
             this.origin = this.newOrigin;
             this.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
             this.selectionService.selection = this.selectionData;

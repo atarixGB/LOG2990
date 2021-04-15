@@ -34,10 +34,10 @@ export class SelectionService extends Tool {
     selectionDeleted: boolean;
     width: number;
     height: number;
-    private controlPointsCoord: Vec2[];
+    controlPointsCoord: Vec2[];
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
-    private isResizing: boolean;
+    isResizing: boolean;
     private selectionObject: SelectionTool;
     private clearSelectionData: ImageData;
 
@@ -102,20 +102,7 @@ export class SelectionService extends Tool {
 
         if (this.mouseDown) {
             if (this.isResizing) {
-                this.selectionObject = this.resizeSelectionService.onMouseMove(this.getPositionFromMouse(event), this.selectionObject);
-
-                // this.origin = this.selectionObject.finalOrigin;
-                // this.destination = this.selectionObject.destination;
-                // this.width = this.selectionObject.width;
-                // this.height = this.selectionObject.height;
-                this.drawingService.clearCanvas(this.drawingService.previewCtx);
-                // console.log(this.origin, this.destination, this.width, this.height);
-
-                this.clearUnderneathShape();
-                // this.imageMoved = true;
-                // this.printMovedSelection(this.drawingService.previewCtx);
-                this.resizeSelectionService.printResize();
-                this.createBoundaryBox();
+                this.resizeSelection(event);
                 return;
             }
 
@@ -130,6 +117,14 @@ export class SelectionService extends Tool {
                 this.newSelection = true;
             }
         }
+    }
+
+    resizeSelection(event: MouseEvent): void {
+        this.selectionObject = this.resizeSelectionService.onMouseMove(this.getPositionFromMouse(event), this.selectionObject);
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.clearUnderneathShape();
+        this.resizeSelectionService.printResize();
+        this.createBoundaryBox();
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -259,8 +254,6 @@ export class SelectionService extends Tool {
     }
 
     clearUnderneathShape(): void {
-        console.log('opopop');
-
         this.drawingService.baseCtx.fillStyle = '#FFFFFF';
         this.drawingService.baseCtx.beginPath();
         if (this.isEllipse) {
@@ -291,7 +284,6 @@ export class SelectionService extends Tool {
             }
             this.printPolygon(this.clearSelectionData);
         } else {
-            console.log(this.origin, this.destination, this.width, this.height);
             this.drawingService.baseCtx.fillRect(this.origin.x, this.origin.y, this.width, this.height);
             this.drawingService.baseCtx.closePath();
         }
@@ -325,7 +317,7 @@ export class SelectionService extends Tool {
                 this.printPolygon(this.selection);
             } else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
 
-            this.selectionObject.finalOrigin = this.origin;
+            this.selectionObject.origin = this.origin;
             this.undoRedoService.addToStack(this.selectionObject);
             this.undoRedoService.setToolInUse(false);
         }

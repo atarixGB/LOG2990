@@ -25,6 +25,9 @@ export class ResizeSelectionService {
     private mouseCoord: Vec2;
     private currentControlPoint: ControlPoints;
     private controlPointsBinding: Map<ControlPoints, () => void>;
+    // private newOrigin: Vec2;
+    private resizeWidth: number;
+    private resizeHeight: number;
 
     constructor(private drawingService: DrawingService) {
         this.controlPointsBinding = new Map<ControlPoints, () => void>();
@@ -44,7 +47,6 @@ export class ResizeSelectionService {
             const boxOrigin = { x: this.controlPointsCoord[i].x, y: this.controlPointsCoord[i].y };
             const boxDestination = { x: this.controlPointsCoord[i].x + CONTROLPOINTSIZE, y: this.controlPointsCoord[i].y + CONTROLPOINTSIZE };
             if (mouseCoord.x >= boxOrigin.x && mouseCoord.y >= boxOrigin.y && mouseCoord.x <= boxDestination.x && mouseCoord.y <= boxDestination.y) {
-                // console.log('true', i);
                 this.currentControlPoint = i;
                 return true;
             }
@@ -54,66 +56,62 @@ export class ResizeSelectionService {
 
     onMouseMove(mouseCoord: Vec2, selection: SelectionTool): SelectionTool {
         this.selectionObject = selection;
-        console.log('//////');
+        this.mouseCoord = mouseCoord;
         this.controlPointInResize(mouseCoord);
         return this.selectionObject;
-        // this.drawingService.previewCtx.putImageData(
-        //     this.selectionObject.selection,
-        //     this.selectionObject.finalOrigin.x,
-        //     this.selectionObject.finalOrigin.y,
-        // );
     }
 
     controlPointInResize(mouseCoord: Vec2): void {
-        switch (this.currentControlPoint) {
-            case ControlPoints.TopLeft:
-                this.resizeTopLeft(mouseCoord);
-                break;
-            case ControlPoints.TopRight:
-                this.resizeTopRight(mouseCoord);
-                break;
-            case ControlPoints.BottomRigth:
-                this.resizeBottomRight(mouseCoord);
-                break;
-            case ControlPoints.BottomLeft:
-                this.resizeBottomLeft(mouseCoord);
-                break;
-            case ControlPoints.MiddleTop:
-                this.resizeMiddleTop(mouseCoord);
-                break;
-            case ControlPoints.MiddleRight:
-                this.resizeMiddleRight(mouseCoord);
-                break;
-            case ControlPoints.MiddleBottom:
-                this.resizeMiddleBottom(mouseCoord);
-                break;
-            case ControlPoints.MiddleLeft:
-                this.resizeMiddleLeft(mouseCoord);
-                break;
+        if (this.controlPointsBinding.has(this.currentControlPoint)) {
+            const resizeFunction = this.controlPointsBinding.get(this.currentControlPoint);
+            if (resizeFunction) resizeFunction();
         }
     }
 
-    resizeTopLeft(mouseCoord: Vec2): void {
-        this.selectionObject.finalOrigin = mouseCoord;
-        this.selectionObject.width = this.selectionObject.destination.x - this.selectionObject.finalOrigin.x;
-        this.selectionObject.height = this.selectionObject.destination.y - this.selectionObject.finalOrigin.y;
+    private resizeTopLeft(mouseCoord: Vec2): void {
+        this.selectionObject.origin = mouseCoord;
+        this.resizeWidth = this.selectionObject.destination.x - this.selectionObject.origin.x;
+        this.resizeHeight = this.selectionObject.destination.y - this.selectionObject.origin.y;
     }
 
-    resizeTopRight(mouseCoord: Vec2): void {
-        // const anchorPoint = { x: this.selectionObject.finalOrigin.x, y: this.selectionObject.destination.y };
+    private resizeTopRight(mouseCoord: Vec2): void {
+        this.selectionObject.origin.y = mouseCoord.y;
+        this.resizeWidth = mouseCoord.x - this.selectionObject.origin.x;
+        this.resizeHeight = this.selectionObject.destination.y - mouseCoord.y;
     }
 
-    resizeBottomRight(mouseCoord: Vec2): void {}
+    private resizeBottomRight(mouseCoord: Vec2): void {
+        this.resizeWidth = mouseCoord.x - this.selectionObject.origin.x;
+        this.resizeHeight = mouseCoord.y - this.selectionObject.origin.y;
+    }
 
-    resizeBottomLeft(mouseCoord: Vec2): void {}
+    private resizeBottomLeft(mouseCoord: Vec2): void {
+        this.selectionObject.origin.x = mouseCoord.x;
+        this.resizeWidth = this.selectionObject.destination.x - mouseCoord.x;
+        this.resizeHeight = mouseCoord.y - this.selectionObject.origin.y;
+    }
 
-    resizeMiddleTop(mouseCoord: Vec2): void {}
+    private resizeMiddleTop(mouseCoord: Vec2): void {
+        this.selectionObject.origin.y = mouseCoord.y;
+        this.resizeWidth = this.selectionObject.width;
+        this.resizeHeight = this.selectionObject.destination.y - mouseCoord.y;
+    }
 
-    resizeMiddleRight(mouseCoord: Vec2): void {}
+    private resizeMiddleRight(mouseCoord: Vec2): void {
+        this.resizeWidth = mouseCoord.x - this.selectionObject.origin.x;
+        this.resizeHeight = this.selectionObject.height;
+    }
 
-    resizeMiddleBottom(mouseCoord: Vec2): void {}
+    private resizeMiddleBottom(mouseCoord: Vec2): void {
+        this.resizeWidth = this.selectionObject.width;
+        this.resizeHeight = mouseCoord.y - this.selectionObject.origin.y;
+    }
 
-    resizeMiddleLeft(mouseCoord: Vec2): void {}
+    private resizeMiddleLeft(mouseCoord: Vec2): void {
+        this.selectionObject.origin.x = mouseCoord.x;
+        this.resizeWidth = this.selectionObject.destination.x - mouseCoord.x;
+        this.resizeHeight = this.selectionObject.height;
+    }
 
     printResize(): void {
         const canvas = document.createElement('canvas');
@@ -121,32 +119,48 @@ export class ResizeSelectionService {
         canvas.height = this.selectionObject.height;
         const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
         tmp.putImageData(this.selectionObject.selection, 0, 0);
-        console.log(this.selectionObject);
 
-        this.drawingService.baseCtx.rect(
-            this.selectionObject.finalOrigin.x,
-            this.selectionObject.finalOrigin.y,
-            this.selectionObject.width,
-            this.selectionObject.height,
-        );
-        // this.drawingService.baseCtx.ellipse(
-        //     this.selectionObject.finalOrigin.x + this.selectionObject.width / 2,
-        //     this.selectionObject.finalOrigin.y + this.selectionObject.height / 2,
-        //     this.selectionObject.width / 2,
-        //     this.selectionObject.height / 2,
-        //     0,
-        //     2 * Math.PI,
-        //     0,
-        // );
-        this.drawingService.baseCtx.save();
-        this.drawingService.baseCtx.clip();
-        this.drawingService.baseCtx.drawImage(
-            tmp.canvas,
-            this.selectionObject.finalOrigin.x,
-            this.selectionObject.finalOrigin.y,
-            this.selectionObject.width,
-            this.selectionObject.height,
-        );
-        this.drawingService.baseCtx.restore();
+        this.drawingService.previewCtx.save();
+        this.checkForMirroirEffect(tmp.canvas);
+        this.drawingService.previewCtx.restore();
+    }
+
+    checkForMirroirEffect(selectionImage: HTMLCanvasElement): void {
+        if (this.resizeHeight < 0 && this.resizeWidth < 0) {
+            this.drawingService.previewCtx.scale(-1, -1);
+            this.drawingService.previewCtx.drawImage(
+                selectionImage,
+                -this.selectionObject.origin.x,
+                -this.selectionObject.origin.y,
+                -this.resizeWidth,
+                -this.resizeHeight,
+            );
+        } else if (this.resizeWidth < 0) {
+            this.drawingService.previewCtx.scale(-1, 1);
+            this.drawingService.previewCtx.drawImage(
+                selectionImage,
+                -this.selectionObject.origin.x,
+                this.selectionObject.origin.y,
+                -this.resizeWidth,
+                this.resizeHeight,
+            );
+        } else if (this.resizeHeight < 0) {
+            this.drawingService.previewCtx.scale(1, -1);
+            this.drawingService.previewCtx.drawImage(
+                selectionImage,
+                this.selectionObject.origin.x,
+                -this.selectionObject.origin.y,
+                this.resizeWidth,
+                -this.resizeHeight,
+            );
+        } else {
+            this.drawingService.previewCtx.drawImage(
+                selectionImage,
+                this.selectionObject.origin.x,
+                this.selectionObject.origin.y,
+                this.resizeWidth,
+                this.resizeHeight,
+            );
+        }
     }
 }
