@@ -32,22 +32,4 @@
             [cdkDragFreeDragPosition]="dragPosition"
         ></div>
     </div>
-    <div
-        class="box right-center"
-        cdkDrag
-        cdkDragLockAxis="x"
-        (cdkDragMoved)="dragMoved($event, true, false)"
-        (cdkDragEnded)="dragEnded($event)"
-        (cdkDragEnded)="changePosition()"
-        [cdkDragFreeDragPosition]="dragPosition"
-    ></div>
-    <div
-        class="box bottom-center"
-        cdkDrag
-        cdkDragLockAxis="y"
-        (cdkDragMoved)="dragMoved($event, false, true)"
-        (cdkDragEnded)="dragEnded($event)"
-        (cdkDragEnded)="changePosition()"
-        [cdkDragFreeDragPosition]="dragPosition"
-    ></div>
 </div>
