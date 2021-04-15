@@ -35,7 +35,7 @@ export class TextService extends Tool {
     private totalLine: number;
     private cursorPosition: number;
     private positionText: Vec2;
-    private positionChanged : boolean;
+    private wasAlignedRight : boolean;
     private initialMousePosition : Vec2;
 
     private fontBinding: Map<Font, string>;
@@ -48,7 +48,7 @@ export class TextService extends Tool {
         this.currentLine = 0;
         this.textInput = [];
         this.totalLine = 1;
-        this.positionChanged = false;
+        this.wasAlignedRight = false;
         this.initialMousePosition = {x:0,y:0};
         this.positionText = {x:0,y:0};
         this.cursorPosition = 0;
@@ -112,15 +112,19 @@ export class TextService extends Tool {
     }
 
     changeFont(): void {
-        if (this.fontBinding.has(this.selectFont) && this.isWriting == true) {
+        if(this.fontBinding.has(this.selectFont)){
             this.font = this.fontBinding.get(this.selectFont);
+        }
+        if (this.isWriting == true) {
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeEmphasis(): void {
-        if (this.emphasisBinding.has(this.selectEmphasis) && this.isWriting == true) {
+        if(this.emphasisBinding.has(this.selectEmphasis)){
             this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
+        }
+        if (this.isWriting == true) {
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
@@ -130,16 +134,16 @@ export class TextService extends Tool {
         if(this.alignBinding.has(this.selectAlign)){
             this.align = this.alignBinding.get(this.selectAlign);
         }
-        if (this.isWriting == true) {
+        console.log("mon align:, ", this.align);
+        if (this.isWriting === true) {
             console.log("current position avant if" ,this.positionText);
             if( this.selectAlign === TextAlign.Right){
                 this.alignToRight();
-                this.positionChanged = true;
             }
-            if(this.selectAlign !== TextAlign.Right && this.positionChanged){
+            if(this.selectAlign !== TextAlign.Right && this.wasAlignedRight){
                 console.log("ici");
                 this.positionText.x = this.initialMousePosition.x;
-                this.positionChanged = false;
+                this.wasAlignedRight = false;
             }
             this.writeOnCanvas(CanvasType.previewCtx);
         }
@@ -181,6 +185,7 @@ export class TextService extends Tool {
             this.positionText.x = this.initialMousePosition.x + longestLine;
             console.log("past position " ,this.initialMousePosition);
             console.log("current position" ,this.positionText);
+            this.wasAlignedRight = true;
         }
     }
 
@@ -297,6 +302,10 @@ export class TextService extends Tool {
         this.totalLine++;
         this.textInput[this.currentLine] = nextLine + '|';
         this.cursorPosition = this.textInput[this.currentLine].length - 1;
+        if(this.selectAlign === TextAlign.Right){
+            console.log("aaaaaa");
+            this.alignToRight();
+        }
     }
 
     private handleArrowDown(): void {
@@ -362,18 +371,11 @@ export class TextService extends Tool {
 
             this.drawingService.baseCtx.fillStyle = this.color;
             this.drawingService.baseCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            if(this.totalLine <= 1 ){
-                console.log("1er if");
-                this.drawingService.baseCtx.textAlign = 'left' as CanvasTextAlign;
-                console.log("apply preview ", this.align);
-                
-                console.log(this.drawingService.baseCtx.textAlign);
-            }else if(this.textInput[this.currentLine] === '|' && this.totalLine === 2){
-                this.drawingService.baseCtx.textAlign = 'left' as CanvasTextAlign;
+            if(this.totalLine === 1){
+                this.drawingService.baseCtx.textAlign = 'left';
             }else{
                 console.log("dans else");
                 this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
-                console.log(this.drawingService.baseCtx.textAlign);
             }
             let y = this.positionText.y;
 
@@ -389,14 +391,8 @@ export class TextService extends Tool {
             this.drawingService.previewCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
             console.log("total line ", this.totalLine);
             
-            if(this.totalLine <= 1 ){
-                console.log("1er if");
-                this.drawingService.previewCtx.textAlign = 'left' as CanvasTextAlign;
-                console.log("apply preview ", this.align);
-                
-                console.log(this.drawingService.previewCtx.textAlign);
-            }else if(this.textInput[this.currentLine] === '|' && this.totalLine === 2){
-                this.drawingService.previewCtx.textAlign = 'left' as CanvasTextAlign;
+            if(this.totalLine === 1){
+                this.drawingService.previewCtx.textAlign = 'left';
             }else{
                 console.log("dans else");
                 this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
