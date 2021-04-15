@@ -360,17 +360,17 @@ describe('MoveSelectionService', () => {
 
     it('should put image data on specified context when magnetism is turned on (move with mouse)', () => {
         spyOn<any>(service, 'initialSelection').and.stub();
+        service['initialMousePosition'] = { x: 0, y: 0 };
         service.mouseDownCoord = { x: 10, y: 10 };
-        service['initialMousePosition'] = { x: 10, y: 10 };
-        service['origin'] = { x: 0, y: 0 };
+        service['origin'] = { x: 3, y: 3 };
         service.isMagnetism = true;
         selectionServiceSpy['height'] = 10;
         selectionServiceSpy['width'] = 10;
         service['selectionData'] = new ImageData(10, 10);
-        magnetismServiceSpy.activateMagnetism.and.stub();
-        const putImageDataSpy = spyOn(service['drawingService'].baseCtx, 'putImageData').and.stub();
+        magnetismServiceSpy.activateMagnetism.and.returnValue( { x: 3, y: 3 });
+        const putImageDataSpy = spyOn(baseCtxStub, 'putImageData').and.stub();
 
-        service['moveSelectionMouse'](service['drawingService'].baseCtx);
+        service['moveSelectionMouse'](baseCtxStub);
         expect(magnetismServiceSpy.activateMagnetism).toHaveBeenCalled();
         expect(putImageDataSpy).toHaveBeenCalled();
     });
@@ -463,7 +463,7 @@ describe('MoveSelectionService', () => {
         service.isMagnetism = true;
         selectionServiceSpy['height'] = 10;
         selectionServiceSpy['width'] = 10;
-        magnetismServiceSpy.activateMagnetism.and.stub();
+        magnetismServiceSpy.activateMagnetism.and.returnValue({x:3,y:3});
         const putImageDataSpy = spyOn(service['drawingService'].baseCtx, 'putImageData').and.stub();
         service['selectionData'] = new ImageData(10, 10);
 
