@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { MagnetismService } from './magnetism.service';
 import { SelectionBox } from '@app/constants';
 
-fdescribe('MagnetismService', () => {
+describe('MagnetismService', () => {
     let service: MagnetismService;
     let topLeftPoint:Vec2;
     let width:number;
