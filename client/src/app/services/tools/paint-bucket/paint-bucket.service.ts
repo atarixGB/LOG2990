@@ -100,10 +100,6 @@ export class PaintBucketService extends Tool {
         this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
         const paintBucket = new PaintBucket(this.isContiguous, this.canvasData);
         this.undoRedoService.addToStack(paintBucket);
-<<<<<<< HEAD
-=======
-        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
->>>>>>> ce2596559ef5e954d67982b51e5fcc8b3d02828e
     }
 
     vec2ToString(pixel: Vec2): string {
