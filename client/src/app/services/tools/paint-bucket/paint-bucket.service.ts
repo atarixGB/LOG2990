@@ -34,15 +34,10 @@ export class PaintBucketService extends Tool {
 
         this.startPixelColor = this.drawingService.getPixelData(this.mouseDownCoord);
         if (event.button === MouseButton.Left) {
-            console.log('allo');
-            console.log(this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString);
             this.drawingService.baseCtx.fillStyle = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-
             this.contiguousFill();
-
-            //method to enable bucket fill with contiguous pixels on left click
         } else if (event.button === MouseButton.Right) {
-            this.fill(); //method to enable bucket to fill without contiguous pixels on right click
+            this.fill();
         }
     }
     setToleranceValue(newTolerance: number): void {
@@ -75,7 +70,6 @@ export class PaintBucketService extends Tool {
         const canvasData: ImageData = this.drawingService.getCanvasData();
 
         const rgbaPrimaryColor: RGBA = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
-
         while (stackPos.length) {
             const selectedPixel = stackPos.pop() as Vec2;
             const index = (selectedPixel.x + selectedPixel.y * this.drawingService.canvas.width) * RGBA_COMPONENTS;
@@ -103,10 +97,9 @@ export class PaintBucketService extends Tool {
         }
         this.canvasData = canvasData;
         this.isContiguous = true;
+        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
         const paintBucket = new PaintBucket(this.isContiguous, this.canvasData);
         this.undoRedoService.addToStack(paintBucket);
-        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
-        console.log('fin');
     }
 
     vec2ToString(pixel: Vec2): string {

@@ -10,7 +10,7 @@ import {
     SECONDARYCOLORINITIAL,
 } from '@app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-import { RGBA } from 'src/app/interfaces-enums/rgba';
+import { DecimalRGBA, RGBA } from 'src/app/interfaces-enums/rgba';
 
 @Injectable({
     providedIn: 'root',
@@ -18,12 +18,13 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 export class ColorManagerService {
     selectedColor: RGBA[];
     lastColors: RGBA[];
-
+    colorOrderGet: ColorOrder = ColorOrder.PrimaryColor;
+    primaryColor: string;
     constructor() {
         this.lastColors = new Array<RGBA>();
         this.selectedColor = new Array<RGBA>();
         let temp = new Array<RGBA>();
-
+        this.primaryColor = 'Red';
         for (let i = 0; i < COLOR_ORDER + COLOR_HISTORY; i++) {
             temp = i < COLOR_ORDER ? this.selectedColor : this.lastColors;
             temp.push({
@@ -70,7 +71,6 @@ export class ColorManagerService {
     }
 
     updatePixelColor(colorOrder: ColorOrder, colorPixel: Uint8ClampedArray): void {
-        console.log('colorPixel');
         this.selectedColor[colorOrder].Dec.Red = colorPixel[0];
         this.selectedColor[colorOrder].Dec.Green = colorPixel[1];
         this.selectedColor[colorOrder].Dec.Blue = colorPixel[2];
@@ -103,7 +103,12 @@ export class ColorManagerService {
         this.updateColorLasts(colorOrder, shouldDeleteLast);
     }
 
-    getColor(): RGBA {
-        return this.selectedColor[ColorOrder.PrimaryColor];
+    getColor(): DecimalRGBA {
+        return {
+            RED: this.selectedColor[this.colorOrderGet].Dec.Red,
+            GREEN: this.selectedColor[this.colorOrderGet].Dec.Green,
+            BLUE: this.selectedColor[this.colorOrderGet].Dec.Blue,
+            ALPHA: this.selectedColor[this.colorOrderGet].Dec.Alpha,
+        };
     }
 }
