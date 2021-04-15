@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
 import { Line } from '@app/classes/line';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -16,18 +17,17 @@ const LINE_RADIUS = 5;
     providedIn: 'root',
 })
 export class LineService extends Tool {
-    private pathData: Vec2[];
-    private coordinates: Vec2[];
-    private hasPressedShiftKey: boolean;
-    private closestPoint: Vec2 | undefined;
-    private basePoint: Vec2;
-
-    private lastCanvasImages: ImageData[];
+    currentSegment: Vec2[];
+    closestPoint: Vec2 | undefined;
+    basePoint: Vec2;
     line: Line;
     lineWidth: number;
     junctionType: TypeOfJunctions;
     junctionRadius: number;
     pointJoin: boolean = false;
+    private coordinates: Vec2[];
+    private hasPressedShiftKey: boolean;
+    private lastCanvasImages: ImageData[];
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
@@ -36,7 +36,7 @@ export class LineService extends Tool {
         this.junctionType = TypeOfJunctions.Regular;
         this.coordinates = [];
         this.lastCanvasImages = [];
-        this.pathData = [];
+        this.currentSegment = [];
         this.hasPressedShiftKey = false;
     }
 
@@ -52,7 +52,7 @@ export class LineService extends Tool {
                 if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, this.closestPoint);
             }
         } else {
-            this.pathData.push(this.mouseDownCoord);
+            this.currentSegment.push(this.mouseDownCoord);
             if (this.junctionType === TypeOfJunctions.Circle) this.drawPoint(this.drawingService.baseCtx, this.mouseDownCoord);
         }
     }
@@ -70,12 +70,18 @@ export class LineService extends Tool {
 
     onMouseUp(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
+        const styles: DrawingContextStyle = {
+            strokeStyle: this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString,
+            fillStyle: this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString,
+            lineWidth: this.lineWidth,
+        };
+
         if (this.mouseDown) {
             if (!this.hasPressedShiftKey) {
-                this.pathData.push(mousePosition);
-                this.drawLine(this.drawingService.baseCtx, this.pathData);
+                this.currentSegment.push(mousePosition);
+                this.drawLine(this.drawingService.baseCtx, this.currentSegment, styles);
             } else {
-                this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, event);
+                this.drawConstrainedLine(this.drawingService.baseCtx, this.coordinates, styles, event);
             }
         }
         this.getCanvasState();
@@ -85,14 +91,20 @@ export class LineService extends Tool {
 
     onMouseMove(event: MouseEvent): void {
         const mousePosition = this.getPositionFromMouse(event);
+        const styles: DrawingContextStyle = {
+            strokeStyle: this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString,
+            fillStyle: this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString,
+            lineWidth: this.lineWidth,
+        };
+
         if (this.mouseDown) {
-            this.pathData.push(mousePosition);
+            this.currentSegment.push(mousePosition);
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
             if (this.hasPressedShiftKey) {
-                this.drawConstrainedLine(this.drawingService.previewCtx, this.coordinates, event);
+                this.drawConstrainedLine(this.drawingService.previewCtx, this.coordinates, styles, event);
             } else {
-                this.drawLine(this.drawingService.previewCtx, this.pathData);
+                this.drawLine(this.drawingService.previewCtx, this.currentSegment, styles);
             }
         }
     }
@@ -120,13 +132,44 @@ export class LineService extends Tool {
         }
     }
 
+    calculatePosition(currentPoint: Vec2, basePoint: Vec2): Vec2 | undefined {
+        if (!currentPoint || !basePoint) {
+            return undefined;
+        }
+        return this.getNearestPoint(currentPoint, basePoint);
+    }
+
+    drawLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle): void {
+        ctx.lineWidth = styles.lineWidth;
+        ctx.strokeStyle = styles.strokeStyle;
+        ctx.beginPath();
+        ctx.moveTo(path[0].x, path[0].y);
+        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
+        ctx.stroke();
+    }
+
+    drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], styles: DrawingContextStyle, event: MouseEvent): void {
+        const mousePosition = this.getPositionFromMouse(event);
+        this.basePoint = path[path.length - 1];
+        this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
+        ctx.lineWidth = styles.lineWidth;
+        ctx.strokeStyle = styles.strokeStyle;
+        ctx.beginPath();
+        if (this.closestPoint) {
+            ctx.moveTo(this.basePoint.x, this.basePoint.y);
+            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
+            ctx.stroke();
+        }
+    }
+
     private getCanvasState(): void {
-        if (this.pathData) {
+        if (this.currentSegment) {
             this.lastCanvasImages.push(
                 this.drawingService.baseCtx.getImageData(0, 0, this.drawingService.canvas.width, this.drawingService.canvas.height),
             );
         }
     }
+
     // Equation of a line: 0 = ax + by + c
     // Distance from a point A to a line L :  distance(A,L) =  abs(ax + by + c) / sqrt(a^2 + b^2)
     private getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
@@ -177,39 +220,6 @@ export class LineService extends Tool {
         return this.getProjectionOnClosestLine(currentPoint, nearestLine);
     }
 
-    private calculatePosition(currentPoint: Vec2, basePoint: Vec2): Vec2 | undefined {
-        if (!currentPoint || !basePoint) {
-            return undefined;
-        }
-        return this.getNearestPoint(currentPoint, basePoint);
-    }
-
-    private drawLine(ctx: CanvasRenderingContext2D, path: Vec2[]): void {
-        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-        ctx.lineWidth = this.lineWidth;
-        ctx.strokeStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        ctx.lineTo(path[path.length - 1].x, path[path.length - 1].y);
-        ctx.stroke();
-    }
-
-    private drawConstrainedLine(ctx: CanvasRenderingContext2D, path: Vec2[], event: MouseEvent): void {
-        const mousePosition = this.getPositionFromMouse(event);
-        this.basePoint = path[path.length - 1];
-
-        this.closestPoint = this.calculatePosition(mousePosition, this.basePoint);
-        ctx.lineWidth = this.lineWidth;
-        const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-        ctx.strokeStyle = color;
-        ctx.beginPath();
-        if (this.closestPoint) {
-            ctx.moveTo(this.basePoint.x, this.basePoint.y);
-            ctx.lineTo(this.closestPoint.x, this.closestPoint.y);
-            ctx.stroke();
-        }
-    }
-
     private drawPoint(ctx: CanvasRenderingContext2D, position: Vec2): void {
         const color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         ctx.fillStyle = color;
@@ -221,6 +231,6 @@ export class LineService extends Tool {
     }
 
     private clearPath(): void {
-        this.pathData = [];
+        this.currentSegment = [];
     }
 }
