@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Params } from '@angular/router';
 import { DrawingComponent } from '@app/components/drawing/drawing.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
@@ -24,6 +25,17 @@ describe('EditorComponent', () => {
                 {
                     provide: MatDialog,
                     useValue: dialogSpy,
+                },
+                {
+                    provide: ActivatedRoute,
+                    useValue: {
+                        params: {
+                            subscribe: (fn: (value: Params) => void) =>
+                                fn({
+                                    url: 'url',
+                                }),
+                        },
+                    },
                 },
             ],
         }).compileComponents();
