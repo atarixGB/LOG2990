@@ -160,7 +160,6 @@ export class SelectionService extends Tool {
     }
 
     printMovedSelection(): void {
-        console.log('print', this.imageMoved);
         if (this.imageMoved) {
             this.imageMoved = false;
             this.selectionObject.origin = this.origin;

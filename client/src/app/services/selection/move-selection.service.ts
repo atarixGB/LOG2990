@@ -168,7 +168,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     }
 
     private handleResizedSelectionOnMouseUp(): void {
-        console.log('move', this.origin, this.destination);
         this.selectionService.imageMoved = true;
         this.selectionObject = this.selectionUtilsService.endResizeSelection();
         this.selectionService.selectionObject = this.selectionObject;
@@ -228,8 +227,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
 
     private initialSelection(): void {
         if (this.selectionService.initialSelection) {
-            console.log('initialSelection');
-
             this.selectionObject = this.selectionService.selectionObject;
             this.origin = this.selectionService.origin;
             this.destination = this.selectionService.destination;

@@ -18,7 +18,7 @@ enum ArrowKeys {
     Right = 4,
 }
 
-fdescribe('MoveSelectionService', () => {
+describe('MoveSelectionService', () => {
     let service: MoveSelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
