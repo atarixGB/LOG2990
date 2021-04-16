@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SelectionTool } from '@app/classes/selection';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { EllipseService } from '../../ellipse/ellipse.service';
+import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 
 const PIXEL_LENGTH = 4;
 

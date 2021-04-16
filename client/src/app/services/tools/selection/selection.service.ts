@@ -293,7 +293,7 @@ export class SelectionService extends Tool {
         this.initialiseServiceDimensions();
     }
 
-    private initialseSelectionObject() {
+    private initialseSelectionObject(): void {
         console.log('initialisation');
 
         this.selectionObject.origin = this.origin;

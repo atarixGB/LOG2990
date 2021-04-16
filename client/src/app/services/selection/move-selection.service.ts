@@ -6,7 +6,7 @@ import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
-import { SelectionUtilsService } from '../utils/selection-utils.service';
+import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 import { ResizeSelectionService } from './resize-selection.service';
 
 const DX = 3;
