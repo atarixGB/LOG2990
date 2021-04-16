@@ -124,16 +124,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
-        this.baseCtx.beginPath();
-        this.baseCtx.fillStyle = '#FF00FF';
-        this.baseCtx.fillRect(0, 0, 300, 300);
-        this.baseCtx.closePath();
     }
 
     ngOnChanges(): void {
         this.route.params.subscribe((params) => {
-            console.log(params.height, params.width);
-
             if (params.height && params.width) {
                 this.canvasSize.x = params.width;
                 this.canvasSize.y = params.height;

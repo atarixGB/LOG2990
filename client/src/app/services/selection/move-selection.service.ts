@@ -64,14 +64,14 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
             this.initialMousePosition = this.getPositionFromMouse(event);
             this.resizeSelectionService.controlPointsCoord = this.selectionUtilsService.controlPointsCoord;
-            this.selectionService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
+            this.selectionUtilsService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
         }
     }
 
     onMouseMove(event: MouseEvent): void {
         if (this.mouseDown && !this.selectionService.selectionTerminated) {
-            if (this.selectionService.isResizing) {
-                this.selectionUtilsService.resizeSelection(this.getPositionFromMouse(event), this.selectionObject);
+            if (this.selectionUtilsService.isResizing) {
+                this.selectionUtilsService.resizeSelection(this.drawingService.previewCtx, this.getPositionFromMouse(event), this.selectionObject);
                 return;
             }
             this.selectionService.imageMoved = true;
@@ -96,8 +96,10 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseDown = false;
-            if (this.selectionService.isResizing) {
-                this.selectionService.isResizing = false;
+            if (this.selectionUtilsService.isResizing) {
+                this.selectionService.selectionObject = this.selectionUtilsService.endResizeSelection();
+                this.selectionService.initialiseServiceDimensions();
+                this.selectionService.getSelectionData(this.drawingService.baseCtx);
                 return;
             }
             this.origin = this.newOrigin;
@@ -105,7 +107,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
             this.selectionService.destination = this.destination;
-            //revoir
+
             this.selectionObject.origin = this.origin;
             this.selectionObject.destination = this.destination;
             this.selectionUtilsService.createBoundaryBox(this.selectionObject);
@@ -157,7 +159,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             this.selectionService.selection = this.selectionData;
             this.selectionService.origin = this.origin;
             this.selectionService.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
-            //revoir
+
             this.selectionObject.origin = this.origin;
             this.selectionObject.destination = { x: this.origin.x + this.selectionData.width, y: this.origin.y + this.selectionData.height };
             this.selectionUtilsService.createBoundaryBox(this.selectionObject);

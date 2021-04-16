@@ -1,6 +1,9 @@
 import { Drawable } from './drawable';
 import { Vec2 } from './vec2';
 
+const PIXEL_LENGTH = 4;
+const MAX_RGB = 255;
+
 export class SelectionTool extends Drawable {
     image: ImageData;
     clearImageDataPolygon: ImageData;
@@ -26,7 +29,11 @@ export class SelectionTool extends Drawable {
         this.clearUnderneathShape(ctx);
         if (this.isEllipse) this.printEllipse(ctx);
         else if (this.isLasso) this.printPolygon(this.image, ctx);
-        else ctx.putImageData(this.image, this.origin.x, this.origin.y);
+        else {
+            console.log('popop');
+
+            ctx.putImageData(this.image, this.origin.x, this.origin.y);
+        }
     }
 
     private clearUnderneathShape(ctx: CanvasRenderingContext2D): void {
@@ -45,6 +52,19 @@ export class SelectionTool extends Drawable {
             ctx.fill();
             ctx.closePath();
         } else if (this.isLasso) {
+            console.log(this.clearImageDataPolygon);
+            const imageData = this.clearImageDataPolygon.data;
+            let pixelCounter = 0;
+            for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
+                for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
+                    if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
+                        for (let k = 0; k < PIXEL_LENGTH; k++) {
+                            imageData[pixelCounter + k] = MAX_RGB;
+                        }
+                    }
+                    pixelCounter += PIXEL_LENGTH;
+                }
+            }
             this.printPolygon(this.clearImageDataPolygon, ctx);
         } else {
             ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.width, this.height);

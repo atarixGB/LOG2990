@@ -10,6 +10,7 @@ import { RectangleService } from '@app/services/tools//rectangle/rectangle.servi
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse-selection/ellipse-selection.service';
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 
 @Injectable({
@@ -30,7 +31,6 @@ export class SelectionService extends Tool {
     selectionDeleted: boolean;
     width: number;
     height: number;
-    isResizing: boolean;
     selectionObject: SelectionTool;
 
     constructor(
@@ -39,7 +39,7 @@ export class SelectionService extends Tool {
         private ellipseService: EllipseService,
         private lassoService: LassoService,
         private ellipseSelectionService: EllipseSelectionService,
-        // private undoRedoService: UndoRedoService,
+        private undoRedoService: UndoRedoService,
         private resizeSelectionService: ResizeSelectionService,
         private selectionUtilsService: SelectionUtilsService,
     ) {
@@ -53,34 +53,37 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.selectionTerminated = false;
         this.selectionDeleted = false;
-        this.isResizing = false;
     }
 
     onMouseClick(event: MouseEvent): void {
-        if (this.isLasso && !this.lassoService.selectionOver && this.newSelection && !this.isResizing) {
+        if (this.isLasso && !this.lassoService.selectionOver && this.newSelection && !this.selectionUtilsService.isResizing) {
             this.selectionTerminated = false;
             this.lassoService.onMouseClick(event);
+            return;
         }
     }
 
     onMouseDown(event: MouseEvent): void {
-        console.log('mousedown', event.offsetX, event.offsetY);
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             if (this.activeSelection) {
+                console.log('checkresize');
+
                 this.resizeSelectionService.controlPointsCoord = this.selectionUtilsService.controlPointsCoord;
-                this.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
+                this.selectionUtilsService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
+                // this.initialseSelectionObject();
                 this.clearUnderneath = true;
             }
         }
 
-        if (this.mouseDown && !this.isLasso) {
+        if (this.mouseDown && !this.isLasso && !this.selectionUtilsService.isResizing) {
             this.initialSelection = true;
             this.clearUnderneath = true;
             this.selectionTerminated = false;
 
             this.selectionUtilsService.initializeToolParameters();
-            this.printMovedSelection(this.drawingService.baseCtx);
+            this.printMovedSelection();
+            this.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
             this.selectionDeleted = false;
 
             if (this.isEllipse) this.ellipseService.onMouseDown(event);
@@ -97,8 +100,10 @@ export class SelectionService extends Tool {
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseMove(event);
 
         if (this.mouseDown) {
-            if (this.isResizing) {
-                this.selectionUtilsService.resizeSelection(this.getPositionFromMouse(event), this.selectionObject);
+            if (this.selectionUtilsService.isResizing) {
+                console.log(this.selectionObject);
+
+                this.selectionUtilsService.resizeSelection(this.drawingService.previewCtx, this.getPositionFromMouse(event), this.selectionObject);
                 return;
             }
 
@@ -116,32 +121,35 @@ export class SelectionService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
-        console.log('mouseup', event.offsetX, event.offsetY);
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
 
         if (this.lassoService.selectionOver) {
             this.activeSelection = true;
             this.initialSelection = true;
             this.clearUnderneath = true;
+            this.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
             this.calculateDimension();
             this.getSelectionData(this.drawingService.baseCtx);
             this.selectionUtilsService.createBoundaryBox(this.selectionObject);
+            this.selectionObject.initialOrigin = this.origin;
+        }
+
+        if (this.selectionUtilsService.isResizing) {
+            this.selectionObject = this.selectionUtilsService.endResizeSelection();
+            this.initialiseServiceDimensions();
+            this.getSelectionData(this.drawingService.baseCtx);
+            return;
         }
 
         if (this.mouseDown && !this.isLasso) {
             this.activeSelection = true;
             this.mouseDown = false;
 
-            if (this.isResizing) {
-                this.isResizing = false;
-                this.selectionUtilsService.cleanedUnderneath = false;
-                return;
-            }
-
             this.calculateDimension();
             this.getSelectionData(this.drawingService.baseCtx);
             this.selectionUtilsService.createControlPoints(this.selectionObject);
             this.selectionUtilsService.resetParametersTools();
+            this.selectionObject.initialOrigin = this.origin;
         }
     }
 
@@ -186,7 +194,7 @@ export class SelectionService extends Tool {
         this.width = this.destination.x;
         this.height = this.destination.y;
 
-        this.printMovedSelection(this.drawingService.baseCtx);
+        this.printMovedSelection();
         this.selection = this.drawingService.baseCtx.getImageData(this.origin.x, this.origin.y, this.destination.x, this.destination.y);
         this.selectionUtilsService.createBoundaryBox(this.selectionObject);
     }
@@ -195,8 +203,7 @@ export class SelectionService extends Tool {
         if (this.activeSelection) {
             if (!this.selectionDeleted) {
                 this.imageMoved = true;
-
-                this.printMovedSelection(this.drawingService.baseCtx);
+                this.printMovedSelection();
             }
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.selectionUtilsService.resetParametersTools();
@@ -211,15 +218,32 @@ export class SelectionService extends Tool {
         }
     }
 
-    printMovedSelection(ctx: CanvasRenderingContext2D): void {
+    printMovedSelection(): void {
         if (this.imageMoved) {
             this.imageMoved = false;
-            // changer ceci
             this.selectionObject.origin = this.origin;
             if (this.isEllipse) this.ellipseSelectionService.printEllipse(this.selectionObject);
             else if (this.isLasso) this.lassoService.printPolygon(this.selection, this.selectionObject);
             else this.drawingService.baseCtx.putImageData(this.selection, this.origin.x, this.origin.y);
+            this.addToUndoStack();
         }
+    }
+
+    getSelectionData(ctx: CanvasRenderingContext2D): void {
+        this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
+        this.initialseSelectionObject();
+        if (this.isEllipse) {
+            this.selectionObject.image = this.ellipseSelectionService.checkPixelInEllipse(this.selectionObject);
+        } else if (this.isLasso) {
+            this.selectionObject.image = this.lassoService.checkPixelInPolygon(this.selectionObject);
+        }
+    }
+
+    initialiseServiceDimensions(): void {
+        this.origin = this.selectionObject.origin;
+        this.destination = this.selectionObject.destination;
+        this.width = this.selectionObject.width;
+        this.height = this.selectionObject.height;
     }
 
     private calculateDimension(): void {
@@ -236,34 +260,39 @@ export class SelectionService extends Tool {
         this.width = this.destination.x - this.origin.x;
         this.height = this.destination.y - this.origin.y;
 
-        //fonction initialisation param
-        this.selectionObject = new SelectionTool(this.origin, this.destination, this.width, this.height);
-        this.selectionObject.isEllipse = this.isEllipse;
-        this.selectionObject.isLasso = this.isLasso;
+        this.initialseSelectionObject();
 
         this.selectionObject = this.selectionUtilsService.reajustOriginAndDestination(this.selectionObject);
 
-        // faire une fonction qui s'en occupe ou changer partout pour utiliser selectionObjet
-        this.origin = this.selectionObject.origin;
-        this.destination = this.selectionObject.destination;
-        this.width = this.selectionObject.width;
-        this.height = this.selectionObject.height;
+        this.initialiseServiceDimensions();
     }
 
-    private getSelectionData(ctx: CanvasRenderingContext2D): void {
-        this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
-        // initialiser autrement
+    private initialseSelectionObject() {
+        this.selectionObject.origin = this.origin;
+        this.selectionObject.destination = this.destination;
+        this.selectionObject.width = this.width;
+        this.selectionObject.height = this.height;
         this.selectionObject.image = this.selection;
-        this.selectionObject.clearImageDataPolygon = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
-        if (this.isEllipse) {
-            this.selectionObject.image = this.ellipseSelectionService.checkPixelInEllipse(this.selectionObject);
-        } else if (this.isLasso) {
-            this.selectionObject.image = this.lassoService.checkPixelInPolygon(this.selectionObject);
+        this.selectionObject.isEllipse = this.isEllipse;
+        this.selectionObject.isLasso = this.isLasso;
+        if (this.isLasso) {
+            this.selectionObject.polygonCoords = this.lassoService.polygonCoords;
+            this.selectionObject.clearImageDataPolygon = this.drawingService.baseCtx.getImageData(
+                this.origin.x,
+                this.origin.y,
+                this.width,
+                this.height,
+            );
         }
     }
 
-    // undo-redo
-    // this.selectionObject.origin = this.origin;
-    // this.undoRedoService.addToStack(this.selectionObject);
-    // this.undoRedoService.setToolInUse(false);
+    private addToUndoStack(): void {
+        // const temp = this.selectionObject;
+        // console.log('add to stack', temp);
+
+        this.initialseSelectionObject();
+        // console.log('apres init', this.selectionObject);
+        this.undoRedoService.addToStack(this.selectionObject);
+        this.undoRedoService.setToolInUse(false);
+    }
 }

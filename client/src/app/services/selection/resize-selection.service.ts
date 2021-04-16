@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE } from '@app/constants';
-import { DrawingService } from '@app/services/drawing/drawing.service';
 
 enum ControlPoints {
     TopLeft = 0,
@@ -20,16 +19,17 @@ enum ControlPoints {
 })
 export class ResizeSelectionService {
     controlPointsCoord: Vec2[];
-    selectionObject: SelectionTool;
+    newOrigin: Vec2;
+    resizeWidth: number;
+    resizeHeight: number;
     shiftKey: boolean;
 
+    private selectionObject: SelectionTool;
     private mouseCoord: Vec2;
     private currentControlPoint: ControlPoints;
     private controlPointsBinding: Map<ControlPoints, () => void>;
-    private resizeWidth: number;
-    private resizeHeight: number;
 
-    constructor(private drawingService: DrawingService) {
+    constructor() {
         this.controlPointsBinding = new Map<ControlPoints, () => void>();
         this.controlPointsBinding
             .set(ControlPoints.TopLeft, () => this.resizeTopLeft())
@@ -57,8 +57,6 @@ export class ResizeSelectionService {
 
     onMouseMove(mouseCoord: Vec2, selection: SelectionTool): void {
         this.selectionObject = selection;
-        console.log('origin', this.selectionObject.origin);
-        console.log('destination', this.selectionObject.destination);
         this.mouseCoord = mouseCoord;
         this.controlPointInResize();
     }
@@ -77,20 +75,16 @@ export class ResizeSelectionService {
         }
     }
 
-    printResize(): void {
+    printResize(ctx: CanvasRenderingContext2D): void {
+        this.newOrigin = this.selectionObject.origin;
         const canvas = document.createElement('canvas');
         canvas.width = this.selectionObject.width;
         canvas.height = this.selectionObject.height;
         const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
         tmp.putImageData(this.selectionObject.image, 0, 0);
-
-        this.drawingService.previewCtx.save();
-        this.checkForMirroirEffect(tmp.canvas);
-        this.drawingService.previewCtx.restore();
-    }
-
-    setResizedDimensions(): Vec2 {
-        return { x: this.resizeWidth, y: this.resizeHeight };
+        ctx.save();
+        this.checkForMirroirEffect(ctx, tmp.canvas);
+        ctx.restore();
     }
 
     private controlPointInResize(): void {
@@ -100,42 +94,18 @@ export class ResizeSelectionService {
         }
     }
 
-    private checkForMirroirEffect(selectionImage: HTMLCanvasElement): void {
+    private checkForMirroirEffect(ctx: CanvasRenderingContext2D, selectionImage: HTMLCanvasElement): void {
         if (this.resizeHeight < 0 && this.resizeWidth < 0) {
-            this.drawingService.previewCtx.scale(-1, -1);
-            this.drawingService.previewCtx.drawImage(
-                selectionImage,
-                -this.selectionObject.origin.x,
-                -this.selectionObject.origin.y,
-                -this.resizeWidth,
-                -this.resizeHeight,
-            );
+            ctx.scale(-1, -1);
+            ctx.drawImage(selectionImage, -this.selectionObject.origin.x, -this.selectionObject.origin.y, -this.resizeWidth, -this.resizeHeight);
         } else if (this.resizeWidth < 0 && this.resizeHeight > 0) {
-            this.drawingService.previewCtx.scale(-1, 1);
-            this.drawingService.previewCtx.drawImage(
-                selectionImage,
-                -this.selectionObject.origin.x,
-                this.selectionObject.origin.y,
-                -this.resizeWidth,
-                this.resizeHeight,
-            );
+            ctx.scale(-1, 1);
+            ctx.drawImage(selectionImage, -this.selectionObject.origin.x, this.selectionObject.origin.y, -this.resizeWidth, this.resizeHeight);
         } else if (this.resizeHeight < 0 && this.resizeWidth > 0) {
-            this.drawingService.previewCtx.scale(1, -1);
-            this.drawingService.previewCtx.drawImage(
-                selectionImage,
-                this.selectionObject.origin.x,
-                -this.selectionObject.origin.y,
-                this.resizeWidth,
-                -this.resizeHeight,
-            );
+            ctx.scale(1, -1);
+            ctx.drawImage(selectionImage, this.selectionObject.origin.x, -this.selectionObject.origin.y, this.resizeWidth, -this.resizeHeight);
         } else {
-            this.drawingService.previewCtx.drawImage(
-                selectionImage,
-                this.selectionObject.origin.x,
-                this.selectionObject.origin.y,
-                this.resizeWidth,
-                this.resizeHeight,
-            );
+            ctx.drawImage(selectionImage, this.selectionObject.origin.x, this.selectionObject.origin.y, this.resizeWidth, this.resizeHeight);
         }
     }
 

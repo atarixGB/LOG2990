@@ -18,6 +18,13 @@ const MAX_RGB = 255;
 export class SelectionUtilsService {
     controlPointsCoord: Vec2[];
     cleanedUnderneath: boolean;
+    isResizing: boolean;
+
+    private origin: Vec2;
+    private destination: Vec2;
+    private width: number;
+    private height: number;
+    private resizedSelection: SelectionTool;
     private previousLineWidthRectangle: number;
     private previousLineWidthEllipse: number;
 
@@ -29,6 +36,7 @@ export class SelectionUtilsService {
         private resizeSelectionService: ResizeSelectionService,
     ) {
         this.cleanedUnderneath = false;
+        this.isResizing = false;
     }
 
     initializeToolParameters(): void {
@@ -88,6 +96,7 @@ export class SelectionUtilsService {
             this.rectangleService.pathData.push(selection.destination);
             this.rectangleService.drawShape(this.drawingService.previewCtx);
         }
+
         if (selection.isLasso) this.lassoService.drawPolygon(this.drawingService.previewCtx, selection.origin);
 
         this.createControlPoints(selection);
@@ -157,7 +166,7 @@ export class SelectionUtilsService {
         }
     }
 
-    resizeSelection(mouseCoord: Vec2, selection: SelectionTool): void {
+    resizeSelection(ctx: CanvasRenderingContext2D, mouseCoord: Vec2, selection: SelectionTool): void {
         this.resizeSelectionService.onMouseMove(mouseCoord, selection);
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
 
@@ -166,12 +175,30 @@ export class SelectionUtilsService {
             this.cleanedUnderneath = true;
         }
 
-        this.resizeSelectionService.printResize();
-        const origin = selection.origin;
-        const width = this.resizeSelectionService.setResizedDimensions().x;
-        const height = this.resizeSelectionService.setResizedDimensions().y;
-        const destination = { x: origin.x + width, y: origin.y + height };
-        const resizedSelection = new SelectionTool(origin, destination, width, height);
-        this.createBoundaryBox(resizedSelection);
+        this.resizeSelectionService.printResize(ctx);
+        this.origin = selection.origin;
+        this.width = this.resizeSelectionService.resizeWidth;
+        this.height = this.resizeSelectionService.resizeHeight;
+        this.destination = { x: this.origin.x + this.width, y: this.origin.y + this.height };
+        this.resizedSelection = new SelectionTool(this.origin, this.destination, this.width, this.height);
+        this.createBoundaryBox(this.resizedSelection);
+    }
+
+    endResizeSelection(): SelectionTool {
+        console.log('calle');
+
+        this.isResizing = false;
+        this.cleanedUnderneath = false;
+        this.drawingService.clearCanvas(this.drawingService.previewCtx);
+        this.resizeSelectionService.printResize(this.drawingService.baseCtx);
+
+        this.origin = this.resizeSelectionService.newOrigin;
+        this.width = this.resizeSelectionService.resizeWidth;
+        this.height = this.resizeSelectionService.resizeHeight;
+        this.destination = { x: this.origin.x + this.width, y: this.origin.y + this.height };
+        this.resizedSelection = this.reajustOriginAndDestination(new SelectionTool(this.origin, this.destination, this.width, this.height));
+
+        this.createBoundaryBox(this.resizedSelection);
+        return this.resizedSelection;
     }
 }
