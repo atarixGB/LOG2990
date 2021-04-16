@@ -85,6 +85,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         this.initialSelection();
 
         if (!this.selectionService.selectionTerminated) {
+            console.log(this.origin, this.destination, this.selectionData);
             if (this.selectionUtilsService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
                 this.selectionService.newSelection = false;
             } else {
@@ -97,9 +98,13 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (this.mouseDown) {
             this.mouseDown = false;
             if (this.selectionUtilsService.isResizing) {
-                this.selectionService.selectionObject = this.selectionUtilsService.endResizeSelection();
+                this.selectionObject = this.selectionUtilsService.endResizeSelection();
+                this.selectionService.selectionObject = this.selectionObject;
                 this.selectionService.initialiseServiceDimensions();
                 this.selectionService.getSelectionData(this.drawingService.baseCtx);
+                this.origin = this.selectionObject.origin;
+                this.destination = this.selectionObject.destination;
+                this.selectionData = this.selectionService.selection;
                 return;
             }
             this.origin = this.newOrigin;

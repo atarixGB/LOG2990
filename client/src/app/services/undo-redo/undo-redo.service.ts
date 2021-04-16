@@ -29,6 +29,9 @@ export class UndoRedoService extends Tool {
     }
 
     undo(): void {
+        console.log('redosatck', this.redoStack);
+        console.log('undoStack', this.undoStack);
+
         if (this.undoStack.isEmpty() || this.toolsInUse.getValue()) {
             return;
         }
@@ -50,8 +53,10 @@ export class UndoRedoService extends Tool {
     }
 
     addToStack(drawable: Drawable): void {
+        console.log('undo', this.undoStack);
+
         this.undoStack.add(drawable);
-        // this.redoStack.clear();
+        this.redoStack.clear();
     }
 
     redo(): void {

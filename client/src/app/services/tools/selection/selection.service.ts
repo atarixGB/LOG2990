@@ -233,10 +233,11 @@ export class SelectionService extends Tool {
         this.selection = ctx.getImageData(this.origin.x, this.origin.y, this.width, this.height);
         this.initialseSelectionObject();
         if (this.isEllipse) {
-            this.selectionObject.image = this.ellipseSelectionService.checkPixelInEllipse(this.selectionObject);
+            this.selection = this.ellipseSelectionService.checkPixelInEllipse(this.selectionObject);
         } else if (this.isLasso) {
-            this.selectionObject.image = this.lassoService.checkPixelInPolygon(this.selectionObject);
+            this.selection = this.lassoService.checkPixelInPolygon(this.selectionObject);
         }
+        this.selectionObject.image = this.selection;
     }
 
     initialiseServiceDimensions(): void {
