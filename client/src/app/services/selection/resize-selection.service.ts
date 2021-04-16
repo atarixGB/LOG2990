@@ -174,16 +174,4 @@ export class ResizeSelectionService {
     private getSelectionRatio(): number {
         return this.selectionObject.width / this.selectionObject.height;
     }
-
-    // private getResizeSelectionWithSameAspectRatio(): void {
-    //     const ratio: number = this.getSelectionRatio();
-
-    //     this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
-    //     this.resizeHeight = this.resizeWidth / ratio;
-
-    //     if (this.resizeHeight > height) {
-    //         this.resizeHeight = height;
-    //         this.resizeWidth = this.resizeHeight * ratio;
-    //     }
-    // }
 }

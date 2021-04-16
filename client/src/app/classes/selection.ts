@@ -7,12 +7,14 @@ const MAX_RGB = 255;
 export class SelectionTool extends Drawable {
     image: ImageData;
     clearImageDataPolygon: ImageData;
+    initialOrigin: Vec2;
     origin: Vec2;
     destination: Vec2;
+    polygonCoords: Vec2[];
+    initialWidth: number;
+    initialHeight: number;
     width: number;
     height: number;
-    initialOrigin: Vec2;
-    polygonCoords: Vec2[];
     isEllipse: boolean;
     isLasso: boolean;
 
@@ -25,13 +27,11 @@ export class SelectionTool extends Drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        console.log('draw');
+        console.log('draw', this.initialOrigin);
         this.clearUnderneathShape(ctx);
         if (this.isEllipse) this.printEllipse(ctx);
         else if (this.isLasso) this.printPolygon(this.image, ctx);
         else {
-            console.log('popop');
-
             ctx.putImageData(this.image, this.origin.x, this.origin.y);
         }
     }
@@ -41,10 +41,10 @@ export class SelectionTool extends Drawable {
         ctx.beginPath();
         if (this.isEllipse) {
             ctx.ellipse(
-                this.initialOrigin.x + this.width / 2,
-                this.initialOrigin.y + this.height / 2,
-                this.width / 2,
-                this.height / 2,
+                this.initialOrigin.x + this.initialWidth / 2,
+                this.initialOrigin.y + this.initialHeight / 2,
+                this.initialWidth / 2,
+                this.initialHeight / 2,
                 0,
                 2 * Math.PI,
                 0,
@@ -55,8 +55,8 @@ export class SelectionTool extends Drawable {
             console.log(this.clearImageDataPolygon);
             const imageData = this.clearImageDataPolygon.data;
             let pixelCounter = 0;
-            for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
-                for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
+            for (let i = this.initialOrigin.y; i < this.initialOrigin.y + this.initialHeight; i++) {
+                for (let j = this.initialOrigin.x; j < this.initialOrigin.x + this.initialWidth; j++) {
                     if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
                         for (let k = 0; k < PIXEL_LENGTH; k++) {
                             imageData[pixelCounter + k] = MAX_RGB;
@@ -67,7 +67,9 @@ export class SelectionTool extends Drawable {
             }
             this.printPolygon(this.clearImageDataPolygon, ctx);
         } else {
-            ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.width, this.height);
+            console.log('clear', this.initialOrigin);
+
+            ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.initialWidth, this.initialHeight);
             ctx.closePath();
         }
     }

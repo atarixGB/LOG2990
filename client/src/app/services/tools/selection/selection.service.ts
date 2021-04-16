@@ -240,6 +240,8 @@ export class SelectionService extends Tool {
             this.getSelectionData(this.drawingService.baseCtx);
             this.selectionUtilsService.createBoundaryBox(this.selectionObject);
             this.selectionObject.initialOrigin = this.origin;
+            this.selectionObject.initialWidth = this.width;
+            this.selectionObject.initialHeight = this.height;
         }
     }
 
@@ -256,6 +258,8 @@ export class SelectionService extends Tool {
 
     private handleActiveSelectionOnMouseUp(): void {
         if (this.mouseDown && !this.isLasso && !this.selectionUtilsService.isResizing) {
+            console.log('call');
+
             this.activeSelection = true;
             this.mouseDown = false;
             this.calculateDimension();
@@ -263,6 +267,8 @@ export class SelectionService extends Tool {
             this.selectionUtilsService.createControlPoints(this.selectionObject);
             this.selectionUtilsService.resetParametersTools();
             this.selectionObject.initialOrigin = this.origin;
+            this.selectionObject.initialWidth = this.width;
+            this.selectionObject.initialHeight = this.height;
         }
     }
 
@@ -288,6 +294,8 @@ export class SelectionService extends Tool {
     }
 
     private initialseSelectionObject() {
+        console.log('initialisation');
+
         this.selectionObject.origin = this.origin;
         this.selectionObject.destination = this.destination;
         this.selectionObject.width = this.width;

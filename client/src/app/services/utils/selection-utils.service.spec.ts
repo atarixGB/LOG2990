@@ -239,7 +239,6 @@ describe('SelectionUtilsService', () => {
     });
 
     it('should end resize selection', () => {
-        const boundaryBoxSpy = spyOn<any>(service, 'createBoundaryBox').and.stub();
         const reajustSpy = spyOn<any>(service, 'reajustOriginAndDestination').and.callThrough();
 
         spyOn<any>(service['resizeSelectionService'], 'printResize').and.callFake(() => {
@@ -255,7 +254,6 @@ describe('SelectionUtilsService', () => {
         expect(service['width']).toBe(10);
         expect(service['height']).toBe(5);
         expect(service['destination']).toEqual({ x: 10, y: 5 } as Vec2);
-        // expect(boundaryBoxSpy).toHaveBeenCalled();
         expect(reajustSpy).toHaveBeenCalled();
     });
 });
