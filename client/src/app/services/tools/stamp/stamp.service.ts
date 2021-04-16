@@ -96,12 +96,12 @@ export class StampService extends Tool {
     }
 
     onWheelEvent(event: WheelEvent): void {
-        this.drawingService.clearCanvas(this.drawingService.previewCtx);
         let rotationStep = ROTATION_STEP_STAMP;
         if (this.isKeyAltDown) {
             rotationStep = 1;
         }
         this.changeAngle(this.angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep);
+    
     }
 
     changeAngle(newAngle: number): void {
@@ -125,11 +125,12 @@ export class StampService extends Tool {
 
         this.drawingService.baseCtx.translate(center.x, center.y);
 
+        this.drawingService.baseCtx.scale(this.resizeFactor, this.resizeFactor);
+        this.drawingService.baseCtx.translate(-this.size / 2, -this.size/2);
+
         this.drawingService.baseCtx.rotate(-((this.angle * Math.PI) / ANGLE_HALF_TURN));
         this.drawingService.baseCtx.translate(-this.size / 2, -this.size / 2);
 
-        this.drawingService.baseCtx.scale(this.resizeFactor, this.resizeFactor);
-        this.drawingService.baseCtx.translate(-this.size / 2, -this.size / 2);
 
         this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         this.drawingService.baseCtx.strokeStyle = this.color;
@@ -149,14 +150,16 @@ export class StampService extends Tool {
         }
 
         const path = new Path2D(this.imageSrc);
-        const center: Vec2 = { x: event.x + this.size / 2, y: event.y - this.size / 2 };
+        const center: Vec2 = { x: event.x + this.size / 2, y: event.y + this.size / 2 };
 
         this.drawingService.cursorCtx.translate(center.x, center.y);
+
+        this.drawingService.cursorCtx.scale(this.resizeFactor, this.resizeFactor);
+        this.drawingService.cursorCtx.translate(-this.size / 2, -this.size/2);
+
         this.drawingService.cursorCtx.rotate(-((this.angle * Math.PI) / ANGLE_HALF_TURN));
         this.drawingService.cursorCtx.translate(-this.size / 2, -this.size / 2);
 
-        this.drawingService.cursorCtx.scale(this.resizeFactor, this.resizeFactor);
-        this.drawingService.cursorCtx.translate(-this.size / 2, -this.size / 2);
 
         this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         this.drawingService.cursorCtx.strokeStyle = this.color;
@@ -172,4 +175,5 @@ export class StampService extends Tool {
             this.currentStamp = this.stampBindings.get(this.selectStamp)!;
         }
     }
+
 }
