@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Stamp } from '@app/classes/stamp';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { ANGLE_HALF_TURN, MAX_ANGLE, MouseButton, ROTATION_STEP_STAMP, SCALE_FACTOR_STAMP, StampList } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -26,8 +28,9 @@ export class StampService extends Tool {
 
     stampBindings: Map<StampList, string>;
     srcBinding: Map<string, string>;
+    
 
-    constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
+    constructor(drawingService: DrawingService, private colorManager: ColorManagerService,private undoRedoService :UndoRedoService) {
         super(drawingService);
 
         this.stampBindings = new Map<StampList, string>();
@@ -60,7 +63,8 @@ export class StampService extends Tool {
                 'dead',
                 'M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm4 17h-8v-2h8v2zm-.499-6.296l-1.298 1.296-1.203-1.204 1.298-1.296-1.298-1.296 1.203-1.204 1.298 1.296 1.296-1.296 1.203 1.204-1.297 1.296 1.297 1.296-1.202 1.204-1.297-1.296zm-7 0l-1.298 1.296-1.203-1.204 1.298-1.296-1.298-1.296 1.203-1.204 1.298 1.296 1.296-1.296 1.203 1.204-1.297 1.296 1.297 1.296-1.202 1.204-1.297-1.296z',
             );
-
+        
+        
         this.currentStamp = 'happy';
         this.selectStamp = StampList.Happy;
         this.size = 24;
@@ -68,11 +72,15 @@ export class StampService extends Tool {
         this.angle = 0;
         this.isKeyAltDown = false;
         this.resizeFactor = SCALE_FACTOR_STAMP;
+
     }
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
+            this.imageCoords = this.getPositionFromMouse(event);
+            const stamp= new Stamp (this.imageCoords,this.imageSrc,this.angle,this.resizeFactor, this.color);
+            this.undoRedoService.addToStack (stamp);
             this.drawStamp(this.getPositionFromMouse(event));
         }
     }

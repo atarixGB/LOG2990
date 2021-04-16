@@ -195,7 +195,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
 
     @HostListener('wheel', ['$event'])
     onWheel(event: WheelEvent): void {
-        console.log('ON WHEEL');
         event.preventDefault();
         this.toolManagerService.onWheel(event);
     }

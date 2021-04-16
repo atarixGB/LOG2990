@@ -165,6 +165,8 @@ export const SCALE_FACTOR_STAMP = 1;
 export const ROTATION_STEP_STAMP = 15;
 export const MAX_ANGLE = 360;
 export const ANGLE_HALF_TURN = 180;
+export const SIZE_STAMP = 24;
+
 // constants for bucket
 export const RGBA_COMPONENTS = 4;
 export const MAX_BYTE_VALUE = 255;
