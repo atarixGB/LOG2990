@@ -1,3 +1,4 @@
+// tslint:disable:max-line-length
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
@@ -10,7 +11,7 @@ import {
     DEFAULT_TEXT_SIZE,
     Emphasis,
     Font,
-    TextAlign
+    TextAlign,
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
@@ -214,10 +215,8 @@ export class TextService extends Tool {
     }
 
     private sizeOfLine(line: string): number {
-
         this.ctx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
         return this.ctx.measureText(line).width;
-
     }
 
     private alignToCenter(): void {
