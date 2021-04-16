@@ -65,35 +65,9 @@ export class SelectionService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
-        if (this.mouseDown) {
-            if (this.activeSelection) {
-                console.log('checkresize');
-
-                this.resizeSelectionService.controlPointsCoord = this.selectionUtilsService.controlPointsCoord;
-                this.selectionUtilsService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
-                // this.initialseSelectionObject();
-                this.clearUnderneath = true;
-            }
-        }
-
-        if (this.mouseDown && !this.isLasso && !this.selectionUtilsService.isResizing) {
-            this.initialSelection = true;
-            this.clearUnderneath = true;
-            this.selectionTerminated = false;
-
-            this.selectionUtilsService.initializeToolParameters();
-            this.printMovedSelection();
-            this.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
-            this.selectionDeleted = false;
-
-            if (this.isEllipse) this.ellipseService.onMouseDown(event);
-            else this.rectangleService.onMouseDown(event);
-        }
-
-        if (this.isLasso && this.newSelection && this.activeSelection) {
-            this.lassoService.selectionOver = false;
-            this.terminateSelection();
-        }
+        this.handleActiveSelectionOnMouseDown(event);
+        this.handleResizedSelectionOnMouseDown(event);
+        this.handleActiveLassoSelectionOnMouseDown(event);
     }
 
     onMouseMove(event: MouseEvent): void {
@@ -111,46 +85,15 @@ export class SelectionService extends Tool {
             else this.rectangleService.onMouseMove(event);
         }
 
-        if (this.activeSelection && !this.selectionTerminated) {
-            if (this.selectionUtilsService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
-                this.newSelection = false;
-            } else {
-                this.newSelection = true;
-            }
-        }
+        this.handleActiveSelectionOnMouseMove(event);
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
 
-        if (this.lassoService.selectionOver) {
-            this.activeSelection = true;
-            this.initialSelection = true;
-            this.clearUnderneath = true;
-            this.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
-            this.calculateDimension();
-            this.getSelectionData(this.drawingService.baseCtx);
-            this.selectionUtilsService.createBoundaryBox(this.selectionObject);
-            this.selectionObject.initialOrigin = this.origin;
-        }
-
-        if (this.selectionUtilsService.isResizing) {
-            this.selectionObject = this.selectionUtilsService.endResizeSelection();
-            this.initialiseServiceDimensions();
-            this.getSelectionData(this.drawingService.baseCtx);
-            return;
-        }
-
-        if (this.mouseDown && !this.isLasso) {
-            this.activeSelection = true;
-            this.mouseDown = false;
-
-            this.calculateDimension();
-            this.getSelectionData(this.drawingService.baseCtx);
-            this.selectionUtilsService.createControlPoints(this.selectionObject);
-            this.selectionUtilsService.resetParametersTools();
-            this.selectionObject.initialOrigin = this.origin;
-        }
+        this.handleLassoSelectionWhenOverOnMouseUp(event);
+        this.handleResizedSelectionOnMouseUp();
+        this.handleActiveSelectionOnMouseUp(event);
     }
 
     onMouseLeave(event: MouseEvent): void {
@@ -247,6 +190,83 @@ export class SelectionService extends Tool {
         this.height = this.selectionObject.height;
     }
 
+    private handleActiveSelectionOnMouseDown(event: MouseEvent): void {
+        if (this.mouseDown) {
+            if (this.activeSelection) {
+                this.resizeSelectionService.controlPointsCoord = this.selectionUtilsService.controlPointsCoord;
+                this.selectionUtilsService.isResizing = this.resizeSelectionService.checkIfMouseIsOnControlPoint(this.getPositionFromMouse(event));
+                this.clearUnderneath = true;
+            }
+        }
+    }
+
+    private handleResizedSelectionOnMouseDown(event: MouseEvent): void {
+        if (this.mouseDown && !this.isLasso && !this.selectionUtilsService.isResizing) {
+            this.initialSelection = true;
+            this.clearUnderneath = true;
+            this.selectionTerminated = false;
+            this.selectionUtilsService.initializeToolParameters();
+            this.printMovedSelection();
+            this.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
+            this.selectionDeleted = false;
+
+            if (this.isEllipse) this.ellipseService.onMouseDown(event);
+            else this.rectangleService.onMouseDown(event);
+        }
+    }
+
+    private handleActiveLassoSelectionOnMouseDown(event: MouseEvent): void {
+        if (this.isLasso && this.newSelection && this.activeSelection) {
+            this.lassoService.selectionOver = false;
+            this.terminateSelection();
+        }
+    }
+
+    private handleActiveSelectionOnMouseMove(event: MouseEvent): void {
+        if (this.activeSelection && !this.selectionTerminated) {
+            if (this.selectionUtilsService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                this.newSelection = false;
+            } else {
+                this.newSelection = true;
+            }
+        }
+    }
+
+    private handleLassoSelectionWhenOverOnMouseUp(event: MouseEvent): void {
+        if (this.lassoService.selectionOver) {
+            this.activeSelection = true;
+            this.initialSelection = true;
+            this.clearUnderneath = true;
+            this.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
+            this.calculateDimension();
+            this.getSelectionData(this.drawingService.baseCtx);
+            this.selectionUtilsService.createBoundaryBox(this.selectionObject);
+            this.selectionObject.initialOrigin = this.origin;
+        }
+    }
+
+    private handleResizedSelectionOnMouseUp(): void {
+        if (this.selectionUtilsService.isResizing) {
+            this.selectionObject = this.selectionUtilsService.endResizeSelection();
+            this.initialiseServiceDimensions();
+            this.getSelectionData(this.drawingService.baseCtx);
+            return;
+        }
+    }
+
+    private handleActiveSelectionOnMouseUp(event: MouseEvent): void {
+        if (this.mouseDown && !this.isLasso) {
+            this.activeSelection = true;
+            this.mouseDown = false;
+
+            this.calculateDimension();
+            this.getSelectionData(this.drawingService.baseCtx);
+            this.selectionUtilsService.createControlPoints(this.selectionObject);
+            this.selectionUtilsService.resetParametersTools();
+            this.selectionObject.initialOrigin = this.origin;
+        }
+    }
+
     private calculateDimension(): void {
         if (this.isEllipse) {
             this.origin = this.ellipseService.pathData[0];
@@ -288,11 +308,7 @@ export class SelectionService extends Tool {
     }
 
     private addToUndoStack(): void {
-        // const temp = this.selectionObject;
-        // console.log('add to stack', temp);
-
         this.initialseSelectionObject();
-        // console.log('apres init', this.selectionObject);
         this.undoRedoService.addToStack(this.selectionObject);
         this.undoRedoService.setToolInUse(false);
     }
