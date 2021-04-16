@@ -4,7 +4,6 @@ import { mouseEventLClick, mouseEventRClick, StampList } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { StampService } from './stamp.service';
 
-
 // tslint:disable
 describe('StampService', () => {
     let service: StampService;
@@ -124,6 +123,7 @@ describe('StampService', () => {
         service.isKeyAltDown = false;
         const changeAngleSpy = spyOn(service, 'changeAngle').and.stub();
         const expectedArg = angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep;
+        spyOn(service, 'onMouseMove').and.stub();
 
         service.onWheelEvent(event);
         expect(changeAngleSpy).toHaveBeenCalledWith(expectedArg);
@@ -136,6 +136,7 @@ describe('StampService', () => {
         service.isKeyAltDown = true;
         const changeAngleSpy = spyOn(service, 'changeAngle').and.stub();
         const expectedArg = angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep;
+        spyOn(service, 'onMouseMove').and.stub();
 
         service.onWheelEvent(event);
         expect(changeAngleSpy).toHaveBeenCalledWith(expectedArg);
