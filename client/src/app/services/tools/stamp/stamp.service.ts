@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Stamp } from '@app/classes/stamp';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { ANGLE_HALF_TURN, MAX_ANGLE, MouseButton, ROTATION_STEP_STAMP, SCALE_FACTOR_STAMP, StampList } from '@app/constants';
+import { ANGLE_HALF_TURN, MAX_ANGLE, MouseButton, ROTATION_STEP_STAMP, SCALE_FACTOR_STAMP, SIZE_STAMP, StampList } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -67,7 +67,7 @@ export class StampService extends Tool {
         
         this.currentStamp = 'happy';
         this.selectStamp = StampList.Happy;
-        this.size = 24;
+        this.size = SIZE_STAMP;
         this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
         this.angle = 0;
         this.isKeyAltDown = false;
