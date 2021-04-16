@@ -12,9 +12,6 @@ import { EllipseSelectionService } from '@app/services/tools/selection/ellipse-s
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 
-const PIXEL_LENGTH = 4;
-const MAX_RGB = 255;
-
 @Injectable({
     providedIn: 'root',
 })
@@ -67,6 +64,7 @@ export class SelectionService extends Tool {
     }
 
     onMouseDown(event: MouseEvent): void {
+        console.log('mousedown', event.offsetX, event.offsetY);
         this.mouseDown = event.button === MouseButton.Left;
         if (this.mouseDown) {
             if (this.activeSelection) {
@@ -118,6 +116,7 @@ export class SelectionService extends Tool {
     }
 
     onMouseUp(event: MouseEvent): void {
+        console.log('mouseup', event.offsetX, event.offsetY);
         if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.onMouseUp(event);
 
         if (this.lassoService.selectionOver) {
@@ -157,12 +156,20 @@ export class SelectionService extends Tool {
             return;
         }
 
+        if (event.key === 'Shift') {
+            this.resizeSelectionService.handleKeyDown(event);
+        }
+
         if (this.isEllipse) this.ellipseService.handleKeyDown(event);
         else if (this.isLasso) this.lassoService.handleKeyDown(event);
         else this.rectangleService.handleKeyDown(event);
     }
 
     handleKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Shift') {
+            this.resizeSelectionService.handleKeyUp(event);
+        }
+
         if (this.isEllipse) this.ellipseService.handleKeyUp(event);
         else if (this.isLasso) this.lassoService.handleKeyUp(event);
         else this.rectangleService.handleKeyUp(event);

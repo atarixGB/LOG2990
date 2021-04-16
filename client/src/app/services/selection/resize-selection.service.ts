@@ -21,6 +21,7 @@ enum ControlPoints {
 export class ResizeSelectionService {
     controlPointsCoord: Vec2[];
     selectionObject: SelectionTool;
+    shiftKey: boolean;
 
     private mouseCoord: Vec2;
     private currentControlPoint: ControlPoints;
@@ -39,6 +40,7 @@ export class ResizeSelectionService {
             .set(ControlPoints.MiddleRight, () => this.resizeMiddleRight())
             .set(ControlPoints.MiddleBottom, () => this.resizeMiddleBottom())
             .set(ControlPoints.MiddleLeft, () => this.resizeMiddleLeft());
+        this.shiftKey = false;
     }
 
     checkIfMouseIsOnControlPoint(mouseCoord: Vec2): boolean {
@@ -55,8 +57,24 @@ export class ResizeSelectionService {
 
     onMouseMove(mouseCoord: Vec2, selection: SelectionTool): void {
         this.selectionObject = selection;
+        console.log('origin', this.selectionObject.origin);
+        console.log('destination', this.selectionObject.destination);
         this.mouseCoord = mouseCoord;
         this.controlPointInResize();
+    }
+
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.key === 'Shift') {
+            event.preventDefault();
+            this.shiftKey = true;
+        }
+    }
+
+    handleKeyUp(event: KeyboardEvent): void {
+        if (event.key === 'Shift') {
+            event.preventDefault();
+            this.shiftKey = false;
+        }
     }
 
     printResize(): void {
@@ -122,26 +140,43 @@ export class ResizeSelectionService {
     }
 
     private resizeTopLeft(): void {
-        this.selectionObject.origin = this.mouseCoord;
-        this.resizeWidth = this.selectionObject.destination.x - this.selectionObject.origin.x;
-        this.resizeHeight = this.selectionObject.destination.y - this.selectionObject.origin.y;
+        if (this.shiftKey) {
+            // todo
+        } else {
+            this.selectionObject.origin = this.mouseCoord;
+            this.resizeWidth = this.selectionObject.destination.x - this.selectionObject.origin.x;
+            this.resizeHeight = this.selectionObject.destination.y - this.selectionObject.origin.y;
+        }
     }
 
     private resizeTopRight(): void {
-        this.selectionObject.origin.y = this.mouseCoord.y;
-        this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
-        this.resizeHeight = this.selectionObject.destination.y - this.mouseCoord.y;
+        if (this.shiftKey) {
+            // todo
+        } else {
+            this.selectionObject.origin.y = this.mouseCoord.y;
+            this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
+            this.resizeHeight = this.selectionObject.destination.y - this.mouseCoord.y;
+        }
     }
 
     private resizeBottomRight(): void {
-        this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
-        this.resizeHeight = this.mouseCoord.y - this.selectionObject.origin.y;
+        if (this.shiftKey) {
+            this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
+            this.resizeHeight = this.resizeWidth / this.getSelectionRatio();
+        } else {
+            this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
+            this.resizeHeight = this.mouseCoord.y - this.selectionObject.origin.y;
+        }
     }
 
     private resizeBottomLeft(): void {
-        this.selectionObject.origin.x = this.mouseCoord.x;
-        this.resizeWidth = this.selectionObject.destination.x - this.mouseCoord.x;
-        this.resizeHeight = this.mouseCoord.y - this.selectionObject.origin.y;
+        if (this.shiftKey) {
+            // todo
+        } else {
+            this.selectionObject.origin.x = this.mouseCoord.x;
+            this.resizeWidth = this.selectionObject.destination.x - this.mouseCoord.x;
+            this.resizeHeight = this.mouseCoord.y - this.selectionObject.origin.y;
+        }
     }
 
     private resizeMiddleTop(): void {
@@ -165,4 +200,20 @@ export class ResizeSelectionService {
         this.resizeWidth = this.selectionObject.destination.x - this.mouseCoord.x;
         this.resizeHeight = this.selectionObject.height;
     }
+
+    private getSelectionRatio(): number {
+        return this.selectionObject.width / this.selectionObject.height;
+    }
+
+    // private getResizeSelectionWithSameAspectRatio(): void {
+    //     const ratio: number = this.getSelectionRatio();
+
+    //     this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
+    //     this.resizeHeight = this.resizeWidth / ratio;
+
+    //     if (this.resizeHeight > height) {
+    //         this.resizeHeight = height;
+    //         this.resizeWidth = this.resizeHeight * ratio;
+    //     }
+    // }
 }
