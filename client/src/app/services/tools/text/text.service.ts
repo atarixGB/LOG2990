@@ -42,6 +42,8 @@ export class TextService extends Tool {
     private emphasisBinding: Map<Emphasis, string>;
     private alignBinding: Map<TextAlign, string>;
     private keyBinding: Map<string, () => void>;
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService) {
         super(drawingService);
@@ -53,6 +55,8 @@ export class TextService extends Tool {
         this.positionText = { x: 0, y: 0 };
         this.cursorPosition = 0;
         this.isWriting = false;
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
 
         this.fontBinding = new Map<Font, string>();
         this.fontBinding
@@ -210,13 +214,10 @@ export class TextService extends Tool {
     }
 
     private sizeOfLine(line: string): number {
-        const dummy = document.createElement('canvas');
-        const ctx = dummy.getContext('2d');
-        if (ctx) {
-            ctx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            return ctx.measureText(line).width;
-        }
-        return 0;
+
+        this.ctx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
+        return this.ctx.measureText(line).width;
+
     }
 
     private alignToCenter(): void {
@@ -294,33 +295,21 @@ export class TextService extends Tool {
         this.isWriting = false;
     }
 
-    private nextLines(index : number):string[]{
-        let array : string[];
-        array = [];
-        for(let i= this.currentLine+1; i< this.textInput.length;i++){
-            array.push(this.textInput[i]);
-        }
-        console.log(array);
-        return array;
-    }
-
-
     private handleEnter(): void {
-        const previousNextLines = this.nextLines(this.currentLine); 
-        console.log("nextLines= ", previousNextLines);
-        let array :string[] = [];
-        const currentLine = this.textInput[this.currentLine].substring(0, this.cursorPosition);
-        const nextLine = '|' + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-        array.push(currentLine);
-        array.push(nextLine);
-        console.log("array after 2 pushed", array );
+        let cuttedLine = '';
+        if (this.textInput[this.currentLine + 1]) {
+            cuttedLine = this.textInput[this.currentLine + 1];
+        }
+        const nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
         this.currentLine++;
         this.totalLine++;
+        this.textInput[this.currentLine] = '|' + nextLine;
         this.cursorPosition = 0;
-        array.concat(previousNextLines);
-        console.log("mon array ", array);
-        this.textInput = array;
-        console.log("mon textInput ", this.textInput);
+        if (cuttedLine !== '') {
+            this.textInput.splice(this.currentLine + 1, 0, cuttedLine);
+        }
+
         if (this.selectAlign === TextAlign.Right) {
             this.alignToRight();
         }
@@ -341,39 +330,33 @@ export class TextService extends Tool {
             } else {
                 this.textInput[this.currentLine] =
                     this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    
-                    '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                    console.log(this.cursorPosition);
-                    if(this.cursorPosition > this.textInput[this.currentLine].length){
-                        this.cursorPosition = this.textInput[this.currentLine].length-1;
-                    }
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                if (this.cursorPosition > this.textInput[this.currentLine].length) {
+                    this.cursorPosition = this.textInput[this.currentLine].length - 1;
                 }
+            }
         }
     }
 
     private handleArrowUp(): void {
         if (this.currentLine !== 0) {
-            this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0,this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition+1,this.textInput[this.currentLine].length);
-            console.log(this.textInput[this.currentLine]);
+            this.textInput[this.currentLine] =
+                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
+                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
             this.currentLine--;
-                console.log(this.textInput[this.currentLine]);
             if (this.textInput[this.currentLine] === '') {
                 this.textInput[this.currentLine] = '|';
                 this.cursorPosition = 0;
             } else {
-                if(this.cursorPosition > this.textInput[this.currentLine].length){
-                    console.log("je suis trop gros");
+                if (this.cursorPosition > this.textInput[this.currentLine].length) {
                     this.cursorPosition = this.textInput[this.currentLine].length;
                 }
                 this.textInput[this.currentLine] =
                     this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    '|'+this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-                    // if(this.cursorPosition < this.textInput[this.currentLine].length){
-                    //     this.cursorPosition = this.textInput[this.currentLine].length-1;
-                    // }
-                    console.log(this.textInput[this.currentLine]);
-                }
-                console.log(this.cursorPosition);
+                    '|' +
+                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+            }
         }
     }
 
@@ -393,7 +376,6 @@ export class TextService extends Tool {
                     '|' +
                     this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
             }
-            console.log('position curseur dans arrow right', this.cursorPosition);
         }
     }
 

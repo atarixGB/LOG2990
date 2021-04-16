@@ -5,17 +5,10 @@ import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { of } from 'rxjs';
-import 'zone.js/dist/async-test';
-import 'zone.js/dist/fake-async-test';
-import 'zone.js/dist/jasmine-patch';
-// tslint:disable:ordered-imports
-import 'zone.js/dist/long-stack-trace-zone';
-import 'zone.js/dist/proxy.js';
-import 'zone.js/dist/sync-test';
 import { TextService } from './text.service';
 
 //tslint:disable
-fdescribe('TextService', () => {
+describe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let colorServiceSpy: ColorManagerService;
@@ -33,7 +26,7 @@ fdescribe('TextService', () => {
         colorServiceSpy = new ColorManagerService();
         TestBed.configureTestingModule({
             providers: [{ provide: DrawingService, useValue: drawServiceSpy },
-                { provide: ColorManagerService, useValue: colorServiceSpy }],
+            { provide: ColorManagerService, useValue: colorServiceSpy }],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -48,8 +41,8 @@ fdescribe('TextService', () => {
         expect(service).toBeTruthy();
     });
 
-    fit('should subscribe to colorManager color change',() => {
-        spyOn(colorServiceSpy,"changeColorObserver").and.returnValue(of({}as any));
+    it('should subscribe to colorManager color change', () => {
+        spyOn(colorServiceSpy, "changeColorObserver").and.returnValue(of({} as any));
         const spyWriteCanvas = spyOn<any>(TextService.prototype, 'writeOnCanvas').and.stub();
         service = new TextService(drawServiceSpy, colorServiceSpy);
         expect(spyWriteCanvas).toHaveBeenCalled();
@@ -423,13 +416,16 @@ fdescribe('TextService', () => {
     });
 
     it('should not apply align when not a defined align', () => {
-        service.isWriting = true;
+        service.align = 'undefined';
+        service.isWriting = false
+        service.isWriting = false;
         spyOn(service['alignBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
         service.changeAlign();
 
-        expect(spyWriteCanvas).not.toHaveBeenCalled();
+        expect(spyWriteCanvas).not.toHaveBeenCalledWith(CanvasType.previewCtx);
+        expect(service.align).toEqual('undefined');
     });
 
     it('applyEmphasis should get the selected emphasis and assign to current emphasis', () => {
@@ -445,14 +441,51 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalledWith(CanvasType.previewCtx);
     });
 
-    it('should not apply emphasis when not a defined empphasis', () => {
-        service.isWriting = true;
+    it('should not apply emphasis when not a defined emphasis', () => {
+        service.isWriting = false;
         spyOn(service['emphasisBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
         service.changeEmphasis();
 
+        expect(service.emphasis).toEqual('normal');
         expect(spyWriteCanvas).not.toHaveBeenCalled();
+    });
+
+    it('should change and apply to right align', () => {
+        service.selectAlign = 2;
+        service.isWriting = true;
+        service['totalLine'] = 2;
+        service['positionText'].x = 50;
+        spyOn<any>(service, 'longestLineSize').and.returnValue(50);
+        spyOn<any>(service, 'alignToRight').and.callThrough();
+
+        service.changeAlign();
+        expect(service['positionText'].x).toBe(50);
+        expect(service['wasAlignChanged']).toBeTruthy;
+    });
+
+    it('should not right align if at first line', () => {
+        service.selectAlign = 2;
+        service['wasAlignChanged'] = false;
+        service['totalLine'] = 1;
+        service['positionText'].x = 50;
+
+        service['alignToRight']();
+        expect(service['positionText'].x).toEqual(50);
+        expect(service['wasAlignChanged']).toBeFalsy;
+    });
+
+    it('should align to center', () => {
+        service.selectAlign = 2;
+        service['initialMousePosition'].x = 50;
+        service['wasAlignChanged'] = false;
+        service['totalLine'] = 2;
+        spyOn<any>(service, 'longestLineSize').and.returnValue(10);
+
+        service['alignToCenter']();
+        expect(service['positionText'].x).toBe(55);
+        expect(service['wasAlignChanged']).toBeTruthy;
     });
 
     it('applyFont should get the selected font and assign to current font', () => {
@@ -469,12 +502,13 @@ fdescribe('TextService', () => {
     });
 
     it('should not apply font when not a defined font', () => {
-        service.isWriting = true;
+        service.isWriting = false;
         spyOn(service['fontBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
 
         service.changeFont();
 
+        expect(service.font).toEqual('Arial');
         expect(spyWriteCanvas).not.toHaveBeenCalled();
     });
 
@@ -574,5 +608,120 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
-    
+    it('should get the size of longest line ', () => {
+        service.isWriting = true;
+        service['textInput'][0] = 'abc';
+        service['textInput'][1] = 'a';
+        service['totalLine'] = 2;
+        service['initialMousePosition'].x = 50;
+        spyOn<any>(service, 'sizeOfLine').and.callThrough();
+        spyOn<any>(service, 'longestLineSize').and.callThrough();
+        const result = service['sizeOfLine']('abc');
+
+        service['alignToRight']();
+
+        expect(service['positionText'].x).toEqual(50 + result);
+    });
+
+    it('should return to initial mousePosition when align left and was changed ', () => {
+        service.isWriting = true;
+        service.selectAlign = 0;
+        service['wasAlignChanged'] = true;
+        service['positionText'].x = 20;
+        service['initialMousePosition'].x = 50;
+
+        service.changeAlign();
+
+        expect(service['positionText'].x).toBe(50);
+        expect(service['wasAlignChanged']).toBeFalsy;
+    });
+
+    it('should not apply change size if not writing', () => {
+        service.isWriting = false;
+        const writeSpy = spyOn<any>(service, 'writeOnCanvas').and.stub();
+
+        service.changeSize();
+
+        expect(writeSpy).not.toHaveBeenCalledWith();
+    });
+
+    it('should apply align on baseCtx', () => {
+        service['totalLine'] = 2;
+        service.align = 'center';
+
+        service['writeOnCanvas'](CanvasType.baseCtx);
+
+        expect(service['drawingService'].baseCtx.textAlign).toEqual('center');
+    });
+
+
+    it('should adjust cursor position when arrow up', () => {
+        service['cursorPosition'] = 5;
+        service['currentLine'] = 2;
+        service['textInput'][2] = 'abc';
+        service['textInput'][1] = 'abc';
+
+        service['handleArrowUp']();
+
+        expect(service['cursorPosition']).toBe(3);
+    });
+
+    it('should adjust cursor position when arrow down', () => {
+        service['cursorPosition'] = 5;
+        service['currentLine'] = 2;
+        service['totalLine'] = 5;
+        service['textInput'][2] = 'abcde';
+        service['textInput'][3] = 'ab';
+
+        service['handleArrowDown']();
+
+        expect(service['cursorPosition']).toBe(2);
+    });
+
+    it('should align to right when enter is pressed  ', () => {
+        service['cursorPosition'] = 2;
+        service['currentLine'] = 0;
+        service['totalLine'] = 2;
+        service['textInput'][0] = 'abcde';
+        service['textInput'][1] = 'ab';
+        service.selectAlign = 2;
+
+        service['handleEnter']();
+
+        expect(service['textInput'][1]).toEqual('|de');
+    });
+
+    it('should align to center when enter is pressed ', () => {
+        service['cursorPosition'] = 2;
+        service['currentLine'] = 0;
+        service['totalLine'] = 2;
+        service['textInput'][0] = 'abcde';
+        service['textInput'][1] = 'ab';
+        service.selectAlign = 1;
+
+        service['handleEnter']();
+
+        expect(service['textInput'][1]).toEqual('|de');
+    });
+
+    it('should align to right when adding an alphanumeric character ', () => {
+        service.isWriting = true;
+        const keyEvent = new KeyboardEvent('keyup', { key: 'a' });
+        service.selectAlign = 2;
+        const alignRightSpy = spyOn<any>(service, 'alignToRight').and.stub();
+        service.handleKeyUp(keyEvent);
+
+        expect(alignRightSpy).toHaveBeenCalled();
+    });
+
+    it('should align to center when adding an alphanumeric character ', () => {
+        service.isWriting = true;
+        const keyEvent = new KeyboardEvent('keyup', { key: 'a' });
+        service.selectAlign = 1;
+        const alignCenterSpy = spyOn<any>(service, 'alignToCenter').and.stub();
+        service.handleKeyUp(keyEvent);
+
+        expect(alignCenterSpy).toHaveBeenCalled();
+    });
+
 });

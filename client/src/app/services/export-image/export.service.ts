@@ -52,6 +52,12 @@ export class ExportService {
         this.imgurURL = '';
     }
 
+    initializeExportParams(): void {
+        this.drawingTitle = 'dessin';
+        this.selectedFilter = FiltersList.None;
+        this.currentFilter = 'none';
+        this.currentImageFormat = 'png';
+    }
     imagePrevisualization(): void {
         this.currentDrawing = this.drawingService.canvas.toDataURL();
         this.image.src = this.currentDrawing;
@@ -86,26 +92,32 @@ export class ExportService {
     }
 
     exportDrawing(): void {
+        const tempCanva = this.previsualizationToBiggerCanvas();
         const link = document.createElement('a');
-        if (this.currentFilter) {
-            this.drawingService.baseCtx.filter = this.currentFilter;
-        }
-        console.log(this.currentFilter);
-        console.log(this.baseCtx);
-        this.image.src = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
+        this.image.src = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
         link.href = this.image.src;
         link.click();
     }
 
-    async uploadToImgur(): Promise<void> {
-        console.log(this.currentFilter);
+    previsualizationToBiggerCanvas(): CanvasRenderingContext2D {
+        const canvas = document.createElement('canvas');
+        const canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        canvas.width = this.drawingService.canvas.width;
+        canvas.height = this.drawingService.canvas.height;
         if (this.currentFilter) {
-            this.drawingService.baseCtx.filter = this.currentFilter;
+            canvasCtx.filter = this.currentFilter;
         }
-        let url = this.drawingService.baseCtx.canvas.toDataURL('image/' + this.currentImageFormat);
+        canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
+
+        return canvasCtx;
+    }
+
+    async uploadToImgur(): Promise<void> {
+        const tempCanva = this.previsualizationToBiggerCanvas();
+        let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>(() => {
             fetch('https://api.imgur.com/3/image', {
                 method: 'post',
                 headers: {
@@ -135,12 +147,5 @@ export class ExportService {
         const width = this.drawingService.baseCtx.canvas.width;
         const height = this.drawingService.baseCtx.canvas.height;
         return width / height;
-    }
-
-    initializeExportParams(): void {
-        this.drawingTitle = 'dessin';
-        this.selectedFilter = FiltersList.None;
-        this.currentFilter = 'none';
-        this.currentImageFormat = 'png';
     }
 }
