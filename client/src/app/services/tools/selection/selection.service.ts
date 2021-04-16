@@ -99,19 +99,18 @@ export class SelectionService extends Tool {
     }
 
     handleKeyDown(event: KeyboardEvent): void {
+        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
+        else if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.handleKeyDown(event);
+        else this.rectangleService.handleKeyDown(event);
+
         if (event.key === 'Escape') {
             event.preventDefault();
             this.terminateSelection();
-            return;
         }
 
         if (event.key === 'Shift') {
             this.resizeSelectionService.handleKeyDown(event);
         }
-
-        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
-        else if (this.isLasso) this.lassoService.handleKeyDown(event);
-        else this.rectangleService.handleKeyDown(event);
     }
 
     handleKeyUp(event: KeyboardEvent): void {
