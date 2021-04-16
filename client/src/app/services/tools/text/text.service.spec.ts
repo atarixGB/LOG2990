@@ -4,13 +4,21 @@ import { Vec2 } from '@app/classes/vec2';
 import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { of } from 'rxjs';
+import 'zone.js/dist/async-test';
+import 'zone.js/dist/fake-async-test';
+import 'zone.js/dist/jasmine-patch';
+// tslint:disable:ordered-imports
+import 'zone.js/dist/long-stack-trace-zone';
+import 'zone.js/dist/proxy.js';
+import 'zone.js/dist/sync-test';
 import { TextService } from './text.service';
 
 //tslint:disable
 fdescribe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
-    let colorManagerSpy: jasmine.SpyObj<DrawingService>;
+    let colorServiceSpy: ColorManagerService;
     const mouseEventClick = {
         x: 25,
         y: 25,
@@ -22,12 +30,10 @@ fdescribe('TextService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
-        colorManagerSpy = jasmine.createSpyObj('ColorManager', ['changeColorObserver']);
+        colorServiceSpy = new ColorManagerService();
         TestBed.configureTestingModule({
-            providers: [
-                { provide: DrawingService, useValue: drawServiceSpy },
-                { provide: ColorManagerService, useValue: colorManagerSpy },
-            ],
+            providers: [{ provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ColorManagerService, useValue: colorServiceSpy }],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -40,6 +46,13 @@ fdescribe('TextService', () => {
 
     it('should be created', () => {
         expect(service).toBeTruthy();
+    });
+
+    fit('should subscribe to colorManager color change',() => {
+        spyOn(colorServiceSpy,"changeColorObserver").and.returnValue(of({}as any));
+        const spyWriteCanvas = spyOn<any>(TextService.prototype, 'writeOnCanvas').and.stub();
+        service = new TextService(drawServiceSpy, colorServiceSpy);
+        expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
     it('should write the first letter', () => {
@@ -561,19 +574,5 @@ fdescribe('TextService', () => {
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
-    it('should change color when color change using color manager', () => {
-        service.isWriting = true;
-        const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
-        const actionFuncReturn = () => {
-            return {
-                subscribe: (f: () => void) => {
-                    f();
-                },
-            };
-        };
-        spyOn(service['colorManager'], 'changeColorObserver').and.returnValue({
-            onAction: actionFuncReturn,
-        } as any);
-        expect(spyWriteCanvas).toHaveBeenCalled();
-    });
+    
 });

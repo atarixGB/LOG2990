@@ -35,8 +35,8 @@ export class TextService extends Tool {
     private totalLine: number;
     private cursorPosition: number;
     private positionText: Vec2;
-    private wasAlignedRight : boolean;
-    private initialMousePosition : Vec2;
+    private wasAlignChanged: boolean;
+    private initialMousePosition: Vec2;
 
     private fontBinding: Map<Font, string>;
     private emphasisBinding: Map<Emphasis, string>;
@@ -48,9 +48,9 @@ export class TextService extends Tool {
         this.currentLine = 0;
         this.textInput = [];
         this.totalLine = 1;
-        this.wasAlignedRight = false;
-        this.initialMousePosition = {x:0,y:0};
-        this.positionText = {x:0,y:0};
+        this.wasAlignChanged = false;
+        this.initialMousePosition = { x: 0, y: 0 };
+        this.positionText = { x: 0, y: 0 };
         this.cursorPosition = 0;
         this.isWriting = false;
 
@@ -88,10 +88,8 @@ export class TextService extends Tool {
             .set('Escape', () => this.handleEscape());
 
         colorManager.changeColorObserver().subscribe(() => {
-            if (this.isWriting) {
-                this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-                this.writeOnCanvas(CanvasType.previewCtx);
-            }
+            this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
+            this.writeOnCanvas(CanvasType.previewCtx);
         });
     }
 
@@ -112,85 +110,46 @@ export class TextService extends Tool {
     }
 
     changeFont(): void {
-        if(this.fontBinding.has(this.selectFont)){
+        if (this.fontBinding.has(this.selectFont)) {
             this.font = this.fontBinding.get(this.selectFont);
         }
-        if (this.isWriting == true) {
+        if (this.isWriting === true) {
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
     changeEmphasis(): void {
-        if(this.emphasisBinding.has(this.selectEmphasis)){
+        if (this.emphasisBinding.has(this.selectEmphasis)) {
             this.emphasis = this.emphasisBinding.get(this.selectEmphasis);
         }
-        if (this.isWriting == true) {
+        if (this.isWriting === true) {
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
 
-    
     changeAlign(): void {
-        if(this.alignBinding.has(this.selectAlign)){
+        if (this.alignBinding.has(this.selectAlign)) {
             this.align = this.alignBinding.get(this.selectAlign);
         }
-        console.log("mon align:, ", this.align);
+
         if (this.isWriting === true) {
-            console.log("current position avant if" ,this.positionText);
-            if( this.selectAlign === TextAlign.Right){
+            if (this.selectAlign === TextAlign.Right) {
                 this.alignToRight();
             }
-            if(this.selectAlign !== TextAlign.Right && this.wasAlignedRight){
-                console.log("ici");
+
+            if (this.selectAlign === TextAlign.Center) {
+                this.alignToCenter();
+            }
+            if (this.selectAlign === TextAlign.Left && this.wasAlignChanged) {
                 this.positionText.x = this.initialMousePosition.x;
-                this.wasAlignedRight = false;
+                this.wasAlignChanged = false;
             }
             this.writeOnCanvas(CanvasType.previewCtx);
-        }
-    }
-
-    private longestLineSize() :number{
-        let longestLine = this.sizeOfLine(this.textInput[0]) as number;
-        
-        for(let i=0; i<this.textInput.length; i++){
-            let realSize = this.sizeOfLine(this.textInput[i]);
-            if(i === this.currentLine){
-                this.sizeOfLine(this.textInput[i].substr(0, this.textInput[i].length-1));
-            }
-            if(realSize > longestLine){
-                longestLine = realSize;
-            }
-        }
-        console.log(longestLine);
-        return longestLine;
-    }
-    private sizeOfLine(line:string):number{
-        let dummy = document.createElement('canvas');
-        let ctx = dummy.getContext("2d");
-        console.log("line", line);
-        if(ctx){
-            ctx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            console.log(ctx.measureText(line).width);
-            return ctx.measureText(line).width;
-        }  
-        return 0; 
-    }
-
-    private alignToRight():void{
-        if(this.totalLine >1){
-            const longestLine = this.longestLineSize();
-            console.log(longestLine);
-            console.log(longestLine);
-            console.log("current position avant if" ,this.positionText);
-            this.positionText.x = this.initialMousePosition.x + longestLine;
-            console.log("past position " ,this.initialMousePosition);
-            console.log("current position" ,this.positionText);
-            this.wasAlignedRight = true;
         }
     }
 
     changeSize(): void {
-        if (this.isWriting == true) {
+        if (this.isWriting === true) {
             this.writeOnCanvas(CanvasType.previewCtx);
         }
     }
@@ -224,13 +183,53 @@ export class TextService extends Tool {
                 if (keyFunction) keyFunction();
             } else {
                 this.addCharacter(event);
-                console.log(this.selectAlign);
-                if(this.selectAlign === TextAlign.Right){
-                    console.log("aaaaaa");
+                if (this.selectAlign === TextAlign.Right) {
                     this.alignToRight();
+                }
+                if (this.selectAlign === TextAlign.Center) {
+                    this.alignToCenter();
                 }
             }
             this.writeOnCanvas(CanvasType.previewCtx);
+        }
+    }
+
+    private longestLineSize(): number {
+        let longestLine = this.sizeOfLine(this.textInput[0]) as number;
+
+        for (let i = 0; i < this.textInput.length; i++) {
+            const realSize = this.sizeOfLine(this.textInput[i]);
+            if (i === this.currentLine) {
+                this.sizeOfLine(this.textInput[i].substr(0, this.textInput[i].length - 1));
+            }
+            if (realSize > longestLine) {
+                longestLine = realSize;
+            }
+        }
+        return longestLine;
+    }
+
+    private sizeOfLine(line: string): number {
+        const dummy = document.createElement('canvas');
+        const ctx = dummy.getContext('2d');
+        if (ctx) {
+            ctx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
+            return ctx.measureText(line).width;
+        }
+        return 0;
+    }
+
+    private alignToCenter(): void {
+        if (this.totalLine > 1) {
+            this.positionText.x = this.initialMousePosition.x + this.longestLineSize() / 2;
+            this.wasAlignChanged = true;
+        }
+    }
+    private alignToRight(): void {
+        if (this.totalLine > 1) {
+            const longestLine = this.longestLineSize();
+            this.positionText.x = this.initialMousePosition.x + longestLine;
+            this.wasAlignChanged = true;
         }
     }
 
@@ -295,16 +294,38 @@ export class TextService extends Tool {
         this.isWriting = false;
     }
 
+    private nextLines(index : number):string[]{
+        let array : string[];
+        array = [];
+        for(let i= this.currentLine+1; i< this.textInput.length;i++){
+            array.push(this.textInput[i]);
+        }
+        console.log(array);
+        return array;
+    }
+
+
     private handleEnter(): void {
-        const nextLine = this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
-        this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0, this.cursorPosition);
+        const previousNextLines = this.nextLines(this.currentLine); 
+        console.log("nextLines= ", previousNextLines);
+        let array :string[] = [];
+        const currentLine = this.textInput[this.currentLine].substring(0, this.cursorPosition);
+        const nextLine = '|' + this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+        array.push(currentLine);
+        array.push(nextLine);
+        console.log("array after 2 pushed", array );
         this.currentLine++;
         this.totalLine++;
-        this.textInput[this.currentLine] = nextLine + '|';
-        this.cursorPosition = this.textInput[this.currentLine].length - 1;
-        if(this.selectAlign === TextAlign.Right){
-            console.log("aaaaaa");
+        this.cursorPosition = 0;
+        array.concat(previousNextLines);
+        console.log("mon array ", array);
+        this.textInput = array;
+        console.log("mon textInput ", this.textInput);
+        if (this.selectAlign === TextAlign.Right) {
             this.alignToRight();
+        }
+        if (this.selectAlign === TextAlign.Center) {
+            this.alignToCenter();
         }
     }
 
@@ -320,27 +341,39 @@ export class TextService extends Tool {
             } else {
                 this.textInput[this.currentLine] =
                     this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    '|' +
-                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-            }
+                    
+                    '|' + this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                    console.log(this.cursorPosition);
+                    if(this.cursorPosition > this.textInput[this.currentLine].length){
+                        this.cursorPosition = this.textInput[this.currentLine].length-1;
+                    }
+                }
         }
     }
 
     private handleArrowUp(): void {
         if (this.currentLine !== 0) {
-            this.textInput[this.currentLine] =
-                this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                this.textInput[this.currentLine].substring(this.cursorPosition + 1, this.textInput[this.currentLine].length);
+            this.textInput[this.currentLine] = this.textInput[this.currentLine].substring(0,this.cursorPosition) + this.textInput[this.currentLine].substring(this.cursorPosition+1,this.textInput[this.currentLine].length);
+            console.log(this.textInput[this.currentLine]);
             this.currentLine--;
+                console.log(this.textInput[this.currentLine]);
             if (this.textInput[this.currentLine] === '') {
                 this.textInput[this.currentLine] = '|';
                 this.cursorPosition = 0;
             } else {
+                if(this.cursorPosition > this.textInput[this.currentLine].length){
+                    console.log("je suis trop gros");
+                    this.cursorPosition = this.textInput[this.currentLine].length;
+                }
                 this.textInput[this.currentLine] =
                     this.textInput[this.currentLine].substring(0, this.cursorPosition) +
-                    '|' +
-                    this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
-            }
+                    '|'+this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
+                    // if(this.cursorPosition < this.textInput[this.currentLine].length){
+                    //     this.cursorPosition = this.textInput[this.currentLine].length-1;
+                    // }
+                    console.log(this.textInput[this.currentLine]);
+                }
+                console.log(this.cursorPosition);
         }
     }
 
@@ -360,6 +393,7 @@ export class TextService extends Tool {
                     '|' +
                     this.textInput[this.currentLine].substring(this.cursorPosition, this.textInput[this.currentLine].length);
             }
+            console.log('position curseur dans arrow right', this.cursorPosition);
         }
     }
 
@@ -371,16 +405,14 @@ export class TextService extends Tool {
 
             this.drawingService.baseCtx.fillStyle = this.color;
             this.drawingService.baseCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            if(this.totalLine === 1){
+            if (this.totalLine === 1) {
                 this.drawingService.baseCtx.textAlign = 'left';
-            }else{
-                console.log("dans else");
+            } else {
                 this.drawingService.baseCtx.textAlign = this.align as CanvasTextAlign;
             }
             let y = this.positionText.y;
 
             for (let i = 0; i < this.totalLine; i++) {
-                console.log("dans write", this.positionText);
                 this.drawingService.baseCtx.fillText(this.textInput[i], this.positionText.x, y);
                 y += Number(this.size);
             }
@@ -389,19 +421,15 @@ export class TextService extends Tool {
 
             this.drawingService.previewCtx.fillStyle = this.color;
             this.drawingService.previewCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-            console.log("total line ", this.totalLine);
-            
-            if(this.totalLine === 1){
+
+            if (this.totalLine === 1) {
                 this.drawingService.previewCtx.textAlign = 'left';
-            }else{
-                console.log("dans else");
+            } else {
                 this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
-                console.log(this.drawingService.previewCtx.textAlign);
             }
             let y = this.positionText.y;
 
             for (let i = 0; i < this.totalLine; i++) {
-                console.log("dans write", this.positionText);
                 this.drawingService.previewCtx.fillText(this.textInput[i], this.positionText.x, y);
                 y += Number(this.size);
             }

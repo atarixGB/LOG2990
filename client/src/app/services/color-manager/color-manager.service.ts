@@ -19,7 +19,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 export class ColorManagerService {
     selectedColor: RGBA[];
     lastColors: RGBA[];
-    primaryColor: Subject<RGBA[]> = new Subject<RGBA[]>();
+    colorChange: Subject<void> = new Subject<void>();
 
     constructor() {
         this.lastColors = new Array<RGBA>();
@@ -57,7 +57,7 @@ export class ColorManagerService {
             this.selectedColor[colorOrder].Dec.Alpha +
             ')';
 
-        this.primaryColor.next();
+        this.colorChange.next();
     }
 
     getColorStringAlpha(colorOrder: ColorOrder, alphaMax: boolean): string {
@@ -106,7 +106,7 @@ export class ColorManagerService {
         this.updateColorLasts(colorOrder, shouldDeleteLast);
     }
 
-    changeColorObserver(): Observable<RGBA[]> {
-        return this.primaryColor.asObservable();
+    changeColorObserver(): Observable<void> {
+        return this.colorChange.asObservable();
     }
 }

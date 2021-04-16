@@ -4,7 +4,7 @@ import { FIRSTCOLORTEST, SECONDCOLORTEST } from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from './color-manager.service';
 
-fdescribe('ColorManagerService', () => {
+describe('ColorManagerService', () => {
     let colorManagerService: ColorManagerService;
 
     beforeEach(() => TestBed.configureTestingModule({}));
@@ -124,7 +124,7 @@ fdescribe('ColorManagerService', () => {
     });
 
     it('should make the variable primaryColor has an Observer', () => {
-        const spy = spyOn(colorManagerService['primaryColor'], 'asObservable').and.stub();
+        const spy = spyOn(colorManagerService['colorChange'], 'asObservable').and.stub();
         colorManagerService.changeColorObserver();
         expect(spy).toHaveBeenCalled();
     });
