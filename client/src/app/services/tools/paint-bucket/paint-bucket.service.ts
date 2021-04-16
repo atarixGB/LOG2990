@@ -70,7 +70,6 @@ export class PaintBucketService extends Tool {
         const canvasData: ImageData = this.drawingService.getCanvasData();
 
         const rgbaPrimaryColor: RGBA = this.colorManager.selectedColor[ColorOrder.PrimaryColor];
-
         while (stackPos.length) {
             const selectedPixel = stackPos.pop() as Vec2;
             const index = (selectedPixel.x + selectedPixel.y * this.drawingService.canvas.width) * RGBA_COMPONENTS;
@@ -98,9 +97,9 @@ export class PaintBucketService extends Tool {
         }
         this.canvasData = canvasData;
         this.isContiguous = true;
+        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
         const paintBucket = new PaintBucket(this.isContiguous, this.canvasData);
         this.undoRedoService.addToStack(paintBucket);
-        this.drawingService.baseCtx.putImageData(canvasData, 0, 0);
     }
 
     vec2ToString(pixel: Vec2): string {
