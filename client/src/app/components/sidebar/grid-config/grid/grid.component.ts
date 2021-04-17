@@ -73,7 +73,7 @@ export class GridComponent {
     @HostListener('window:keydown.=')
     @HostListener('window:keydown.shift.+')
     increase(): void {
-        if ( this.squareSize < MAX_GRID_SQUARE_SIZE) {
+        if (this.squareSize < MAX_GRID_SQUARE_SIZE) {
             this.squareSize += SQUARE_STEP;
             this.drawingService.gridSpaces = this.squareSize;
             this.magnetismService.setGridSpaces(this.squareSize);
@@ -82,7 +82,7 @@ export class GridComponent {
     }
     @HostListener('window:keydown.-')
     decrease(): void {
-        if ( this.squareSize > MIN_GRID_SQUARE_SIZE) {
+        if (this.squareSize > MIN_GRID_SQUARE_SIZE) {
             this.squareSize -= SQUARE_STEP;
             this.drawingService.gridSpaces = this.squareSize;
             this.magnetismService.setGridSpaces(this.squareSize);

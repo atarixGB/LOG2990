@@ -1,9 +1,10 @@
-import { Vec2 } from './../../classes/vec2';
 import { TestBed } from '@angular/core/testing';
+import { Vec2 } from '@app/classes/vec2';
 
-import { MagnetismService } from './magnetism.service';
 import { SelectionBox } from '@app/constants';
+import { MagnetismService } from './magnetism.service';
 
+// tslint:disable
 describe('MagnetismService', () => {
     let service: MagnetismService;
     let topLeftPoint:Vec2;
