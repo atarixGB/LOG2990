@@ -9,13 +9,8 @@ import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 })
 export class ConfigPanelComponent {
     ToolList: typeof ToolList = ToolList;
-    isOpened: boolean = true;
 
     constructor(public toolManagerService: ToolManagerService) {}
-
-    toggleConfigPanel(): void {
-        this.isOpened = !this.isOpened;
-    }
 
     includesColorConfiguration(): boolean {
         if (
