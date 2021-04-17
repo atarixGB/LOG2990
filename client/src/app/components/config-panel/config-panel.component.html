@@ -1,8 +1,5 @@
-<mat-sidenav-container class="config-container" *ngIf="isOpened">
+<mat-sidenav-container class="config-container">
     <mat-sidenav-content>
-        <button id="close-btn" mat-icon-button matTooltip="Fermer" matTooltipPosition="after" (click)="toggleConfigPanel()">
-            <mat-icon id="">close</mat-icon>
-        </button>
         <h3>Paramètres de l'outil</h3>
         <app-line-config *ngIf="toolManagerService.currentToolEnum === ToolList.Line"></app-line-config>
         <app-pencil-config *ngIf="toolManagerService.currentToolEnum === ToolList.Pencil"></app-pencil-config>
@@ -24,9 +21,3 @@
         </div>
     </mat-sidenav-content>
 </mat-sidenav-container>
-
-<div class="minimized-panel" *ngIf="!isOpened">
-    <button mat-icon-button matTooltip="Ouvrir les paramètres de l'outil" matTooltipPosition="after" (click)="toggleConfigPanel()">
-        <mat-icon id="">keyboard_arrow_right</mat-icon>
-    </button>
-</div>

@@ -13,6 +13,7 @@ describe('CarouselComponent', () => {
     let component: CarouselComponent;
     let fixture: ComponentFixture<CarouselComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+
     let routerSpy = jasmine.createSpyObj('Router', {
         navigate: new Promise<boolean>(() => {
             return;
@@ -85,6 +86,33 @@ describe('CarouselComponent', () => {
         component.isCanvaEmpty = null!;
         component.loadImage();
         expect(component.isCanvaEmpty).toBeTrue();
+    });
+
+    it('should not set isCanvaEmpty to true when isCanvasEmpty is not null', () => {
+        drawingServiceSpy.canvas = document.createElement('canvas');
+        drawingServiceSpy.canvas.width = 100;
+        drawingServiceSpy.canvas.height = 100;
+        component.isCanvaEmpty = false!;
+        component.loadImage();
+        expect(component.isCanvaEmpty).toBeFalse();
+    });
+
+    it('should open drawing if canvas is NOT empty', () => {
+        component.isCanvaEmpty = false;
+        component['decision'] = true;
+        spyOn<any>(window, 'confirm').and.returnValue(true);
+        const openDrawingSpy = spyOn<any>(component, 'openDrawing').and.stub();
+        component.loadImage();
+        expect(openDrawingSpy).toHaveBeenCalled();
+    });
+
+    it('should open drawing if canvas is empty', () => {
+        component.isCanvaEmpty = false;
+
+        spyOn<any>(window, 'confirm').and.returnValue(false);
+        const openDrawingSpy = spyOn<any>(component, 'openDrawing').and.stub();
+        component.loadImage();
+        expect(openDrawingSpy).not.toHaveBeenCalled();
     });
 
     it('should update images when next', () => {

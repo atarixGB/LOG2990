@@ -76,6 +76,15 @@ describe('ExportService', () => {
         expect(filterGetSpy).not.toHaveBeenCalled();
     });
 
+    it('should not apply filter if doesnt exist in list', () => {
+        spyOn(service['filtersBindings'], 'has').and.returnValue(false);
+        const filterGetSpy = spyOn<any>(service['filtersBindings'], 'get').and.stub();
+
+        service.applyFilter();
+
+        expect(filterGetSpy).not.toHaveBeenCalled();
+    });
+
     it('getResizedCanvas should resize if the ratio is too big', () => {
         service.selectedFilter = FiltersList.Blur;
         spyOn<any>(service, 'getCanvasRatio').and.returnValue(1);

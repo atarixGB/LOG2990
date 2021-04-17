@@ -49,12 +49,18 @@
         </button>
     </mat-grid-tile>
 </mat-grid-list>
-<hr>
+<hr />
 <div class="magnetism">
     <h3>Magnétisme</h3>
-    <mat-slide-toggle [checked]="isMagnetismEnabled" (change)="enableGridMagnetism($event.checked)">Activer/désactiver</mat-slide-toggle>
+    <mat-slide-toggle
+        [checked]="isMagnetismEnabled"
+        matTooltip="Magnétisme (M)"
+        matTooltipPosition="above"
+        (change)="enableGridMagnetism($event.checked)"
+        >Activer/désactiver</mat-slide-toggle
+    >
 </div>
-<br>
+<br />
 <mat-form-field>
     <mat-label>Point d'ancrage</mat-label>
     <mat-select class="white" [(ngModel)]="magnetismService.anchorPoint">
