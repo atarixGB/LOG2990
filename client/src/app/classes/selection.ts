@@ -1,8 +1,8 @@
 import { Drawable } from './drawable';
 import { Vec2 } from './vec2';
 
-const PIXEL_LENGTH = 4;
-const MAX_RGB = 255;
+// const PIXEL_LENGTH = 4;
+// const MAX_RGB = 255;
 
 export class SelectionTool extends Drawable {
     image: ImageData;
@@ -27,10 +27,10 @@ export class SelectionTool extends Drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        console.log('draw', this.initialOrigin);
+        console.log('draw');
         this.clearUnderneathShape(ctx);
         if (this.isEllipse) this.printEllipse(ctx);
-        else if (this.isLasso) this.printPolygon(this.image, ctx);
+        else if (this.isLasso) this.printPolygon(ctx);
         else {
             ctx.putImageData(this.image, this.origin.x, this.origin.y);
         }
@@ -52,20 +52,20 @@ export class SelectionTool extends Drawable {
             ctx.fill();
             ctx.closePath();
         } else if (this.isLasso) {
-            console.log(this.clearImageDataPolygon);
-            const imageData = this.clearImageDataPolygon.data;
-            let pixelCounter = 0;
-            for (let i = this.initialOrigin.y; i < this.initialOrigin.y + this.initialHeight; i++) {
-                for (let j = this.initialOrigin.x; j < this.initialOrigin.x + this.initialWidth; j++) {
-                    if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
-                        for (let k = 0; k < PIXEL_LENGTH; k++) {
-                            imageData[pixelCounter + k] = MAX_RGB;
-                        }
-                    }
-                    pixelCounter += PIXEL_LENGTH;
-                }
-            }
-            this.printPolygon(this.clearImageDataPolygon, ctx);
+            // console.log('clear lasso', this.initialOrigin, this.initialWidth, this.clearImageDataPolygon);
+            // const imageData = this.clearImageDataPolygon.data;
+            // let pixelCounter = 0;
+            // for (let i = this.initialOrigin.y; i < this.initialOrigin.y + this.initialHeight; i++) {
+            //     for (let j = this.initialOrigin.x; j < this.initialOrigin.x + this.initialWidth; j++) {
+            //         if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
+            //             for (let k = 0; k < PIXEL_LENGTH; k++) {
+            //                 imageData[pixelCounter + k] = MAX_RGB;
+            //             }
+            //         }
+            //         pixelCounter += PIXEL_LENGTH;
+            //     }
+            // }
+            this.clearPolygon(ctx);
         } else {
             console.log('clear', this.initialOrigin);
 
@@ -87,16 +87,31 @@ export class SelectionTool extends Drawable {
         ctx.restore();
     }
 
-    private printPolygon(imageData: ImageData, ctx: CanvasRenderingContext2D): void {
+    private printPolygon(ctx: CanvasRenderingContext2D): void {
+        console.log('print poly', this.origin, this.image);
+
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;
         const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
-        tmp.putImageData(imageData, 0, 0);
+        tmp.putImageData(this.image, 0, 0);
         ctx.save();
         ctx.clip(this.calculatePath2d());
-
         ctx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
+        ctx.restore();
+    }
+
+    private clearPolygon(ctx: CanvasRenderingContext2D): void {
+        const canvas = document.createElement('canvas');
+        canvas.width = this.initialWidth;
+        canvas.height = this.initialHeight;
+        const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
+        tmp.putImageData(this.clearImageDataPolygon, 0, 0);
+        ctx.save();
+        ctx.clip(this.calculatePath2d());
+        console.log('clear poly', this.initialOrigin, this.clearImageDataPolygon);
+
+        ctx.drawImage(tmp.canvas, this.initialOrigin.x, this.initialOrigin.y);
         ctx.restore();
     }
 
