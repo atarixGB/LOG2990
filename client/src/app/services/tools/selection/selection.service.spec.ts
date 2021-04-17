@@ -13,7 +13,7 @@ import { LassoService } from './lasso/lasso.service';
 import { SelectionService } from './selection.service';
 
 // tslint:disable
-describe('SelectionService', () => {
+fdescribe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
@@ -45,8 +45,13 @@ describe('SelectionService', () => {
             'printPolygon',
             'checkPixelInPolygon',
         ]);
-        selectionUtilsServiceSpy = jasmine.createSpyObj('SelectionUtilsService', ['resizeSelection', 'resetParametersTools']);
-        resizeSelectionServiceSpy = jasmine.createSpyObj('ResizeSelectionService', ['handleKeyDown', 'handleKeyUp']);
+        selectionUtilsServiceSpy = jasmine.createSpyObj('SelectionUtilsService', [
+            'resizeSelection',
+            'resetParametersTools',
+            'initializeToolParameters',
+            'mouseInSelectionArea',
+        ]);
+        resizeSelectionServiceSpy = jasmine.createSpyObj('ResizeSelectionService', ['handleKeyDown', 'handleKeyUp', 'checkIfMouseIsOnControlPoint']);
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['addToStack', 'setToolInUse']);
         canvasSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['getImageData']);
 
@@ -496,6 +501,131 @@ describe('SelectionService', () => {
         expect(service.destination).toEqual(service.selectionObject.destination);
         expect(service.width).toEqual(service.selectionObject.width);
         expect(service.height).toEqual(service.selectionObject.height);
+    });
+
+    it('should verify if mouse is on a control point', () => {
+        service.mouseDown = true;
+        service.activeSelection = true;
+        selectionUtilsServiceSpy.controlPointsCoord = [{ x: 10, y: 10 }];
+        resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.returnValue(false);
+
+        service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
+        expect(resizeSelectionServiceSpy.controlPointsCoord).toEqual(selectionUtilsServiceSpy.controlPointsCoord);
+        expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).toHaveBeenCalled();
+        expect(selectionUtilsServiceSpy.isResizing).toBeFalse();
+        expect(service.clearUnderneath).toBeTrue();
+    });
+
+    it('should not verify if mouse is on a control point if activeSelection is false', () => {
+        service.mouseDown = true;
+        service.activeSelection = false;
+        resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.stub();
+
+        service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
+        expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).not.toHaveBeenCalled();
+    });
+
+    it('should not verify if mouse is on a control point if mouseDown is false', () => {
+        service.mouseDown = false;
+        resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.stub();
+
+        service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
+        expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).not.toHaveBeenCalled();
+    });
+
+    it('should print moved selection if isLasso is false and isResizing is false', () => {
+        service.mouseDown = true;
+        service.isLasso = false;
+        selectionUtilsServiceSpy.isResizing = false;
+        const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
+
+        service['handleResizedSelectionOnMouseDown'](mouseEventLClick);
+        expect(service.initialSelection).toBeTrue();
+        expect(service.clearUnderneath).toBeTrue();
+        expect(service.selectionTerminated).toBeFalse();
+        expect(selectionUtilsServiceSpy.initializeToolParameters).toHaveBeenCalled();
+        expect(printMovedSelectionSpy).toHaveBeenCalled();
+        expect(service.selectionObject).toEqual(new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0));
+        expect(service.selectionDeleted).toBeFalse();
+        expect(rectangleServiceSpy.onMouseDown).toHaveBeenCalled();
+    });
+
+    it('should print moved selection if isLasso is false, isEllipse is true and isResizing is false', () => {
+        service.mouseDown = true;
+        service.isLasso = false;
+        selectionUtilsServiceSpy.isResizing = false;
+        service.isEllipse = true;
+        const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
+
+        service['handleResizedSelectionOnMouseDown'](mouseEventLClick);
+        expect(service.initialSelection).toBeTrue();
+        expect(service.clearUnderneath).toBeTrue();
+        expect(service.selectionTerminated).toBeFalse();
+        expect(selectionUtilsServiceSpy.initializeToolParameters).toHaveBeenCalled();
+        expect(printMovedSelectionSpy).toHaveBeenCalled();
+        expect(service.selectionObject).toEqual(new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0));
+        expect(service.selectionDeleted).toBeFalse();
+        expect(ellipseServiceSpy.onMouseDown).toHaveBeenCalled();
+    });
+
+    it('should not print moved selection if isLasso is true and isResizing is true', () => {
+        service.mouseDown = false;
+        service.isLasso = true;
+        selectionUtilsServiceSpy.isResizing = true;
+        const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
+
+        service['handleResizedSelectionOnMouseDown'](mouseEventLClick);
+        expect(printMovedSelectionSpy).not.toHaveBeenCalled();
+        expect(ellipseServiceSpy.onMouseDown).not.toHaveBeenCalled();
+        expect(rectangleServiceSpy.onMouseDown).not.toHaveBeenCalled();
+    });
+
+    it('should terminate selection if isLasso is true, newSelection is true and activeSelection is true', () => {
+        service.isLasso = true;
+        service.newSelection = true;
+        service.activeSelection = true;
+        const terminateSelectionSpy = spyOn<any>(service, 'terminateSelection').and.stub();
+
+        service['handleActiveLassoSelectionOnMouseDown'](mouseEventLClick);
+        expect(lassoServiceSpy.selectionOver).toBeFalse();
+        expect(terminateSelectionSpy).toHaveBeenCalled();
+    });
+
+    it('should not terminate selection if isLasso is false, newSelection is false or activeSelection is false', () => {
+        service.isLasso = false;
+        service.newSelection = true;
+        service.activeSelection = true;
+        const terminateSelectionSpy = spyOn<any>(service, 'terminateSelection').and.stub();
+
+        service['handleActiveLassoSelectionOnMouseDown'](mouseEventLClick);
+        expect(terminateSelectionSpy).not.toHaveBeenCalled();
+    });
+
+    it('should change newSelection to false if selectionTerminated is false and mouse is in selection area', () => {
+        service.activeSelection = true;
+        service.selectionTerminated = false;
+        selectionUtilsServiceSpy.mouseInSelectionArea.and.returnValue(true);
+
+        service['handleActiveSelectionOnMouseMove'](mouseEventLClick);
+        expect(service.newSelection).toBeFalse();
+    });
+
+    it('should change newSelection to true if selectionTerminated is false and mouse is in selection area', () => {
+        service.activeSelection = true;
+        service.selectionTerminated = false;
+        selectionUtilsServiceSpy.mouseInSelectionArea.and.returnValue(false);
+
+        service['handleActiveSelectionOnMouseMove'](mouseEventLClick);
+        expect(service.newSelection).toBeTrue();
+    });
+
+    it('should not change newSelection to true if selectionTerminated is true', () => {
+        service.activeSelection = false;
+        service.selectionTerminated = true;
+        selectionUtilsServiceSpy.mouseInSelectionArea.and.stub();
+
+        service['handleActiveSelectionOnMouseMove'](mouseEventLClick);
+        expect(selectionUtilsServiceSpy.mouseInSelectionArea).not.toHaveBeenCalled();
     });
 
     it('should add to undo stack', () => {
