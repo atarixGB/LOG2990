@@ -9,6 +9,7 @@ import {
     PRIMARYCOLORINITIAL,
     SECONDARYCOLORINITIAL,
 } from '@app/constants';
+import { Observable, Subject } from 'rxjs';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 
@@ -18,6 +19,7 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 export class ColorManagerService {
     selectedColor: RGBA[];
     lastColors: RGBA[];
+    colorChange: Subject<void> = new Subject<void>();
 
     constructor() {
         this.lastColors = new Array<RGBA>();
@@ -54,6 +56,8 @@ export class ColorManagerService {
             ',' +
             this.selectedColor[colorOrder].Dec.Alpha +
             ')';
+
+        this.colorChange.next();
     }
 
     getColorStringAlpha(colorOrder: ColorOrder, alphaMax: boolean): string {
@@ -102,7 +106,7 @@ export class ColorManagerService {
         this.updateColorLasts(colorOrder, shouldDeleteLast);
     }
 
-    getColor(): RGBA {
-        return this.selectedColor[ColorOrder.PrimaryColor];
+    changeColorObserver(): Observable<void> {
+        return this.colorChange.asObservable();
     }
 }

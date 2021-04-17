@@ -144,9 +144,11 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
         const distanceY: number = this.mouseDownCoord.y - this.initialMousePosition.y;
         this.newOrigin = { x: this.origin.x + distanceX, y: this.origin.y + distanceY };
+
         if (this.isMagnetism) {
             this.newOrigin = this.magnetismService.activateMagnetism(this.newOrigin, this.selectionService.height, this.selectionService.width);
         }
+        console.log(this.newOrigin);
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
     }
 
@@ -175,6 +177,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     }
 
     private initialSelection(): void {
+        console.log('okokok');
         if (this.selectionService.initialSelection) {
             this.origin = this.selectionService.origin;
             this.destination = this.selectionService.destination;
