@@ -75,8 +75,6 @@ export class SelectionService extends Tool {
 
         if (this.mouseDown) {
             if (this.selectionUtilsService.isResizing) {
-                console.log(this.selectionObject);
-
                 this.selectionUtilsService.resizeSelection(this.drawingService.previewCtx, this.getPositionFromMouse(event), this.selectionObject);
                 return;
             }
