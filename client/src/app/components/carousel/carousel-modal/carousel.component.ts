@@ -15,22 +15,24 @@ import { DrawingData } from '@common/communication/drawing-data';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
-    private index: number;
-    private mainDrawingURL: string;
-    readonly URL_POSITION: number = 4;
-    private decision: boolean;
     isLoading: boolean;
-    imageCards: Drawing[];
     placement: Drawing[];
     isDisabled: boolean;
     tags: string[];
     tagInput: string;
+    imageCards: Drawing[];
 
+    readonly URL_POSITION: number = 4;
+
+    private index: number;
+    private mainDrawingURL: string;
+    private decision: boolean;
     @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
     @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
 
     constructor(
         public indexService: IndexService,
+
         private router: Router,
         private dialogRef: MatDialogRef<CarouselComponent>,
         private drawingService: DrawingService,
@@ -52,14 +54,43 @@ export class CarouselComponent implements AfterViewInit {
         this.getDrawings();
     }
 
-    getDrawings(): void {
-        this.isLoading = true;
-        this.indexService.getAllDrawings().then((drawings: Drawing[]) => {
-            this.imageCards = drawings;
-            this.isLoading = false;
-            this.updateImagePlacement();
-            this.updateMainImageURL();
-        });
+    openDrawing(): void {
+        const params: DrawingParams = {
+            url: this.mainDrawingURL,
+        };
+        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
+        this.dialogRef.close();
+
+        const drawing: DrawingData = {
+            title: '',
+            width: this.drawingService.canvas.width,
+            height: this.drawingService.canvas.height,
+            body: this.drawingService.canvas.toDataURL(),
+        };
+        this.autoSaveService.saveCanvasState(drawing);
+    }
+
+    addTag(): void {
+        const trimmedTag: string = this.tagInput.trim();
+        this.tags.push(trimmedTag);
+        this.tagInput = '';
+        this.searchbyTags();
+    }
+
+    removeTag(tag: string): void {
+        this.tags = this.tags.filter((current) => current !== tag);
+        this.searchbyTags();
+    }
+
+    nextImages(): void {
+        this.index++;
+        this.updateImagePlacement();
+        this.updateMainImageURL();
+    }
+    previousImages(): void {
+        this.index--;
+        this.updateImagePlacement();
+        this.updateMainImageURL();
     }
 
     async searchbyTags(): Promise<void> {
@@ -72,42 +103,6 @@ export class CarouselComponent implements AfterViewInit {
             .catch((error) => {
                 alert(`Un problème de connexion au serveur est survenu. Veuillez réessayer.\n ${error}`);
             });
-    }
-
-    mod(n: number, m: number): number {
-        return ((n % m) + m) % m;
-    }
-
-    updateImagePlacement(): void {
-        this.placement[0] = this.imageCards[this.mod(this.index - 1, this.imageCards.length)];
-        this.placement[1] = this.imageCards[this.mod(this.index, this.imageCards.length)];
-        this.placement[2] = this.imageCards[this.mod(this.index + 1, this.imageCards.length)];
-    }
-
-    updateMainImageURL(): void {
-        if (this.placement[1].imageURL !== undefined) {
-            this.mainDrawingURL = this.placement[1].imageURL;
-        }
-    }
-    nextImages(): void {
-        this.index++;
-        this.updateImagePlacement();
-        this.updateMainImageURL();
-    }
-    previousImages(): void {
-        this.index--;
-        this.updateImagePlacement();
-        this.updateMainImageURL();
-    }
-
-    @HostListener('document:keydown', ['$event'])
-    handleKeyDown(event: KeyboardEvent): void {
-        if (event.code === 'ArrowLeft') {
-            this.previousImages();
-        }
-        if (event.code === 'ArrowRight') {
-            this.nextImages();
-        }
     }
 
     async deleteDrawing(): Promise<void> {
@@ -140,31 +135,65 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    openDrawing(): void {
-        const params: DrawingParams = {
-            url: this.mainDrawingURL,
-        };
-        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
-        this.dialogRef.close();
-
-        const drawing: DrawingData = {
-            title: '',
-            width: this.drawingService.canvas.width,
-            height: this.drawingService.canvas.height,
-            body: this.drawingService.canvas.toDataURL(),
-        };
-        this.autoSaveService.saveCanvasState(drawing);
+    @HostListener('document:keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.code === 'ArrowLeft') {
+            this.previousImages();
+        }
+        if (event.code === 'ArrowRight') {
+            this.nextImages();
+        }
     }
 
-    addTag(): void {
-        const trimmedTag: string = this.tagInput.trim();
-        this.tags.push(trimmedTag);
-        this.tagInput = '';
-        this.searchbyTags();
+    private getDrawings(): void {
+        this.isLoading = true;
+        let urlFromServer: string[];
+        let drawingFromDB: Drawing[];
+        this.indexService
+            .getAllDrawingsFromDB()
+            .then((drawings: Drawing[]) => {
+                drawingFromDB = drawings;
+                console.log('coucou');
+            })
+            .then(() => {
+                this.indexService
+                    .getAllDrawingsFromLocalServer()
+                    .then((url: string[]) => {
+                        console.log('coucou');
+                        urlFromServer = url;
+                    })
+                    .then(() => {
+                        this.verifyImages(urlFromServer, drawingFromDB);
+                        this.isLoading = false;
+                        this.updateImagePlacement();
+                        this.updateMainImageURL();
+                    });
+            });
     }
 
-    removeTag(tag: string): void {
-        this.tags = this.tags.filter((current) => current !== tag);
-        this.searchbyTags();
+    private mod(n: number, m: number): number {
+        return ((n % m) + m) % m;
+    }
+
+    private updateImagePlacement(): void {
+        this.placement[0] = this.imageCards[this.mod(this.index - 1, this.imageCards.length)];
+        this.placement[1] = this.imageCards[this.mod(this.index, this.imageCards.length)];
+        this.placement[2] = this.imageCards[this.mod(this.index + 1, this.imageCards.length)];
+    }
+
+    private updateMainImageURL(): void {
+        if (this.placement[1] && this.placement[1].imageURL !== undefined) {
+            this.mainDrawingURL = this.placement[1].imageURL;
+        }
+    }
+
+    private verifyImages(urlFromServer: string[], drawingFromDB: Drawing[]): void {
+        for (const url of urlFromServer) {
+            for (const drawing of drawingFromDB) {
+                if (drawing.imageURL === url) {
+                    this.imageCards.push(drawing);
+                }
+            }
+        }
     }
 }

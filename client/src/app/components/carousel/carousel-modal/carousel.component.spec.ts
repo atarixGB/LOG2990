@@ -9,10 +9,11 @@ import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 import { CarouselComponent } from './carousel.component';
 //tslint:disable
-describe('CarouselComponent', () => {
+fdescribe('CarouselComponent', () => {
     let component: CarouselComponent;
     let fixture: ComponentFixture<CarouselComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
+
     let routerSpy = jasmine.createSpyObj('Router', {
         navigate: new Promise<boolean>(() => {
             return;
@@ -87,6 +88,33 @@ describe('CarouselComponent', () => {
         expect(component.isCanvaEmpty).toBeTrue();
     });
 
+    it('should not set isCanvaEmpty to true when isCanvasEmpty is not null', () => {
+        drawingServiceSpy.canvas = document.createElement('canvas');
+        drawingServiceSpy.canvas.width = 100;
+        drawingServiceSpy.canvas.height = 100;
+        component.isCanvaEmpty = false!;
+        component.loadImage();
+        expect(component.isCanvaEmpty).toBeFalse();
+    });
+
+    it('should open drawing if canvas is NOT empty', () => {
+        component.isCanvaEmpty = false;
+        component['decision'] = true;
+        spyOn<any>(window, 'confirm').and.returnValue(true);
+        const openDrawingSpy = spyOn<any>(component, 'openDrawing').and.stub();
+        component.loadImage();
+        expect(openDrawingSpy).toHaveBeenCalled();
+    });
+
+    it('should open drawing if canvas is empty', () => {
+        component.isCanvaEmpty = false;
+
+        spyOn<any>(window, 'confirm').and.returnValue(false);
+        const openDrawingSpy = spyOn<any>(component, 'openDrawing').and.stub();
+        component.loadImage();
+        expect(openDrawingSpy).not.toHaveBeenCalled();
+    });
+
     it('should update images when next', () => {
         component['index'] = 0;
         let spyUpdateImageURL = spyOn<any>(component, 'updateImagePlacement');
@@ -97,6 +125,15 @@ describe('CarouselComponent', () => {
         expect(spyUpdateImageURL).toHaveBeenCalled();
         expect(spyMainImage).toHaveBeenCalled();
         expect(component['index']).toEqual(1);
+    });
+
+    it('should put updateMainURL', () => {
+        const draw  = new Drawing ('allo', [], 'img.png');
+
+        component['placement'][1]= draw;
+        component['updateMainImageURL']();
+
+        expect(component['mainDrawingURL']).toEqual('img.png');
     });
 
     it('should update images when previous', () => {
@@ -112,7 +149,7 @@ describe('CarouselComponent', () => {
     });
 
     it('should give right modulo', () => {
-        let testResult = component.mod(-1, 4);
+        let testResult = component['mod'](-1, 4);
         expect(testResult).toBe(3);
     });
 
@@ -121,20 +158,11 @@ describe('CarouselComponent', () => {
         component.imageCards = [draw];
         component.placement = [];
 
-        component.updateImagePlacement();
+        component['updateImagePlacement']();
 
         expect(component.placement[0]).toBe(draw);
         expect(component.placement[1]).toBe(draw);
         expect(component.placement[2]).toBe(draw);
-    });
-
-    it('should put the right drawing in the middle', () => {
-        let draw = new Drawing('test', [], 'test.png');
-        component.placement[1] = draw;
-
-        component.updateMainImageURL();
-
-        expect(component['mainDrawingURL']).toBe(draw.imageURL!);
     });
 
     it('should change to previous when arrowleft pressed', async () => {
@@ -155,15 +183,6 @@ describe('CarouselComponent', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('should collect all drawings on getDrawings', async () => {
-        let getAllDrawingsSpy: jasmine.Spy;
-        getAllDrawingsSpy = spyOn(IndexService.prototype, 'getAllDrawings').and.returnValue(Promise.resolve([]));
-
-        component.getDrawings();
-
-        expect(getAllDrawingsSpy).toHaveBeenCalledTimes(1);
-    });
-
     it('should get drawings of tag', async () => {
         let searchByTag: jasmine.Spy;
         component['mainDrawingURL'] = 'http://localhost:3000/api/database/drawings/605a9a7be06fb909f0c904e5.png';
@@ -179,4 +198,13 @@ describe('CarouselComponent', () => {
         component.deleteDrawing();
         expect(deleteSpy).toHaveBeenCalled();
     });
+
+    it('should verify if drawing is in server and also in db', async () => {
+        let urlFromServer = ['abc.png', 'pizza.png'];
+        let drawing = new Drawing('pizza',[],'abc.png');
+        let drawingFromDB = [drawing]
+        component['verifyImages'](urlFromServer, drawingFromDB);
+        expect(component.imageCards).toEqual(drawingFromDB);
+    });
+
 });
