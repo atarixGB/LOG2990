@@ -4,6 +4,8 @@ import { mouseEventLClick, mouseEventRClick, StampList } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { StampService } from './stamp.service';
 
+
+// tslint:disable
 describe('StampService', () => {
     let service: StampService;
     let canvasTestHelper: CanvasTestHelper;
@@ -164,7 +166,7 @@ describe('StampService', () => {
         const test = 'test';
         service.currentStamp = test;
         service.imageSrc = test;
-        spyOn(service['srcBinding'], 'has').and.returnValue(false);
+        spyOn(service.srcBinding, 'has').and.returnValue(false);
         service.drawStamp({ x: 0, y: 0 });
         expect(service.imageSrc).toEqual(test);
     });
@@ -177,8 +179,9 @@ describe('StampService', () => {
 
     it('drawStamp should translate the stamp', () => {
         const translateSpy = spyOn(baseCtxStub, 'translate').and.stub();
+        const expectedCalled = 3;
         service.drawStamp({ x: 0, y: 0 });
-        expect(translateSpy).toHaveBeenCalledTimes(3);
+        expect(translateSpy).toHaveBeenCalledTimes(expectedCalled);
     });
 
     it('drawStamp should scale the stamp', () => {
@@ -205,7 +208,7 @@ describe('StampService', () => {
         const test = 'test';
         service.currentStamp = test;
         service.imageSrc = test;
-        spyOn(service['srcBinding'], 'has').and.returnValue(false);
+        spyOn(service.srcBinding, 'has').and.returnValue(false);
         service.previewCursor({ x: 0, y: 0 });
         expect(service.imageSrc).toEqual(test);
     });
@@ -218,8 +221,9 @@ describe('StampService', () => {
 
     it('previewCursor should translate the stamp', () => {
         const translateSpy = spyOn(cursorCtxStub, 'translate').and.stub();
+        const expectedCalled = 3;
         service.previewCursor({ x: 0, y: 0 });
-        expect(translateSpy).toHaveBeenCalledTimes(3);
+        expect(translateSpy).toHaveBeenCalledTimes(expectedCalled);
     });
 
     it('previewCursor should scale the stamp', () => {
@@ -239,7 +243,7 @@ describe('StampService', () => {
         service.currentStamp = 'happy';
         service.selectStamp = StampList.Sad;
 
-        spyOn(service['stampBindings'], 'has').and.returnValue(false);
+        spyOn(service.stampBindings, 'has').and.returnValue(false);
         service.changeStamp();
         expect(service.currentStamp).toEqual('happy');
     });

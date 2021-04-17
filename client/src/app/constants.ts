@@ -151,14 +151,13 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
 
-
 // constants for stamp
 export enum StampList {
-    Surprised = 0,  
-    Happy = 1,   
-    Sad = 2,   
-    Glasses = 3,    
-    Dead = 4, 
+    Surprised = 0,
+    Happy = 1,
+    Sad = 2,
+    Glasses = 3,
+    Dead = 4,
 }
 
 export const SCALE_FACTOR_STAMP = 1;

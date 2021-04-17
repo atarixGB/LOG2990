@@ -4,7 +4,7 @@ import { Stamp } from './stamp';
 import { Vec2 } from './vec2';
 // tslint:disable: no-any
 // tslint:disable: no-magic-numbers
-fdescribe('Stamp', () => {
+describe('Stamp', () => {
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
 
