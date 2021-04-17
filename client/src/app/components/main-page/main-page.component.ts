@@ -21,7 +21,7 @@ export class MainPageComponent implements OnInit {
     handleKeyDown(event: KeyboardEvent): void {
         if (event.ctrlKey && event.key === 'g') {
             event.preventDefault();
-            this.dialog.open(CarouselComponent, {});
+            this.openCarousel();
         }
     }
 
@@ -35,6 +35,10 @@ export class MainPageComponent implements OnInit {
 
     continueDrawing(): void {
         this.autoSaveService.loadImage();
+        this.changeLocation();
+    }
+
+    private changeLocation(): void {
         window.location.replace(this.EDITOR_ROUTE);
     }
 }

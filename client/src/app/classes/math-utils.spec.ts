@@ -221,4 +221,12 @@ describe('MathUtils', () => {
         let result = Utils.findMaxCoord(coords);
         expect(result).toEqual(expectedResult);
     });
+
+    it('should return nearest point from current point', () => {
+        const currentPoint = { x: 7, y: 10 };
+        const basePoint = { x: 4, y: 2 };
+        const expectedResult = { x: 4, y: 10 };
+        const result = Utils.getNearestPoint(currentPoint, basePoint);
+        expect(result).toEqual(expectedResult);
+    });
 });
