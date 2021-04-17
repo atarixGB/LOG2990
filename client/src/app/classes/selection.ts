@@ -1,8 +1,8 @@
 import { Drawable } from './drawable';
 import { Vec2 } from './vec2';
 
-// const PIXEL_LENGTH = 4;
-// const MAX_RGB = 255;
+const PIXEL_LENGTH = 4;
+const MAX_RGB = 255;
 
 export class SelectionTool extends Drawable {
     image: ImageData;
@@ -27,7 +27,6 @@ export class SelectionTool extends Drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        console.log('draw');
         this.clearUnderneathShape(ctx);
         if (this.isEllipse) this.printEllipse(ctx);
         else if (this.isLasso) this.printPolygon(ctx);
@@ -52,23 +51,20 @@ export class SelectionTool extends Drawable {
             ctx.fill();
             ctx.closePath();
         } else if (this.isLasso) {
-            // console.log('clear lasso', this.initialOrigin, this.initialWidth, this.clearImageDataPolygon);
-            // const imageData = this.clearImageDataPolygon.data;
-            // let pixelCounter = 0;
-            // for (let i = this.initialOrigin.y; i < this.initialOrigin.y + this.initialHeight; i++) {
-            //     for (let j = this.initialOrigin.x; j < this.initialOrigin.x + this.initialWidth; j++) {
-            //         if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
-            //             for (let k = 0; k < PIXEL_LENGTH; k++) {
-            //                 imageData[pixelCounter + k] = MAX_RGB;
-            //             }
-            //         }
-            //         pixelCounter += PIXEL_LENGTH;
-            //     }
-            // }
+            const imageData = this.clearImageDataPolygon.data;
+            let pixelCounter = 0;
+            for (let i = this.initialOrigin.y; i < this.initialOrigin.y + this.initialHeight; i++) {
+                for (let j = this.initialOrigin.x; j < this.initialOrigin.x + this.initialWidth; j++) {
+                    if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
+                        for (let k = 0; k < PIXEL_LENGTH; k++) {
+                            imageData[pixelCounter + k] = MAX_RGB;
+                        }
+                    }
+                    pixelCounter += PIXEL_LENGTH;
+                }
+            }
             this.clearPolygon(ctx);
         } else {
-            console.log('clear', this.initialOrigin);
-
             ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.initialWidth, this.initialHeight);
             ctx.closePath();
         }
@@ -109,7 +105,7 @@ export class SelectionTool extends Drawable {
         tmp.putImageData(this.clearImageDataPolygon, 0, 0);
         ctx.save();
         ctx.clip(this.calculatePath2d());
-        console.log('clear poly', this.initialOrigin, this.clearImageDataPolygon);
+        console.log('clear polygon', this.initialOrigin, this.clearImageDataPolygon);
 
         ctx.drawImage(tmp.canvas, this.initialOrigin.x, this.initialOrigin.y);
         ctx.restore();
