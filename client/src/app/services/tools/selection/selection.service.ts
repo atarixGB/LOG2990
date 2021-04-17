@@ -56,6 +56,7 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.selectionTerminated = false;
         this.selectionDeleted = false;
+        this.firstOrigin = { x: 0, y: 0 };
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -79,7 +80,6 @@ export class SelectionService extends Tool {
         if (this.mouseDown) {
             if (this.selectionUtilsService.isResizing) {
                 this.selectionUtilsService.resizeSelection(this.drawingService.previewCtx, this.getPositionFromMouse(event), this.selectionObject);
-                console.log('mouseMove', this.origin, this.firstOrigin.x);
                 return;
             }
 
@@ -250,8 +250,6 @@ export class SelectionService extends Tool {
             this.initialSelection = true;
             this.imageMoved = true;
             this.mouseDown = false;
-            console.log('mouseUp resize', this.firstOrigin);
-
             this.selectionObject = this.selectionUtilsService.endResizeSelection();
             this.initialiseServiceDimensions();
             this.getSelectionData(this.drawingService.previewCtx);
@@ -283,9 +281,8 @@ export class SelectionService extends Tool {
         }
         this.width = this.destination.x - this.origin.x;
         this.height = this.destination.y - this.origin.y;
-        console.log('change initO');
-
-        this.firstOrigin = this.origin;
+        this.firstOrigin.x = this.origin.x;
+        this.firstOrigin.y = this.origin.y;
         this.initialseSelectionObject();
 
         this.selectionObject = this.selectionUtilsService.reajustOriginAndDestination(this.selectionObject);
