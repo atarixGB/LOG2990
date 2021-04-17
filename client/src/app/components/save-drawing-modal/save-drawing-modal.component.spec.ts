@@ -13,7 +13,7 @@ import { DrawingData } from '@common/communication/drawing-data';
 import { SaveDrawingModalComponent } from './save-drawing-modal.component';
 
 // tslint:disable
-fdescribe('SaveDrawingModalComponent', () => {
+describe('SaveDrawingModalComponent', () => {
     let component: SaveDrawingModalComponent;
     let fixture: ComponentFixture<SaveDrawingModalComponent>;
     let indexServiceSpy: jasmine.SpyObj<any>;
