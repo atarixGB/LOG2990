@@ -153,13 +153,11 @@ export class CarouselComponent implements AfterViewInit {
             .getAllDrawingsFromDB()
             .then((drawings: Drawing[]) => {
                 drawingFromDB = drawings;
-                console.log('coucou');
             })
             .then(() => {
                 this.indexService
                     .getAllDrawingsFromLocalServer()
                     .then((url: string[]) => {
-                        console.log('coucou');
                         urlFromServer = url;
                     })
                     .then(() => {

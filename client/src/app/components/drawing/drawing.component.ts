@@ -19,7 +19,7 @@ import { SelectionService } from '@app/services/tools/selection/selection.servic
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingData } from '@common/communication/drawing-data';
-import { Subscription, throwError } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
@@ -35,12 +35,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
     @ViewChild('lassoPreviewCanvas', { static: false }) lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
 
     dragPosition: Vec2 = { x: 0, y: 0 };
+    canvasSize: Vec2;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private gridCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
     private lassoPreviewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2;
     private currentDrawing: ImageData;
     private subscription: Subscription;
     private positionX: number;
@@ -78,21 +78,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.subscription.unsubscribe();
     }
 
-    ngOnInit(): void {
-        this.route.params.subscribe((params) => {
-            if (params.url) {
-                const path = params.url;
-                this.getNewImage(path)
-                    .then((img) => {
-                        this.baseCtx.drawImage(img, 0, 0);
-                    })
-                    .catch((error) => {
-                        return throwError(error);
-                    });
-            }
-        });
-    }
-
+    ngOnInit(): void {}
     ngAfterViewInit(): void {
         this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
         this.workingArea.nativeElement.style.height = WORKING_AREA_LENGHT;
@@ -110,6 +96,32 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
 
+        this.route.params.subscribe((params) => {
+            if (params.url) {
+                console.log('coucou');
+                const img = new Image();
+                img.src = params.url;
+                img.crossOrigin = 'Anonymous';
+
+                img.onload = () => {
+                    // this.canvasSize.x = img.width;
+                    // this.canvasSize.y = img.height;
+                    console.log(this.baseCtx.canvas.width);
+                    console.log(this.baseCtx.canvas.height);
+                    this.baseCtx.drawImage(img, 0, 0);
+                    console.log('la taille du canvas est ', this.canvasSize);
+
+                    this.drawing = {
+                        title: '',
+                        width: this.drawingService.canvas.width,
+                        height: this.drawingService.canvas.height,
+                        body: this.drawingService.canvas.toDataURL(),
+                    };
+                    this.autoSaveService.saveCanvasState(this.drawing);
+                };
+            }
+        });
+
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
@@ -120,7 +132,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
             this.canvasSize.x = this.autoSaveService.localDrawing.width;
             this.canvasSize.y = this.autoSaveService.localDrawing.height;
         };
-
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();
@@ -129,7 +140,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
     ngOnChanges(): void {
         this.route.params.subscribe((params) => {
             console.log(params.height, params.width);
-
             if (params.height && params.width) {
                 this.canvasSize.x = params.width;
                 this.canvasSize.y = params.height;
@@ -366,20 +376,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
             event.preventDefault();
             this.undoRedoService.redo();
         }
-    }
-
-    async getNewImage(src: string): Promise<HTMLImageElement> {
-        return new Promise((resolve, reject) => {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => {
-                resolve(img);
-            };
-            img.onerror = (err: string | Event) => {
-                reject(err);
-            };
-            img.src = src;
-        });
     }
 
     private isCanvasBlank(): boolean {
