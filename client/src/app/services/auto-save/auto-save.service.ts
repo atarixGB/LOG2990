@@ -7,11 +7,14 @@ import { DrawingData } from '@common/communication/drawing-data';
 })
 export class AutoSaveService {
     readonly localName: string = 'local';
+    readonly isEmpty: boolean;
+
     localDrawing: DrawingData;
-    isEmpty: boolean;
+    private canvasImage: HTMLImageElement;
 
     constructor(private drawingService: DrawingService) {
         this.localDrawing = new DrawingData();
+        this.canvasImage = new Image();
     }
 
     saveCanvasState(drawing: DrawingData): void {
@@ -20,13 +23,12 @@ export class AutoSaveService {
 
     loadImage(): void {
         const lastAutoSavedDrawing = window.localStorage.getItem(this.localName);
-        const img: HTMLImageElement = new Image();
 
         if (lastAutoSavedDrawing) {
             this.localDrawing = JSON.parse(lastAutoSavedDrawing) as DrawingData;
-            img.src = this.localDrawing.body;
-            img.onload = () => {
-                this.drawingService.baseCtx.drawImage(img, 0, 0, this.localDrawing.width, this.localDrawing.height);
+            this.canvasImage.src = this.localDrawing.body;
+            this.canvasImage.onload = () => {
+                this.drawingService.baseCtx.drawImage(this.canvasImage, 0, 0, this.localDrawing.width, this.localDrawing.height);
             };
         }
     }
@@ -36,7 +38,6 @@ export class AutoSaveService {
     }
 
     localStorageIsEmpty(): boolean {
-        const size = window.localStorage.length;
-        return size === 0;
+        return window.localStorage.length === 0;
     }
 }
