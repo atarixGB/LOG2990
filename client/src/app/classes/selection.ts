@@ -84,8 +84,6 @@ export class SelectionTool extends Drawable {
     }
 
     private printPolygon(ctx: CanvasRenderingContext2D): void {
-        //console.log('print poly', this.origin, this.image);
-
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;
@@ -105,8 +103,6 @@ export class SelectionTool extends Drawable {
         tmp.putImageData(this.clearImageDataPolygon, 0, 0);
         ctx.save();
         ctx.clip(this.calculatePath2d());
-        //console.log('clear polygon', this.initialOrigin, this.clearImageDataPolygon);
-
         ctx.drawImage(tmp.canvas, this.initialOrigin.x, this.initialOrigin.y);
         ctx.restore();
     }
