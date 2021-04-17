@@ -3,11 +3,21 @@ import { Vec2 } from './vec2';
 export const INFINITY = 10000;
 export const COLINEAR = 0;
 const ANGLE_PI_IN_DEGREES = 180;
+const NEGATIVE_LINE_SLOPE = -1;
+const NUMBER_SIGN_CHANGE = -1;
 export interface Segment {
     initial: Vec2;
     final: Vec2;
 }
 
+export interface Coefficients {
+    a: number;
+    b: number;
+    c: number;
+    d: number;
+    e: number;
+    f: number;
+}
 export class Utils {
     static findOrientation(p: Vec2, q: Vec2, r: Vec2): number {
         const value: number = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
@@ -156,5 +166,51 @@ export class Utils {
         }
 
         return { x: maxX, y: maxY };
+    }
+
+    static getDistanceBetweenPointAndLine(point: Vec2, lines: number[]): number {
+        const numerator: number = Math.abs(lines[0] * point.x + lines[1] * point.y + lines[2]);
+        const denominator: number = Math.sqrt(lines[0] * lines[0] + lines[1] * lines[1]);
+        return numerator / denominator;
+    }
+
+    static getClosestLine(currentPoint: Vec2, basePoint: Vec2): number[] {
+        const lineList = [
+            [1, 1, NUMBER_SIGN_CHANGE * (basePoint.x + basePoint.y)], // ascending diagonal
+            [1, NEGATIVE_LINE_SLOPE, NUMBER_SIGN_CHANGE * (basePoint.x - basePoint.y)], // descending diagonal
+            [1, 0, -basePoint.x], // x axis
+            [0, 1, -basePoint.y], // y axis
+        ];
+        const distance: number[] = lineList.map((line) => this.getDistanceBetweenPointAndLine(currentPoint, line));
+        const maxDistance: number = Math.min(...distance);
+        const maxIndex: number = distance.indexOf(maxDistance);
+        return lineList[maxIndex];
+    }
+
+    static solveLinearEquationsSystem(coefficents: Coefficients): Vec2 {
+        const determinant: number = coefficents.a * coefficents.d - coefficents.b * coefficents.c;
+        const point: Vec2 = {
+            x: (coefficents.d * coefficents.e - coefficents.b * coefficents.f) / determinant,
+            y: (coefficents.a * coefficents.f - coefficents.c * coefficents.e) / determinant,
+        };
+        return point;
+    }
+
+    static getProjectionOnClosestLine(point: Vec2, line: number[]): Vec2 {
+        const coefficient: Coefficients = {
+            a: line[0],
+            b: line[1],
+            c: -line[1],
+            d: line[0],
+            e: -line[2],
+            f: line[0] * point.y - line[1] * point.x,
+        };
+        const projection: Vec2 = this.solveLinearEquationsSystem(coefficient);
+        return projection;
+    }
+
+    static getNearestPoint(currentPoint: Vec2, basePoint: Vec2): Vec2 {
+        const nearestLine: number[] = this.getClosestLine(currentPoint, basePoint);
+        return this.getProjectionOnClosestLine(currentPoint, nearestLine);
     }
 }
