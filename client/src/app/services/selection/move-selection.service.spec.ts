@@ -49,6 +49,8 @@ fdescribe('MoveSelectionService', () => {
             'createControlPoints',
             'terminateSelection',
             'moveSelectionKeyboard',
+            'initialiseServiceDimensions',
+            'getSelectionData',
         ]);
         resizeSelectionServiceSpy = jasmine.createSpyObj('ResizeSelectionService', ['checkIfMouseIsOnControlPoint']);
         selectionUtilsSpyServiceSpy = jasmine.createSpyObj('SelectionUtilsService', [
@@ -56,6 +58,7 @@ fdescribe('MoveSelectionService', () => {
             'createBoundaryBox',
             'mouseInSelectionArea',
             'resizeSelection',
+            'endResizeSelection',
         ]);
         magnetismServiceSpy = jasmine.createSpyObj('MagnetismService', ['activateMagnetism']);
 
@@ -391,9 +394,44 @@ fdescribe('MoveSelectionService', () => {
         expect(putImageDataSpy).toHaveBeenCalled();
     });
 
-    xit('TODO handleSelectionWhenNotTerminatedOnMouseMove', () => {});
+    it('should set newSelection attribute of SelectionService to false if selectionTerminated is false and mouse if in selection area', () => {
+        spyOn<any>(service, 'initialSelection').and.stub();
+        selectionServiceSpy.selectionTerminated = false;
+        selectionUtilsSpyServiceSpy.mouseInSelectionArea.and.returnValue(true);
 
-    xit('TODO handleResizedSelectionOnMouseUp', () => {});
+        service['handleSelectionWhenNotTerminatedOnMouseMove']({} as MouseEvent);
+        expect(selectionServiceSpy.newSelection).toBeFalse();
+    });
+
+    it('should set newSelection attribute of SelectionService to true if selectionTerminated is false and mouse if not in selection area', () => {
+        spyOn<any>(service, 'initialSelection').and.stub();
+        selectionServiceSpy.selectionTerminated = false;
+        selectionUtilsSpyServiceSpy.mouseInSelectionArea.and.returnValue(false);
+
+        service['handleSelectionWhenNotTerminatedOnMouseMove']({} as MouseEvent);
+        expect(selectionServiceSpy.newSelection).toBeTrue();
+    });
+
+    it('should not change newSelection attribute of SelectionService  selectionTerminated is true', () => {
+        spyOn<any>(service, 'initialSelection').and.stub();
+        selectionServiceSpy.selectionTerminated = true;
+
+        service['handleSelectionWhenNotTerminatedOnMouseMove']({} as MouseEvent);
+        expect(selectionServiceSpy.newSelection).toBeUndefined();
+    });
+
+    it('should initialize dimension and get selection data correctly', () => {
+        selectionUtilsSpyServiceSpy.endResizeSelection.and.returnValue(new SelectionTool({ x: 0, y: 0 }, { x: 110, y: 110 }, 110, 110));
+        selectionServiceSpy.initialiseServiceDimensions.and.stub();
+        selectionServiceSpy.getSelectionData.and.stub();
+
+        service['handleResizedSelectionOnMouseUp']();
+        expect(service['selectionObject']).toEqual(new SelectionTool({ x: 0, y: 0 }, { x: 110, y: 110 }, 110, 110));
+        expect(selectionServiceSpy.selectionObject).toEqual(service['selectionObject']);
+        expect(service['origin']).toEqual(service['selectionObject'].origin);
+        expect(service['destination']).toEqual(service['selectionObject'].destination);
+        expect(service['selectionData']).toEqual(selectionServiceSpy.selection);
+    });
 
     it('should move selection to right if ArrowRight is pressed', () => {
         service['keysDown'].set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, true);
@@ -460,18 +498,17 @@ fdescribe('MoveSelectionService', () => {
     });
 
     it('should put image data on specified context when magnetism is turned on (move with keyboard)', () => {
-        service['newOrigin'] = { x: 0, y: 0 };
         service['keysDown'].set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, true).set(ArrowKeys.Right, false);
+        selectionServiceSpy.origin = { x: 100, y: 110 };
+        magnetismServiceSpy.squareSize = 20;
         spyOn<any>(service, 'clearUnderneathShape').and.stub();
         drawingServiceSpy.clearCanvas.and.stub();
         service.isMagnetism = true;
-        selectionServiceSpy['height'] = 10;
-        selectionServiceSpy['width'] = 10;
-        magnetismServiceSpy.squareSize = 20;
-        const putImageDataSpy = spyOn(service['drawingService'].baseCtx, 'putImageData').and.stub();
-        service.isMagnetism = true;
-        magnetismServiceSpy.activateMagnetism.and.returnValue({ x: 3, y: 3 });
+        selectionServiceSpy['height'] = 40;
+        selectionServiceSpy['width'] = 40;
+        magnetismServiceSpy.activateMagnetism.and.returnValue({ x: 80, y: 80 });
         service['selectionData'] = new ImageData(10, 10);
+        const putImageDataSpy = spyOn(service['drawingService'].baseCtx, 'putImageData').and.stub();
 
         service['moveSelectionKeyboard'](service['drawingService'].baseCtx);
         expect(magnetismServiceSpy.activateMagnetism).toHaveBeenCalled();
