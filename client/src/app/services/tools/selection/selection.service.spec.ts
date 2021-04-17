@@ -55,7 +55,6 @@ describe('SelectionService', () => {
             'endResizeSelection',
             'createControlPoints',
             'reajustOriginAndDestination',
-            // fdsfdsfds
         ]);
         resizeSelectionServiceSpy = jasmine.createSpyObj('ResizeSelectionService', ['handleKeyDown', 'handleKeyUp', 'checkIfMouseIsOnControlPoint']);
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['addToStack', 'setToolInUse']);
