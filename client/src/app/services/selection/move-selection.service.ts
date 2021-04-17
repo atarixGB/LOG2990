@@ -82,29 +82,14 @@ export class MoveSelectionService extends Tool implements OnDestroy {
             return;
         }
 
-        this.initialSelection();
-
-        if (!this.selectionService.selectionTerminated) {
-            console.log(this.origin, this.destination, this.selectionData);
-            if (this.selectionUtilsService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
-                this.selectionService.newSelection = false;
-            } else {
-                this.selectionService.newSelection = true;
-            }
-        }
+        this.handleSelectionWhenNotTerminatedOnMouseMove(event);
     }
 
     onMouseUp(event: MouseEvent): void {
         if (this.mouseDown) {
             this.mouseDown = false;
             if (this.selectionUtilsService.isResizing) {
-                this.selectionObject = this.selectionUtilsService.endResizeSelection();
-                this.selectionService.selectionObject = this.selectionObject;
-                this.selectionService.initialiseServiceDimensions();
-                this.selectionService.getSelectionData(this.drawingService.baseCtx);
-                this.origin = this.selectionObject.origin;
-                this.destination = this.selectionObject.destination;
-                this.selectionData = this.selectionService.selection;
+                this.handleResizedSelectionOnMouseUp();
                 return;
             }
             this.origin = this.newOrigin;
@@ -171,6 +156,27 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         }
     }
 
+    private handleSelectionWhenNotTerminatedOnMouseMove(event: MouseEvent): void {
+        this.initialSelection();
+        if (!this.selectionService.selectionTerminated) {
+            if (this.selectionUtilsService.mouseInSelectionArea(this.origin, this.destination, this.getPositionFromMouse(event))) {
+                this.selectionService.newSelection = false;
+            } else {
+                this.selectionService.newSelection = true;
+            }
+        }
+    }
+
+    private handleResizedSelectionOnMouseUp(): void {
+        this.selectionObject = this.selectionUtilsService.endResizeSelection();
+        this.selectionService.selectionObject = this.selectionObject;
+        this.selectionService.initialiseServiceDimensions();
+        this.selectionService.getSelectionData(this.drawingService.baseCtx);
+        this.origin = this.selectionObject.origin;
+        this.destination = this.selectionObject.destination;
+        this.selectionData = this.selectionService.selection;
+    }
+
     private moveSelectionMouse(ctx: CanvasRenderingContext2D): void {
         this.initialSelection();
         const distanceX: number = this.mouseDownCoord.x - this.initialMousePosition.x;
@@ -180,7 +186,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         if (this.isMagnetism) {
             this.newOrigin = this.magnetismService.activateMagnetism(this.newOrigin, this.selectionService.height, this.selectionService.width);
         }
-        console.log(this.newOrigin);
         ctx.putImageData(this.selectionData, this.newOrigin.x, this.newOrigin.y);
     }
 
@@ -219,7 +224,6 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     }
 
     private initialSelection(): void {
-        console.log('okokok');
         if (this.selectionService.initialSelection) {
             this.selectionObject = this.selectionService.selectionObject;
             this.origin = this.selectionService.origin;
