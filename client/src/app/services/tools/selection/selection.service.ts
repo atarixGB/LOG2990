@@ -239,6 +239,7 @@ export class SelectionService extends Tool {
             this.calculateDimension();
             this.getSelectionData(this.drawingService.baseCtx);
             this.selectionUtilsService.createBoundaryBox(this.selectionObject);
+            console.log(this.selectionObject);
             this.selectionObject.initialOrigin = this.origin;
         }
     }
