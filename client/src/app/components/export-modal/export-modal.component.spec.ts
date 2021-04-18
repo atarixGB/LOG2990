@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExportService } from '@app/services/export-image/export.service';
 import { ExportModalComponent } from './export-modal.component';
 // tslint:disable
-fdescribe('ExportModalComponent', () => {
+describe('ExportModalComponent', () => {
     let component: ExportModalComponent;
     let fixture: ComponentFixture<ExportModalComponent>;
     let exportServiceSpy: ExportService;
