@@ -7,7 +7,7 @@ import {
     MIN_GRID_OPACITY,
     MIN_GRID_SQUARE_SIZE,
     SQUARE_STEP,
-    TWO_DECIMAL_MULTIPLIER,
+    TWO_DECIMAL_MULTIPLIER
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
@@ -27,7 +27,7 @@ export class GridComponent {
     squareSize: number = DEFAULT_GRID_SIZE;
     currentOpacity: number = DEFAULT_GRID_OPACITY;
 
-    constructor(public drawingService: DrawingService, public magnetismService: MagnetismService, private textService: TextService) {
+    constructor(public drawingService: DrawingService, public magnetismService: MagnetismService, public textService: TextService) {
         this.drawingService.gridSpaces = this.squareSize;
         this.magnetismService.setGridSpaces(this.squareSize);
         this.drawingService.gridOpacity = this.currentOpacity;
@@ -73,7 +73,7 @@ export class GridComponent {
     @HostListener('window:keydown.=')
     @HostListener('window:keydown.shift.+')
     increase(): void {
-        if ( this.squareSize < MAX_GRID_SQUARE_SIZE) {
+        if (this.squareSize < MAX_GRID_SQUARE_SIZE) {
             this.squareSize += SQUARE_STEP;
             this.drawingService.gridSpaces = this.squareSize;
             this.magnetismService.setGridSpaces(this.squareSize);
@@ -82,7 +82,7 @@ export class GridComponent {
     }
     @HostListener('window:keydown.-')
     decrease(): void {
-        if ( this.squareSize > MIN_GRID_SQUARE_SIZE) {
+        if (this.squareSize > MIN_GRID_SQUARE_SIZE) {
             this.squareSize -= SQUARE_STEP;
             this.drawingService.gridSpaces = this.squareSize;
             this.magnetismService.setGridSpaces(this.squareSize);
