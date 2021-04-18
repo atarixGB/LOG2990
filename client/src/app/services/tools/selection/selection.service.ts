@@ -287,7 +287,7 @@ export class SelectionService extends Tool {
         this.initialiseServiceDimensions();
     }
 
-    private initialseSelectionObject() {
+    private initialseSelectionObject(): void {
         this.selectionObject.origin = this.origin;
         this.selectionObject.destination = this.destination;
         this.selectionObject.width = this.width;

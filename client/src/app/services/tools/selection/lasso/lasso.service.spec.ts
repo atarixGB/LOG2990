@@ -10,7 +10,7 @@ import { LineService } from '@app/services/tools/line/line.service';
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 
 // tslint:disable
-fdescribe('LassoService', () => {
+describe('LassoService', () => {
     let service: LassoService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let lineServiceSpy: jasmine.SpyObj<LineService>;

@@ -3,6 +3,8 @@ import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE } from '@app/constants';
 
+const OPPOSITE_SIGN = -1;
+
 enum ControlPoints {
     TopLeft = 0,
     TopRight = 1,
@@ -96,13 +98,13 @@ export class ResizeSelectionService {
 
     private checkForMirroirEffect(ctx: CanvasRenderingContext2D, selectionImage: HTMLCanvasElement): void {
         if (this.resizeHeight < 0 && this.resizeWidth < 0) {
-            ctx.scale(-1, -1);
+            ctx.scale(OPPOSITE_SIGN, OPPOSITE_SIGN);
             ctx.drawImage(selectionImage, -this.selectionObject.origin.x, -this.selectionObject.origin.y, -this.resizeWidth, -this.resizeHeight);
         } else if (this.resizeWidth < 0 && this.resizeHeight > 0) {
-            ctx.scale(-1, 1);
+            ctx.scale(OPPOSITE_SIGN, 1);
             ctx.drawImage(selectionImage, -this.selectionObject.origin.x, this.selectionObject.origin.y, -this.resizeWidth, this.resizeHeight);
         } else if (this.resizeHeight < 0 && this.resizeWidth > 0) {
-            ctx.scale(1, -1);
+            ctx.scale(1, OPPOSITE_SIGN);
             ctx.drawImage(selectionImage, this.selectionObject.origin.x, -this.selectionObject.origin.y, this.resizeWidth, -this.resizeHeight);
         } else {
             ctx.drawImage(selectionImage, this.selectionObject.origin.x, this.selectionObject.origin.y, this.resizeWidth, this.resizeHeight);

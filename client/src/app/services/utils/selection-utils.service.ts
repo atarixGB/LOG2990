@@ -3,10 +3,10 @@ import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { CONTROLPOINTSIZE } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
-import { ResizeSelectionService } from '../selection/resize-selection.service';
 
 const SELECTION_DEFAULT_LINE_THICKNESS = 3;
 const PIXEL_LENGTH = 4;
