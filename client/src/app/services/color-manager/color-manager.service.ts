@@ -11,7 +11,7 @@ import {
 } from '@app/constants';
 import { Observable, Subject } from 'rxjs';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-import { RGBA } from 'src/app/interfaces-enums/rgba';
+import { DecimalRGBA, RGBA } from 'src/app/interfaces-enums/rgba';
 
 @Injectable({
     providedIn: 'root',
@@ -19,13 +19,15 @@ import { RGBA } from 'src/app/interfaces-enums/rgba';
 export class ColorManagerService {
     selectedColor: RGBA[];
     lastColors: RGBA[];
+    colorOrderGet: ColorOrder = ColorOrder.PrimaryColor;
+    primaryColor: string;
     colorChange: Subject<void> = new Subject<void>();
 
     constructor() {
         this.lastColors = new Array<RGBA>();
         this.selectedColor = new Array<RGBA>();
         let temp = new Array<RGBA>();
-
+        this.primaryColor = 'Red';
         for (let i = 0; i < COLOR_ORDER + COLOR_HISTORY; i++) {
             temp = i < COLOR_ORDER ? this.selectedColor : this.lastColors;
             temp.push({
@@ -104,6 +106,15 @@ export class ColorManagerService {
         this.selectedColor[colorOrder].Dec = colorElement.Dec;
         this.updateColorString(colorOrder);
         this.updateColorLasts(colorOrder, shouldDeleteLast);
+    }
+
+    getColor(): DecimalRGBA {
+        return {
+            RED: this.selectedColor[this.colorOrderGet].Dec.Red,
+            GREEN: this.selectedColor[this.colorOrderGet].Dec.Green,
+            BLUE: this.selectedColor[this.colorOrderGet].Dec.Blue,
+            ALPHA: this.selectedColor[this.colorOrderGet].Dec.Alpha,
+        };
     }
 
     changeColorObserver(): Observable<void> {
