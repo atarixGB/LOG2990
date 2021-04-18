@@ -103,14 +103,26 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     async searchbyTags(): Promise<void> {
+        this.isLoading = true;
+        let drawingFromDB = [] as Drawing[];
+        let urlFromServer = [] as string[];
         await this.indexService
             .searchByTags(this.tags)
-            .then((result) => {
-                this.drawings = result;
-                this.updateImagePlacement();
+            .then((drawings: Drawing[]) => {
+                drawingFromDB = drawings;
             })
-            .catch((error) => {
-                alert(`Un problème de connexion au serveur est survenu. Veuillez réessayer.\n ${error}`);
+            .then(() => {
+                this.indexService
+                    .getAllDrawingsFromLocalServer()
+                    .then((url: string[]) => {
+                        urlFromServer = url;
+                    })
+                    .then(() => {
+                        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
+                        this.isLoading = false;
+                        this.updateImagePlacement();
+                        this.updateMainImageURL();
+                    });
             });
     }
 
@@ -184,8 +196,10 @@ export class CarouselComponent implements AfterViewInit {
 
     private findAvailableImages(urlFromServer: string[], drawingFromDB: Drawing[]): Drawing[] {
         const availableImages = [];
+        console.log('server: ', urlFromServer, 'db: ', drawingFromDB);
         for (const url of urlFromServer) {
             for (const drawing of drawingFromDB) {
+                console.log(url, ' et ', drawing.imageURL);
                 if (drawing.imageURL === url) {
                     availableImages.push(drawing);
                 }
