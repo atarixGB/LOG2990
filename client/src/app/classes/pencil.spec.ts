@@ -4,7 +4,7 @@ import { Pencil } from './pencil';
 import { Vec2 } from './vec2';
 // tslint:disable: no-any
 // tslint:disable: no-magic-numbers
-fdescribe('PaintBucket', () => {
+describe('PaintBucket', () => {
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
 
@@ -13,7 +13,7 @@ fdescribe('PaintBucket', () => {
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
     });
     it('should create an instance', () => {
-        expect(new Pencil([] as Vec2[], 'Red', 1)).toBeTruthy();
+        expect(new Pencil([] as Vec2[], 'rgba(255, 0, 0, 1)', 1)).toBeTruthy();
     });
     it(' draw should call putImageData', () => {
         const pencilTest = new Pencil(
@@ -23,7 +23,7 @@ fdescribe('PaintBucket', () => {
                 { x: 2, y: 2 },
                 { x: 3, y: 3 },
             ] as Vec2[],
-            'Red',
+            'rgba(255, 0, 0, 1)',
             1,
         );
         const startSpy = spyOn<any>(baseCtxStub, 'beginPath');

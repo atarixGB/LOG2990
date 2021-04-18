@@ -3,7 +3,7 @@ import { CanvasTestHelper } from './canvas-test-helper';
 import { PaintBucket } from './paint';
 // tslint:disable: no-any
 // tslint:disable: no-magic-numbers
-fdescribe('PaintBucket', () => {
+describe('PaintBucket', () => {
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
 
@@ -15,10 +15,10 @@ fdescribe('PaintBucket', () => {
         expect(new PaintBucket(true, {} as ImageData)).toBeTruthy();
     });
     it(' draw should call putImageData', () => {
-        const PaintTest = new PaintBucket(true, {} as ImageData);
+        const paintTest = new PaintBucket(true, {} as ImageData);
         const tempImg = {} as ImageData;
         const spy = spyOn<any>(baseCtxStub, 'putImageData');
-        PaintTest.draw(baseCtxStub);
+        paintTest.draw(baseCtxStub);
         expect(spy).toHaveBeenCalledWith(tempImg, 0, 0);
     });
 });
