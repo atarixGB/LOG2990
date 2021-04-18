@@ -107,6 +107,7 @@ export class StampService extends Tool {
             rotationStep = 1;
         }
         this.changeAngle(this.angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep);
+        this.onMouseMove(this.mouseEvent);
     }
 
     changeAngle(newAngle: number): void {
