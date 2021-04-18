@@ -106,24 +106,19 @@ export class CarouselComponent implements AfterViewInit {
         this.isLoading = true;
         let drawingFromDB = [] as Drawing[];
         let urlFromServer = [] as string[];
-        await this.indexService
-            .searchByTags(this.tags)
-            .then((drawings: Drawing[]) => {
-                drawingFromDB = drawings;
-            })
-            .then(() => {
-                this.indexService
-                    .getAllDrawingsFromLocalServer()
-                    .then((url: string[]) => {
-                        urlFromServer = url;
-                    })
-                    .then(() => {
-                        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
-                        this.isLoading = false;
-                        this.updateImagePlacement();
-                        this.updateMainImageURL();
-                    });
-            });
+
+        await this.indexService.searchByTags(this.tags).then((drawings: Drawing[]) => {
+            drawingFromDB = drawings;
+        });
+
+        await this.indexService.getAllDrawingsFromLocalServer().then((url: string[]) => {
+            urlFromServer = url;
+        });
+
+        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
+        this.isLoading = false;
+        this.updateImagePlacement();
+        this.updateMainImageURL();
     }
 
     async deleteDrawing(): Promise<void> {
@@ -158,28 +153,23 @@ export class CarouselComponent implements AfterViewInit {
         this.autoSaveService.saveCanvasState(drawing);
     }
 
-    private fetchDrawings(): void {
+    private async fetchDrawings(): Promise<void> {
         this.isLoading = true;
-        let urlFromServer: string[];
-        let drawingFromDB: Drawing[];
-        this.indexService
-            .getAllDrawingsFromDB()
-            .then((drawings: Drawing[]) => {
-                drawingFromDB = drawings;
-            })
-            .then(() => {
-                this.indexService
-                    .getAllDrawingsFromLocalServer()
-                    .then((url: string[]) => {
-                        urlFromServer = url;
-                    })
-                    .then(() => {
-                        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
-                        this.isLoading = false;
-                        this.updateImagePlacement();
-                        this.updateMainImageURL();
-                    });
-            });
+        let urlFromServer: string[] = [];
+        let drawingFromDB: Drawing[] = [];
+
+        await this.indexService.getAllDrawingsFromDB().then((drawings: Drawing[]) => {
+            drawingFromDB = drawings;
+        });
+
+        await this.indexService.getAllDrawingsFromLocalServer().then((url: string[]) => {
+            urlFromServer = url;
+        });
+
+        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
+        this.isLoading = false;
+        this.updateImagePlacement();
+        this.updateMainImageURL();
     }
 
     private updateImagePlacement(): void {

@@ -9,7 +9,7 @@ import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 import { CarouselComponent } from './carousel.component';
 //tslint:disable
-describe('CarouselComponent', () => {
+fdescribe('CarouselComponent', () => {
     let component: CarouselComponent;
     let fixture: ComponentFixture<CarouselComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -199,5 +199,31 @@ describe('CarouselComponent', () => {
         let drawingFromDB = [drawing];
         const result = component['findAvailableImages'](urlFromServer, drawingFromDB);
         expect(result).toEqual(drawingFromDB);
+    });
+
+    it('should fetch all drawings from db and local server', async () => {
+        let drawing = new Drawing('pizza', [], 'abc.png');
+        let drawingFromDB = [drawing];
+        let urlFromServer = ['abc.png'];
+        spyOn<any>(component['indexService'], 'getAllDrawingsFromDB').and.returnValue(Promise.resolve(drawingFromDB));
+        spyOn<any>(component['indexService'], 'getAllDrawingsFromLocalServer').and.returnValue(Promise.resolve(urlFromServer));
+        spyOn<any>(component, 'updateImagePlacement').and.stub();
+        spyOn<any>(component, 'updateMainImageURL').and.stub();
+        await component['fetchDrawings']();
+        expect(component['drawings']).toEqual(drawingFromDB);
+        expect(component['isLoading']).toBe(false);
+    });
+
+    it('should fetch drawings by tag and them from local server', async () => {
+        let drawing = new Drawing('pizza', ['non'], 'abc.png');
+        let drawingFromDB = [drawing];
+        let urlFromServer = ['abc.png'];
+        spyOn<any>(component['indexService'], 'searchByTags').and.returnValue(Promise.resolve(drawingFromDB));
+        spyOn<any>(component['indexService'], 'getAllDrawingsFromLocalServer').and.returnValue(Promise.resolve(urlFromServer));
+        spyOn<any>(component, 'updateImagePlacement').and.stub();
+        spyOn<any>(component, 'updateMainImageURL').and.stub();
+        await component.searchbyTags();
+        expect(component['drawings']).toEqual(drawingFromDB);
+        expect(component['isLoading']).toBe(false);
     });
 });
