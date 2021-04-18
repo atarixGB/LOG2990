@@ -1,23 +1,17 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { ComponentType } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
-import { CarouselComponent } from '@app/components/carousel/carousel-modal/carousel.component';
-import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
-import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
-import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
+import { KeyHandlerService } from '@app/services/key-handler/key-handler.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
-import { ClipboardService } from '@app/services/selection/clipboard.service';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription, throwError } from 'rxjs';
 
@@ -56,10 +50,9 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         private drawingService: DrawingService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
-        private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
         private autoSaveService: AutoSaveService,
-        private clipboardService: ClipboardService,
+        private keyHandlerService: KeyHandlerService,
     ) {
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
@@ -109,6 +102,8 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.drawingService.gridCtx = this.gridCtx;
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
+        this.keyHandlerService.baseCtx = this.baseCtx;
+        this.keyHandlerService.canvasSize = this.canvasSize;
 
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
@@ -128,8 +123,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
 
     ngOnChanges(): void {
         this.route.params.subscribe((params) => {
-            console.log(params.height, params.width);
-
             if (params.height && params.width) {
                 this.canvasSize.x = params.width;
                 this.canvasSize.y = params.height;
@@ -208,30 +201,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                this.moveSelectionService.handleKeyUp(event);
-            }
-        }
-
-        this.toolManagerService.handleKeyUp(event);
+        this.keyHandlerService.handleKeyUp(event);
     }
 
-    // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.modalHandler(event, NewDrawModalComponent, 'o');
-        this.modalHandler(event, SaveDrawingModalComponent, 's');
-        this.modalHandler(event, CarouselComponent, 'g');
-        this.modalHandler(event, ExportModalComponent, 'e');
-
-        if (this.selectionToolKeyHandler(event)) return;
-
-        if (this.dialog.openDialogs.length < 1) {
-            this.toolManagerService.handleHotKeysShortcut(event);
-        }
-
-        this.undoRedoToolKeyHandler(event);
+        this.keyHandlerService.handleKeyDown(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
@@ -295,79 +270,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         return this.canvasSize.y;
     }
 
-    private modalHandler(
-        event: KeyboardEvent,
-        component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent | CarouselComponent | ExportModalComponent>,
-        key: string,
-    ): void {
-        if (event.ctrlKey && event.key === key) {
-            event.preventDefault();
-            if (this.dialog.openDialogs.length === 0) {
-                if (key === 'g') {
-                    this.dialog.open(component, { data: this.isCanvasBlank() });
-                }
-                if (key === 'e') {
-                    this.dialog.open(component, {});
-                    this.exportService.imagePrevisualization();
-                    this.exportService.initializeExportParams();
-                } else {
-                    this.dialog.open(component, {});
-                }
-            }
-            return;
-        }
-    }
-
-    private selectionToolKeyHandler(event: KeyboardEvent): boolean {
-        if (event.ctrlKey && event.key === 'a') {
-            event.preventDefault();
-            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
-            this.selectionService.selectAll();
-        }
-
-        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
-            if (event.ctrlKey) {
-                switch (event.key) {
-                    case 'c':
-                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.copy();
-                        break;
-                    case 'x':
-                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.cut();
-                        break;
-                    case 'v':
-                        if (this.clipboardService.pasteAvailable) this.clipboardService.paste();
-                        break;
-                }
-                return true;
-            }
-
-            if (event.key === 'Delete' && this.clipboardService.actionsAreAvailable()) this.clipboardService.delete();
-
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                this.moveSelectionService.handleKeyDown(event);
-            }
-        }
-        return false;
-    }
-
-    private undoRedoToolKeyHandler(event: KeyboardEvent): void {
-        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
-            event.preventDefault();
-            this.undoRedoService.undo();
-        }
-
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.code === 'KeyZ' &&
-            this.undoRedoService.canRedo() &&
-            !this.toolManagerService.currentTool?.mouseDown
-        ) {
-            event.preventDefault();
-            this.undoRedoService.redo();
-        }
-    }
-
     async getNewImage(src: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -380,10 +282,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
             };
             img.src = src;
         });
-    }
-
-    private isCanvasBlank(): boolean {
-        return !this.baseCtx.getImageData(0, 0, this.width, this.height).data.some((channel) => channel !== 0);
     }
 
     private whiteBackgroundCanvas(): void {

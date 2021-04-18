@@ -46,6 +46,7 @@ export class CarouselComponent implements AfterViewInit {
         this.isDisabled = true;
         this.tagInput = '';
         this.decision = false;
+        console.log('jdhk');
     }
 
     async ngAfterViewInit(): Promise<void> {
