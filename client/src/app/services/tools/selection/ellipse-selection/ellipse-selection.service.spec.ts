@@ -5,6 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { EllipseSelectionService } from './ellipse-selection.service';
 
+// tslint:disable
 describe('EllipseSelectionService', () => {
     let service: EllipseSelectionService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;

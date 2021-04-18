@@ -6,7 +6,7 @@ import { RectangleService } from '@app/services/tools/rectangle/rectangle.servic
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { SelectionUtilsService } from '../utils/selection-utils.service';
+import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 import { ClipboardService } from './clipboard.service';
 
 // tslint:disable

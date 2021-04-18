@@ -7,12 +7,14 @@ const MAX_RGB = 255;
 export class SelectionTool extends Drawable {
     image: ImageData;
     clearImageDataPolygon: ImageData;
+    initialOrigin: Vec2;
     origin: Vec2;
     destination: Vec2;
+    polygonCoords: Vec2[];
+    initialWidth: number;
+    initialHeight: number;
     width: number;
     height: number;
-    initialOrigin: Vec2;
-    polygonCoords: Vec2[];
     isEllipse: boolean;
     isLasso: boolean;
 
@@ -27,7 +29,7 @@ export class SelectionTool extends Drawable {
     draw(ctx: CanvasRenderingContext2D): void {
         this.clearUnderneathShape(ctx);
         if (this.isEllipse) this.printEllipse(ctx);
-        else if (this.isLasso) this.printPolygon(this.image, ctx);
+        else if (this.isLasso) this.printPolygon(ctx);
         else {
             ctx.putImageData(this.image, this.origin.x, this.origin.y);
         }
@@ -38,10 +40,10 @@ export class SelectionTool extends Drawable {
         ctx.beginPath();
         if (this.isEllipse) {
             ctx.ellipse(
-                this.initialOrigin.x + this.width / 2,
-                this.initialOrigin.y + this.height / 2,
-                this.width / 2,
-                this.height / 2,
+                this.initialOrigin.x + this.initialWidth / 2,
+                this.initialOrigin.y + this.initialHeight / 2,
+                this.initialWidth / 2,
+                this.initialHeight / 2,
                 0,
                 2 * Math.PI,
                 0,
@@ -51,8 +53,8 @@ export class SelectionTool extends Drawable {
         } else if (this.isLasso) {
             const imageData = this.clearImageDataPolygon.data;
             let pixelCounter = 0;
-            for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
-                for (let j = this.origin.x; j < this.origin.x + this.width; j++) {
+            for (let i = this.initialOrigin.y; i < this.initialOrigin.y + this.initialHeight; i++) {
+                for (let j = this.initialOrigin.x; j < this.initialOrigin.x + this.initialWidth; j++) {
                     if (imageData[pixelCounter + PIXEL_LENGTH - 1] !== 0) {
                         for (let k = 0; k < PIXEL_LENGTH; k++) {
                             imageData[pixelCounter + k] = MAX_RGB;
@@ -61,9 +63,9 @@ export class SelectionTool extends Drawable {
                     pixelCounter += PIXEL_LENGTH;
                 }
             }
-            this.printPolygon(this.clearImageDataPolygon, ctx);
+            this.clearPolygon(ctx);
         } else {
-            ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.width, this.height);
+            ctx.fillRect(this.initialOrigin.x, this.initialOrigin.y, this.initialWidth, this.initialHeight);
             ctx.closePath();
         }
     }
@@ -81,16 +83,31 @@ export class SelectionTool extends Drawable {
         ctx.restore();
     }
 
-    private printPolygon(imageData: ImageData, ctx: CanvasRenderingContext2D): void {
+    private printPolygon(ctx: CanvasRenderingContext2D): void {
+        //console.log('print poly', this.origin, this.image);
+
         const canvas = document.createElement('canvas');
         canvas.width = this.width;
         canvas.height = this.height;
         const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
-        tmp.putImageData(imageData, 0, 0);
+        tmp.putImageData(this.image, 0, 0);
         ctx.save();
         ctx.clip(this.calculatePath2d());
-
         ctx.drawImage(tmp.canvas, this.origin.x, this.origin.y);
+        ctx.restore();
+    }
+
+    private clearPolygon(ctx: CanvasRenderingContext2D): void {
+        const canvas = document.createElement('canvas');
+        canvas.width = this.initialWidth;
+        canvas.height = this.initialHeight;
+        const tmp = canvas.getContext('2d') as CanvasRenderingContext2D;
+        tmp.putImageData(this.clearImageDataPolygon, 0, 0);
+        ctx.save();
+        ctx.clip(this.calculatePath2d());
+        //console.log('clear polygon', this.initialOrigin, this.clearImageDataPolygon);
+
+        ctx.drawImage(tmp.canvas, this.initialOrigin.x, this.initialOrigin.y);
         ctx.restore();
     }
 
