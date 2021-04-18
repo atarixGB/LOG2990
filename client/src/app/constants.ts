@@ -74,6 +74,7 @@ export const mouseEventRClick = {
     y: 25,
     button: 2,
 } as MouseEvent;
+
 export const COLOR_WINDOW_WIDTH = '500px';
 
 export const WIDTH = 20;
@@ -149,6 +150,7 @@ export const TWO_DECIMAL_MULTIPLIER = 100;
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
+
 // constants for bucket
 export const RGBA_COMPONENTS = 4;
 export const MAX_BYTE_VALUE = 255;

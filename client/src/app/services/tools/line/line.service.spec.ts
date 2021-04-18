@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
-import { Utils } from '@app/classes/math-utils';
+import { Utils } from '@app/classes/utils/math-utils';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, mouseEventLClick, TypeOfJunctions } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';

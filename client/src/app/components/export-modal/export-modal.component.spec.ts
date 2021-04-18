@@ -1,3 +1,4 @@
+import { MatRadioModule } from '@angular/material/radio';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -10,7 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ExportService } from '@app/services/export-image/export.service';
 import { ExportModalComponent } from './export-modal.component';
 // tslint:disable
-describe('ExportModalComponent', () => {
+fdescribe('ExportModalComponent', () => {
     let component: ExportModalComponent;
     let fixture: ComponentFixture<ExportModalComponent>;
     let exportServiceSpy: ExportService;
@@ -34,6 +35,7 @@ describe('ExportModalComponent', () => {
                 MatSelectModule,
                 ReactiveFormsModule,
                 BrowserAnimationsModule,
+                MatRadioModule,
             ],
             providers: [
                 {
@@ -78,7 +80,7 @@ describe('ExportModalComponent', () => {
 
     it('should verify if input string is valid', () => {
         const result = component.validateString('abc');
-        expect(result).toBeTruthy;
+        expect(result).toBeTruthy();
     });
 
     it('should change to imgur is selected', () => {

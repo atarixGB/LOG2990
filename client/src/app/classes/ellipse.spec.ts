@@ -5,7 +5,7 @@ import { Vec2 } from './vec2';
 import{TypeStyle} from '@app/interfaces-enums/type-style'
 
 // tslint:disable
-fdescribe('Ellipse ', () => {
+describe('Ellipse ', () => {
     let canvasTestHelper:CanvasTestHelper;
     beforeEach(()=>{
         canvasTestHelper=TestBed.inject(CanvasTestHelper);

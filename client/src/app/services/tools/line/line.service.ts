@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
 import { Line } from '@app/classes/line';
-import { Utils } from '@app/classes/math-utils';
+import { Utils } from '@app/classes/utils/math-utils';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, TypeOfJunctions } from '@app/constants';
