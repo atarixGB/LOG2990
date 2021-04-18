@@ -9,7 +9,7 @@ import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 import { CarouselComponent } from './carousel.component';
 //tslint:disable
-fdescribe('CarouselComponent', () => {
+describe('CarouselComponent', () => {
     let component: CarouselComponent;
     let fixture: ComponentFixture<CarouselComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;

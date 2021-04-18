@@ -120,7 +120,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
         this.whiteBackgroundCanvas();
     }
 
-    ngAfterViewChecked() {
+    ngAfterViewChecked(): void {
         this.route.params.subscribe((params) => {
             if (params.url) {
                 const img = new Image();
