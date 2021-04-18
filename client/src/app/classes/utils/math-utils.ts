@@ -1,4 +1,4 @@
-import { Vec2 } from './vec2';
+import { Vec2 } from '@app/classes/vec2';
 
 export const INFINITY = 10000;
 export const COLINEAR = 0;
