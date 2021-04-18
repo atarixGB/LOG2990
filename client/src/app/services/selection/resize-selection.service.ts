@@ -63,20 +63,6 @@ export class ResizeSelectionService {
         this.controlPointInResize();
     }
 
-    handleKeyDown(event: KeyboardEvent): void {
-        if (event.key === 'Shift') {
-            event.preventDefault();
-            this.shiftKey = true;
-        }
-    }
-
-    handleKeyUp(event: KeyboardEvent): void {
-        if (event.key === 'Shift') {
-            event.preventDefault();
-            this.shiftKey = false;
-        }
-    }
-
     printResize(ctx: CanvasRenderingContext2D): void {
         this.newOrigin = this.selectionObject.origin;
         const canvas = document.createElement('canvas');
@@ -113,7 +99,9 @@ export class ResizeSelectionService {
 
     private resizeTopLeft(): void {
         if (this.shiftKey) {
-            // todo
+            this.selectionObject.origin = this.mouseCoord;
+            this.resizeWidth = this.selectionObject.destination.x - this.selectionObject.origin.x;
+            this.resizeHeight = this.resizeWidth / this.getSelectionRatio();
         } else {
             this.selectionObject.origin = this.mouseCoord;
             this.resizeWidth = this.selectionObject.destination.x - this.selectionObject.origin.x;
@@ -123,7 +111,9 @@ export class ResizeSelectionService {
 
     private resizeTopRight(): void {
         if (this.shiftKey) {
-            // todo
+            this.selectionObject.origin.y = this.mouseCoord.y;
+            this.resizeHeight = this.selectionObject.destination.y - this.mouseCoord.y;
+            this.resizeWidth = this.resizeHeight / this.getSelectionRatio();
         } else {
             this.selectionObject.origin.y = this.mouseCoord.y;
             this.resizeWidth = this.mouseCoord.x - this.selectionObject.origin.x;
@@ -143,7 +133,9 @@ export class ResizeSelectionService {
 
     private resizeBottomLeft(): void {
         if (this.shiftKey) {
-            // todo
+            this.selectionObject.origin.x = this.mouseCoord.x;
+            this.resizeWidth = this.selectionObject.destination.x - this.mouseCoord.x;
+            this.resizeHeight = this.resizeWidth / this.getSelectionRatio();
         } else {
             this.selectionObject.origin.x = this.mouseCoord.x;
             this.resizeWidth = this.selectionObject.destination.x - this.mouseCoord.x;
