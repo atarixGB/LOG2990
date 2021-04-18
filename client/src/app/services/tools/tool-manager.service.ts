@@ -8,7 +8,7 @@ import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PaintBucketService } from './paint-bucket/paint-bucket.service';
-import { PencilService } from './pencil/pencil-service';
+import { PencilService } from './pencil/pencil.service';
 import { PipetteService } from './pipette/pipette.service';
 import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';

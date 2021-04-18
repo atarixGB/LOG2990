@@ -1,16 +1,16 @@
-import { MatIconModule } from '@angular/material/icon';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
 import { Drawing } from '@common/communication/drawing';
 import { CarouselComponent } from './carousel.component';
-import { FormsModule } from '@angular/forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //tslint:disable
 describe('CarouselComponent', () => {
     let component: CarouselComponent;
@@ -28,7 +28,15 @@ describe('CarouselComponent', () => {
         drawingServiceSpy = jasmine.createSpyObj('DrawingService', ['']);
 
         TestBed.configureTestingModule({
-            imports: [HttpClientTestingModule, RouterTestingModule, MatDialogModule, MatProgressSpinnerModule, MatIconModule,FormsModule, BrowserAnimationsModule],
+            imports: [
+                HttpClientTestingModule,
+                RouterTestingModule,
+                MatDialogModule,
+                MatProgressSpinnerModule,
+                MatIconModule,
+                FormsModule,
+                BrowserAnimationsModule,
+            ],
             declarations: [CarouselComponent],
             providers: [
                 { provide: MatDialogRef, useValue: { close: dialogSpy } },
