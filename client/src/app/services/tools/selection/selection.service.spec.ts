@@ -14,7 +14,7 @@ import { LassoService } from './lasso/lasso.service';
 import { SelectionService } from './selection.service';
 
 // tslint:disable
-fdescribe('SelectionService', () => {
+describe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
@@ -242,7 +242,27 @@ fdescribe('SelectionService', () => {
         expect(terminateSelectionSpy).toHaveBeenCalled();
     });
 
+    it('should change resize selection shiftkey to true if shift key is pressed', () => {
+        const keyboardEvent = { key: 'Shift', preventDefault(): void {} } as KeyboardEvent;
 
+        service.handleKeyDown(keyboardEvent);
+        expect(resizeSelectionServiceSpy.shiftKey).toBeTrue();
+    });
+
+    it('should change resize selection shiftkey to false if shift key is released', () => {
+        const keyboardEvent = { key: 'Shift', preventDefault(): void {} } as KeyboardEvent;
+
+        service.handleKeyUp(keyboardEvent);
+        expect(resizeSelectionServiceSpy.shiftKey).toBeFalse();
+    });
+
+    it('should not change resize selection shiftkey to false if shift key is released', () => {
+        const keyboardEvent = { key: 'X', preventDefault(): void {} } as KeyboardEvent;
+        resizeSelectionServiceSpy.shiftKey = true;
+
+        service.handleKeyUp(keyboardEvent);
+        expect(resizeSelectionServiceSpy.shiftKey).toBeTrue();
+    });
 
     it('should call handleKeyDown of ellipseService if isEllipse is true', () => {
         const keyboardEvent = {} as KeyboardEvent;
@@ -258,6 +278,20 @@ fdescribe('SelectionService', () => {
         expect(rectangleServiceSpy.handleKeyDown).not.toHaveBeenCalled();
     });
 
+    it('should call handleKeyUp of ellipseService if isEllipse is true', () => {
+        const keyboardEvent = {} as KeyboardEvent;
+        service.isEllipse = true;
+        service.isLasso = false;
+        ellipseServiceSpy.handleKeyUp.and.stub();
+        lassoServiceSpy.handleKeyUp.and.stub();
+        rectangleServiceSpy.handleKeyUp.and.stub();
+
+        service.handleKeyUp(keyboardEvent);
+        expect(ellipseServiceSpy.handleKeyUp).toHaveBeenCalled();
+        expect(lassoServiceSpy.handleKeyUp).not.toHaveBeenCalled();
+        expect(rectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
+    });
+
     it('should call handleKeyDown of lassoService if isLasso is true', () => {
         const keyboardEvent = {} as KeyboardEvent;
         service.isEllipse = false;
@@ -270,6 +304,20 @@ fdescribe('SelectionService', () => {
         expect(ellipseServiceSpy.handleKeyDown).not.toHaveBeenCalled();
         expect(lassoServiceSpy.handleKeyDown).toHaveBeenCalled();
         expect(rectangleServiceSpy.handleKeyDown).not.toHaveBeenCalled();
+    });
+
+    it('should call handleKeyUp of lassoService if isLasso is true', () => {
+        const keyboardEvent = {} as KeyboardEvent;
+        service.isEllipse = false;
+        service.isLasso = true;
+        ellipseServiceSpy.handleKeyUp.and.stub();
+        lassoServiceSpy.handleKeyUp.and.stub();
+        rectangleServiceSpy.handleKeyUp.and.stub();
+
+        service.handleKeyUp(keyboardEvent);
+        expect(ellipseServiceSpy.handleKeyUp).not.toHaveBeenCalled();
+        expect(lassoServiceSpy.handleKeyUp).toHaveBeenCalled();
+        expect(rectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
     });
 
     it('should get image data from baseCtx and set attributes correctly when selecting all canvas', () => {
