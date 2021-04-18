@@ -69,7 +69,7 @@ fdescribe('CarouselComponent', () => {
         drawingServiceSpy.canvas = document.createElement('canvas');
         routerSpy.navigate.and.returnValue(Promise.resolve());
         component['mainDrawingURL'] = 'poly.png';
-        component.openDrawing();
+        component['openEditorWithDrawing']();
 
         fixture.whenStable().then(() => {
             fixture.detectChanges();
@@ -101,16 +101,15 @@ fdescribe('CarouselComponent', () => {
         component.isCanvaEmpty = false;
         component['decision'] = true;
         spyOn<any>(window, 'confirm').and.returnValue(true);
-        const openDrawingSpy = spyOn<any>(component, 'openDrawing').and.stub();
+        const openDrawingSpy = spyOn<any>(component, 'openEditorWithDrawing').and.stub();
         component.loadImage();
         expect(openDrawingSpy).toHaveBeenCalled();
     });
 
     it('should open drawing if canvas is empty', () => {
         component.isCanvaEmpty = false;
-
         spyOn<any>(window, 'confirm').and.returnValue(false);
-        const openDrawingSpy = spyOn<any>(component, 'openDrawing').and.stub();
+        const openDrawingSpy = spyOn<any>(component, 'openEditorWithDrawing').and.stub();
         component.loadImage();
         expect(openDrawingSpy).not.toHaveBeenCalled();
     });
@@ -128,9 +127,9 @@ fdescribe('CarouselComponent', () => {
     });
 
     it('should put updateMainURL', () => {
-        const draw  = new Drawing ('allo', [], 'img.png');
+        const draw = new Drawing('allo', [], 'img.png');
 
-        component['placement'][1]= draw;
+        component['placement'][1] = draw;
         component['updateMainImageURL']();
 
         expect(component['mainDrawingURL']).toEqual('img.png');
@@ -148,14 +147,9 @@ fdescribe('CarouselComponent', () => {
         expect(component['index']).toEqual(0);
     });
 
-    it('should give right modulo', () => {
-        let testResult = component['mod'](-1, 4);
-        expect(testResult).toBe(3);
-    });
-
     it('should put the right image on placement', () => {
         let draw = new Drawing('test', [], 'test.png');
-        component.imageCards = [draw];
+        component.drawings = [draw];
         component.placement = [];
 
         component['updateImagePlacement']();
@@ -201,10 +195,9 @@ fdescribe('CarouselComponent', () => {
 
     it('should verify if drawing is in server and also in db', async () => {
         let urlFromServer = ['abc.png', 'pizza.png'];
-        let drawing = new Drawing('pizza',[],'abc.png');
-        let drawingFromDB = [drawing]
-        component['verifyImages'](urlFromServer, drawingFromDB);
-        expect(component.imageCards).toEqual(drawingFromDB);
+        let drawing = new Drawing('pizza', [], 'abc.png');
+        let drawingFromDB = [drawing];
+        const result = component['findAvailableImages'](urlFromServer, drawingFromDB);
+        expect(result).toEqual(drawingFromDB);
     });
-
 });

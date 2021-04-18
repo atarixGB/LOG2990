@@ -9,7 +9,6 @@ import {
     HostListener,
     OnChanges,
     OnDestroy,
-    OnInit,
     ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -37,7 +36,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges, AfterViewChecked {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, AfterViewChecked {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
@@ -89,7 +88,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.subscription.unsubscribe();
     }
 
-    ngOnInit(): void {}
     ngAfterViewInit(): void {
         this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
         this.workingArea.nativeElement.style.height = WORKING_AREA_LENGHT;
@@ -317,21 +315,22 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent | CarouselComponent | ExportModalComponent>,
         key: string,
     ): void {
-        if (event.ctrlKey && event.key === key) {
+        if (event.ctrlKey && event.key === key && this.dialog.openDialogs.length === 0) {
             event.preventDefault();
-            if (this.dialog.openDialogs.length === 0) {
-                if (key === 'g') {
+
+            switch (event.key) {
+                case 'g':
                     this.dialog.open(component, { data: this.isCanvasBlank() });
-                }
-                if (key === 'e') {
-                    this.dialog.open(component, {});
+                    break;
+                case 'e':
                     this.exportService.imagePrevisualization();
                     this.exportService.initializeExportParams();
-                } else {
                     this.dialog.open(component, {});
-                }
+                    break;
+                default:
+                    this.dialog.open(component, {});
+                    break;
             }
-            return;
         }
     }
 

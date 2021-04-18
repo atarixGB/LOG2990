@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild }
 import { MatButton } from '@angular/material/button';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Utils } from '@app/classes/math-utils';
 import { DrawingParams } from '@app/components/drawing/drawing-params';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -15,14 +16,14 @@ import { DrawingData } from '@common/communication/drawing-data';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
+    readonly URL_POSITION: number = 4;
+
     isLoading: boolean;
     placement: Drawing[];
     isDisabled: boolean;
     tags: string[];
     tagInput: string;
-    imageCards: Drawing[];
-
-    readonly URL_POSITION: number = 4;
+    drawings: Drawing[];
 
     private index: number;
     private mainDrawingURL: string;
@@ -40,7 +41,7 @@ export class CarouselComponent implements AfterViewInit {
         @Inject(MAT_DIALOG_DATA) public isCanvaEmpty: boolean,
     ) {
         this.index = 0;
-        this.imageCards = [];
+        this.drawings = [];
         this.placement = [];
         this.tags = [];
         this.isLoading = true;
@@ -48,26 +49,6 @@ export class CarouselComponent implements AfterViewInit {
         this.isDisabled = true;
         this.tagInput = '';
         this.decision = false;
-    }
-
-    async ngAfterViewInit(): Promise<void> {
-        this.getDrawings();
-    }
-
-    openDrawing(): void {
-        const params: DrawingParams = {
-            url: this.mainDrawingURL,
-        };
-        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
-        this.dialogRef.close();
-
-        const drawing: DrawingData = {
-            title: '',
-            width: this.drawingService.canvas.width,
-            height: this.drawingService.canvas.height,
-            body: this.drawingService.canvas.toDataURL(),
-        };
-        this.autoSaveService.saveCanvasState(drawing);
     }
 
     addTag(): void {
@@ -93,11 +74,39 @@ export class CarouselComponent implements AfterViewInit {
         this.updateMainImageURL();
     }
 
+    loadImage(): void {
+        if (this.isCanvaEmpty === null) {
+            this.isCanvaEmpty = true;
+        }
+        if (!this.isCanvaEmpty) {
+            this.decision = confirm('Voulez-vous abandonner votre dessin ?');
+            if (this.decision) {
+                this.openEditorWithDrawing();
+            }
+        } else {
+            this.openEditorWithDrawing();
+        }
+    }
+
+    @HostListener('document:keydown', ['$event'])
+    handleKeyDown(event: KeyboardEvent): void {
+        if (event.code === 'ArrowLeft') {
+            this.previousImages();
+        }
+        if (event.code === 'ArrowRight') {
+            this.nextImages();
+        }
+    }
+
+    async ngAfterViewInit(): Promise<void> {
+        this.fetchDrawings();
+    }
+
     async searchbyTags(): Promise<void> {
         await this.indexService
             .searchByTags(this.tags)
             .then((result) => {
-                this.imageCards = result;
+                this.drawings = result;
                 this.updateImagePlacement();
             })
             .catch((error) => {
@@ -114,38 +123,30 @@ export class CarouselComponent implements AfterViewInit {
         this.indexService
             .deleteDrawingById(path(this.mainDrawingURL))
             .then(() => {
-                this.getDrawings();
+                this.fetchDrawings();
             })
             .catch((error) => {
                 alert(`Un problème avec le serveur est survenu. Le dessin n'a pas pu être supprimé. Veuillez réessayer.\nError ${error}`);
             });
     }
 
-    loadImage(): void {
-        if (this.isCanvaEmpty === null) {
-            this.isCanvaEmpty = true;
-        }
-        if (!this.isCanvaEmpty) {
-            this.decision = confirm('Voulez-vous abandonner votre dessin ?');
-            if (this.decision) {
-                this.openDrawing();
-            }
-        } else {
-            this.openDrawing();
-        }
+    private openEditorWithDrawing(): void {
+        const params: DrawingParams = {
+            url: this.mainDrawingURL,
+        };
+        this.router.navigate(['/'], { skipLocationChange: true }).then(() => this.router.navigate(['editor', params]));
+        this.dialogRef.close();
+
+        const drawing: DrawingData = {
+            title: '',
+            width: this.drawingService.canvas.width,
+            height: this.drawingService.canvas.height,
+            body: this.drawingService.canvas.toDataURL(),
+        };
+        this.autoSaveService.saveCanvasState(drawing);
     }
 
-    @HostListener('document:keydown', ['$event'])
-    handleKeyDown(event: KeyboardEvent): void {
-        if (event.code === 'ArrowLeft') {
-            this.previousImages();
-        }
-        if (event.code === 'ArrowRight') {
-            this.nextImages();
-        }
-    }
-
-    private getDrawings(): void {
+    private fetchDrawings(): void {
         this.isLoading = true;
         let urlFromServer: string[];
         let drawingFromDB: Drawing[];
@@ -161,7 +162,7 @@ export class CarouselComponent implements AfterViewInit {
                         urlFromServer = url;
                     })
                     .then(() => {
-                        this.verifyImages(urlFromServer, drawingFromDB);
+                        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
                         this.isLoading = false;
                         this.updateImagePlacement();
                         this.updateMainImageURL();
@@ -169,14 +170,10 @@ export class CarouselComponent implements AfterViewInit {
             });
     }
 
-    private mod(n: number, m: number): number {
-        return ((n % m) + m) % m;
-    }
-
     private updateImagePlacement(): void {
-        this.placement[0] = this.imageCards[this.mod(this.index - 1, this.imageCards.length)];
-        this.placement[1] = this.imageCards[this.mod(this.index, this.imageCards.length)];
-        this.placement[2] = this.imageCards[this.mod(this.index + 1, this.imageCards.length)];
+        this.placement[0] = this.drawings[Utils.mod(this.index - 1, this.drawings.length)];
+        this.placement[1] = this.drawings[Utils.mod(this.index, this.drawings.length)];
+        this.placement[2] = this.drawings[Utils.mod(this.index + 1, this.drawings.length)];
     }
 
     private updateMainImageURL(): void {
@@ -185,13 +182,15 @@ export class CarouselComponent implements AfterViewInit {
         }
     }
 
-    private verifyImages(urlFromServer: string[], drawingFromDB: Drawing[]): void {
+    private findAvailableImages(urlFromServer: string[], drawingFromDB: Drawing[]): Drawing[] {
+        let availableImages = [];
         for (const url of urlFromServer) {
             for (const drawing of drawingFromDB) {
                 if (drawing.imageURL === url) {
-                    this.imageCards.push(drawing);
+                    availableImages.push(drawing);
                 }
             }
         }
+        return availableImages;
     }
 }
