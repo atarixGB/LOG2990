@@ -6,7 +6,7 @@ import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
-import { SelectionUtilsService } from '../utils/selection-utils.service';
+import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 import { ResizeSelectionService } from './resize-selection.service';
 
 const DX = 3;
@@ -168,10 +168,12 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     }
 
     private handleResizedSelectionOnMouseUp(): void {
+        this.selectionService.imageMoved = true;
         this.selectionObject = this.selectionUtilsService.endResizeSelection();
         this.selectionService.selectionObject = this.selectionObject;
         this.selectionService.initialiseServiceDimensions();
-        this.selectionService.getSelectionData(this.drawingService.baseCtx);
+        this.selectionService.getSelectionData(this.drawingService.previewCtx);
+        this.selectionUtilsService.createBoundaryBox(this.selectionObject);
         this.origin = this.selectionObject.origin;
         this.destination = this.selectionObject.destination;
         this.selectionData = this.selectionService.selection;

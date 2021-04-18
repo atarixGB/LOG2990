@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
-import { LassoService } from '../tools/selection/lasso/lasso.service';
 
 @Injectable({
     providedIn: 'root',

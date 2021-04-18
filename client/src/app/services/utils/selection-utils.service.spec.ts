@@ -2,9 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
-import { DrawingService } from '../drawing/drawing.service';
+import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionUtilsService } from './selection-utils.service';
 
+// tslint:disable
 describe('SelectionUtilsService', () => {
     let service: SelectionUtilsService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -239,7 +240,6 @@ describe('SelectionUtilsService', () => {
     });
 
     it('should end resize selection', () => {
-        const boundaryBoxSpy = spyOn<any>(service, 'createBoundaryBox').and.stub();
         const reajustSpy = spyOn<any>(service, 'reajustOriginAndDestination').and.callThrough();
 
         spyOn<any>(service['resizeSelectionService'], 'printResize').and.callFake(() => {
@@ -255,7 +255,6 @@ describe('SelectionUtilsService', () => {
         expect(service['width']).toBe(10);
         expect(service['height']).toBe(5);
         expect(service['destination']).toEqual({ x: 10, y: 5 } as Vec2);
-        expect(boundaryBoxSpy).toHaveBeenCalled();
         expect(reajustSpy).toHaveBeenCalled();
     });
 });
