@@ -692,7 +692,7 @@ describe('SelectionService', () => {
         service.origin = { x: 10, y: 10 };
         service.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 100, y: 100 }, 100, 100);
 
-        service['handleActiveSelectionOnMouseUp'](mouseEventLClick);
+        service['handleActiveSelectionOnMouseUp']();
         expect(service.activeSelection).toBeTrue();
         expect(service.mouseDown).toBeFalse();
         expect(calculateDimensionSpy).toHaveBeenCalled();
@@ -708,7 +708,7 @@ describe('SelectionService', () => {
         const calculateDimensionSpy = spyOn<any>(service, 'calculateDimension').and.stub();
         const getSelectionDataSpy = spyOn<any>(service, 'getSelectionData').and.stub();
 
-        service['handleActiveSelectionOnMouseUp'](mouseEventLClick);
+        service['handleActiveSelectionOnMouseUp']();
         expect(calculateDimensionSpy).not.toHaveBeenCalled();
         expect(getSelectionDataSpy).not.toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.createControlPoints).not.toHaveBeenCalled();

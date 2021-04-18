@@ -239,7 +239,7 @@ describe('SelectionUtilsService', () => {
     });
 
     it('should end resize selection', () => {
-        const boundaryBoxSpy = spyOn<any>(service, 'createBoundaryBox').and.stub();
+        //const boundaryBoxSpy = spyOn<any>(service, 'createBoundaryBox').and.stub();
         const reajustSpy = spyOn<any>(service, 'reajustOriginAndDestination').and.callThrough();
 
         spyOn<any>(service['resizeSelectionService'], 'printResize').and.callFake(() => {

@@ -11,7 +11,7 @@ fdescribe('Selection', () => {
 
     });
     it('should create', () => {
-        expect(new SelectionTool({} as Vec2,{} as Vec2, 2, 2,)).toBeTruthy();
+        expect(new SelectionTool({x:1,y:1} as Vec2,{x:4, y:4} as Vec2, 2, 2,)).toBeTruthy();
     });
 
     it('draw should call clearUnderneathShape',()=>{
@@ -23,7 +23,7 @@ fdescribe('Selection', () => {
         selection.clearImageDataPolygon=new ImageData(100,100);
         selection.initialOrigin={x:1,y:1};
         selection.polygonCoords=[{x:1,y:1},{x:2,y:2}];
-        const spy =spyOn<any>(selection,'clearUnderneathShape').and.stub();
+        const spy =spyOn<any>(selection,'clearUnderneathShape');
         selection.draw(ctx);
         expect(spy).toHaveBeenCalled();
     });
@@ -40,7 +40,7 @@ fdescribe('Selection', () => {
 
         const spy= spyOn<any>(selection,'printEllipse');
         selection.draw(ctx);
-        expect(spy).toHaveBeenCalled;
+        expect(spy).toHaveBeenCalled();
     });
 
     it('draw should call printPolygon if isLasso is true',()=>{
@@ -54,7 +54,7 @@ fdescribe('Selection', () => {
         selection.polygonCoords=[{x:1,y:1},{x:2,y:2}];
         const spy= spyOn<any>(selection,'printPolygon');
         selection.draw(ctx);
-        expect(spy).toHaveBeenCalled;
+        expect(spy).toHaveBeenCalled();
     });
 
     it('draw should call putImagedata if isLasso and isEllipse are false',()=>{

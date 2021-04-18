@@ -49,7 +49,6 @@ export class SelectionTool extends Drawable {
             ctx.fill();
             ctx.closePath();
         } else if (this.isLasso) {
-            console.log(this.clearImageDataPolygon);
             const imageData = this.clearImageDataPolygon.data;
             let pixelCounter = 0;
             for (let i = this.origin.y; i < this.origin.y + this.height; i++) {
