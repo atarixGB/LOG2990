@@ -25,13 +25,10 @@ export class SelectionTool extends Drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        console.log('draw');
         this.clearUnderneathShape(ctx);
         if (this.isEllipse) this.printEllipse(ctx);
         else if (this.isLasso) this.printPolygon(this.image, ctx);
         else {
-            console.log('popop');
-
             ctx.putImageData(this.image, this.origin.x, this.origin.y);
         }
     }
