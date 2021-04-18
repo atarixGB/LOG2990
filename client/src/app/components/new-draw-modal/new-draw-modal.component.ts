@@ -9,7 +9,7 @@ import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service
 })
 export class NewDrawModalComponent {
     constructor(
-        public dialogRef: MatDialogRef<NewDrawModalComponent>,
+        private dialogRef: MatDialogRef<NewDrawModalComponent>,
         private newDrawService: NewDrawingService,
         private autoSaveService: AutoSaveService,
     ) {}

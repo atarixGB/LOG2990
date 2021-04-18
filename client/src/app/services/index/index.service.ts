@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
@@ -18,25 +18,37 @@ export class IndexService {
 
     async postDrawing(message: DrawingData): Promise<void> {
         const url: string = this.BASE_URL + this.DATABASE_URL + this.SEND_URL;
-        return new Promise<void>((resolve, reject) => {
+        return new Promise<void>((resolve) => {
             const httpOptions = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
             return this.http.post(url, message, { responseType: 'text' as 'json', headers: httpOptions }).subscribe(
                 (data) => resolve(),
-                (error) => reject(),
+                (error) => alert("Le dessin n'a pas pu être sauvegardé sur le serveur"),
             );
         });
     }
 
+    async uploadToImgur(url: string): Promise<string> {
+        return new Promise<string>((resolve) => {
+            fetch('https://api.imgur.com/3/image', {
+                method: 'post',
+                headers: {
+                    Authorization: 'Client-ID 13c4ad7558b3e6b',
+                },
+                body: url,
+            })
+                .then((data) => data.json())
+                .then((data) => resolve(data.data.link));
+        });
+    }
+
     async deleteDrawingById(id: string): Promise<void> {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.${this.FILE_FORMAT}`;
             this.http.delete(url, { responseType: 'text' }).subscribe(
                 () => {
                     resolve();
                 },
-                (error) => {
-                    return this.handleError(error);
-                },
+                (error) => alert('Impossible de supprimer le dessin du serveur'),
             );
         });
     }
@@ -48,9 +60,7 @@ export class IndexService {
                 (drawing: DrawingData[]) => {
                     resolve(this.drawingDataToDrawing(drawing));
                 },
-                (error) => {
-                    return this.handleError(error);
-                },
+                (error) => alert('Impossible de retrouver tous les dessins de la base de donnée'),
             );
         });
     }
@@ -62,9 +72,7 @@ export class IndexService {
                 (drawing: string[]) => {
                     resolve(drawing);
                 },
-                (error) => {
-                    return this.handleError(error);
-                },
+                (error) => alert('Impossible de retrouver tous les dessins du serveur'),
             );
         });
     }
@@ -99,15 +107,5 @@ export class IndexService {
                 });
             });
         }
-    }
-
-    private handleError(error: HttpErrorResponse): void {
-        let errorMessage = 'Erreur inconnue';
-        if (error.error instanceof ErrorEvent) {
-            errorMessage = `Erreur: ${error.error.message}`;
-        } else {
-            errorMessage = `Erreur: ${error.status}\n${error.message}`;
-        }
-        alert(errorMessage);
     }
 }

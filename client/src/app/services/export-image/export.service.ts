@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FiltersList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { IndexService } from '@app/services/index/index.service';
 
 const PREVIEW_ORIGIN_X = 0;
 const PREVIEW_ORIGIN_Y = 0;
@@ -16,21 +17,18 @@ export class ExportService {
     canvas: HTMLCanvasElement;
     resizeWidth: number;
     resizeHeight: number;
-
     drawingTitle: string;
     currentDrawing: string;
-    currentImageFormat: string;
-    selectedFilter: FiltersList;
-    currentFilter: string | undefined;
-    filterIntensity: number;
-
-    filtersBindings: Map<FiltersList, string>;
-
     imgurURL: string;
+    currentImageFormat: string;
+    filterIntensity: number;
+    currentFilter: string | undefined;
+    selectedFilter: FiltersList;
 
+    private filtersBindings: Map<FiltersList, string>;
     private image: HTMLImageElement;
 
-    constructor(private drawingService: DrawingService) {
+    constructor(private drawingService: DrawingService, private indexService: IndexService) {
         this.filtersBindings = new Map<FiltersList, string>();
         this.filtersBindings
             .set(FiltersList.None, 'none')
@@ -92,7 +90,7 @@ export class ExportService {
     }
 
     exportDrawing(): void {
-        const tempCanva = this.previsualizationToBiggerCanvas();
+        const tempCanva = this.prevToBaseCanvas();
         const link = document.createElement('a');
         this.image.src = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
@@ -100,7 +98,14 @@ export class ExportService {
         link.click();
     }
 
-    previsualizationToBiggerCanvas(): CanvasRenderingContext2D {
+    async uploadToImgur(): Promise<void> {
+        const tempCanva = this.prevToBaseCanvas();
+        let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
+        url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
+        await this.indexService.uploadToImgur(url).then((info) => (this.imgurURL = info));
+    }
+
+    private prevToBaseCanvas(): CanvasRenderingContext2D {
         const canvas = document.createElement('canvas');
         const canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
         canvas.width = this.drawingService.canvas.width;
@@ -109,27 +114,7 @@ export class ExportService {
             canvasCtx.filter = this.currentFilter;
         }
         canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
-
         return canvasCtx;
-    }
-
-    async uploadToImgur(): Promise<void> {
-        const tempCanva = this.previsualizationToBiggerCanvas();
-        let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
-        url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
-        return new Promise<void>(() => {
-            fetch('https://api.imgur.com/3/image', {
-                method: 'post',
-                headers: {
-                    Authorization: 'Client-ID 13c4ad7558b3e6b',
-                },
-                body: url,
-            })
-                .then((data) => data.json())
-                .then((data) => {
-                    this.imgurURL = data.data.link;
-                });
-        });
     }
 
     private getResizedCanvas(): void {

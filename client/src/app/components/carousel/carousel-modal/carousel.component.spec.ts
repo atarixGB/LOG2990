@@ -89,6 +89,9 @@ describe('CarouselComponent', () => {
     });
 
     it('should not set isCanvaEmpty to true when isCanvasEmpty is not null', () => {
+        const confirmMock = jasmine.createSpyObj('confirmMock', ['confirm']);
+        window.confirm = confirmMock;
+        spyOn<any>(window, 'confirm').and.returnValue(false);
         drawingServiceSpy.canvas = document.createElement('canvas');
         drawingServiceSpy.canvas.width = 100;
         drawingServiceSpy.canvas.height = 100;
@@ -100,6 +103,8 @@ describe('CarouselComponent', () => {
     it('should open drawing if canvas is NOT empty', () => {
         component.isCanvaEmpty = false;
         component['decision'] = true;
+        const confirmMock = jasmine.createSpyObj('confirmMock', ['confirm']);
+        window.confirm = confirmMock;
         spyOn<any>(window, 'confirm').and.returnValue(true);
         const openDrawingSpy = spyOn<any>(component, 'openEditorWithDrawing').and.stub();
         component.loadImage();
@@ -108,6 +113,8 @@ describe('CarouselComponent', () => {
 
     it('should open drawing if canvas is empty', () => {
         component.isCanvaEmpty = false;
+        const confirmMock = jasmine.createSpyObj('confirmMock', ['confirm']);
+        window.confirm = confirmMock;
         spyOn<any>(window, 'confirm').and.returnValue(false);
         const openDrawingSpy = spyOn<any>(component, 'openEditorWithDrawing').and.stub();
         component.loadImage();
@@ -199,5 +206,31 @@ describe('CarouselComponent', () => {
         let drawingFromDB = [drawing];
         const result = component['findAvailableImages'](urlFromServer, drawingFromDB);
         expect(result).toEqual(drawingFromDB);
+    });
+
+    it('should fetch all drawings from db and local server', async () => {
+        let drawing = new Drawing('pizza', [], 'abc.png');
+        let drawingFromDB = [drawing];
+        let urlFromServer = ['abc.png'];
+        spyOn<any>(component['indexService'], 'getAllDrawingsFromDB').and.returnValue(Promise.resolve(drawingFromDB));
+        spyOn<any>(component['indexService'], 'getAllDrawingsFromLocalServer').and.returnValue(Promise.resolve(urlFromServer));
+        spyOn<any>(component, 'updateImagePlacement').and.stub();
+        spyOn<any>(component, 'updateMainImageURL').and.stub();
+        await component['fetchDrawings']();
+        expect(component['drawings']).toEqual(drawingFromDB);
+        expect(component['isLoading']).toBe(false);
+    });
+
+    it('should fetch drawings by tag and them from local server', async () => {
+        let drawing = new Drawing('pizza', ['non'], 'abc.png');
+        let drawingFromDB = [drawing];
+        let urlFromServer = ['abc.png'];
+        spyOn<any>(component['indexService'], 'searchByTags').and.returnValue(Promise.resolve(drawingFromDB));
+        spyOn<any>(component['indexService'], 'getAllDrawingsFromLocalServer').and.returnValue(Promise.resolve(urlFromServer));
+        spyOn<any>(component, 'updateImagePlacement').and.stub();
+        spyOn<any>(component, 'updateMainImageURL').and.stub();
+        await component.searchbyTags();
+        expect(component['drawings']).toEqual(drawingFromDB);
+        expect(component['isLoading']).toBe(false);
     });
 });
