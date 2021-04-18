@@ -7,7 +7,7 @@ import { ShapeService } from '@app/services/tools/shape/shape.service';
 import { RectangleService } from './rectangle.service';
 
 // tslint:disable
-fdescribe('RectangleService', () => {
+describe('RectangleService', () => {
     let service: RectangleService;
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
@@ -32,7 +32,16 @@ fdescribe('RectangleService', () => {
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'pathData']);
-        shapeServiceSpy = jasmine.createSpyObj('ShapeService', ['drawShape', 'changeType', 'onMouseDown', 'clearPath']);
+        shapeServiceSpy = jasmine.createSpyObj('ShapeService', [
+            'drawShape',
+            'changeType',
+            'onMouseDown',
+            'clearPath',
+            'lowerLeft',
+            'upperRight',
+            'upperLeft',
+            'lowerRight',
+        ]);
         previewCtxStub = jasmine.createSpyObj('CanvasRendringContext', [
             'putImageData',
             'beginPath',
@@ -318,5 +327,103 @@ fdescribe('RectangleService', () => {
         expect(service['drawingService'].previewCtx.strokeStyle).toEqual('#00ff00');
         expect(fillSpy).toHaveBeenCalled();
         expect(strokeSpy).toHaveBeenCalled();
+    });
+
+    it('should update border when fill value and stroke value', () => {
+        service.isSelection = false;
+        service['strokeValue'] = true;
+        service['fillValue'] = true;
+        const fillSpy = spyOn<any>(service['drawingService'].previewCtx, 'fill').and.stub();
+        const strokeSpy = spyOn<any>(service['drawingService'].previewCtx, 'stroke').and.stub();
+        service['updateBorderType'](service['drawingService'].previewCtx);
+        expect(service['drawingService'].previewCtx.fillStyle).toEqual('#ff0000');
+        expect(service['drawingService'].previewCtx.strokeStyle).toEqual('#00ff00');
+        expect(fillSpy).toHaveBeenCalled();
+        expect(strokeSpy).toHaveBeenCalled();
+    });
+
+    it('should update border when fill value and stroke value', () => {
+        service.isSelection = false;
+        service['strokeValue'] = true;
+        service['fillValue'] = true;
+        const fillSpy = spyOn<any>(service['drawingService'].previewCtx, 'fill').and.stub();
+        const strokeSpy = spyOn<any>(service['drawingService'].previewCtx, 'stroke').and.stub();
+        service['updateBorderType'](service['drawingService'].previewCtx);
+        expect(service['drawingService'].previewCtx.fillStyle).toEqual('#ff0000');
+        expect(service['drawingService'].previewCtx.strokeStyle).toEqual('#00ff00');
+        expect(fillSpy).toHaveBeenCalled();
+        expect(strokeSpy).toHaveBeenCalled();
+    });
+
+    it('should update border when fill value and stroke value', () => {
+        service.isSelection = false;
+        service['strokeValue'] = true;
+        service['fillValue'] = true;
+        const fillSpy = spyOn<any>(service['drawingService'].previewCtx, 'fill').and.stub();
+        const strokeSpy = spyOn<any>(service['drawingService'].previewCtx, 'stroke').and.stub();
+        service['updateBorderType'](service['drawingService'].previewCtx);
+        expect(service['drawingService'].previewCtx.fillStyle).toEqual('#ff0000');
+        expect(service['drawingService'].previewCtx.strokeStyle).toEqual('#00ff00');
+        expect(fillSpy).toHaveBeenCalled();
+        expect(strokeSpy).toHaveBeenCalled();
+    });
+
+    it('should call lower left if mouse go to low-right', () => {
+        service['pathData'] = [{ x: 0, y: 0 } as Vec2, { x: 10, y: 10 } as Vec2];
+        const lowerRightSpy = spyOn<any>(service, 'lowerRight').and.stub();
+        service['findMouseDirection']();
+        expect(lowerRightSpy).toHaveBeenCalled();
+    });
+
+    it('should call lower left if mouse go to low-left', () => {
+        service['pathData'] = [{ x: 10, y: 10 } as Vec2, { x: 5, y: 20 } as Vec2];
+        const lowerLeftSpy = spyOn<any>(service, 'lowerLeft').and.stub();
+        service['findMouseDirection']();
+        expect(lowerLeftSpy).toHaveBeenCalled();
+    });
+
+    it('should call upper right if mouse go to upper-right', () => {
+        service['pathData'] = [{ x: 10, y: 10 } as Vec2, { x: 20, y: 0 } as Vec2];
+        const upperRightSpy = spyOn<any>(service, 'upperRight').and.stub();
+        service['findMouseDirection']();
+        expect(upperRightSpy).toHaveBeenCalled();
+    });
+
+    it('should call upper left if mouse go to upper-left', () => {
+        service['pathData'] = [{ x: 10, y: 10 } as Vec2, { x: 0, y: 0 } as Vec2];
+        const upperLeftSpy = spyOn<any>(service, 'upperLeft').and.stub();
+        service['findMouseDirection']();
+        expect(upperLeftSpy).toHaveBeenCalled();
+    });
+
+    it('should throw error when pathData is empty', () => {
+        service['pathData'] = [];
+        expect(function () {
+            service['computeSize']();
+        }).toThrow(new Error('No data in path'));
+    });
+
+    it('should adjust startPoint when x and y higher than endPoint ', () => {
+        const startPoint = { x: 10, y: 10 } as Vec2;
+        const endPoint = { x: 0, y: 0 } as Vec2;
+        const result = service['calculLeftpoint'](startPoint, endPoint);
+        expect(result.x).toBe(0);
+        expect(result.y).toBe(0);
+    });
+
+    it('should adjust startPoint y endPoint is higher than y of startPoint ', () => {
+        const startPoint = { x: 10, y: 10 } as Vec2;
+        const endPoint = { x: 0, y: 20 } as Vec2;
+        const result = service['calculLeftpoint'](startPoint, endPoint);
+        expect(result.x).toBe(0);
+        expect(result.y).toBe(10);
+    });
+
+    it('should adjust startPoint y endPoint is higher than y of startPoint ', () => {
+        const startPoint = { x: 10, y: 10 } as Vec2;
+        const endPoint = { x: 20, y: 0 } as Vec2;
+        const result = service['calculLeftpoint'](startPoint, endPoint);
+        expect(result.x).toBe(10);
+        expect(result.y).toBe(0);
     });
 });
