@@ -7,12 +7,12 @@ import { ExportModalComponent } from '@app/components/export-modal/export-modal.
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { ToolList } from '@app/constants';
-import { ExportService } from '../export-image/export.service';
-import { ClipboardService } from '../selection/clipboard.service';
-import { MoveSelectionService } from '../selection/move-selection.service';
-import { SelectionService } from '../tools/selection/selection.service';
-import { ToolManagerService } from '../tools/tool-manager.service';
-import { UndoRedoService } from '../undo-redo/undo-redo.service';
+import { ExportService } from '@app/services/export-image/export.service';
+import { ClipboardService } from '@app/services/selection/clipboard.service';
+import { MoveSelectionService } from '@app/services/selection/move-selection.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
 @Injectable({
     providedIn: 'root',
@@ -61,7 +61,8 @@ export class KeyHandlerService {
         component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent | CarouselComponent | ExportModalComponent>,
         key: string,
     ): void {
-        if (event.ctrlKey && event.key === key && this.dialog.openDialogs.length === 0) {
+        const modalKeysPressed = event.ctrlKey && event.key === key;
+        if (modalKeysPressed && this.dialog.openDialogs.length === 0) {
             event.preventDefault();
 
             switch (event.key) {
@@ -92,20 +93,7 @@ export class KeyHandlerService {
         }
 
         if (selectionServiceIsSelected || moveSelectionServiceIsSelected) {
-            if (event.ctrlKey)
-                switch (event.key) {
-                    case 'c':
-                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.copy();
-                        return true;
-                    case 'x':
-                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.cut();
-                        return true;
-                    case 'v':
-                        if (this.clipboardService.pasteAvailable) this.clipboardService.paste();
-                        return true;
-                }
-
-            if (event.key === 'Delete' && this.clipboardService.actionsAreAvailable()) this.clipboardService.delete();
+            if (this.clipboardKeysArePressed(event)) return true;
 
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
                 this.moveSelectionService.handleKeyDown(event);
@@ -133,6 +121,26 @@ export class KeyHandlerService {
             event.preventDefault();
             this.undoRedoService.redo();
         }
+    }
+
+    private clipboardKeysArePressed(event: KeyboardEvent): boolean {
+        if (event.ctrlKey) {
+            switch (event.key) {
+                case 'c':
+                    if (this.clipboardService.actionsAreAvailable()) this.clipboardService.copy();
+                    return true;
+                case 'x':
+                    if (this.clipboardService.actionsAreAvailable()) this.clipboardService.cut();
+                    return true;
+                case 'v':
+                    if (this.clipboardService.pasteAvailable) this.clipboardService.paste();
+                    return true;
+            }
+        }
+
+        if (event.key === 'Delete' && this.clipboardService.actionsAreAvailable()) this.clipboardService.delete();
+
+        return false;
     }
 
     private isCanvasBlank(): boolean {

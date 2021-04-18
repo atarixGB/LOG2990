@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Params } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { KeyHandlerService } from '@app/services/key-handler/key-handler.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingComponent } from './drawing.component';
 
@@ -14,6 +15,7 @@ describe('DrawingComponent', () => {
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;
     let toolManagerSpy: jasmine.SpyObj<ToolManagerService>;
+    let keyHandlerSpy: jasmine.SpyObj<KeyHandlerService>;
 
     beforeEach(async(() => {
         drawingStub = new DrawingService();
@@ -26,6 +28,7 @@ describe('DrawingComponent', () => {
             'handleKeyUp',
             'handleHotKeysShortcut',
         ]);
+        keyHandlerSpy = jasmine.createSpyObj('KeyHandlerService', ['handleKeyDown', 'handleKeyUp']);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
@@ -33,6 +36,7 @@ describe('DrawingComponent', () => {
             providers: [
                 { provide: DrawingService, useValue: drawingStub },
                 { provide: ToolManagerService, useValue: toolManagerSpy },
+                { provide: KeyHandlerService, useValue: keyHandlerSpy },
                 {
                     provide: ActivatedRoute,
                     useValue: {
@@ -134,15 +138,13 @@ describe('DrawingComponent', () => {
     it(" should call the tool's manager mouse handle key up when receiving a key up event", () => {
         const event = {} as KeyboardEvent;
         component.handleKeyUp(event);
-        expect(toolManagerSpy.handleKeyUp).toHaveBeenCalled();
-        expect(toolManagerSpy.handleKeyUp).toHaveBeenCalledWith(event);
+        expect(keyHandlerSpy.handleKeyUp).toHaveBeenCalled();
     });
 
     it('should call the modalHandler when CTRL + <key> is pressed', () => {
         const event = new KeyboardEvent('keydown', { key: 'o', ctrlKey: true });
-        let handleModalSpy = spyOn<any>(component, 'modalHandler');
         component.handleKeyDown(event);
-        expect(handleModalSpy).toHaveBeenCalledTimes(4);
+        expect(keyHandlerSpy.handleKeyDown).toHaveBeenCalled();
     });
 
     it('should return canvas width', () => {

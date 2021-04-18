@@ -7,15 +7,16 @@ import { CarouselComponent } from '@app/components/carousel/carousel-modal/carou
 import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { ToolList } from '@app/constants';
-import { ExportService } from '../export-image/export.service';
-import { ClipboardService } from '../selection/clipboard.service';
-import { MoveSelectionService } from '../selection/move-selection.service';
-import { SelectionService } from '../tools/selection/selection.service';
-import { ToolManagerService } from '../tools/tool-manager.service';
-import { UndoRedoService } from '../undo-redo/undo-redo.service';
+import { ExportService } from '@app/services/export-image/export.service';
+import { ClipboardService } from '@app/services/selection/clipboard.service';
+import { MoveSelectionService } from '@app/services/selection/move-selection.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
+import { ToolManagerService } from '@app/services/tools/tool-manager.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { KeyHandlerService } from './key-handler.service';
 
-fdescribe('KeyHandlerService', () => {
+// tslint:disable
+describe('KeyHandlerService', () => {
     let service: KeyHandlerService;
     let toolManagerServiceSpy: jasmine.SpyObj<ToolManagerService>;
     let moveSelectionServiceSpy: jasmine.SpyObj<MoveSelectionService>;
