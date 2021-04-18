@@ -67,14 +67,17 @@ export class KeyHandlerService {
 
             switch (event.key) {
                 case 'g':
+                    this.selectionService.terminateSelection();
                     this.dialog.open(component, { data: this.isCanvasBlank() });
                     break;
                 case 'e':
                     this.exportService.imagePrevisualization();
                     this.exportService.initializeExportParams();
+                    this.selectionService.terminateSelection();
                     this.dialog.open(component, {});
                     break;
                 default:
+                    this.selectionService.terminateSelection();
                     this.dialog.open(component, {});
                     break;
             }
@@ -114,6 +117,7 @@ export class KeyHandlerService {
 
         if (undoKeysPressed) {
             event.preventDefault();
+            this.selectionService.terminateSelection();
             this.undoRedoService.undo();
         }
 

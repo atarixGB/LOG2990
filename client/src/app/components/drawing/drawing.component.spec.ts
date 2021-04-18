@@ -17,7 +17,7 @@ import { of } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 
 // tslint:disable
-fdescribe('DrawingComponent', () => {
+describe('DrawingComponent', () => {
     let component: DrawingComponent;
     let fixture: ComponentFixture<DrawingComponent>;
     let drawingStub: DrawingService;

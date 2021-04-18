@@ -35,7 +35,7 @@ describe('KeyHandlerService', () => {
     beforeEach(() => {
         toolManagerServiceSpy = jasmine.createSpyObj('ToolManagerService', ['handleHotKeysShortcut', 'handleKeyUp']);
         exportServiceSpy = jasmine.createSpyObj('ExportService', ['imagePrevisualization', 'initializeExportParams']);
-        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['handleKeyUp', 'selectAll']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['handleKeyUp', 'selectAll', 'terminateSelection']);
         moveSelectionServiceSpy = jasmine.createSpyObj('SelectionService', ['handleKeyUp', 'handleKeyDown']);
         clipboardServiceSpy = jasmine.createSpyObj('ClipboardService', ['actionsAreAvailable', 'copy', 'cut', 'paste', 'delete']);
         undoRedoServiceSpy = jasmine.createSpyObj('UndoRedoService', ['undo', 'redo', 'canUndo', 'canRedo']);
@@ -182,6 +182,7 @@ describe('KeyHandlerService', () => {
         const isCanvasBlankSpy = spyOn<any>(service, 'isCanvasBlank').and.stub();
 
         service['modalHandler'](keyboardEvent, CarouselComponent, 'g');
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(openDialogSpy).toHaveBeenCalled();
         expect(isCanvasBlankSpy).toHaveBeenCalled();
     });
@@ -191,6 +192,7 @@ describe('KeyHandlerService', () => {
         const openDialogSpy = spyOn<any>(service.dialog, 'open').and.stub();
 
         service['modalHandler'](keyboardEvent, ExportModalComponent, 'e');
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(openDialogSpy).toHaveBeenCalled();
         expect(exportServiceSpy.imagePrevisualization).toHaveBeenCalled();
         expect(exportServiceSpy.initializeExportParams).toHaveBeenCalled();
@@ -201,6 +203,7 @@ describe('KeyHandlerService', () => {
         const openDialogSpy = spyOn<any>(service.dialog, 'open').and.stub();
 
         service['modalHandler'](keyboardEvent, SaveDrawingModalComponent, 's');
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(openDialogSpy).toHaveBeenCalled();
     });
 
@@ -306,6 +309,7 @@ describe('KeyHandlerService', () => {
         toolManagerServiceSpy.currentTool.mouseDown = false;
 
         service['undoRedoToolKeyHandler'](keyboardEvent);
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(undoRedoServiceSpy.undo).toHaveBeenCalled();
     });
 
