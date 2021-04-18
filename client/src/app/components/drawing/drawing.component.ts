@@ -1,6 +1,17 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ComponentType } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewChecked,
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    HostListener,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
@@ -26,7 +37,7 @@ import { Subscription } from 'rxjs';
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges, AfterViewChecked {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
@@ -96,32 +107,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.drawingService.canvas = this.baseCanvas.nativeElement;
         this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
 
-        this.route.params.subscribe((params) => {
-            if (params.url) {
-                console.log('coucou');
-                const img = new Image();
-                img.src = params.url;
-                img.crossOrigin = 'Anonymous';
-
-                img.onload = () => {
-                    // this.canvasSize.x = img.width;
-                    // this.canvasSize.y = img.height;
-                    console.log(this.baseCtx.canvas.width);
-                    console.log(this.baseCtx.canvas.height);
-                    this.baseCtx.drawImage(img, 0, 0);
-                    console.log('la taille du canvas est ', this.canvasSize);
-
-                    this.drawing = {
-                        title: '',
-                        width: this.drawingService.canvas.width,
-                        height: this.drawingService.canvas.height,
-                        body: this.drawingService.canvas.toDataURL(),
-                    };
-                    this.autoSaveService.saveCanvasState(this.drawing);
-                };
-            }
-        });
-
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
@@ -137,9 +122,31 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.whiteBackgroundCanvas();
     }
 
+    ngAfterViewChecked() {
+        this.route.params.subscribe((params) => {
+            if (params.url) {
+                const img = new Image();
+                img.src = params.url;
+                img.crossOrigin = 'Anonymous';
+
+                img.onload = () => {
+                    this.canvasSize.x = img.width;
+                    this.canvasSize.y = img.height;
+                    this.baseCtx.drawImage(img, 0, 0);
+                    this.drawing = {
+                        title: '',
+                        width: this.drawingService.canvas.width,
+                        height: this.drawingService.canvas.height,
+                        body: this.drawingService.canvas.toDataURL(),
+                    };
+                    this.autoSaveService.saveCanvasState(this.drawing);
+                };
+            }
+        });
+    }
+
     ngOnChanges(): void {
         this.route.params.subscribe((params) => {
-            console.log(params.height, params.width);
             if (params.height && params.width) {
                 this.canvasSize.x = params.width;
                 this.canvasSize.y = params.height;
