@@ -185,20 +185,16 @@ export class SelectionUtilsService {
     }
 
     endResizeSelection(): SelectionTool {
-        console.log('calle');
-
         this.isResizing = false;
         this.cleanedUnderneath = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
-        this.resizeSelectionService.printResize(this.drawingService.baseCtx);
+        this.resizeSelectionService.printResize(this.drawingService.previewCtx);
 
         this.origin = this.resizeSelectionService.newOrigin;
         this.width = this.resizeSelectionService.resizeWidth;
         this.height = this.resizeSelectionService.resizeHeight;
         this.destination = { x: this.origin.x + this.width, y: this.origin.y + this.height };
         this.resizedSelection = this.reajustOriginAndDestination(new SelectionTool(this.origin, this.destination, this.width, this.height));
-
-        this.createBoundaryBox(this.resizedSelection);
         return this.resizedSelection;
     }
 }
