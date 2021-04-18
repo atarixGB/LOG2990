@@ -5,7 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
-import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
+import { SelectionUtilsService } from '@app/classes/utils/selection-utils.service';
 import { MagnetismService } from './magnetism.service';
 import { MoveSelectionService } from './move-selection.service';
 import { ResizeSelectionService } from './resize-selection.service';

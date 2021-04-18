@@ -158,15 +158,7 @@ export const MAX_PERCENT = 100;
 export const MAX_TOLERANCE_VALUE = 100;
 export const MIN_TOLERANCE_VALUE = 0;
 
-// constants for grid
-export const MIN_GRID_SQUARE_SIZE = 5;
-export const MAX_GRID_SQUARE_SIZE = 200;
-export const MIN_GRID_OPACITY = 10;
-export const MAX_GRID_OPACITY = 100;
-export const DEFAULT_GRID_SIZE = 5;
-export const GRID_STEP = 5;
-export const DEFAULT_GRID_OPACITY = 10;
-export const SQUARE_STEP = 5;
+
 
 // constants for magnetism
 export enum SelectionBox {

@@ -8,25 +8,9 @@ import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPickerComponent } from './color-picker.component';
+import{EventMock,SecondEventMock,ThirdEventMock} from '@app/classes/utils/testing-utils';
 // tslint:disable
-class EventMock {
-    button = 2;
-    preventDefault() {
-        return false;
-    }
-}
-class SecondEventMock {
-    button = 0;
-    preventDefault() {
-        return false;
-    }
-}
-class ThirdEventMock {
-    button = 1;
-    preventDefault() {
-        return false;
-    }
-}
+
 
 describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;

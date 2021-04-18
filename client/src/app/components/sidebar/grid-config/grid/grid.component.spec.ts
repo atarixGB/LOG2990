@@ -9,7 +9,7 @@ import { GridComponent } from './grid.component';
 
 // tslint:disable
 
-describe('GridComponent', () => {
+fdescribe('GridComponent', () => {
     let component: GridComponent;
     let fixture: ComponentFixture<GridComponent>;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;

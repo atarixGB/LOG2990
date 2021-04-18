@@ -5,7 +5,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
+import { SelectionUtilsService } from '@app/classes/utils/selection-utils.service';
 
 @Injectable({
     providedIn: 'root',

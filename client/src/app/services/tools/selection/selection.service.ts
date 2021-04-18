@@ -11,7 +11,7 @@ import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse-selection/ellipse-selection.service';
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
+import { SelectionUtilsService } from '@app/classes/utils/selection-utils.service';
 
 @Injectable({
     providedIn: 'root',

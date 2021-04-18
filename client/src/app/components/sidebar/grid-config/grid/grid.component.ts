@@ -8,7 +8,7 @@ import {
     MIN_GRID_SQUARE_SIZE,
     SQUARE_STEP,
     TWO_DECIMAL_MULTIPLIER,
-} from '@app/constants';
+} from '@app/constants/grid-constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { TextService } from '@app/services/tools/text/text.service';
@@ -19,15 +19,22 @@ import { TextService } from '@app/services/tools/text/text.service';
     styleUrls: ['./grid.component.scss'],
 })
 export class GridComponent {
-    isEnabled: boolean = false;
-    minSquareSize: number = MIN_GRID_SQUARE_SIZE;
-    maxSquareSize: number = MAX_GRID_SQUARE_SIZE;
-    minOpacity: number = MIN_GRID_OPACITY;
-    maxOpacity: number = MAX_GRID_OPACITY;
-    squareSize: number = DEFAULT_GRID_SIZE;
-    currentOpacity: number = DEFAULT_GRID_OPACITY;
+    isEnabled: boolean;
+    minSquareSize: number;
+    maxSquareSize: number;
+    minOpacity: number;
+    maxOpacity: number;
+    squareSize: number;
+    currentOpacity: number;
 
     constructor(public drawingService: DrawingService, public magnetismService: MagnetismService, public textService: TextService) {
+        this.isEnabled = false;
+        this.minSquareSize = MIN_GRID_SQUARE_SIZE;
+        this.maxSquareSize = MAX_GRID_SQUARE_SIZE;
+        this.minOpacity = MIN_GRID_OPACITY;
+        this.maxOpacity = MAX_GRID_OPACITY;
+        this.squareSize = DEFAULT_GRID_SIZE;
+        this.currentOpacity = DEFAULT_GRID_OPACITY;
         this.drawingService.gridSpaces = this.squareSize;
         this.magnetismService.setGridSpaces(this.squareSize);
         this.drawingService.gridOpacity = this.currentOpacity;
