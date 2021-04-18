@@ -208,6 +208,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
         this.toolManagerService.onMouseLeave(event);
     }
 
+    @HostListener('wheel', ['$event'])
+    onWheel(event: WheelEvent): void {
+        event.preventDefault();
+        this.toolManagerService.onWheel(event);
+    }
+
     @HostListener('click', ['$event'])
     onMouseClick(event: MouseEvent): void {
         const ELEMENT = event.target as HTMLElement;
