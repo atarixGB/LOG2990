@@ -8,28 +8,28 @@ const MIN_INPUT_SIZE = 1;
 const MAX_INPUT_SIZE = 15;
 const NB_TAGS_ALLOWED = 5;
 const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
-
 @Component({
     selector: 'app-save-drawing-modal',
     templateUrl: './save-drawing-modal.component.html',
     styleUrls: ['./save-drawing-modal.component.scss'],
 })
 export class SaveDrawingModalComponent {
-    readonly matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
-    readonly matTooltipForTags: string = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+    readonly matTooltipForTags: string;
+    readonly matTooltipForTitle: string;
     minLength: number;
     maxLength: number;
     drawingTitle: string;
     titleIsValid: boolean;
     tagInput: string;
     tags: string[];
-    message: DrawingData;
 
     constructor(
-        public matDialogRef: MatDialogRef<SaveDrawingModalComponent>,
+        private matDialogRef: MatDialogRef<SaveDrawingModalComponent>,
         private indexService: IndexService,
         private drawingService: DrawingService,
     ) {
+        this.matTooltipForTags = `Le nom d'une étiquette doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+        this.matTooltipForTitle = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
         this.minLength = MIN_INPUT_SIZE;
         this.maxLength = MAX_INPUT_SIZE;
         this.drawingTitle = '';

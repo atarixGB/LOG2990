@@ -1,16 +1,6 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
 import { ComponentType } from '@angular/cdk/portal';
-import {
-    AfterViewChecked,
-    AfterViewInit,
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    HostListener,
-    OnChanges,
-    OnDestroy,
-    ViewChild,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
@@ -31,12 +21,13 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription } from 'rxjs';
 
+const LOAD_IMAGE = 100;
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, AfterViewChecked {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
@@ -116,21 +107,15 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
             this.canvasSize.y = this.autoSaveService.localDrawing.height;
         };
         this.cdr.detectChanges();
-
-        this.whiteBackgroundCanvas();
-    }
-
-    ngAfterViewChecked(): void {
         this.route.params.subscribe((params) => {
             if (params.url) {
                 const img = new Image();
-                img.src = params.url;
                 img.crossOrigin = 'Anonymous';
-
                 img.onload = () => {
                     this.canvasSize.x = img.width;
                     this.canvasSize.y = img.height;
-                    this.baseCtx.drawImage(img, 0, 0);
+                    // needed for drawImage to load correctly
+                    setTimeout(() => this.baseCtx.drawImage(img, 0, 0), LOAD_IMAGE);
                     this.drawing = {
                         title: '',
                         width: this.drawingService.canvas.width,
@@ -139,8 +124,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
                     };
                     this.autoSaveService.saveCanvasState(this.drawing);
                 };
+                img.src = params.url;
             }
         });
+
+        this.whiteBackgroundCanvas();
     }
 
     ngOnChanges(): void {

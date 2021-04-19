@@ -3,7 +3,7 @@
     <div id="filter-container">
         <label for="ffiltre">Filtre: </label>
         <input type="text" name="ffiltre" [(ngModel)]="tagInput" />
-        <button (click)="this.addTag()">Entrer</button><br />
+        <button mat-raised-button (click)="this.addTag()">Entrer</button><br />
         <p id="filter">Vos filtres:</p>
         <ul>
             <li class="tag-list" *ngFor="let tag of tags">

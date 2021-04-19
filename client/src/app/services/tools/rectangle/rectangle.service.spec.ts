@@ -406,7 +406,7 @@ describe('RectangleService', () => {
     it('should adjust startPoint when x and y higher than endPoint ', () => {
         const startPoint = { x: 10, y: 10 } as Vec2;
         const endPoint = { x: 0, y: 0 } as Vec2;
-        const result = service['calculLeftpoint'](startPoint, endPoint);
+        const result = service['findLeftPoint'](startPoint, endPoint);
         expect(result.x).toBe(0);
         expect(result.y).toBe(0);
     });
@@ -414,7 +414,7 @@ describe('RectangleService', () => {
     it('should adjust startPoint y endPoint is higher than y of startPoint ', () => {
         const startPoint = { x: 10, y: 10 } as Vec2;
         const endPoint = { x: 0, y: 20 } as Vec2;
-        const result = service['calculLeftpoint'](startPoint, endPoint);
+        const result = service['findLeftPoint'](startPoint, endPoint);
         expect(result.x).toBe(0);
         expect(result.y).toBe(10);
     });
@@ -422,7 +422,7 @@ describe('RectangleService', () => {
     it('should adjust startPoint y endPoint is higher than y of startPoint ', () => {
         const startPoint = { x: 10, y: 10 } as Vec2;
         const endPoint = { x: 20, y: 0 } as Vec2;
-        const result = service['calculLeftpoint'](startPoint, endPoint);
+        const result = service['findLeftPoint'](startPoint, endPoint);
         expect(result.x).toBe(10);
         expect(result.y).toBe(0);
     });

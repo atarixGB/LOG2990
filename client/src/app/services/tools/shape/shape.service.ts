@@ -145,7 +145,7 @@ export abstract class ShapeService extends Tool {
         }
     }
 
-    protected calculLeftpoint(startPoint: Vec2, endPoint: Vec2): Vec2 {
+    protected findLeftPoint(startPoint: Vec2, endPoint: Vec2): Vec2 {
         let x = startPoint.x;
         let y = startPoint.y;
 
