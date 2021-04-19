@@ -1,5 +1,15 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewChecked,
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    HostListener,
+    OnChanges,
+    OnDestroy,
+    ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
@@ -13,14 +23,14 @@ import { MoveSelectionService } from '@app/services/selection/move-selection.ser
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingData } from '@common/communication/drawing-data';
-import { Subscription, throwError } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
     styleUrls: ['./drawing.component.scss'],
 })
-export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnChanges {
+export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, AfterViewChecked {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
     @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
@@ -29,12 +39,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
     @ViewChild('lassoPreviewCanvas', { static: false }) lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
 
     dragPosition: Vec2 = { x: 0, y: 0 };
+    canvasSize: Vec2;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
     private gridCtx: CanvasRenderingContext2D;
     private cursorCtx: CanvasRenderingContext2D;
     private lassoPreviewCtx: CanvasRenderingContext2D;
-    private canvasSize: Vec2;
     private currentDrawing: ImageData;
     private subscription: Subscription;
     private positionX: number;
@@ -54,6 +64,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         private autoSaveService: AutoSaveService,
         private keyHandlerService: KeyHandlerService,
     ) {
+        this.dragPosition = { x: 0, y: 0 };
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
             if (isCleanRequest) {
@@ -71,44 +82,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         this.subscription.unsubscribe();
     }
 
-    ngOnInit(): void {
-        this.route.params.subscribe((params) => {
-            if (params.url) {
-                const path = params.url;
-                this.getNewImage(path)
-                    .then((img) => {
-                        this.baseCtx.drawImage(img, 0, 0);
-                    })
-                    .catch((error) => {
-                        return throwError(error);
-                    });
-            }
-        });
-    }
-
     ngAfterViewInit(): void {
         this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
         this.workingArea.nativeElement.style.height = WORKING_AREA_LENGHT;
 
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.lassoPreviewCtx = this.lassoPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
-        this.drawingService.previewCtx = this.previewCtx;
-        this.drawingService.cursorCtx = this.cursorCtx;
-        this.drawingService.lassoPreviewCtx = this.lassoPreviewCtx;
-        this.drawingService.gridCtx = this.gridCtx;
-        this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
-        this.keyHandlerService.baseCtx = this.baseCtx;
-        this.keyHandlerService.canvasSize = this.canvasSize;
-
-        this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
-        if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
-            this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
-        }
+        this.initialiseParameters();
 
         window.onload = () => {
             this.autoSaveService.loadImage();
@@ -117,8 +95,30 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
         };
 
         this.cdr.detectChanges();
-
         this.whiteBackgroundCanvas();
+    }
+
+    ngAfterViewChecked(): void {
+        this.route.params.subscribe((params) => {
+            if (params.url) {
+                const img = new Image();
+                img.src = params.url;
+                img.crossOrigin = 'Anonymous';
+
+                img.onload = () => {
+                    this.canvasSize.x = img.width;
+                    this.canvasSize.y = img.height;
+                    this.baseCtx.drawImage(img, 0, 0);
+                    this.drawing = {
+                        title: '',
+                        width: this.drawingService.canvas.width,
+                        height: this.drawingService.canvas.height,
+                        body: this.drawingService.canvas.toDataURL(),
+                    };
+                    this.autoSaveService.saveCanvasState(this.drawing);
+                };
+            }
+        });
     }
 
     ngOnChanges(): void {
@@ -184,6 +184,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
 
     onMouseLeave(event: MouseEvent): void {
         this.toolManagerService.onMouseLeave(event);
+    }
+
+    @HostListener('wheel', ['$event'])
+    onWheel(event: WheelEvent): void {
+        event.preventDefault();
+        this.toolManagerService.onWheel(event);
     }
 
     @HostListener('click', ['$event'])
@@ -282,6 +288,28 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnInit, OnCha
             };
             img.src = src;
         });
+    }
+
+    private initialiseParameters(): void {
+        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.lassoPreviewCtx = this.lassoPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.drawingService.baseCtx = this.baseCtx;
+        this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.cursorCtx = this.cursorCtx;
+        this.drawingService.lassoPreviewCtx = this.lassoPreviewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
+        this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
+        this.keyHandlerService.baseCtx = this.baseCtx;
+        this.keyHandlerService.canvasSize = this.canvasSize;
+
+        this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
+        if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
+            this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
+        }
     }
 
     private whiteBackgroundCanvas(): void {
