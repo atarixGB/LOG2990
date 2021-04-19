@@ -13,7 +13,7 @@ chai.use(require('chai-http'));
 // tslint:disable
 const HTTP_OK = 200;
 
-xdescribe('Database Controller', () => {
+describe('Database Controller', () => {
     let application: Application;
     let databaseController: DatabaseController;
     let databaseService: DatabaseService;
@@ -41,6 +41,8 @@ xdescribe('Database Controller', () => {
         chai.expect(databaseController).to.be.instanceOf(DatabaseController);
         done();
     });
+
+    it('should return a list of all drawings from database');
 
     it('should call addDrawing when accessing api/database/send with POST request', (done: Mocha.Done) => {
         const stub = sinon.stub(DatabaseService.prototype, 'addDrawing');

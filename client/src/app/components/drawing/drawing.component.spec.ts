@@ -1,4 +1,4 @@
-import { CdkDragEnd, CdkDragMove, DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDragMove, DragDropModule } from '@angular/cdk/drag-drop';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -8,12 +8,9 @@ import { ToolList } from '@app/constants';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { KeyHandlerService } from '@app/services/key-handler/key-handler.service';
-import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
-import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { DrawingData } from '@common/communication/drawing-data';
-import { of } from 'rxjs';
 import { DrawingComponent } from './drawing.component';
 
 // tslint:disable
@@ -25,7 +22,6 @@ describe('DrawingComponent', () => {
     let keyHandlerSpy: jasmine.SpyObj<KeyHandlerService>;
     let autoSaveServiceSpy: jasmine.SpyObj<AutoSaveService>;
     let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
-    let newDrawingServiceSpy: jasmine.SpyObj<NewDrawingService>;
     let baseCtxSpy: CanvasRenderingContext2D;
 
     beforeEach(async(() => {
@@ -44,7 +40,6 @@ describe('DrawingComponent', () => {
         keyHandlerSpy = jasmine.createSpyObj('KeyHandlerService', ['handleKeyDown', 'handleKeyUp']);
         autoSaveServiceSpy = jasmine.createSpyObj('AutoSaveService', ['loadImage', 'saveCanvasState']);
         selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['']);
-        newDrawingServiceSpy = jasmine.createSpyObj('NewDrawingService', ['getCleanStatus']);
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
@@ -81,22 +76,6 @@ describe('DrawingComponent', () => {
         component['baseCtx'] = baseCtxSpy;
     });
 
-    it('should subscribe to clean status of NewDrawingService', () => {
-        newDrawingServiceSpy.getCleanStatus.and.returnValue(of(true));
-        spyOn<any>(drawingStub.baseCtx, 'beginPath').and.stub();
-        spyOn<any>(drawingStub.baseCtx, 'clearRect').and.stub();
-        spyOn<any>(drawingStub.previewCtx, 'clearRect').and.stub();
-        spyOn<any>(drawingStub.lassoPreviewCtx, 'clearRect').and.stub();
-        spyOn<any>(drawingStub.gridCtx, 'clearRect').and.stub();
-        spyOn<any>(component, 'whiteBackgroundCanvas').and.stub();
-
-        expect(drawingStub.baseCtx.beginPath).toHaveBeenCalled();
-        expect(drawingStub.baseCtx.clearRect).toHaveBeenCalled();
-        expect(drawingStub.previewCtx.clearRect).toHaveBeenCalled();
-        expect(drawingStub.lassoPreviewCtx.clearRect).toHaveBeenCalled();
-        expect(drawingStub.gridCtx.clearRect).toHaveBeenCalled();
-    });
-
     it('should set canvasSize with width and height value of autoSaveService', () => {
         autoSaveServiceSpy.loadImage.and.stub();
         autoSaveServiceSpy.localDrawing = new DrawingData();
@@ -115,19 +94,6 @@ describe('DrawingComponent', () => {
         component.ngOnChanges();
         expect(component.canvasSize.x).toEqual(100);
         expect(component.canvasSize.y).toEqual(100);
-    });
-
-    xit('should not set canvasSize if fetched width and height are undefined', () => {
-        component.ngOnChanges();
-        expect(component.canvasSize.x).toEqual(100);
-        expect(component.canvasSize.y).toEqual(100);
-    });
-
-    it('should return mouse coordinates correctly', () => {
-        const mouseEvent = { x: 10, y: 10, button: 0 } as MouseEvent;
-
-        const result = component.mouseCoord(mouseEvent);
-        expect(result).toEqual({ x: 10, y: 10 });
     });
 
     it(" should call the tool's manager mouse move when receiving a mouse move event if not resizing", () => {
@@ -153,8 +119,6 @@ describe('DrawingComponent', () => {
         component.onMouseMove(event as any);
         expect(drawingStub.cursorCtx).toEqual(component['cursorCtx']);
     });
-
-    it('should set currentTool to moveSelectionService if mouse is not on control point', () => {});
 
     it(" should call the tool's manager mouse down when receiving a mouse down event if not resizing", () => {
         const event = {
@@ -259,25 +223,6 @@ describe('DrawingComponent', () => {
         expect(component['baseCtx'].getImageData).toHaveBeenCalled();
     });
 
-    it('should set canvas size correctly when drag ended if newWidth and newHeight are greather than MIN_SIZE', () => {
-        component.canvasSize = { x: 100, y: 100 };
-        const event = { distance: { x: 500, y: 500 } } as CdkDragEnd;
-        component['drawing'] = new DrawingData();
-
-        component.dragEnded(event);
-        expect(component.canvasSize).toEqual({ x: 500, y: 500 });
-        expect(autoSaveServiceSpy.saveCanvasState).toHaveBeenCalled();
-    });
-
-    it('should set canvas size to MIN_SIZE when drag ended if newWidth and newHeight are lower than MIN_SIZE', () => {
-        component.canvasSize = { x: 100, y: 100 };
-        const event = { distance: { x: 10, y: 10 } } as CdkDragEnd;
-
-        component.dragEnded(event);
-        expect(component.canvasSize).toEqual({ x: 250, y: 250 });
-        expect(autoSaveServiceSpy.saveCanvasState).toHaveBeenCalled();
-    });
-
     it('should set drag position correctly', () => {
         component.dragPosition = { x: 250, y: 250 };
 
@@ -299,8 +244,6 @@ describe('DrawingComponent', () => {
         expect(height).toEqual(CANVAS_HEIGHT);
     });
 
-    it('should resolve image if image ', () => {});
-
     it('should not call onMouseMove of ToolManagerService if mouse is not resizing', () => {
         const event = {
             target: {
@@ -311,19 +254,6 @@ describe('DrawingComponent', () => {
         component['handleSelectionTool'](event as any);
         expect(toolManagerSpy.onMouseMove).not.toHaveBeenCalled();
         expect(mouseCoord).not.toHaveBeenCalled();
-    });
-
-    it('should set currentTool to moveSelectionService if currentToolEnum is SelectionRectangle and it is not a new selection', () => {
-        const event = {
-            target: {
-                className: 'htmlclass',
-            },
-        };
-        toolManagerSpy.currentToolEnum = ToolList.SelectionRectangle;
-        selectionServiceSpy.newSelection = false;
-
-        component['handleSelectionTool'](event as any);
-        expect(toolManagerSpy.currentTool).toBeInstanceOf(MoveSelectionService);
     });
 
     it('should set currentTool to selectionService if currentToolEnum is SelectionRectangle it is a new selection', () => {
@@ -339,15 +269,6 @@ describe('DrawingComponent', () => {
         expect(toolManagerSpy.currentTool).toBeInstanceOf(SelectionService);
     });
 
-    it('should change canvasSize to MIN_SIZE if canvasSize is smaller than 250px', () => {
-        component.canvasSize.x = 100;
-        component.canvasSize.y = 100;
-
-        component['adjustCanvasSize']();
-        expect(component.canvasSize.x).toEqual(100);
-        expect(component.canvasSize.y).toEqual(100);
-    });
-
     it('should change canvas background to white', () => {
         drawingStub.isGridEnabled = true;
 
@@ -356,17 +277,5 @@ describe('DrawingComponent', () => {
         expect(component['baseCtx'].fillStyle).toEqual('#FFFFFF');
         expect(baseCtxSpy.fillRect).toHaveBeenCalled();
         expect(baseCtxSpy.closePath).toHaveBeenCalled();
-    });
-
-    it('should get new image if source image exists', async () => {
-        spyOn<any>(component, 'getNewImage').and.callFake(() => {
-            return Promise.resolve();
-        });
-
-        const result = component.getNewImage('url');
-        if (window.onload) {
-            window.onload({} as any);
-        }
-        expect(result).toBeInstanceOf(Promise);
     });
 });

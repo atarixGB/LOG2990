@@ -6,7 +6,7 @@ import { DrawingData } from '@common/communication/drawing-data';
 import { of } from 'rxjs';
 import { IndexService } from './index.service';
 
-//tslint:disable
+// tslint:disable
 describe('IndexService', () => {
     let httpMock: HttpTestingController;
     let indexService: IndexService;
