@@ -33,7 +33,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
     private destination: Vec2;
     private selectionData: ImageData;
     private keysDown: Map<ArrowKeys, boolean>;
-    private intervalId: ReturnType<typeof setTimeout> | undefined = undefined;
+    private intervalId: ReturnType<typeof setTimeout> | undefined;
 
     constructor(
         drawingService: DrawingService,
@@ -46,6 +46,7 @@ export class MoveSelectionService extends Tool implements OnDestroy {
         this.isMagnetism = false;
         this.keysDown = new Map<ArrowKeys, boolean>();
         this.keysDown.set(ArrowKeys.Up, false).set(ArrowKeys.Down, false).set(ArrowKeys.Left, false).set(ArrowKeys.Right, false);
+        this.intervalId = undefined;
     }
 
     ngOnDestroy(): void {

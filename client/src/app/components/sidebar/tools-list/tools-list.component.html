@@ -167,5 +167,16 @@
                 <mat-icon>redo</mat-icon>
             </button>
         </mat-grid-tile>
+        <mat-grid-tile>
+            <button
+                [ngClass]="{ active: toolManagerService.currentToolEnum === ToolList.Stamp }"
+                mat-icon-button
+                matTooltip="Étampe (D)"
+                matTooltipPosition="above"
+                (click)="onTool(ToolList.Stamp)"
+            >
+                <mat-icon>check_circle</mat-icon>
+            </button>
+        </mat-grid-tile>
     </mat-grid-list>
 </div>

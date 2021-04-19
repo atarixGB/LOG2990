@@ -9,9 +9,9 @@ import { ResizeSelectionService } from '@app/services/selection/resize-selection
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse-selection/ellipse-selection.service';
-import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
+import { LassoService } from './lasso/lasso.service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,6 +19,7 @@ import { SelectionUtilsService } from '@app/services/utils/selection-utils.servi
 export class SelectionService extends Tool {
     selection: ImageData;
     origin: Vec2;
+    firstOrigin: Vec2;
     destination: Vec2;
     isEllipse: boolean;
     isLasso: boolean;
@@ -30,7 +31,9 @@ export class SelectionService extends Tool {
     selectionTerminated: boolean;
     selectionDeleted: boolean;
     width: number;
+    initialWidth: number;
     height: number;
+    initialHeight: number;
     selectionObject: SelectionTool;
 
     constructor(
@@ -53,6 +56,7 @@ export class SelectionService extends Tool {
         this.clearUnderneath = true;
         this.selectionTerminated = false;
         this.selectionDeleted = false;
+        this.firstOrigin = { x: 0, y: 0 };
     }
 
     onMouseClick(event: MouseEvent): void {
@@ -65,8 +69,8 @@ export class SelectionService extends Tool {
 
     onMouseDown(event: MouseEvent): void {
         this.mouseDown = event.button === MouseButton.Left;
-        this.handleActiveSelectionOnMouseDown(event);
         this.handleResizedSelectionOnMouseDown(event);
+        this.handleActiveSelectionOnMouseDown(event);
         this.handleActiveLassoSelectionOnMouseDown(event);
     }
 
@@ -99,19 +103,18 @@ export class SelectionService extends Tool {
     }
 
     handleKeyDown(event: KeyboardEvent): void {
+        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
+        else if (this.isLasso && !this.lassoService.selectionOver) this.lassoService.handleKeyDown(event);
+        else this.rectangleService.handleKeyDown(event);
+
         if (event.key === 'Escape') {
             event.preventDefault();
             this.terminateSelection();
-            return;
         }
 
         if (event.key === 'Shift') {
             this.resizeSelectionService.handleKeyDown(event);
         }
-
-        if (this.isEllipse) this.ellipseService.handleKeyDown(event);
-        else if (this.isLasso) this.lassoService.handleKeyDown(event);
-        else this.rectangleService.handleKeyDown(event);
     }
 
     handleKeyUp(event: KeyboardEvent): void {
@@ -188,7 +191,7 @@ export class SelectionService extends Tool {
         this.height = this.selectionObject.height;
     }
 
-    private handleActiveSelectionOnMouseDown(event: MouseEvent): void {
+    private handleResizedSelectionOnMouseDown(event: MouseEvent): void {
         if (this.mouseDown) {
             if (this.activeSelection) {
                 this.resizeSelectionService.controlPointsCoord = this.selectionUtilsService.controlPointsCoord;
@@ -198,7 +201,7 @@ export class SelectionService extends Tool {
         }
     }
 
-    private handleResizedSelectionOnMouseDown(event: MouseEvent): void {
+    private handleActiveSelectionOnMouseDown(event: MouseEvent): void {
         if (this.mouseDown && !this.isLasso && !this.selectionUtilsService.isResizing) {
             this.clearUnderneath = true;
             this.initialSelection = true;
@@ -231,7 +234,7 @@ export class SelectionService extends Tool {
     }
 
     private handleLassoSelectionWhenOverOnMouseUp(event: MouseEvent): void {
-        if (this.lassoService.selectionOver) {
+        if (this.isLasso && this.lassoService.selectionOver) {
             this.activeSelection = true;
             this.initialSelection = true;
             this.clearUnderneath = true;
@@ -239,9 +242,6 @@ export class SelectionService extends Tool {
             this.calculateDimension();
             this.getSelectionData(this.drawingService.baseCtx);
             this.selectionUtilsService.createBoundaryBox(this.selectionObject);
-            this.selectionObject.initialOrigin = this.origin;
-            this.selectionObject.initialWidth = this.width;
-            this.selectionObject.initialHeight = this.height;
         }
     }
 
@@ -249,6 +249,7 @@ export class SelectionService extends Tool {
         if (this.selectionUtilsService.isResizing) {
             this.initialSelection = true;
             this.imageMoved = true;
+            this.mouseDown = false;
             this.selectionObject = this.selectionUtilsService.endResizeSelection();
             this.initialiseServiceDimensions();
             this.getSelectionData(this.drawingService.previewCtx);
@@ -258,17 +259,12 @@ export class SelectionService extends Tool {
 
     private handleActiveSelectionOnMouseUp(): void {
         if (this.mouseDown && !this.isLasso && !this.selectionUtilsService.isResizing) {
-            console.log('call');
-
             this.activeSelection = true;
             this.mouseDown = false;
             this.calculateDimension();
             this.getSelectionData(this.drawingService.baseCtx);
             this.selectionUtilsService.createControlPoints(this.selectionObject);
             this.selectionUtilsService.resetParametersTools();
-            this.selectionObject.initialOrigin = this.origin;
-            this.selectionObject.initialWidth = this.width;
-            this.selectionObject.initialHeight = this.height;
         }
     }
 
@@ -285,18 +281,22 @@ export class SelectionService extends Tool {
         }
         this.width = this.destination.x - this.origin.x;
         this.height = this.destination.y - this.origin.y;
-
+        this.firstOrigin.x = this.origin.x;
+        this.firstOrigin.y = this.origin.y;
         this.initialseSelectionObject();
 
         this.selectionObject = this.selectionUtilsService.reajustOriginAndDestination(this.selectionObject);
+        this.initialWidth = this.width;
+        this.initialHeight = this.height;
 
         this.initialiseServiceDimensions();
     }
 
     private initialseSelectionObject(): void {
-        console.log('initialisation');
-
         this.selectionObject.origin = this.origin;
+        this.selectionObject.initialOrigin = this.firstOrigin;
+        this.selectionObject.initialWidth = this.initialWidth;
+        this.selectionObject.initialHeight = this.initialHeight;
         this.selectionObject.destination = this.destination;
         this.selectionObject.width = this.width;
         this.selectionObject.height = this.height;
