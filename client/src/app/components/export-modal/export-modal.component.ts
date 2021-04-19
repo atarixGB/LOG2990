@@ -1,4 +1,5 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FiltersList } from '@app/constants';
 import { ExportService } from '@app/services/export-image/export.service';
 
@@ -19,7 +20,7 @@ export class ExportModalComponent implements AfterViewInit {
     imgurIsSelected: boolean;
     private baseCtx: CanvasRenderingContext2D;
 
-    constructor(public exportService: ExportService, private cdRef: ChangeDetectorRef) {
+    constructor(public matDialogRef: MatDialogRef<ExportModalComponent>, public exportService: ExportService, private cdr: ChangeDetectorRef) {
         this.maxLength = MAX_INPUT_SIZE;
         this.matTooltipForTitle = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
         this.filters = FiltersList;
@@ -30,7 +31,7 @@ export class ExportModalComponent implements AfterViewInit {
         this.exportService.baseCtx = this.baseCtx;
         this.exportService.canvas = this.baseCanvas.nativeElement;
         this.imgurIsSelected = false;
-        this.cdRef.detectChanges();
+        this.cdr.detectChanges();
     }
 
     exportDrawing(): void {
