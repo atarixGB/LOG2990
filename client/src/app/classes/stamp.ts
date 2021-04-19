@@ -1,7 +1,8 @@
-import { ANGLE_HALF_TURN, SIZE_STAMP } from '@app/constants';
 import { Drawable } from './drawable';
 import { Vec2 } from './vec2';
 
+export const ANGLE_HALF_TURN = 180;
+export const SIZE_STAMP = 24;
 export class Stamp extends Drawable {
     private angle: number;
     private positionCoord: Vec2;

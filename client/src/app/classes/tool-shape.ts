@@ -1,4 +1,4 @@
-import { MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { Tool } from './tool';
 import { Vec2 } from './vec2';

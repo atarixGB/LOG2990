@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { DOUBLE_MATH, MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PolygonService } from './polygon.service';
+import { PolygonService,DOUBLE_MATH } from './polygon.service';
 
 //tslint:disable
 describe('PolygonService', () => {

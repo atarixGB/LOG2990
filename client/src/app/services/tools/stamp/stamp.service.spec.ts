@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { mouseEventLClick, mouseEventRClick, StampList } from '@app/constants';
+import { mouseEventLClick, mouseEventRClick} from '@app/constants/constants';
+import{StampList} from '@app/interfaces-enums/stamp-list'
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { StampService } from './stamp.service';
 
@@ -63,7 +64,7 @@ describe('StampService', () => {
 
     it('onMouseDown should draw the stamp if left click', () => {
         spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 25, y: 25 });
-        const drawStampSpy = spyOn(service, 'drawStamp').and.stub();
+        const drawStampSpy = spyOn<any>(service, 'drawStamp').and.stub();
         service.onMouseDown(mouseEventLClick);
 
         expect(drawStampSpy).toHaveBeenCalled();
@@ -71,7 +72,7 @@ describe('StampService', () => {
 
     it('onMouseDown should draw the stamp if right click', () => {
         spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 25, y: 25 });
-        const drawStampSpy = spyOn(service, 'drawStamp').and.stub();
+        const drawStampSpy = spyOn<any>(service, 'drawStamp').and.stub();
         service.onMouseDown(mouseEventRClick);
 
         expect(drawStampSpy).not.toHaveBeenCalled();
@@ -110,7 +111,7 @@ describe('StampService', () => {
 
     it('onMouseMove should update the preview cursor', () => {
         spyOn(service, 'getPositionFromMouse').and.returnValue({ x: 25, y: 25 });
-        const cursorSpy = spyOn(service, 'previewCursor').and.stub();
+        const cursorSpy = spyOn<any>(service, 'previewCursor').and.stub();
         service.onMouseMove(mouseEventRClick);
 
         expect(cursorSpy).toHaveBeenCalled();
@@ -121,7 +122,7 @@ describe('StampService', () => {
         const angle = 0;
         const rotationStep = 15;
         service.isKeyAltDown = false;
-        const changeAngleSpy = spyOn(service, 'changeAngle').and.stub();
+        const changeAngleSpy = spyOn<any>(service, 'changeAngle').and.stub();
         const expectedArg = angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep;
         spyOn(service, 'onMouseMove').and.stub();
 
@@ -134,7 +135,7 @@ describe('StampService', () => {
         const angle = 0;
         const rotationStep = 1;
         service.isKeyAltDown = true;
-        const changeAngleSpy = spyOn(service, 'changeAngle').and.stub();
+        const changeAngleSpy = spyOn<any>(service, 'changeAngle').and.stub();
         const expectedArg = angle - (event.deltaY / Math.abs(event.deltaY)) * rotationStep;
         spyOn(service, 'onMouseMove').and.stub();
 
@@ -146,7 +147,7 @@ describe('StampService', () => {
         const newAngle = 90;
         const observableSpy = spyOn(service['angleObservable'], 'next').and.stub();
 
-        service.changeAngle(newAngle);
+        service['changeAngle'](newAngle);
 
         expect(service.angle).toEqual(newAngle);
         expect(observableSpy).toHaveBeenCalled();
@@ -157,7 +158,7 @@ describe('StampService', () => {
         const expectedAngle = 330;
         const observableSpy = spyOn(service['angleObservable'], 'next').and.stub();
 
-        service.changeAngle(newAngle);
+        service['changeAngle'](newAngle);
 
         expect(service.angle).toEqual(expectedAngle);
         expect(observableSpy).toHaveBeenCalled();
@@ -168,39 +169,39 @@ describe('StampService', () => {
         service.currentStamp = test;
         service.imageSrc = test;
         spyOn(service.srcBinding, 'has').and.returnValue(false);
-        service.drawStamp({ x: 0, y: 0 });
+        service['drawStamp']({ x: 0, y: 0 });
         expect(service.imageSrc).toEqual(test);
     });
 
     it('drawStamp should rotate the stamp', () => {
         const rotateSpy = spyOn(baseCtxStub, 'rotate').and.stub();
-        service.drawStamp({ x: 0, y: 0 });
+        service['drawStamp']({ x: 0, y: 0 });
         expect(rotateSpy).toHaveBeenCalledTimes(1);
     });
 
     it('drawStamp should translate the stamp', () => {
         const translateSpy = spyOn(baseCtxStub, 'translate').and.stub();
         const expectedCalled = 3;
-        service.drawStamp({ x: 0, y: 0 });
+        service['drawStamp']({ x: 0, y: 0 });
         expect(translateSpy).toHaveBeenCalledTimes(expectedCalled);
     });
 
     it('drawStamp should scale the stamp', () => {
         const scaleSpy = spyOn(baseCtxStub, 'scale').and.stub();
-        service.drawStamp({ x: 0, y: 0 });
+        service['drawStamp']({ x: 0, y: 0 });
         expect(scaleSpy).toHaveBeenCalledTimes(1);
     });
 
     it('drawStamp should set transform on the stamp only horizontaly and verticaly', () => {
         const setTransformSpy = spyOn(baseCtxStub, 'setTransform').and.stub();
-        service.drawStamp({ x: 0, y: 0 });
+        service['drawStamp']({ x: 0, y: 0 });
         expect(setTransformSpy).toHaveBeenCalledTimes(1);
         expect(setTransformSpy).toHaveBeenCalledWith(1, 0, 0, 1, 0, 0);
     });
 
     it('drawStamp should match the principal color', () => {
         const color = '#ff0000';
-        service.drawStamp({ x: 0, y: 0 });
+        service['drawStamp']({ x: 0, y: 0 });
         expect(baseCtxStub.strokeStyle).toEqual(color);
         expect(baseCtxStub.fillStyle).toEqual(color);
     });
@@ -210,32 +211,32 @@ describe('StampService', () => {
         service.currentStamp = test;
         service.imageSrc = test;
         spyOn(service.srcBinding, 'has').and.returnValue(false);
-        service.previewCursor({ x: 0, y: 0 });
+        service['previewCursor']({ x: 0, y: 0 });
         expect(service.imageSrc).toEqual(test);
     });
 
     it('previewCursor should rotate the stamp', () => {
         const rotateSpy = spyOn(cursorCtxStub, 'rotate').and.stub();
-        service.previewCursor({ x: 0, y: 0 });
+        service['previewCursor']({ x: 0, y: 0 });
         expect(rotateSpy).toHaveBeenCalledTimes(1);
     });
 
     it('previewCursor should translate the stamp', () => {
         const translateSpy = spyOn(cursorCtxStub, 'translate').and.stub();
         const expectedCalled = 3;
-        service.previewCursor({ x: 0, y: 0 });
+        service['previewCursor']({ x: 0, y: 0 });
         expect(translateSpy).toHaveBeenCalledTimes(expectedCalled);
     });
 
     it('previewCursor should scale the stamp', () => {
         const scaleSpy = spyOn(cursorCtxStub, 'scale').and.stub();
-        service.previewCursor({ x: 0, y: 0 });
+        service['previewCursor']({ x: 0, y: 0 });
         expect(scaleSpy).toHaveBeenCalledTimes(1);
     });
 
     it('previewCursor should set transform on the stamp only horizontaly and verticaly', () => {
         const setTransformSpy = spyOn(cursorCtxStub, 'setTransform').and.stub();
-        service.previewCursor({ x: 0, y: 0 });
+        service['previewCursor']({ x: 0, y: 0 });
         expect(setTransformSpy).toHaveBeenCalledTimes(1);
         expect(setTransformSpy).toHaveBeenCalledWith(1, 0, 0, 1, 0, 0);
     });

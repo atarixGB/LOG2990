@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { ACCEPTED_CHAR, DEFAULT_EMPHASIS, DEFAULT_FONT, DEFAULT_TEXT_ALIGN, DEFAULT_TEXT_SIZE, Emphasis, Font, TextAlign } from '@app/constants';
+import { ACCEPTED_CHAR, DEFAULT_EMPHASIS, DEFAULT_FONT, DEFAULT_TEXT_ALIGN, DEFAULT_TEXT_SIZE, Emphasis, Font, TextAlign } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 @Injectable({
     providedIn: 'root',

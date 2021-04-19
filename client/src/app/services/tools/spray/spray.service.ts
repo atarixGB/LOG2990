@@ -4,7 +4,7 @@ import { Spray } from '@app/classes/spray';
 import { Tool } from '@app/classes/tool';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from 'src/app/classes/vec2';
-import { MouseButton } from 'src/app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 //import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -63,7 +63,7 @@ export class SprayService extends Tool implements OnDestroy {
             this.mouseDown = true;
             this.mouseCoord = this.getPositionFromMouse(event);
             clearTimeout(this.timeoutId);
-            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.baseCtx);
+            this.timeoutId = setTimeout(this.drawSpray, ONE_SECOND / this.sprayFrequency, this, this.drawingService.previewCtx);
             this.undoRedoService.setToolInUse(true);
         }
     }

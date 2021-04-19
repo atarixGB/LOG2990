@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton, ZOOM_RADIUS, ZOOM_RATIO } from '@app/constants';
+import { MouseButton, ZOOM_RADIUS, ZOOM_RATIO } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
 
-import { SelectionBox } from '@app/constants';
+import { SelectionBox } from '@app/constants/constants';
 import { MagnetismService } from './magnetism.service';
 
 // tslint:disable

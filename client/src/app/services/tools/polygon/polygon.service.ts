@@ -2,13 +2,17 @@ import { Injectable } from '@angular/core';
 import { Polygon } from '@app/classes/polygon';
 import { ToolShape } from '@app/classes/tool-shape';
 import { Vec2 } from '@app/classes/vec2';
-import { DASH_SEGMENT_FIRST, DASH_SEGMENT_SECONDARY, DEFAULT_LINE_THICKNESS, DOUBLE_MATH, MIN_SIDE } from '@app/constants';
+import { DEFAULT_LINE_THICKNESS} from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+export const DASH_SEGMENT_FIRST = 1;
+export const DASH_SEGMENT_SECONDARY = 3;
+export const DOUBLE_MATH = 2;
+export const MIN_SIDE = 3;
 @Injectable({
     providedIn: 'root',
 })

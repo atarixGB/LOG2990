@@ -8,7 +8,7 @@ import {
     OPACITY_POS_ALPHA,
     PRIMARYCOLORINITIAL,
     SECONDARYCOLORINITIAL,
-} from '@app/constants';
+} from '@app/constants/constants';
 import { Observable, Subject } from 'rxjs';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { DecimalRGBA, RGBA } from 'src/app/interfaces-enums/rgba';

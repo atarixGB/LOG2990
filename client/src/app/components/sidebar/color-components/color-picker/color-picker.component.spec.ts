@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorDisplayerComponent } from 'src/app/components/sidebar/color-components/color-displayer/color-displayer.component';
-import { FIRSTCOLORTEST, SECONDCOLORTEST } from 'src/app/constants';
+import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
-import { CONTROLPOINTSIZE } from '@app/constants';
+import { CONTROLPOINTSIZE } from '@app/constants/constants';
 
 const OPPOSITE_SIGN = -1;
 
@@ -177,32 +177,5 @@ export class ResizeSelectionService {
         return this.selectionObject.width / this.selectionObject.height;
     }
 
-    private updateDimensionOnShift(startPoint: Vec2, currentPoint: Vec2, boxWidth: number, boxHeight: number): void {
-        const width = Math.abs(currentPoint.x - startPoint.x);
-        const height = Math.abs(currentPoint.y - startPoint.y);
-
-        if (width < height) {
-            if (
-                (currentPoint.x <= startPoint.x && currentPoint.y <= startPoint.y) ||
-                (currentPoint.x >= startPoint.x && currentPoint.y <= startPoint.y)
-            ) {
-                currentPoint.y -= width - height;
-                boxHeight = boxWidth;
-            } else {
-                currentPoint.y += width - height;
-                boxHeight = boxWidth;
-            }
-        } else {
-            if (
-                (currentPoint.x <= startPoint.x && currentPoint.y <= startPoint.y) ||
-                (currentPoint.x <= startPoint.x && currentPoint.y >= startPoint.y)
-            ) {
-                currentPoint.x -= height - width;
-                boxWidth = boxHeight;
-            } else {
-                currentPoint.x += height - width;
-                boxWidth = boxHeight;
-            }
-        }
-    }
+    
 }

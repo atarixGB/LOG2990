@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { StampList } from '@app/constants';
+import{StampList} from '@app/interfaces-enums/stamp-list'
 import { StampService } from '@app/services/tools/stamp/stamp.service';
 @Component({
     selector: 'app-stamp-config',

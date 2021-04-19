@@ -1,6 +1,6 @@
 // tslint:disable:max-line-length
 import { Injectable } from '@angular/core';
-import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants';
+import { CanvasType, Emphasis, Font, TextAlign } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';

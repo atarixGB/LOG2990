@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { DecimalRGBA } from '@app/interfaces-enums/rgba';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';

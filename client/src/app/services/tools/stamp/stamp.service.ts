@@ -3,13 +3,19 @@ import { Injectable } from '@angular/core';
 import { Stamp } from '@app/classes/stamp';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { ANGLE_HALF_TURN, MAX_ANGLE, MouseButton, ROTATION_STEP_STAMP, SCALE_FACTOR_STAMP, SIZE_STAMP, StampList } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
+import { StampList } from '@app/interfaces-enums/stamp-list';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
 
+export const SCALE_FACTOR_STAMP = 1;
+export const ROTATION_STEP_STAMP = 15;
+export const MAX_ANGLE = 360;
+export const ANGLE_HALF_TURN = 180;
+export const SIZE_STAMP = 24;
 @Injectable({
     providedIn: 'root',
 })
@@ -110,7 +116,12 @@ export class StampService extends Tool {
         this.onMouseMove(this.mouseEvent);
     }
 
-    changeAngle(newAngle: number): void {
+    changeStamp(): void {
+        if (this.stampBindings.has(this.selectStamp)) {
+            this.currentStamp = this.stampBindings.get(this.selectStamp)!;
+        }
+    }
+    private changeAngle(newAngle: number): void {
         newAngle %= MAX_ANGLE;
 
         if (newAngle < 0) {
@@ -120,8 +131,7 @@ export class StampService extends Tool {
         this.angle = newAngle;
         this.angleObservable.next(this.angle);
     }
-
-    drawStamp(event: Vec2): void {
+    private drawStamp(event: Vec2): void {
         if (this.srcBinding.has(this.currentStamp)) {
             this.imageSrc = this.srcBinding.get(this.currentStamp)!;
         }
@@ -148,7 +158,7 @@ export class StampService extends Tool {
         this.drawingService.baseCtx.setTransform(1, 0, 0, 1, 0, 0);
     }
 
-    previewCursor(event: Vec2): void {
+    private previewCursor(event: Vec2): void {
         this.drawingService.clearCanvas(this.drawingService.cursorCtx);
 
         if (this.srcBinding.has(this.currentStamp)) {
@@ -173,11 +183,5 @@ export class StampService extends Tool {
         this.drawingService.cursorCtx.stroke(path);
         this.drawingService.cursorCtx.fill(path);
         this.drawingService.cursorCtx.setTransform(1, 0, 0, 1, 0, 0);
-    }
-
-    changeStamp(): void {
-        if (this.stampBindings.has(this.selectStamp)) {
-            this.currentStamp = this.stampBindings.get(this.selectStamp)!;
-        }
     }
 }

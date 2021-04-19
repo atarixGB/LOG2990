@@ -1,6 +1,6 @@
 // tslint:disable
 import { TestBed } from '@angular/core/testing';
-import { FIRSTCOLORTEST, SECONDCOLORTEST } from 'src/app/constants';
+import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from './color-manager.service';
 

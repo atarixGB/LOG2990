@@ -3,7 +3,7 @@ import { RGBA } from '@app/interfaces-enums/rgba';
 // Canvas constants
 
 export const MIN_SIZE = 250;
-export const MIN_SIDE = 3;
+
 export enum MouseButton {
     Left = 0,
     Middle = 1,
@@ -130,29 +130,13 @@ export const COLOR_WIN_WIDTH = '500px';
 export const WORKING_AREA_WIDTH = '85vw';
 export const WORKING_AREA_LENGHT = '100vh';
 
-export const DASH_SEGMENT_FIRST = 1;
-export const DASH_SEGMENT_SECONDARY = 3;
-export const DOUBLE_MATH = 2;
+
 
 
 // constants for pipette service
 export const ZOOM_RADIUS = 75;
 export const ZOOM_RATIO = 0.2;
 
-// constants for stamp
-export enum StampList {
-    Surprised = 0,
-    Happy = 1,
-    Sad = 2,
-    Glasses = 3,
-    Dead = 4,
-}
-
-export const SCALE_FACTOR_STAMP = 1;
-export const ROTATION_STEP_STAMP = 15;
-export const MAX_ANGLE = 360;
-export const ANGLE_HALF_TURN = 180;
-export const SIZE_STAMP = 24;
 
 // constants for bucket
 export const RGBA_COMPONENTS = 4;

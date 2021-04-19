@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FiltersList } from '@app/constants';
+import { FiltersList } from '@app/constants/constants';
 import { ExportService } from '@app/services/export-image/export.service';
 
 const MIN_INPUT_SIZE = 0;

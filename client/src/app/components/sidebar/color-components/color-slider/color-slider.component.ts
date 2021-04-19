@@ -3,7 +3,7 @@
 // Available at : https://github.com/LukasMarx/angular-color-picker
 import { AfterViewInit, Component, ElementRef, EventEmitter, Inject, Output, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FIVE_SIX, HEIGHT, ONE_SIX, ONE_THREE, ONE_TWO, TWO_THREE, WIDTH } from '@app/constants';
+import { FIVE_SIX, HEIGHT, ONE_SIX, ONE_THREE, ONE_TWO, TWO_THREE, WIDTH } from '@app/constants/constants';
 import { Vec2 } from 'src/app/classes/vec2';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';

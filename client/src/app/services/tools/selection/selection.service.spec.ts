@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Utils } from '@app/classes/utils/math-utils';
 import { SelectionTool } from '@app/classes/selection';
-import { mouseEventLClick } from '@app/constants';
+import { mouseEventLClick } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';

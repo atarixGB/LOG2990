@@ -4,7 +4,7 @@ import { Segment, Utils } from '@app/classes/utils/math-utils';
 import { SelectionTool } from '@app/classes/selection';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { LineService } from '@app/services/tools/line/line.service';
 

@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import { mouseEventLClick, mouseEventRClick } from '@app/constants';
+import { mouseEventLClick, mouseEventRClick } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PencilService } from './pencil.service';
 

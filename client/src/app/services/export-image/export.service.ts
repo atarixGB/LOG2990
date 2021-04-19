@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FiltersList } from '@app/constants';
+import { FiltersList } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
 const PREVIEW_ORIGIN_X = 0;

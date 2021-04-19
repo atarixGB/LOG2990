@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { SelectionBox } from '@app/constants';
+import { SelectionBox } from '@app/constants/constants';
 import { ClipboardService } from '@app/services/selection/clipboard.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';

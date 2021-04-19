@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { COLOR_WINDOW_WIDTH } from '@app/constants';
+import { COLOR_WINDOW_WIDTH } from '@app/constants/constants';
 import { ColorPopupComponent } from 'src/app/components/sidebar/color-components/color-popup/color-popup.component';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';

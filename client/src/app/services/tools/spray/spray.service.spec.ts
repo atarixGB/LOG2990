@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ONE_SECOND, SprayService } from './spray.service';
 
 // tslint:disable
-fdescribe('SprayHandlerService', () => {
+describe('SprayHandlerService', () => {
     let service: SprayService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let colorManagerServiceSpy: jasmine.SpyObj<ColorManagerService>;
@@ -193,18 +193,6 @@ fdescribe('SprayHandlerService', () => {
         );
     });
 
-    // it('drawSpray should not call getRandomNumber', () => {
-    //     const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
-    //     service['density'] = 1;
-    //     service.width = 2;
-    //     service.mouseCoord = { x: 0, y: 0 };
-
-    //     service.drawSpray(service, service['drawingService'].previewCtx);
-
-    //     expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
-    //     expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
-    // });
-
     it('getRandomNumber should return random float within min and max range', () => {
         const minimum = 5;
         const maximum = 10;
@@ -215,6 +203,7 @@ fdescribe('SprayHandlerService', () => {
         expect(service['getRandomNumber'](minimum, maximum)).toBeLessThan(maximum);
         expect(service['getRandomNumber'](minimum, maximum)).toBeLessThan(maximum);
     });
+
     it('should change width', () => {
         service.width = 0;
         service.changeWidth(1);

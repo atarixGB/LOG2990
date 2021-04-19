@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FIRSTCOLORTEST} from '@app/constants';
+import { FIRSTCOLORTEST} from '@app/constants/constants';
 import { AlphaSliderComponent } from 'src/app/components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorPaletteComponent } from 'src/app/components/sidebar/color-components/color-palette/color-palette.component';
 import { ColorSliderComponent } from 'src/app/components/sidebar/color-components/color-slider/color-slider.component';

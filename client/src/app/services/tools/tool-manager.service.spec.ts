@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Tool } from '@app/classes/tool';
-import { ToolList } from '@app/constants';
+import { ToolList } from '@app/constants/constants';
 import { PencilService } from './pencil/pencil.service';
 import { RectangleService } from './rectangle/rectangle.service';
 import { SelectionService } from './selection/selection.service';
