@@ -157,7 +157,7 @@ fdescribe('SelectionService', () => {
         expect(lassoServiceSpy.onMouseMove).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.resizeSelection).not.toHaveBeenCalled();
     });
-    ////////////////////////////////
+
     it('should call onMouseMove of ellipseService if isEllipse is false', () => {
         service.isLasso = true;
         lassoServiceSpy.selectionOver = false;
