@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
-import { MouseButton} from '@app/constants';
+import { MouseButton } from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SprayService,ONE_SECOND } from './spray.service';
+import { ONE_SECOND, SprayService } from './spray.service';
 
 // tslint:disable
 fdescribe('SprayHandlerService', () => {
@@ -12,7 +12,7 @@ fdescribe('SprayHandlerService', () => {
     let baseCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     let previewCtxSpy: jasmine.SpyObj<CanvasRenderingContext2D>;
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', [ 'clearCanvas', 'autoSave', 'getCanvasData']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas', 'autoSave', 'getCanvasData']);
         colorManagerServiceSpy = jasmine.createSpyObj('ColorSelectionService', ['getRgbaPrimaryColor']);
         baseCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['beginPath', 'moveTo', 'lineTo', 'stroke']);
         previewCtxSpy = jasmine.createSpyObj('CanvasRenderingContext2D', ['beginPath', 'moveTo', 'lineTo', 'stroke', 'arc', 'fill']);
@@ -47,6 +47,16 @@ fdescribe('SprayHandlerService', () => {
         expect(clearTimeoutSpy).toHaveBeenCalled();
     });
 
+    it(' mouseDown should set filter of baseCtx and previewCtx to none', () => {
+        const mouseEvent = {
+            button: MouseButton.Right,
+        } as MouseEvent;
+
+        service.onMouseDown(mouseEvent);
+
+        expect(service['drawingService'].baseCtx.filter).toEqual('none');
+        expect(service['drawingService'].previewCtx.filter).toEqual('none');
+    });
 
     it(' mouseDown should set mouseDown to true on left click', () => {
         const setTimeoutSpy = spyOn(global, 'setTimeout');
@@ -61,8 +71,20 @@ fdescribe('SprayHandlerService', () => {
         expect(service.mouseDown).toEqual(true);
     });
 
-   
+    it(' mouseDown should set mouseCoord on left click', () => {
+        const setTimeoutSpy = spyOn(global, 'setTimeout');
+        service.mouseCoord = { x: 0, y: 0 };
+        const mouseEvent = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
 
+        service.onMouseDown(mouseEvent);
+
+        expect(setTimeoutSpy).toHaveBeenCalled();
+        expect(service.mouseCoord).toEqual({ x: 25, y: 25 });
+    });
     it(' mouseUp should call clearTimeout if mousDown is true', () => {
         const clearTimeoutSpy = spyOn(global, 'clearTimeout');
         service.mouseDown = true;
@@ -89,6 +111,20 @@ fdescribe('SprayHandlerService', () => {
 
         service.onMouseMove(mouseEvent);
         expect(service.mouseCoord).toEqual({ x: 0, y: 0 });
+    });
+
+    it(' onMouseMove should set mouseCoord if mousDown is true', () => {
+        service.mouseCoord = { x: 0, y: 0 };
+        service.mouseDown = true;
+        const mouseEvent = {
+            offsetX: 25,
+            offsetY: 25,
+            button: MouseButton.Left,
+        } as MouseEvent;
+
+        service.onMouseMove(mouseEvent);
+
+        expect(service.mouseCoord).toEqual({ x: 25, y: 25 });
     });
 
     it(' mouseLeave should not call clearTimeout if mousDown is false', () => {
@@ -157,7 +193,17 @@ fdescribe('SprayHandlerService', () => {
         );
     });
 
+    // it('drawSpray should not call getRandomNumber', () => {
+    //     const getRandomNumberSpy = spyOn(service, 'getRandomNumber');
+    //     service['density'] = 1;
+    //     service.width = 2;
+    //     service.mouseCoord = { x: 0, y: 0 };
 
+    //     service.drawSpray(service, service['drawingService'].previewCtx);
+
+    //     expect(getRandomNumberSpy).toHaveBeenCalledWith(0, Math.PI * 2);
+    //     expect(getRandomNumberSpy).toHaveBeenCalledWith(0, service.width);
+    // });
 
     it('getRandomNumber should return random float within min and max range', () => {
         const minimum = 5;
