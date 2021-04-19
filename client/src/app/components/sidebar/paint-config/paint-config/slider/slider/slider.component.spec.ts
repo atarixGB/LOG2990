@@ -1,4 +1,6 @@
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
 import { SliderComponent } from './slider.component';
 
 // tslint:disable
@@ -9,6 +11,8 @@ describe('SliderComponent', () => {
     beforeEach(async(() => {
         TestBed.configureTestingModule({
             declarations: [SliderComponent],
+            imports:[FormsModule],
+            schemas:[CUSTOM_ELEMENTS_SCHEMA],
         }).compileComponents();
     }));
 
@@ -21,4 +25,14 @@ describe('SliderComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should emit value',()=>{
+        spyOn(component.valueChange,'emit');
+        component.value=1;
+        component.step=1;
+        component.changeValue();
+        expect(component.valueChange.emit).toHaveBeenCalled();
+
+    });
+
 });
