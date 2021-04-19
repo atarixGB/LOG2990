@@ -110,11 +110,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
 
-        window.onload = () => {
-            this.autoSaveService.loadImage();
-            this.canvasSize.x = this.autoSaveService.localDrawing.width;
-            this.canvasSize.y = this.autoSaveService.localDrawing.height;
-        };
+        if (!this.autoSaveService.localStorageIsEmpty()) {
+            window.onload = () => {
+                this.autoSaveService.loadImage();
+                this.canvasSize.x = this.autoSaveService.localDrawing.width;
+                this.canvasSize.y = this.autoSaveService.localDrawing.height;
+            };
+        }
+
         this.cdr.detectChanges();
 
         this.whiteBackgroundCanvas();

@@ -1,7 +1,7 @@
 <div class="container">
   <h1 class="header-item">{{ title }}</h1>
 
-  <button class="button" routerLink="/editor">Créer un nouveau dessin</button>
+  <button class="button" routerLink="/editor" (click)='clearLocalStorage()'>Créer un nouveau dessin</button>
 
   <button class="button" (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
 
