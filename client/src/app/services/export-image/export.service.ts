@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FiltersList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { IndexService } from '@app/services/index/index.service';
 
 const PREVIEW_ORIGIN_X = 0;
 const PREVIEW_ORIGIN_Y = 0;
@@ -27,7 +28,7 @@ export class ExportService {
     private filtersBindings: Map<FiltersList, string>;
     private image: HTMLImageElement;
 
-    constructor(private drawingService: DrawingService) {
+    constructor(private drawingService: DrawingService, private indexService: IndexService) {
         this.filtersBindings = new Map<FiltersList, string>();
         this.filtersBindings
             .set(FiltersList.None, 'none')
@@ -101,19 +102,7 @@ export class ExportService {
         const tempCanva = this.prevToBaseCanvas();
         let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
-        return new Promise<void>(() => {
-            fetch('https://api.imgur.com/3/image', {
-                method: 'post',
-                headers: {
-                    Authorization: 'Client-ID 13c4ad7558b3e6b',
-                },
-                body: url,
-            })
-                .then((data) => data.json())
-                .then((data) => {
-                    this.imgurURL = data.data.link;
-                });
-        });
+        await this.indexService.uploadToImgur(url).then((info) => (this.imgurURL = info));
     }
 
     private prevToBaseCanvas(): CanvasRenderingContext2D {
@@ -126,6 +115,7 @@ export class ExportService {
         }
         canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
 
+        console.log('le nouveau canvas', canvasCtx);
         return canvasCtx;
     }
 

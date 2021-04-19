@@ -1,8 +1,7 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Params } from '@angular/router';
-import { DrawingComponent } from '@app/components/drawing/drawing.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { EditorComponent } from './editor.component';
 //tslint:disable
@@ -16,7 +15,7 @@ describe('EditorComponent', () => {
 
     beforeEach(async(() => {
         TestBed.configureTestingModule({
-            declarations: [EditorComponent, DrawingComponent, SidebarComponent],
+            imports: [HttpClientTestingModule],
             providers: [
                 {
                     provide: ToolManagerService,

@@ -1,4 +1,7 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { FiltersList } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
@@ -11,11 +14,20 @@ describe('ExportService', () => {
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
     let canvasTestHelper: CanvasTestHelper;
+    let routerSpy = jasmine.createSpyObj('Router', {
+        navigate: new Promise<boolean>(() => {
+            return;
+        }),
+    });
 
     beforeEach(() => {
         drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy }],
+            imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: Router, useValue: routerSpy },
+            ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -141,9 +153,10 @@ describe('ExportService', () => {
     });
 
     it('should upload image of drawingBaseCtx to imgur', async () => {
-        service.uploadToImgur().then(() => {
-            expect(service.imgurURL).not.toEqual('');
-        });
+        let urlFromImgur = 'https://i.imgur.com/u78Ey81.png';
+        spyOn<any>(service['indexService'], 'uploadToImgur').and.returnValue(Promise.resolve(urlFromImgur));
+        await service.uploadToImgur();
+        expect(service.imgurURL).toEqual('https://i.imgur.com/u78Ey81.png');
     });
 
     it('should resize canvas case height is bigger ', () => {

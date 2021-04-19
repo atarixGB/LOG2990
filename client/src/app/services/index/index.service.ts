@@ -27,6 +27,20 @@ export class IndexService {
         });
     }
 
+    async uploadToImgur(url: string): Promise<string> {
+        return new Promise<string>((resolve) => {
+            fetch('https://api.imgur.com/3/image', {
+                method: 'post',
+                headers: {
+                    Authorization: 'Client-ID 13c4ad7558b3e6b',
+                },
+                body: url,
+            })
+                .then((data) => data.json())
+                .then((data) => resolve(data.data.link));
+        });
+    }
+
     async deleteDrawingById(id: string): Promise<void> {
         return new Promise<void>((resolve) => {
             const url = this.BASE_URL + this.DATABASE_URL + this.DRAWINGS_URL + `/${id}.${this.FILE_FORMAT}`;
