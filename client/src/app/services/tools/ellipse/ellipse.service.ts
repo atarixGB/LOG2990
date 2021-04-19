@@ -21,7 +21,7 @@ export class EllipseService extends ShapeService {
         super(drawingService, colorManager);
     }
 
-    drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void {
+    drawShape(ctx: CanvasRenderingContext2D): void {
         this.rectangle.setPath(this.pathData);
         this.computeSize();
         this.findMouseDirection();
@@ -34,7 +34,7 @@ export class EllipseService extends ShapeService {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (!this.isShiftShape) {

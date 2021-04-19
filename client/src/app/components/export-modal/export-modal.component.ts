@@ -1,5 +1,4 @@
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { FiltersList } from '@app/constants';
 import { ExportService } from '@app/services/export-image/export.service';
 
@@ -20,7 +19,7 @@ export class ExportModalComponent implements AfterViewInit {
     imgurIsSelected: boolean;
     private baseCtx: CanvasRenderingContext2D;
 
-    constructor(public matDialogRef: MatDialogRef<ExportModalComponent>, public exportService: ExportService, private cdRef: ChangeDetectorRef) {
+    constructor(public exportService: ExportService, private cdRef: ChangeDetectorRef) {
         this.maxLength = MAX_INPUT_SIZE;
     }
 

@@ -179,10 +179,8 @@ export class CarouselComponent implements AfterViewInit {
 
     private findAvailableImages(urlFromServer: string[], drawingFromDB: Drawing[]): Drawing[] {
         const availableImages = [];
-        console.log('server: ', urlFromServer, 'db: ', drawingFromDB);
         for (const url of urlFromServer) {
             for (const drawing of drawingFromDB) {
-                console.log(url, ' et ', drawing.imageURL);
                 if (drawing.imageURL === url) {
                     availableImages.push(drawing);
                 }

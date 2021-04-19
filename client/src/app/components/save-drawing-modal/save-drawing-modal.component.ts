@@ -23,7 +23,6 @@ export class SaveDrawingModalComponent {
     titleIsValid: boolean;
     tagInput: string;
     tags: string[];
-    message: DrawingData;
 
     constructor(
         public matDialogRef: MatDialogRef<SaveDrawingModalComponent>,
