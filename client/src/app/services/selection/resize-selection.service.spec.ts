@@ -4,6 +4,18 @@ import { SelectionTool } from '@app/classes/selection';
 import { ResizeSelectionService } from './resize-selection.service';
 
 // tslint:disable
+
+enum ControlPoints {
+    TopLeft = 0,
+    TopRight = 1,
+    BottomRigth = 2,
+    BottomLeft = 3,
+    MiddleTop = 4,
+    MiddleRight = 5,
+    MiddleBottom = 6,
+    MiddleLeft = 7,
+}
+
 fdescribe('ResizeSelectionService', () => {
     let service: ResizeSelectionService;
     let canvasTestHelper: CanvasTestHelper;
@@ -26,10 +38,11 @@ fdescribe('ResizeSelectionService', () => {
     });
 
     /*
-    it('checkIfMouseIsOnControlPoint should return true if  mouse on a control point', () => {
+    fit('checkIfMouseIsOnControlPoint should return true if  mouse on a control point', () => {
         const mouseCoord = {x: 0, y: 0};
+
         service.controlPointsCoord[0].x = 0;
-        service.controlPointsCoord[0].y =
+        service.controlPointsCoord[0].y = 0;
         const spyCheckControlPoint = spyOn(service, 'checkIfMouseIsOnControlPoint');
         service.checkIfMouseIsOnControlPoint(mouseCoord);
         expect(service['currentControlPoint']).toEqual(0);
@@ -120,14 +133,15 @@ fdescribe('ResizeSelectionService', () => {
         expect(service.shiftKey).toEqual(false);
     });
     
-    /*
-    fit('print resize should print on the canvas', () => {
+    
+    it('print resize should print on the canvas', () => {
         const expectedNewOrigin = {x:0, y:0};
 
         service['selectionObject'].origin = {x:0, y:0};
         service['selectionObject'].destination = {x: 10, y:10};
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
+        service['selectionObject'].image = new ImageData(10, 10);
 
         const saveSpy = spyOn(baseCtxStub, 'save').and.stub();
         const restoreSpy = spyOn(baseCtxStub, 'restore').and.stub();
@@ -139,8 +153,24 @@ fdescribe('ResizeSelectionService', () => {
         expect(restoreSpy).toHaveBeenCalled();
         
     });
-    */
     
+    it('scontrolPointInResize should not call a resize function if valid control point', () => {
+        spyOn(service['controlPointsBinding'], 'has').and.returnValue(false);
+        const spyBinding = spyOn(service['controlPointsBinding'], 'get');
+
+        service['controlPointInResize']();
+
+        expect(spyBinding).not.toHaveBeenCalled();
+    });
+
+    it('controlPointInResize should call a resize function if valid control point', () => {
+        const spyBinding = spyOn(service['controlPointsBinding'], 'get');
+        service['currentControlPoint'] = ControlPoints.BottomLeft;
+
+        service['controlPointInResize']();
+
+        expect(spyBinding).toHaveBeenCalled();
+    });
 
     /*
     it('controlPointInResize call the resize function if valid ', () => {
