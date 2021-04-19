@@ -9,7 +9,7 @@ import { StampComponent } from './stamp-config.component';
 
 
 //tslint:disable
-fdescribe('StampComponent', () => {
+describe('StampComponent', () => {
     let component: StampComponent;
     let fixture: ComponentFixture<StampComponent>;
 
