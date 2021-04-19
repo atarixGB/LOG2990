@@ -94,20 +94,20 @@ describe('RectangleService', () => {
     });
 
     it('onMouseUp should clear canvas on preview context', () => {
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
         expect(drawServiceSpy.clearCanvas).toHaveBeenCalled();
     });
 
     it('onMouseUp should call drawSquare if isShiftShape is true', () => {
         service['isShiftShape'] = true;
         drawSquareSpy = spyOn<any>(service, 'drawSquare');
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
         expect(drawSquareSpy).toHaveBeenCalled();
     });
 
     it('onMouseUp should clear path', () => {
         let clearPathSpy = spyOn<any>(service, 'clearPath');
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
         expect(clearPathSpy).toHaveBeenCalled();
     });
 

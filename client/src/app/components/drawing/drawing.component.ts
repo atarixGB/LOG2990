@@ -264,12 +264,10 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
 
         if (resizeX && this.positionX > MIN_SIZE) {
             this.previewCanvas.nativeElement.width = this.positionX;
-            this.gridCanvas.nativeElement.width = this.positionX;
         }
 
         if (resizeY && this.positionY > MIN_SIZE) {
             this.previewCanvas.nativeElement.height = this.positionY;
-            this.gridCanvas.nativeElement.height = this.positionY;
         }
     }
 
