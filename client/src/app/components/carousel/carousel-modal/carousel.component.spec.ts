@@ -89,6 +89,9 @@ describe('CarouselComponent', () => {
     });
 
     it('should not set isCanvaEmpty to true when isCanvasEmpty is not null', () => {
+        const confirmMock = jasmine.createSpyObj('confirmMock', ['confirm']);
+        window.confirm = confirmMock;
+        spyOn<any>(window, 'confirm').and.returnValue(false);
         drawingServiceSpy.canvas = document.createElement('canvas');
         drawingServiceSpy.canvas.width = 100;
         drawingServiceSpy.canvas.height = 100;
@@ -100,6 +103,8 @@ describe('CarouselComponent', () => {
     it('should open drawing if canvas is NOT empty', () => {
         component.isCanvaEmpty = false;
         component['decision'] = true;
+        const confirmMock = jasmine.createSpyObj('confirmMock', ['confirm']);
+        window.confirm = confirmMock;
         spyOn<any>(window, 'confirm').and.returnValue(true);
         const openDrawingSpy = spyOn<any>(component, 'openEditorWithDrawing').and.stub();
         component.loadImage();
@@ -108,6 +113,8 @@ describe('CarouselComponent', () => {
 
     it('should open drawing if canvas is empty', () => {
         component.isCanvaEmpty = false;
+        const confirmMock = jasmine.createSpyObj('confirmMock', ['confirm']);
+        window.confirm = confirmMock;
         spyOn<any>(window, 'confirm').and.returnValue(false);
         const openDrawingSpy = spyOn<any>(component, 'openEditorWithDrawing').and.stub();
         component.loadImage();
