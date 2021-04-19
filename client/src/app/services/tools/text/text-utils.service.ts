@@ -12,11 +12,11 @@ export class TextUtilsService extends Tool {
     selectFont: Font;
     selectEmphasis: Emphasis;
     selectAlign: TextAlign;
-    color: string;
     font: undefined | string = DEFAULT_FONT;
     size: string = DEFAULT_TEXT_SIZE;
     emphasis: undefined | string = DEFAULT_EMPHASIS;
 
+    protected color: string;
     protected textInput: string[];
     protected currentLine: number;
     protected totalLine: number;

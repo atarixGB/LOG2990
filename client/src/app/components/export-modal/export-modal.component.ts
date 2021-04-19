@@ -13,14 +13,16 @@ const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
 })
 export class ExportModalComponent implements AfterViewInit {
     @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    matTooltipForTitle: string = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
-    FiltersList: typeof FiltersList = FiltersList;
+    matTooltipForTitle: string;
+    filters: typeof FiltersList;
     maxLength: number;
     imgurIsSelected: boolean;
     private baseCtx: CanvasRenderingContext2D;
 
     constructor(public exportService: ExportService, private cdRef: ChangeDetectorRef) {
         this.maxLength = MAX_INPUT_SIZE;
+        this.matTooltipForTitle = `Le titre doit contenir seulement des caractères alphanumériques. Sa longueur doit être au plus de ${MAX_INPUT_SIZE} caractères.`;
+        this.filters = FiltersList;
     }
 
     ngAfterViewInit(): void {

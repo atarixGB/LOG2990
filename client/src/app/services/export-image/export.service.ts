@@ -16,18 +16,15 @@ export class ExportService {
     canvas: HTMLCanvasElement;
     resizeWidth: number;
     resizeHeight: number;
-
     drawingTitle: string;
     currentDrawing: string;
-    currentImageFormat: string;
-    selectedFilter: FiltersList;
-    currentFilter: string | undefined;
-    filterIntensity: number;
-
-    filtersBindings: Map<FiltersList, string>;
-
     imgurURL: string;
+    currentImageFormat: string;
+    filterIntensity: number;
+    currentFilter: string | undefined;
+    selectedFilter: FiltersList;
 
+    private filtersBindings: Map<FiltersList, string>;
     private image: HTMLImageElement;
 
     constructor(private drawingService: DrawingService) {
@@ -92,7 +89,7 @@ export class ExportService {
     }
 
     exportDrawing(): void {
-        const tempCanva = this.previsualizationToBiggerCanvas();
+        const tempCanva = this.prevToBaseCanvas();
         const link = document.createElement('a');
         this.image.src = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         link.download = this.drawingTitle + '.' + this.currentImageFormat;
@@ -100,21 +97,8 @@ export class ExportService {
         link.click();
     }
 
-    previsualizationToBiggerCanvas(): CanvasRenderingContext2D {
-        const canvas = document.createElement('canvas');
-        const canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
-        canvas.width = this.drawingService.canvas.width;
-        canvas.height = this.drawingService.canvas.height;
-        if (this.currentFilter) {
-            canvasCtx.filter = this.currentFilter;
-        }
-        canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
-
-        return canvasCtx;
-    }
-
     async uploadToImgur(): Promise<void> {
-        const tempCanva = this.previsualizationToBiggerCanvas();
+        const tempCanva = this.prevToBaseCanvas();
         let url = tempCanva.canvas.toDataURL('image/' + this.currentImageFormat);
         url = url.replace('data:image/' + this.currentImageFormat + ';base64', '');
         return new Promise<void>(() => {
@@ -130,6 +114,19 @@ export class ExportService {
                     this.imgurURL = data.data.link;
                 });
         });
+    }
+
+    private prevToBaseCanvas(): CanvasRenderingContext2D {
+        const canvas = document.createElement('canvas');
+        const canvasCtx = canvas.getContext('2d') as CanvasRenderingContext2D;
+        canvas.width = this.drawingService.canvas.width;
+        canvas.height = this.drawingService.canvas.height;
+        if (this.currentFilter) {
+            canvasCtx.filter = this.currentFilter;
+        }
+        canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
+
+        return canvasCtx;
     }
 
     private getResizedCanvas(): void {

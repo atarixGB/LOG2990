@@ -34,7 +34,7 @@ describe('ExportService', () => {
     it('should apply blur filter image', () => {
         service.selectedFilter = FiltersList.Blur;
         spyOn<any>(service, 'getResizedCanvas').and.stub();
-        const filterGetSpy = spyOn(service.filtersBindings, 'get').and.callThrough();
+        const filterGetSpy = spyOn(service['filtersBindings'], 'get').and.callThrough();
         service.applyFilter();
         if (service['image'].onload) {
             service['image'].onload({} as any);
@@ -46,7 +46,7 @@ describe('ExportService', () => {
     it('should not apply filter', () => {
         service.selectedFilter = FiltersList.None;
         spyOn<any>(service, 'getResizedCanvas').and.stub();
-        const filterGetSpy = spyOn(service.filtersBindings, 'get').and.callThrough();
+        const filterGetSpy = spyOn(service['filtersBindings'], 'get').and.callThrough();
         service.applyFilter();
         if (service['image'].onload) {
             service['image'].onload({} as any);
@@ -58,7 +58,7 @@ describe('ExportService', () => {
     it('should apply inverse filter ', () => {
         service.selectedFilter = FiltersList.Invert;
         spyOn<any>(service, 'getResizedCanvas').and.stub();
-        const filterGetSpy = spyOn(service.filtersBindings, 'get').and.callThrough();
+        const filterGetSpy = spyOn(service['filtersBindings'], 'get').and.callThrough();
         service.applyFilter();
         if (service['image'].onload) {
             service['image'].onload({} as any);
@@ -107,7 +107,7 @@ describe('ExportService', () => {
     });
 
     it('should save the canva image locally', () => {
-        const exportSpy = spyOn(service, 'previsualizationToBiggerCanvas').and.callThrough();
+        const exportSpy = spyOn<any>(service, 'prevToBaseCanvas').and.callThrough();
         service['drawingService'].canvas.width = 250;
         service['drawingService'].canvas.height = 250;
         service.currentFilter = 'blur';
@@ -118,7 +118,7 @@ describe('ExportService', () => {
     });
 
     it('should save the canva image locally', () => {
-        const exportSpy = spyOn(service, 'previsualizationToBiggerCanvas').and.callThrough();
+        const exportSpy = spyOn<any>(service, 'prevToBaseCanvas').and.callThrough();
         service['drawingService'].canvas.width = 250;
         service['drawingService'].canvas.height = 250;
         service.currentFilter = 'blur';
@@ -157,7 +157,7 @@ describe('ExportService', () => {
     });
 
     it('should not apply filter if this one is undefined ', () => {
-        const prevSpy = spyOn(service, 'previsualizationToBiggerCanvas').and.callThrough();
+        const prevSpy = spyOn<any>(service, 'prevToBaseCanvas').and.callThrough();
         service['drawingService'].canvas.width = 250;
         service['drawingService'].canvas.height = 250;
         service.currentFilter = undefined;

@@ -40,12 +40,12 @@
     <mat-form-field class="filters-container">
         <mat-label>Filtres</mat-label>
         <mat-select ngDefaultControl [(ngModel)]="exportService.selectedFilter" (selectionChange)="exportService.applyFilter()">
-            <mat-option [value]="FiltersList.None">Aucun</mat-option>
-            <mat-option [value]="FiltersList.Blur">Flou</mat-option>
-            <mat-option [value]="FiltersList.Brightness">Luminosité</mat-option>
-            <mat-option [value]="FiltersList.Contrast">Contraste</mat-option>
-            <mat-option [value]="FiltersList.Invert">Inversion des couleurs</mat-option>
-            <mat-option [value]="FiltersList.Grayscale">Nuance de gris</mat-option>
+            <mat-option [value]="filters.None">Aucun</mat-option>
+            <mat-option [value]="filters.Blur">Flou</mat-option>
+            <mat-option [value]="filters.Brightness">Luminosité</mat-option>
+            <mat-option [value]="filters.Contrast">Contraste</mat-option>
+            <mat-option [value]="filters.Invert">Inversion des couleurs</mat-option>
+            <mat-option [value]="filters.Grayscale">Nuance de gris</mat-option>
         </mat-select>
     </mat-form-field>
 
