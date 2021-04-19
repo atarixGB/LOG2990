@@ -38,6 +38,10 @@ export class MainPageComponent implements OnInit {
         this.changeLocation();
     }
 
+    clearLocalStorage(): void {
+        this.autoSaveService.clearLocalStorage();
+    }
+
     private changeLocation(): void {
         window.location.replace(this.EDITOR_ROUTE);
     }
