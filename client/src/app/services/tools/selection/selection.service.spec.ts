@@ -14,7 +14,7 @@ import { LassoService } from './lasso/lasso.service';
 import { SelectionService } from './selection.service';
 
 // tslint:disable
-describe('SelectionService', () => {
+fdescribe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
@@ -156,6 +156,23 @@ describe('SelectionService', () => {
         service.onMouseMove(mouseEventLClick);
         expect(lassoServiceSpy.onMouseMove).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.resizeSelection).not.toHaveBeenCalled();
+    });
+
+    it('should call onMouseMove of ellipseService if isEllipse is false', () => {
+        service.isLasso = true;
+        lassoServiceSpy.selectionOver = false;
+        service.mouseDown = true;
+        selectionUtilsServiceSpy.isResizing = false;
+        service.isEllipse = false;
+        const mouseEventLClick = {
+            x: 25,
+            y: 25,
+            button: 0,
+        } as MouseEvent;
+        service.onMouseMove(mouseEventLClick);
+        expect(lassoServiceSpy.onMouseMove).toHaveBeenCalled();
+        expect(selectionUtilsServiceSpy.resizeSelection).not.toHaveBeenCalled();
+        expect(rectangleServiceSpy.onMouseMove).toHaveBeenCalled();
     });
 
     it('should call onMouseUp of LassoService if isLasso is true', () => {
