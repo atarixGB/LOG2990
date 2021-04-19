@@ -8,4 +8,7 @@ import { Drawing } from '@common/communication/drawing';
 })
 export class CarouselDrawingComponent {
     @Input() drawing: Drawing;
+    constructor() {
+        this.drawing = new Drawing('', [], '');
+    }
 }
