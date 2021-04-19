@@ -25,10 +25,10 @@ export class StampService extends Tool {
     isKeyAltDown: boolean;
     mouseEvent: MouseEvent;
 
-    private angleObservable: Subject<number> = new Subject<number>();
-
     stampBindings: Map<StampList, string>;
     srcBinding: Map<string, string>;
+
+    private angleObservable: Subject<number> = new Subject<number>();
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
@@ -128,6 +128,8 @@ export class StampService extends Tool {
 
         const path = new Path2D(this.imageSrc);
         const center: Vec2 = { x: event.x + this.size / 2, y: event.y + this.size / 2 };
+
+        this.drawingService.baseCtx.lineWidth = 1;
 
         this.drawingService.baseCtx.translate(center.x, center.y);
 
