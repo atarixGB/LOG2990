@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { AfterViewInit, Component, HostListener, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Utils } from '@app/classes/math-utils';
@@ -16,24 +15,19 @@ import { DrawingData } from '@common/communication/drawing-data';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
-    readonly URL_POSITION: number = 4;
-
     isLoading: boolean;
     placement: Drawing[];
-    isDisabled: boolean;
     tags: string[];
     tagInput: string;
     drawings: Drawing[];
 
+    private readonly URL_POSITION: number = 4;
     private index: number;
     private mainDrawingURL: string;
     private decision: boolean;
-    @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
-    @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
 
     constructor(
         public indexService: IndexService,
-
         private router: Router,
         private dialogRef: MatDialogRef<CarouselComponent>,
         private drawingService: DrawingService,
@@ -46,7 +40,6 @@ export class CarouselComponent implements AfterViewInit {
         this.tags = [];
         this.isLoading = true;
         this.mainDrawingURL = '';
-        this.isDisabled = true;
         this.tagInput = '';
         this.decision = false;
     }
