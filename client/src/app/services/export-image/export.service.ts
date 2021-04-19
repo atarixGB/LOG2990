@@ -114,8 +114,6 @@ export class ExportService {
             canvasCtx.filter = this.currentFilter;
         }
         canvasCtx.drawImage(this.drawingService.canvas, 0, 0);
-
-        console.log('le nouveau canvas', canvasCtx);
         return canvasCtx;
     }
 
