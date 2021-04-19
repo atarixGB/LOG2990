@@ -6,6 +6,7 @@
     "format": "prettier --config ../.prettierrc.yaml --write \"src/**/*\"",
     "build": "ng build",
     "test": "ng test",
+    "test:headless": "ng test --browsers ChromeHeadless --code-coverage --sourceMap=true --watch=false",
     "coverage": "ng test --code-coverage --sourceMap=true",
     "lint": "ng lint --type-check --format stylish",
     "lint:fix": "npm run lint -- --fix"
