@@ -31,14 +31,14 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./drawing.component.scss'],
 })
 export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, AfterViewChecked {
-    @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
-    @ViewChild('lassoPreviewCanvas', { static: false }) lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('baseCanvas', { static: false }) private baseCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('previewCanvas', { static: false }) private previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) private gridCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('cursorCanvas', { static: false }) private cursorCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('workingArea', { static: false }) private workingArea: ElementRef<HTMLDivElement>;
+    @ViewChild('lassoPreviewCanvas', { static: false }) private lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
 
-    dragPosition: Vec2 = { x: 0, y: 0 };
+    dragPosition: Vec2;
     canvasSize: Vec2;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -135,29 +135,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
     }
 
     onMouseMove(event: MouseEvent): void {
-        const ELEMENT = event.target as HTMLElement;
-
         if (this.toolManagerService.currentToolEnum === ToolList.Eraser) {
             this.drawingService.cursorCtx = this.cursorCtx;
         } else {
             this.cursorCtx.clearRect(0, 0, this.cursorCanvas.nativeElement.width, this.cursorCanvas.nativeElement.height);
         }
 
-        if (!ELEMENT.className.includes('box')) {
-            this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
-
-            if (
-                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
-                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse ||
-                this.toolManagerService.currentToolEnum === ToolList.Lasso
-            ) {
-                if (!this.selectionService.newSelection) {
-                    this.toolManagerService.currentTool = this.moveSelectionService;
-                } else {
-                    this.toolManagerService.currentTool = this.selectionService;
-                }
-            }
-        }
+        this.handleSelectionTool(event);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -232,19 +216,19 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
     }
 
     dragEnded(event: CdkDragEnd): void {
-        const NEW_WIDTH: number = this.canvasSize.x + event.distance.x;
-        const NEW_HEIGHT: number = this.canvasSize.y + event.distance.y;
+        const newWidth: number = this.canvasSize.x + event.distance.x;
+        const newHeight: number = this.canvasSize.y + event.distance.y;
 
         this.previewCanvas.nativeElement.style.borderStyle = 'solid';
 
-        if (NEW_WIDTH >= MIN_SIZE) {
-            this.canvasSize.x = NEW_WIDTH;
+        if (newWidth >= MIN_SIZE) {
+            this.canvasSize.x = newWidth;
         } else {
             this.canvasSize.x = MIN_SIZE;
         }
 
-        if (NEW_HEIGHT >= MIN_SIZE) {
-            this.canvasSize.y = NEW_HEIGHT;
+        if (newHeight >= MIN_SIZE) {
+            this.canvasSize.y = newHeight;
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
@@ -303,10 +287,32 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
         this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
         this.keyHandlerService.baseCtx = this.baseCtx;
         this.keyHandlerService.canvasSize = this.canvasSize;
+        this.adjustCanvasSize();
+    }
 
+    private adjustCanvasSize(): void {
         this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
         if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
+        }
+    }
+
+    private handleSelectionTool(event: MouseEvent): void {
+        const element = event.target as HTMLElement;
+        if (!element.className.includes('box')) {
+            this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
+
+            if (
+                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
+                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse ||
+                this.toolManagerService.currentToolEnum === ToolList.Lasso
+            ) {
+                if (!this.selectionService.newSelection) {
+                    this.toolManagerService.currentTool = this.moveSelectionService;
+                } else {
+                    this.toolManagerService.currentTool = this.selectionService;
+                }
+            }
         }
     }
 
