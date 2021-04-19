@@ -14,7 +14,7 @@ import { LassoService } from './lasso/lasso.service';
 import { SelectionService } from './selection.service';
 
 // tslint:disable
-fdescribe('SelectionService', () => {
+describe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
