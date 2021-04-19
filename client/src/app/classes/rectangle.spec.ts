@@ -2,11 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from './canvas-test-helper';
 import { Rectangle } from './rectangle';
 import { Vec2 } from './vec2';
-export enum TypeStyle {
-    Stroke = 'stroke',
-    Fill = 'fill',
-    StrokeFill = 'strokeFill',
-}
+import { TypeStyle } from '@app/interfaces-enums/type-style';
 
 // tslint:disable
 describe('Rectangle ', () => {

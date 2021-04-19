@@ -176,4 +176,5 @@ export class ResizeSelectionService {
     private getSelectionRatio(): number {
         return this.selectionObject.width / this.selectionObject.height;
     }
+
 }

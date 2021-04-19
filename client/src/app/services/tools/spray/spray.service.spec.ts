@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
-import { MouseButton, ONE_SECOND } from '@app/constants';
+import { MouseButton} from '@app/constants';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { SprayService } from './spray.service';
+import { SprayService,ONE_SECOND } from './spray.service';
 
 // tslint:disable
-describe('SprayHandlerService', () => {
+fdescribe('SprayHandlerService', () => {
     let service: SprayService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let colorManagerServiceSpy: jasmine.SpyObj<ColorManagerService>;
@@ -30,8 +30,8 @@ describe('SprayHandlerService', () => {
     });
 
     afterEach(() => {
-        if (service.timeoutId) {
-            clearTimeout(service.timeoutId);
+        if (service['timeoutId']) {
+            clearTimeout(service['timeoutId']);
         }
     });
 
@@ -135,7 +135,7 @@ describe('SprayHandlerService', () => {
 
     it('drawSpray should not call setTimeout if timeoutId is undefined', () => {
         const setTimeoutSpy = spyOn(global, 'setTimeout');
-        service.density = 0;
+        service['density'] = 0;
 
         service.drawSpray(service, service['drawingService'].previewCtx);
 
@@ -143,8 +143,8 @@ describe('SprayHandlerService', () => {
     });
 
     it('drawSpray should call setTimeout if timeoutId is not undefined', () => {
-        service.density = 0;
-        service.timeoutId = setTimeout(() => {}, 100);
+        service['density'] = 0;
+        service['timeoutId'] = setTimeout(() => {}, 100);
         const setTimeoutSpy = spyOn(global, 'setTimeout');
 
         service.drawSpray(service, service['drawingService'].previewCtx);
@@ -163,11 +163,11 @@ describe('SprayHandlerService', () => {
         const minimum = 5;
         const maximum = 10;
 
-        expect(service.getRandomNumber(minimum, maximum)).toBeGreaterThan(minimum);
-        expect(service.getRandomNumber(minimum, maximum)).toBeGreaterThan(minimum);
+        expect(service['getRandomNumber'](minimum, maximum)).toBeGreaterThan(minimum);
+        expect(service['getRandomNumber'](minimum, maximum)).toBeGreaterThan(minimum);
 
-        expect(service.getRandomNumber(minimum, maximum)).toBeLessThan(maximum);
-        expect(service.getRandomNumber(minimum, maximum)).toBeLessThan(maximum);
+        expect(service['getRandomNumber'](minimum, maximum)).toBeLessThan(maximum);
+        expect(service['getRandomNumber'](minimum, maximum)).toBeLessThan(maximum);
     });
     it('should change width', () => {
         service.width = 0;

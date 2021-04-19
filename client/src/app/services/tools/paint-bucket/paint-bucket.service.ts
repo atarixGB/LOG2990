@@ -17,9 +17,9 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 })
 export class PaintBucketService extends Tool {
     startPixelColor: Uint8ClampedArray;
-    maxTolerance: number = MAX_TOLERANCE_VALUE;
-    minTolerance: number = MIN_TOLERANCE_VALUE;
-    tolerance: number = MIN_TOLERANCE_VALUE;
+    maxTolerance: number; 
+    minTolerance: number; 
+    tolerance: number; 
     mouseDownCoord: Vec2;
     canvasData: ImageData;
     paintBucket: PaintBucket;
@@ -27,6 +27,9 @@ export class PaintBucketService extends Tool {
 
     constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
+        this.maxTolerance=MAX_TOLERANCE_VALUE;
+        this.minTolerance=MIN_TOLERANCE_VALUE;
+        this.tolerance=MIN_TOLERANCE_VALUE;
     }
 
     onMouseDown(event: MouseEvent): void {

@@ -10,7 +10,7 @@ import { ColorManagerService } from 'src/app/services/color-manager/color-manage
     providedIn: 'root',
 })
 export class PipetteService extends Tool {
-    pixelColor: string[] = ['#000000', '0'];
+    pixelColor: string[];
     primaryColor: EventEmitter<string[]> = new EventEmitter<string[]>();
     secondaryColor: EventEmitter<string[]> = new EventEmitter<string[]>();
     zoom: HTMLCanvasElement;
@@ -19,6 +19,7 @@ export class PipetteService extends Tool {
 
     constructor(drawingService: DrawingService, public colorManagerService: ColorManagerService) {
         super(drawingService);
+        this.pixelColor= ['#000000', '0'];
     }
 
     onMouseDown(event: MouseEvent): void {

@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Polygon } from '@app/classes/polygon';
 import { ToolShape } from '@app/classes/tool-shape';
 import { Vec2 } from '@app/classes/vec2';
-import { DASH_SEGMENT_FIRST, DASH_SEGMENT_SECONDARY, DEFAULT_LINE_THICKNESS, DOUBLE_MATH, MIN_SIDE, TypeStyle } from '@app/constants';
+import { DASH_SEGMENT_FIRST, DASH_SEGMENT_SECONDARY, DEFAULT_LINE_THICKNESS, DOUBLE_MATH, MIN_SIDE } from '@app/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
+import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
@@ -14,17 +15,18 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 export class PolygonService extends ToolShape {
     private pointCircleCenter: Vec2;
     radius: number;
-    sides: number = MIN_SIDE;
-    fillValue: boolean = false;
-    strokeValue: boolean = true;
-    lineWidth: number = DEFAULT_LINE_THICKNESS;
+    sides: number;
+    fillValue: boolean;
+    strokeValue: boolean;
+    lineWidth: number;
 
     constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
-
+        this.sides = MIN_SIDE;
+        this.lineWidth = DEFAULT_LINE_THICKNESS;
         this.fillValue = false;
         this.strokeValue = false;
-        this.selectType = TypeStyle.stroke;
+        this.selectType = TypeStyle.Stroke;
     }
 
     onMouseUp(event: MouseEvent): void {
@@ -124,15 +126,15 @@ export class PolygonService extends ToolShape {
 
     changeSelectedType(): void {
         switch (this.selectType) {
-            case TypeStyle.stroke:
+            case TypeStyle.Stroke:
                 this.fillValue = false;
                 this.strokeValue = true;
                 break;
-            case TypeStyle.fill:
+            case TypeStyle.Fill:
                 this.fillValue = true;
                 this.strokeValue = false;
                 break;
-            case TypeStyle.strokeFill:
+            case TypeStyle.StrokeFill:
                 this.fillValue = true;
                 this.strokeValue = true;
                 break;
