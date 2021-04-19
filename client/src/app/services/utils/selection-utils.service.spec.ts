@@ -6,7 +6,7 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { SelectionUtilsService } from './selection-utils.service';
 
 // tslint:disable
-fdescribe('SelectionUtilsService', () => {
+describe('SelectionUtilsService', () => {
     let service: SelectionUtilsService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let canvasTestHelper: CanvasTestHelper;

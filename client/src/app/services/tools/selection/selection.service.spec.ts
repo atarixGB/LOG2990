@@ -14,7 +14,7 @@ import { LassoService } from './lasso/lasso.service';
 import { SelectionService } from './selection.service';
 
 // tslint:disable
-describe('SelectionService', () => {
+fdescribe('SelectionService', () => {
     let service: SelectionService;
     let drawingServiceSpy: jasmine.SpyObj<DrawingService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
@@ -127,17 +127,51 @@ describe('SelectionService', () => {
         lassoServiceSpy.selectionOver = false;
         service.mouseDown = true;
         selectionUtilsServiceSpy.isResizing = true;
-
         service.onMouseMove(mouseEventLClick);
         expect(lassoServiceSpy.onMouseMove).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.resizeSelection).toHaveBeenCalled();
     });
+    it('should not resize selection correctly if Lasso is selected', () => {
+        service.isLasso = false;
+        lassoServiceSpy.selectionOver = false;
+        service.mouseDown = false;
+        service.isEllipse = true;
+        selectionUtilsServiceSpy.isResizing = false;
+        service.onMouseMove(mouseEventLClick);
+        expect(lassoServiceSpy.onMouseMove).not.toHaveBeenCalled();
+        expect(selectionUtilsServiceSpy.resizeSelection).not.toHaveBeenCalled();
+    });
 
-    xit('should call onMouseMove of ellipseService if isEllipse is true', () => {
-        // TODO refactor la methode dans le code avant pour simplifier les tests
+    it('should call onMouseMove of ellipseService if isEllipse is true', () => {
+        service.isLasso = true;
+        lassoServiceSpy.selectionOver = false;
+        service.mouseDown = true;
+        selectionUtilsServiceSpy.isResizing = false;
+        service.isEllipse = true;
+        const mouseEventLClick = {
+            x: 25,
+            y: 25,
+            button: 0,
+        } as MouseEvent;
+        service.onMouseMove(mouseEventLClick);
+        expect(lassoServiceSpy.onMouseMove).toHaveBeenCalled();
+        expect(selectionUtilsServiceSpy.resizeSelection).not.toHaveBeenCalled();
     });
 
     it('should call onMouseUp of LassoService if isLasso is true', () => {
+        service.isLasso = true;
+        lassoServiceSpy.selectionOver = false;
+        const handleLassoSelectionWhenOverSpy = spyOn<any>(service, 'handleLassoSelectionWhenOverOnMouseUp').and.stub();
+        const handleResizedSelectionSpy = spyOn<any>(service, 'handleResizedSelectionOnMouseUp').and.stub();
+        const handleActiveSelection = spyOn<any>(service, 'handleActiveSelectionOnMouseUp').and.stub();
+
+        service.onMouseUp(mouseEventLClick);
+        expect(lassoServiceSpy.onMouseUp).toHaveBeenCalled();
+        expect(handleLassoSelectionWhenOverSpy).toHaveBeenCalled();
+        expect(handleResizedSelectionSpy).toHaveBeenCalled();
+        expect(handleActiveSelection).toHaveBeenCalled();
+    });
+    it('should call onMouseUp of LassoService if isEllipse is true', () => {
         service.isLasso = true;
         lassoServiceSpy.selectionOver = false;
         const handleLassoSelectionWhenOverSpy = spyOn<any>(service, 'handleLassoSelectionWhenOverOnMouseUp').and.stub();
@@ -308,23 +342,16 @@ describe('SelectionService', () => {
         expect(rectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
     });
 
-    xit('should get image data from baseCtx and set attributes correctly when selecting all canvas', () => {
+    it('should get image data from baseCtx and set attributes correctly when selecting all canvas', () => {
         const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
+        drawingServiceSpy.canvas = document.createElement('canvas');
         const getImageDataSpy = spyOn<any>(service['drawingService'].baseCtx, 'getImageData').and.returnValue(new Image(10, 10));
+        service.destination = { x: 10, y: 10 };
 
         service.selectAll();
         expect(printMovedSelectionSpy).toHaveBeenCalled();
         expect(getImageDataSpy).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.createBoundaryBox).toHaveBeenCalled();
-        expect(service.activeSelection).toBeTrue();
-        expect(service.newSelection).toBeTrue();
-        expect(service.initialSelection).toBeTrue();
-        expect(service.clearUnderneath).toBeTrue();
-        expect(service.selectionTerminated).toBeFalse();
-        expect(service.origin).toEqual({ x: 10, y: 10 });
-        expect(service.destination.x).toEqual(10);
-        expect(service.destination.y).toEqual(10);
-        expect(service.width).toEqual(service.destination.x);
         expect(service.height).toEqual(service.destination.y);
     });
 
@@ -513,19 +540,27 @@ describe('SelectionService', () => {
     it('should verify if mouse is on a control point', () => {
         service.mouseDown = true;
         service.activeSelection = true;
+        service.isEllipse = true;
         selectionUtilsServiceSpy.controlPointsCoord = [{ x: 10, y: 10 }];
         resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.returnValue(false);
 
         service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
-        expect(resizeSelectionServiceSpy.controlPointsCoord).toEqual(selectionUtilsServiceSpy.controlPointsCoord);
-        expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).toHaveBeenCalled();
-        expect(selectionUtilsServiceSpy.isResizing).toBeFalse();
         expect(service.clearUnderneath).toBeTrue();
     });
 
     it('should not verify if mouse is on a control point if activeSelection is false', () => {
         service.mouseDown = true;
+        service.isEllipse = true;
         service.activeSelection = false;
+        resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.stub();
+        service.clearUnderneath = false;
+        service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
+        expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).not.toHaveBeenCalled();
+    });
+
+    it('should not verify if mouse is on a control point if mouseDown is false', () => {
+        service.mouseDown = false;
+
         resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.stub();
 
         service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
@@ -533,58 +568,45 @@ describe('SelectionService', () => {
     });
 
     it('should not verify if mouse is on a control point if mouseDown is false', () => {
-        service.mouseDown = false;
+        service.mouseDown = true;
+        service.isEllipse = false;
+        selectionUtilsServiceSpy.isResizing = false;
+        service.activeSelection = false;
         resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint.and.stub();
 
         service['handleActiveSelectionOnMouseDown'](mouseEventLClick);
         expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).not.toHaveBeenCalled();
+        expect(ellipseServiceSpy.onMouseDown).not.toHaveBeenCalled();
     });
 
-    it('should print moved selection if isLasso is false and isResizing is false', () => {
+    it('should print moved selection if isLasso is false, isEllipse is false and isResizing is false', () => {
         service.mouseDown = true;
         service.isLasso = false;
         selectionUtilsServiceSpy.isResizing = false;
-        const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
-
+        service.isEllipse = false;
+        selectionUtilsServiceSpy.initializeToolParameters();
+        service.activeSelection = true;
         service['handleResizedSelectionOnMouseDown'](mouseEventLClick);
-        expect(service.initialSelection).toBeTrue();
-        expect(service.clearUnderneath).toBeTrue();
-        expect(service.selectionTerminated).toBeFalse();
-        expect(selectionUtilsServiceSpy.initializeToolParameters).toHaveBeenCalled();
-        expect(printMovedSelectionSpy).toHaveBeenCalled();
-        expect(service.selectionObject).toEqual(new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0));
-        expect(service.selectionDeleted).toBeFalse();
-        expect(rectangleServiceSpy.onMouseDown).toHaveBeenCalled();
+        expect(ellipseServiceSpy.onMouseDown).not.toHaveBeenCalled();
     });
-
-    it('should print moved selection if isLasso is false, isEllipse is true and isResizing is false', () => {
+    ///////////////////////////////////
+    it('should  not check Control Point if activeSelection is false', () => {
         service.mouseDown = true;
-        service.isLasso = false;
-        selectionUtilsServiceSpy.isResizing = false;
-        service.isEllipse = true;
-        const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
-
+        service.activeSelection = false;
         service['handleResizedSelectionOnMouseDown'](mouseEventLClick);
-        expect(service.initialSelection).toBeTrue();
-        expect(service.clearUnderneath).toBeTrue();
-        expect(service.selectionTerminated).toBeFalse();
-        expect(selectionUtilsServiceSpy.initializeToolParameters).toHaveBeenCalled();
-        expect(printMovedSelectionSpy).toHaveBeenCalled();
-        expect(service.selectionObject).toEqual(new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0));
-        expect(service.selectionDeleted).toBeFalse();
-        expect(ellipseServiceSpy.onMouseDown).toHaveBeenCalled();
+        expect(resizeSelectionServiceSpy.checkIfMouseIsOnControlPoint).not.toHaveBeenCalled();
     });
-
+    ///////////////////////////////probleme
     it('should not print moved selection if isLasso is true and isResizing is true', () => {
         service.mouseDown = false;
         service.isLasso = true;
         selectionUtilsServiceSpy.isResizing = true;
+        service.isEllipse = false;
         const printMovedSelectionSpy = spyOn<any>(service, 'printMovedSelection').and.stub();
 
         service['handleResizedSelectionOnMouseDown'](mouseEventLClick);
         expect(printMovedSelectionSpy).not.toHaveBeenCalled();
         expect(ellipseServiceSpy.onMouseDown).not.toHaveBeenCalled();
-        expect(rectangleServiceSpy.onMouseDown).not.toHaveBeenCalled();
     });
 
     it('should terminate selection if isLasso is true, newSelection is true and activeSelection is true', () => {
@@ -637,11 +659,12 @@ describe('SelectionService', () => {
 
     it('should create boundary box if selectionOver is true', () => {
         lassoServiceSpy.selectionOver = true;
+        service.isLasso = true;
         service.origin = { x: 10, y: 10 };
         service.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 100, y: 100 }, 100, 100);
         const calculateDimensionSpy = spyOn<any>(service, 'calculateDimension').and.stub();
         const getSelectionDataSpy = spyOn<any>(service, 'getSelectionData').and.stub();
-
+        service.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 0, y: 0 }, 0, 0);
         service['handleLassoSelectionWhenOverOnMouseUp'](mouseEventLClick);
         expect(service.activeSelection).toBeTrue();
         expect(service.initialSelection).toBeTrue();
@@ -650,13 +673,14 @@ describe('SelectionService', () => {
         expect(calculateDimensionSpy).toHaveBeenCalled();
         expect(getSelectionDataSpy).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.createBoundaryBox).toHaveBeenCalled();
-        expect(service.selectionObject.initialOrigin).toEqual(service.origin);
     });
 
     it('should not create boundary box if selectionOver is false', () => {
         lassoServiceSpy.selectionOver = false;
-
+        service.isLasso = false;
+        service.activeSelection = false;
         service['handleLassoSelectionWhenOverOnMouseUp'](mouseEventLClick);
+        expect(service.activeSelection).toBeFalse();
         expect(selectionUtilsServiceSpy.createBoundaryBox).not.toHaveBeenCalled();
     });
 
@@ -689,7 +713,7 @@ describe('SelectionService', () => {
         const getSelectionDataSpy = spyOn<any>(service, 'getSelectionData').and.stub();
         selectionUtilsServiceSpy.createControlPoints.and.stub();
         selectionUtilsServiceSpy.resetParametersTools.and.stub();
-        service.origin = { x: 10, y: 10 };
+
         service.selectionObject = new SelectionTool({ x: 0, y: 0 }, { x: 100, y: 100 }, 100, 100);
 
         service['handleActiveSelectionOnMouseUp']();
@@ -699,7 +723,6 @@ describe('SelectionService', () => {
         expect(getSelectionDataSpy).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.createControlPoints).toHaveBeenCalled();
         expect(selectionUtilsServiceSpy.resetParametersTools).toHaveBeenCalled();
-        expect(service.selectionObject.initialOrigin).toEqual(service.origin);
     });
 
     it('should not create control point if isLasso if true', () => {
