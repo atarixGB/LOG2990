@@ -111,26 +111,28 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
         }
 
         window.onload = () => {
+            console.log('winodws');
+
             this.autoSaveService.loadImage();
             this.canvasSize.x = this.autoSaveService.localDrawing.width;
             this.canvasSize.y = this.autoSaveService.localDrawing.height;
         };
         this.cdr.detectChanges();
+        console.log('a');
 
-        this.whiteBackgroundCanvas();
-    }
-
-    ngAfterViewChecked(): void {
         this.route.params.subscribe((params) => {
             if (params.url) {
                 const img = new Image();
-                img.src = params.url;
                 img.crossOrigin = 'Anonymous';
+                console.log('b');
 
                 img.onload = () => {
+                    console.log('TEST', img);
+
                     this.canvasSize.x = img.width;
                     this.canvasSize.y = img.height;
-                    this.baseCtx.drawImage(img, 0, 0);
+                    setTimeout(() => this.baseCtx.drawImage(img, 0, 0), 100);
+
                     this.drawing = {
                         title: '',
                         width: this.drawingService.canvas.width,
@@ -139,8 +141,33 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
                     };
                     this.autoSaveService.saveCanvasState(this.drawing);
                 };
+                img.src = params.url;
             }
         });
+
+        this.whiteBackgroundCanvas();
+    }
+
+    ngAfterViewChecked(): void {
+        // this.route.params.subscribe((params) => {
+        //     if (params.url) {
+        //         const img = new Image();
+        //         img.src = params.url;
+        //         img.crossOrigin = 'Anonymous';
+        //         img.onload = () => {
+        //             this.canvasSize.x = img.width;
+        //             this.canvasSize.y = img.height;
+        //             this.baseCtx.drawImage(img, 0, 0);
+        //             this.drawing = {
+        //                 title: '',
+        //                 width: this.drawingService.canvas.width,
+        //                 height: this.drawingService.canvas.height,
+        //                 body: this.drawingService.canvas.toDataURL(),
+        //             };
+        //             this.autoSaveService.saveCanvasState(this.drawing);
+        //         };
+        //     }
+        // });
     }
 
     ngOnChanges(): void {

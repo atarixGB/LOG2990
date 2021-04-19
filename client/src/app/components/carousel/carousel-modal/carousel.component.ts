@@ -120,14 +120,12 @@ export class CarouselComponent implements AfterViewInit {
             parseUrl = parseUrl.split('/')[this.URL_POSITION].split('.')[0];
             return parseUrl;
         };
-        this.indexService
-            .deleteDrawingById(path(this.mainDrawingURL))
-            .then(() => {
-                this.fetchDrawings();
-            })
-            .catch((error) => {
-                alert(`Un problème avec le serveur est survenu. Le dessin n'a pas pu être supprimé. Veuillez réessayer.\nError ${error}`);
-            });
+        this.indexService.deleteDrawingById(path(this.mainDrawingURL)).then(() => {
+            this.fetchDrawings();
+        });
+        // .catch((error) => {
+        //     alert(`Un problème avec le serveur est survenu. Le dessin n'a pas pu être supprimé. Veuillez réessayer.\nError ${error}`);
+        // });
     }
 
     private openEditorWithDrawing(): void {
