@@ -16,7 +16,7 @@ enum ControlPoints {
     MiddleLeft = 7,
 }
 
-fdescribe('ResizeSelectionService', () => {
+describe('ResizeSelectionService', () => {
     let service: ResizeSelectionService;
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -36,19 +36,6 @@ fdescribe('ResizeSelectionService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
-
-    /*
-    fit('checkIfMouseIsOnControlPoint should return true if  mouse on a control point', () => {
-        const mouseCoord = {x: 0, y: 0};
-
-        service.controlPointsCoord[0].x = 0;
-        service.controlPointsCoord[0].y = 0;
-        const spyCheckControlPoint = spyOn(service, 'checkIfMouseIsOnControlPoint');
-        service.checkIfMouseIsOnControlPoint(mouseCoord);
-        expect(service['currentControlPoint']).toEqual(0);
-        expect(spyCheckControlPoint).toEqual(true);
-    });
-    */
 
     it('onMouseMove should change the selection and mouse coord', () => {
         const mouseCoord = {x: 0, y: 0};
@@ -73,65 +60,6 @@ fdescribe('ResizeSelectionService', () => {
         expect(service['mouseCoord']).toEqual(mouseCoord);
     });
 
-    it('handleKeyDown should prevents defaults if shift is pressed', () => {
-        const Shift = new KeyboardEvent('keydown', { key: 'Shift' });
-        const spyDefault = spyOn(Shift, 'preventDefault');
-
-        service.handleKeyDown(Shift);
-        expect(spyDefault).toHaveBeenCalled();
-    });
-
-    it('handleKeyDown should not prevents defaults if shift is not pressed', () => {
-        const alt = new KeyboardEvent('keydown', { key: 'Alt' });
-        const spyDefault = spyOn(alt, 'preventDefault');
-
-        service.handleKeyDown(alt);
-        expect(spyDefault).not.toHaveBeenCalled();
-    });
-
-    it('handleKeyDown should set shiftKey to true if shift is pressed', () => {
-        const shift = new KeyboardEvent('keydown', { key: 'Shift' });
- 
-        service.handleKeyDown(shift);
-        expect(service.shiftKey).toEqual(true);
-    });
-
-    it('handleKeyDown should set shiftKey to false if shift is not pressed', () => {
-        const alt = new KeyboardEvent('keydown', { key: 'Alt' });
- 
-        service.handleKeyDown(alt);
-        expect(service.shiftKey).toEqual(false);
-    });
-
-    it('handleKeyUp should prevent Default if shift is not pressed', () => {
-        const Shift = new KeyboardEvent('keyup', { key: 'Shift' });
-        const spyDefault = spyOn(Shift, 'preventDefault');
-
-        service.handleKeyUp(Shift);
-        expect(spyDefault).toHaveBeenCalled();
-    });
-
-    it('handleKeyUp should not prevents defaults if shift is not pressed', () => {
-        const alt = new KeyboardEvent('keyup', { key: 'Alt' });
-        const spyDefault = spyOn(alt, 'preventDefault');
-
-        service.handleKeyUp(alt);
-        expect(spyDefault).not.toHaveBeenCalled();
-    });
-
-    it('handleKeyUp should set shiftKey to false if shift is pressed', () => {
-        const shift = new KeyboardEvent('keyup', { key: 'Shift' });
- 
-        service.handleKeyUp(shift);
-        expect(service.shiftKey).toEqual(false);
-    });
-
-    it('handleKeyUp should set shiftKey to false if shift is not pressed', () => {
-        const alt = new KeyboardEvent('keyup', { key: 'Alt' });
- 
-        service.handleKeyUp(alt);
-        expect(service.shiftKey).toEqual(false);
-    });
     
     
     it('print resize should print on the canvas', () => {
@@ -171,13 +99,6 @@ fdescribe('ResizeSelectionService', () => {
 
         expect(spyBinding).toHaveBeenCalled();
     });
-
-    /*
-    it('controlPointInResize call the resize function if valid ', () => {
-        service['currentControlPoint'] =  ControlPoints.TopLeft
-        
-    });
-    */
 
     it('checkForMirroirEffect should scale with oposite sign if inverted', () => {
         const expectedResize = -10;
@@ -268,11 +189,28 @@ fdescribe('ResizeSelectionService', () => {
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    /*
+    
     it('resizeTopLeft should do ajustments for shift', () => {
-        expect(service).toBeTruthy();
+        const expectedNewOrigin = {x: 5, y: 5};
+        const expectedNewWidth = 5;
+        const expectedNewHeight = 5;
+
+        service['selectionObject'].origin = {x:0, y:0};
+        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].width = 10;
+        service['selectionObject'].height = 10;
+
+        service['mouseCoord'] = expectedNewOrigin;
+        service.shiftKey = true;
+
+        service['resizeTopLeft']();
+
+        expect(service['selectionObject'].origin).toEqual(expectedNewOrigin);
+        expect(service.resizeWidth).toEqual(expectedNewWidth);
+        expect(service.resizeHeight).toEqual(expectedNewHeight);
+
     });
-    */
+    
 
     
     it('resizeTopLeft should do change the origin and the rezise', () => {
@@ -297,11 +235,27 @@ fdescribe('ResizeSelectionService', () => {
     });
     
 
-    /*
+    
     it('resizeTopRight should do ajustments for shift', () => {
-        expect(service).toBeTruthy();
+        const expectedNewOrigin = {x: 0, y: 5};
+        const expectedNewWidth = 5;
+        const expectedNewHeight = 5;
+
+        service['selectionObject'].origin = {x:0, y:0};
+        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].width = 10;
+        service['selectionObject'].height = 10;
+
+        service['mouseCoord'] = expectedNewOrigin;
+        service.shiftKey = true;
+
+        service['resizeTopRight']();
+
+        expect(service['selectionObject'].origin).toEqual(expectedNewOrigin);
+        expect(service.resizeWidth).toEqual(expectedNewWidth);
+        expect(service.resizeHeight).toEqual(expectedNewHeight);
     });
-    */
+    
 
     
     it('resizeTopRight should do change the origin and the rezise', () => {
@@ -366,23 +320,28 @@ fdescribe('ResizeSelectionService', () => {
 
     });
 
-    /*
+    
     it('resizeBottomLeft should do ajustments for shift', () => {
-        const mouseCOord = {x: 0, y: 0};
-        const expectedNewWidth = 0;
-        const expectedNewHeight = 0;
+        const expectedMouseCoords = {x: 5, y: 0};
+        const expectedNewWidth = 5;
+        const expectedNewHeight = 5;
 
-        service['selectionObject'] = selection;
-        service['mouseCoord'] = mouseCOord;
+        service['selectionObject'].origin = {x:0, y:0};
+        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].width = 10;
+        service['selectionObject'].height = 10;
+
+        service['mouseCoord'] = expectedMouseCoords;
         service.shiftKey = true;
 
         service['resizeBottomLeft']();
 
+        expect(service['selectionObject'].origin).toEqual(expectedMouseCoords);
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
     });
 
-    */
+    
 
     it('resizeBottomLeft should do change the origin and the rezise', () => {
         const expectedMouseCoords = {x: 5, y: 0};

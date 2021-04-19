@@ -7,7 +7,7 @@ import {
     MIN_GRID_OPACITY,
     MIN_GRID_SQUARE_SIZE,
     SQUARE_STEP,
-    TWO_DECIMAL_MULTIPLIER
+    TWO_DECIMAL_MULTIPLIER,
 } from '@app/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
