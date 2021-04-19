@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { TypeOfJunctions } from '@app/constants/constants';
 import { LineService } from '@app/services/tools/line/line.service';
-
+import{TypeOfJunctions} from '@app/interfaces-enums/junction-type'
 @Component({
     selector: 'app-line-config',
     templateUrl: './line-config.component.html',

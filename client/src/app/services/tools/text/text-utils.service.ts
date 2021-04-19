@@ -1,8 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { ACCEPTED_CHAR, DEFAULT_EMPHASIS, DEFAULT_FONT, DEFAULT_TEXT_ALIGN, DEFAULT_TEXT_SIZE, Emphasis, Font, TextAlign } from '@app/constants/constants';
+import { Emphasis, Font, TextAlign } from '@app/interfaces-enums/text-properties';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+
+export const DEFAULT_TEXT_SIZE = '20';
+export const DEFAULT_FONT = 'Arial';
+export const DEFAULT_EMPHASIS = 'normal';
+export const DEFAULT_TEXT_ALIGN = 'left';
+export const ACCEPTED_CHAR = RegExp(/^[\S ]$/);
 @Injectable({
     providedIn: 'root',
 })

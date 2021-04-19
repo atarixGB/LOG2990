@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Emphasis, Font, TextAlign } from '@app/constants/constants';
+import { Emphasis, Font, TextAlign } from '@app/interfaces-enums/text-properties';
 import { TextService } from '@app/services/tools/text/text.service';
 
 @Component({

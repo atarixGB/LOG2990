@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { Eraser } from '@app/classes/eraser';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_ERASER_COLOR, MIN_ERASER_THICKNESS, MouseButton } from '@app/constants/constants';
+import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+export const MIN_ERASER_THICKNESS = 5;
+export const DEFAULT_ERASER_COLOR = '#FFF';
 @Injectable({
     providedIn: 'root',
 })
