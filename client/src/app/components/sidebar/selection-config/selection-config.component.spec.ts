@@ -14,7 +14,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
 
 // tslint:disable
-fdescribe('SelectionConfigComponent', () => {
+describe('SelectionConfigComponent', () => {
     let component: SelectionConfigComponent;
     let fixture: ComponentFixture<SelectionConfigComponent>;
     let moveSelectionServiceSpy: jasmine.SpyObj<MoveSelectionService>;
