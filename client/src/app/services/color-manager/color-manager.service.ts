@@ -41,27 +41,6 @@ export class ColorManagerService {
         this.updateWithHex(ColorOrder.SecondaryColor, SECONDARYCOLORINITIAL);
     }
 
-    private updateColorLasts(colorOrder: ColorOrder, shouldDeleteLast: boolean): void {
-        this.lastColors.unshift(JSON.parse(JSON.stringify(this.selectedColor[colorOrder])));
-        if (shouldDeleteLast) {
-            this.lastColors.pop();
-        }
-    }
-    private updateColorString(colorOrder: ColorOrder): void {
-        this.selectedColor[colorOrder].inString =
-            'rgba(' +
-            this.selectedColor[colorOrder].Dec.Red +
-            ',' +
-            this.selectedColor[colorOrder].Dec.Green +
-            ',' +
-            this.selectedColor[colorOrder].Dec.Blue +
-            ',' +
-            this.selectedColor[colorOrder].Dec.Alpha +
-            ')';
-
-        this.colorChange.next();
-    }
-
     getColorStringAlpha(colorOrder: ColorOrder, alphaMax: boolean): string {
         let colorInString =
             'rgba(' +
@@ -119,5 +98,25 @@ export class ColorManagerService {
 
     changeColorObserver(): Observable<void> {
         return this.colorChange.asObservable();
+    }
+    private updateColorLasts(colorOrder: ColorOrder, shouldDeleteLast: boolean): void {
+        this.lastColors.unshift(JSON.parse(JSON.stringify(this.selectedColor[colorOrder])));
+        if (shouldDeleteLast) {
+            this.lastColors.pop();
+        }
+    }
+    private updateColorString(colorOrder: ColorOrder): void {
+        this.selectedColor[colorOrder].inString =
+            'rgba(' +
+            this.selectedColor[colorOrder].Dec.Red +
+            ',' +
+            this.selectedColor[colorOrder].Dec.Green +
+            ',' +
+            this.selectedColor[colorOrder].Dec.Blue +
+            ',' +
+            this.selectedColor[colorOrder].Dec.Alpha +
+            ')';
+
+        this.colorChange.next();
     }
 }

@@ -2,15 +2,17 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { SelectionBox } from '@app/constants';
 
+export const INITIAL_SQUARE_SIZE=50;
 @Injectable({
     providedIn: 'root',
 })
 export class MagnetismService {
-    squareSize: number = 50;
+    squareSize: number;
     anchorPoint: SelectionBox;
 
     constructor() {
         this.anchorPoint = SelectionBox.TopLeft;
+        this.squareSize=INITIAL_SQUARE_SIZE;
     }
 
     activateMagnetism(topLeftPoint: Vec2, height: number, width: number): Vec2 {
