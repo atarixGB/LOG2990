@@ -1,4 +1,5 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +30,7 @@ describe('DrawingComponent', () => {
 
         TestBed.configureTestingModule({
             declarations: [DrawingComponent],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA],
             imports: [MatDialogModule, DragDropModule, BrowserAnimationsModule, RouterTestingModule],
             providers: [
                 { provide: DrawingService, useValue: drawingStub },

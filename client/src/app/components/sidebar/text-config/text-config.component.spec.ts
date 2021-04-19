@@ -8,7 +8,7 @@ import { TextConfigComponent } from './text-config.component';
 
 
 //tslint:disable
-fdescribe('TextConfigComponent', () => {
+describe('TextConfigComponent', () => {
   let component: TextConfigComponent;
   let fixture: ComponentFixture<TextConfigComponent>;
 
