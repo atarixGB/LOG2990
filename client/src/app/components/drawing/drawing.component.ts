@@ -18,7 +18,8 @@ import { CarouselComponent } from '@app/components/carousel/carousel-modal/carou
 import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
-import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants/constants';
+import { MIN_SIZE, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants/constants';
+import{ToolList} from '@app/interfaces-enums/tool-list';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';

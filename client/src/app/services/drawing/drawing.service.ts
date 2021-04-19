@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
-import { MAX_PERCENT } from '@app/constants/constants';
 
+
+export const MAX_PERCENT = 100;
 @Injectable({
     providedIn: 'root',
 })

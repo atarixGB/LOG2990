@@ -44,26 +44,6 @@ export const MIN_ERASER_THICKNESS = 5;
 export const DEFAULT_ERASER_COLOR = '#FFF';
 export const DEFAULT_JUNCTION_RADIUS = 2;
 
-export enum ToolList {
-    Pencil = 0,
-    Eraser = 1,
-    Line = 2,
-    Rectangle = 3,
-    Ellipse = 4,
-    Spray = 5,
-    Polygon = 6,
-    Pipette = 7,
-    SelectionRectangle = 8,
-    SelectionEllipse = 9,
-    PaintBucket = 10,
-    Lasso = 11,
-    MoveSelection = 12,
-    Undo = 13,
-    Redo = 14,
-    Stamp = 15,
-    Text = 16,
-}
-
 export const mouseEventLClick = {
     x: 25,
     y: 25,
@@ -132,33 +112,6 @@ export const WORKING_AREA_LENGHT = '100vh';
 
 
 
-
-// constants for pipette service
-export const ZOOM_RADIUS = 75;
-export const ZOOM_RATIO = 0.2;
-
-
-// constants for bucket
-export const RGBA_COMPONENTS = 4;
-export const MAX_BYTE_VALUE = 255;
-export const MAX_PERCENT = 100;
-export const MAX_TOLERANCE_VALUE = 100;
-export const MIN_TOLERANCE_VALUE = 0;
-
-
-
-// constants for magnetism
-export enum SelectionBox {
-    TopLeft = 1,
-    TopRight = 2,
-    BottomRight = 3,
-    BottomLeft = 4,
-    TopMiddle = 5,
-    BottomMiddle = 6,
-    LeftMiddle = 7,
-    RightMiddle = 8,
-    Center = 9,
-}
 // Text
 export enum Font {
     Arial = 0,

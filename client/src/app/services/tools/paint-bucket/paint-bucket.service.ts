@@ -5,13 +5,18 @@ import { Injectable } from '@angular/core';
 import { PaintBucket } from '@app/classes/paint';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MAX_BYTE_VALUE, MAX_DEC_RANGE, MAX_PERCENT, MAX_TOLERANCE_VALUE, MIN_TOLERANCE_VALUE, MouseButton, RGBA_COMPONENTS } from '@app/constants/constants';
+import { MAX_DEC_RANGE,MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { RGBA, RGBA_INDEX } from '@app/interfaces-enums/rgba';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
+export const RGBA_COMPONENTS = 4;
+export const MAX_BYTE_VALUE = 255;
+export const MAX_PERCENT = 100;
+export const MAX_TOLERANCE_VALUE = 100;
+export const MIN_TOLERANCE_VALUE = 0;
 @Injectable({
     providedIn: 'root',
 })
