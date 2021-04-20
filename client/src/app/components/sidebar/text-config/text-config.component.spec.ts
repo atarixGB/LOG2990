@@ -1,4 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSliderModule } from '@angular/material/slider';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TextConfigComponent } from './text-config.component';
 
 
@@ -9,7 +14,8 @@ describe('TextConfigComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TextConfigComponent ]
+      declarations: [ TextConfigComponent ],
+      imports: [MatSliderModule, MatFormFieldModule, MatSelectModule, FormsModule, BrowserAnimationsModule],
     })
     .compileComponents();
   }));

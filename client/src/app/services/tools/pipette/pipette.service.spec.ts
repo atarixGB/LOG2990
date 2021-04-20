@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton, mouseEventLClick, mouseEventRClick } from '@app/constants';
+import { MouseButton, mouseEventLClick, mouseEventRClick } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { PipetteService } from './pipette.service';
 // tslint:disable

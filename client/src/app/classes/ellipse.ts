@@ -1,9 +1,4 @@
-export enum TypeStyle {
-    Stroke = 'stroke',
-    Fill = 'fill',
-    StrokeFill = 'strokeFill',
-}
-
+import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { Drawable } from './drawable';
 import { Vec2 } from './vec2';
 

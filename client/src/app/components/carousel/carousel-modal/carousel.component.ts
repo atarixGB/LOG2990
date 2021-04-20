@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, HostListener, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Utils } from '@app/classes/math-utils';
-import { DrawingParams } from '@app/components/drawing/drawing-params';
+import { Utils } from '@app/classes/utils/math-utils';
+import { DrawingParams } from '@app/interfaces-enums/drawing-params';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';

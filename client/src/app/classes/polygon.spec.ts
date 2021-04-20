@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { TypeStyle } from '@app/constants';
+import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { Polygon } from './polygon';
 import { Vec2 } from './vec2';
 
@@ -29,7 +29,7 @@ describe('Polygon', () => {
 
     it('case Fill', () => {
         const ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        const polygon = new Polygon({} as Vec2, 2, 3, TypeStyle.fill, 2, 'black', 'red');
+        const polygon = new Polygon({} as Vec2, 2, 3, TypeStyle.Fill, 2, 'black', 'red');
 
         const spy = spyOn<any>(ctx, 'fill');
 
@@ -40,7 +40,7 @@ describe('Polygon', () => {
 
     it('case StrokeFill', () => {
         const ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        const polygon = new Polygon({} as Vec2, 2, 3, TypeStyle.strokeFill, 2, 'black', 'red');
+        const polygon = new Polygon({} as Vec2, 2, 3, TypeStyle.StrokeFill, 2, 'black', 'red');
 
         const fillSpy = spyOn<any>(ctx, 'fill');
         const strokeSpy = spyOn<any>(ctx, 'stroke');

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
-import { Utils } from '@app/classes/math-utils';
+import { Utils } from '@app/classes/utils/math-utils';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_JUNCTION_RADIUS, DEFAULT_LINE_THICKNESS, MouseButton, mouseEventLClick, TypeOfJunctions } from '@app/constants';
+import { DEFAULT_LINE_THICKNESS, MouseButton, mouseEventLClick } from '@app/constants/constants';
+import { TypeOfJunctions } from '@app/interfaces-enums/junction-type';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { LineService } from './line.service';
-
+import { DEFAULT_JUNCTION_RADIUS, LineService } from './line.service';
 // tslint:disable
 describe('LineService', () => {
     let service: LineService;

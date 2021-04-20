@@ -4,6 +4,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,6 +35,7 @@ describe('ExportModalComponent', () => {
                 MatSelectModule,
                 ReactiveFormsModule,
                 BrowserAnimationsModule,
+                MatRadioModule,
             ],
             providers: [
                 {
@@ -78,7 +80,7 @@ describe('ExportModalComponent', () => {
 
     it('should verify if input string is valid', () => {
         const result = component.validateString('abc');
-        expect(result).toBeTruthy;
+        expect(result).toBeTruthy();
     });
 
     it('should change to imgur is selected', () => {

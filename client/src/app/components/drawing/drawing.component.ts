@@ -8,7 +8,8 @@ import { CarouselComponent } from '@app/components/carousel/carousel-modal/carou
 import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
-import { MIN_SIZE, ToolList, WORKING_AREA_LENGHT, WORKING_AREA_WIDTH } from '@app/constants';
+import { MIN_SIZE } from '@app/constants/constants';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
@@ -21,7 +22,10 @@ import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription } from 'rxjs';
 
+const WORKING_AREA_WIDTH = '85vw';
+const WORKING_AREA_LENGHT = '100vh';
 const LOAD_IMAGE = 100;
+
 @Component({
     selector: 'app-drawing',
     templateUrl: './drawing.component.html',
@@ -101,11 +105,14 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
             this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
 
-        window.onload = () => {
-            this.autoSaveService.loadImage();
-            this.canvasSize.x = this.autoSaveService.localDrawing.width;
-            this.canvasSize.y = this.autoSaveService.localDrawing.height;
-        };
+        if (!this.autoSaveService.localStorageIsEmpty()) {
+            window.onload = () => {
+                this.autoSaveService.loadImage();
+                this.canvasSize.x = this.autoSaveService.localDrawing.width;
+                this.canvasSize.y = this.autoSaveService.localDrawing.height;
+            };
+        }
+
         this.cdr.detectChanges();
         this.route.params.subscribe((params) => {
             if (params.url) {
@@ -226,7 +233,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
         this.toolManagerService.handleKeyUp(event);
     }
 
-    // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
         this.modalHandler(event, NewDrawModalComponent, 'o');
@@ -325,7 +331,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
             }
         }
     }
-
+    // tslint:disable
     private selectionToolKeyHandler(event: KeyboardEvent): boolean {
         if (event.ctrlKey && event.key === 'a') {
             event.preventDefault();

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SelectionTool } from '@app/classes/selection';
 import { Vec2 } from '@app/classes/vec2';
-import { CONTROLPOINTSIZE } from '@app/constants';
+import { CONTROLPOINTSIZE } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';

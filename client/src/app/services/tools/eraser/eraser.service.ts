@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { Eraser } from '@app/classes/eraser';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_ERASER_COLOR, MIN_ERASER_THICKNESS, MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-// Ceci est une implémentation de base de l'outil Crayon pour aider à débuter le projet
-// L'implémentation ici ne couvre pas tous les critères d'accepetation du projet
-// Vous êtes encouragés de modifier et compléter le code.
-// N'oubliez pas de regarder les tests dans le fichier spec.ts aussi!
+
+export const MIN_ERASER_THICKNESS = 5;
+export const DEFAULT_ERASER_COLOR = '#FFF';
 @Injectable({
     providedIn: 'root',
 })

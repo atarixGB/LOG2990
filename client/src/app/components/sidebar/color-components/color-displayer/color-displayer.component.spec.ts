@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { BrowserDynamicTestingModule } from '@angular/platform-browser-dynamic/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants';
+import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants/constants';
 import { AlphaSliderComponent } from 'src/app/components/sidebar/color-components/alpha-slider/alpha-slider.component';
 import { ColorPaletteComponent } from 'src/app/components/sidebar/color-components/color-palette/color-palette.component';
 import { ColorPopupComponent } from 'src/app/components/sidebar/color-components/color-popup/color-popup.component';
