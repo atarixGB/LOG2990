@@ -16,7 +16,7 @@ enum ControlPoints {
     MiddleLeft = 7,
 }
 
-describe('ResizeSelectionService', () => {
+fdescribe('ResizeSelectionService', () => {
     let service: ResizeSelectionService;
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -29,25 +29,38 @@ describe('ResizeSelectionService', () => {
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
 
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-        
-        service['selectionObject'] = new SelectionTool({x:0, y:0}, {x:10, y:10}, 10, 10);
+
+        service['selectionObject'] = new SelectionTool({ x: 0, y: 0 }, { x: 10, y: 10 }, 10, 10);
     });
 
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
 
+    it('should return true if mouse is on a control point', () => {
+        const mouseCoord = { x: 10, y: 10 };
+        service.controlPointsCoord = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+
+        const result = service.checkIfMouseIsOnControlPoint(mouseCoord);
+        expect(result).toBeTrue();
+    });
+
     it('onMouseMove should change the selection and mouse coord', () => {
-        const mouseCoord = {x: 0, y: 0};
-        const oldMouseCoords ={x: 10, y: 10};
-        const origin = {x: 0, y:0};
-        const dest = {x: 0, y: 0};
-        const newOrigin = {x: 10, y: 10};
-        const newDest = {x: 10, y: 10};
+        const mouseCoord = { x: 0, y: 0 };
+        const oldMouseCoords = { x: 10, y: 10 };
+        const origin = { x: 0, y: 0 };
+        const dest = { x: 0, y: 0 };
+        const newOrigin = { x: 10, y: 10 };
+        const newDest = { x: 10, y: 10 };
         const width = 10;
         const lenght = 10;
         const oldSelection = new SelectionTool(origin, dest, width, lenght);
-        
+
         service['selectionObject'] = oldSelection;
         service['mouseCoord'] = oldMouseCoords;
 
@@ -60,13 +73,11 @@ describe('ResizeSelectionService', () => {
         expect(service['mouseCoord']).toEqual(mouseCoord);
     });
 
-    
-    
     it('print resize should print on the canvas', () => {
-        const expectedNewOrigin = {x:0, y:0};
+        const expectedNewOrigin = { x: 0, y: 0 };
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
         service['selectionObject'].image = new ImageData(10, 10);
@@ -79,9 +90,8 @@ describe('ResizeSelectionService', () => {
         expect(service.newOrigin).toEqual(expectedNewOrigin);
         expect(saveSpy).toHaveBeenCalled();
         expect(restoreSpy).toHaveBeenCalled();
-        
     });
-    
+
     it('scontrolPointInResize should not call a resize function if valid control point', () => {
         spyOn(service['controlPointsBinding'], 'has').and.returnValue(false);
         const spyBinding = spyOn(service['controlPointsBinding'], 'get');
@@ -105,12 +115,12 @@ describe('ResizeSelectionService', () => {
         service.resizeHeight = expectedResize;
         service.resizeWidth = expectedResize;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
-        const newSelection =  document.createElement('canvas');
+        const newSelection = document.createElement('canvas');
 
         const scaleSpy = spyOn(baseCtxStub, 'scale').and.stub();
         const drawSpy = spyOn(baseCtxStub, 'drawImage').and.stub();
@@ -120,7 +130,7 @@ describe('ResizeSelectionService', () => {
         expect(scaleSpy).toHaveBeenCalledWith(OPPOSITE_SIGN, OPPOSITE_SIGN);
         expect(drawSpy).toHaveBeenCalled();
     });
-   
+
     it('checkForMirroirEffect should scale with oposite sign in x but 1 in y if inverted in x axe', () => {
         const expectedResizeX = -10;
         const expectedResizeY = 10;
@@ -128,12 +138,12 @@ describe('ResizeSelectionService', () => {
         service.resizeHeight = expectedResizeY;
         service.resizeWidth = expectedResizeX;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
-        const newSelection =  document.createElement('canvas');
+        const newSelection = document.createElement('canvas');
 
         const scaleSpy = spyOn(baseCtxStub, 'scale').and.stub();
         const drawSpy = spyOn(baseCtxStub, 'drawImage').and.stub();
@@ -151,12 +161,12 @@ describe('ResizeSelectionService', () => {
         service.resizeHeight = expectedResizeY;
         service.resizeWidth = expectedResizeX;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
-        const newSelection =  document.createElement('canvas');
+        const newSelection = document.createElement('canvas');
 
         const scaleSpy = spyOn(baseCtxStub, 'scale').and.stub();
         const drawSpy = spyOn(baseCtxStub, 'drawImage').and.stub();
@@ -173,12 +183,12 @@ describe('ResizeSelectionService', () => {
         service.resizeHeight = expectedResizeY;
         service.resizeWidth = expectedResizeX;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
-        const newSelection =  document.createElement('canvas');
+        const newSelection = document.createElement('canvas');
 
         const scaleSpy = spyOn(baseCtxStub, 'scale').and.stub();
         const drawSpy = spyOn(baseCtxStub, 'drawImage').and.stub();
@@ -189,14 +199,13 @@ describe('ResizeSelectionService', () => {
         expect(drawSpy).toHaveBeenCalled();
     });
 
-    
     it('resizeTopLeft should do ajustments for shift', () => {
-        const expectedNewOrigin = {x: 5, y: 5};
+        const expectedNewOrigin = { x: 5, y: 5 };
         const expectedNewWidth = 5;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -208,18 +217,15 @@ describe('ResizeSelectionService', () => {
         expect(service['selectionObject'].origin).toEqual(expectedNewOrigin);
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
-
     });
-    
 
-    
     it('resizeTopLeft should do change the origin and the rezise', () => {
-        const expectedNewOrigin = {x: 5, y: 5};
+        const expectedNewOrigin = { x: 5, y: 5 };
         const expectedNewWidth = 5;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -231,18 +237,15 @@ describe('ResizeSelectionService', () => {
         expect(service['selectionObject'].origin).toEqual(expectedNewOrigin);
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
-
     });
-    
 
-    
     it('resizeTopRight should do ajustments for shift', () => {
-        const expectedNewOrigin = {x: 0, y: 5};
+        const expectedNewOrigin = { x: 0, y: 5 };
         const expectedNewWidth = 5;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -255,16 +258,14 @@ describe('ResizeSelectionService', () => {
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
     });
-    
 
-    
     it('resizeTopRight should do change the origin and the rezise', () => {
-        const expectedNewOrigin = {x: 0, y: 5};
+        const expectedNewOrigin = { x: 0, y: 5 };
         const expectedNewWidth = 0;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -276,18 +277,15 @@ describe('ResizeSelectionService', () => {
         expect(service['selectionObject'].origin).toEqual(expectedNewOrigin);
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
-
     });
 
-
-    
     it('resizeBottomRight should do ajustments for shift', () => {
-        const mouseCOord = {x: 8, y: 8};
+        const mouseCOord = { x: 8, y: 8 };
         const expectedNewWidth = 8;
         const expectedNewHeight = 8;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -301,12 +299,12 @@ describe('ResizeSelectionService', () => {
     });
 
     it('resizeBottomRight should do change the origin and the rezise', () => {
-        const mouseCOord = {x: 5, y: 5};
+        const mouseCOord = { x: 5, y: 5 };
         const expectedNewWidth = 5;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -317,17 +315,15 @@ describe('ResizeSelectionService', () => {
 
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
-
     });
 
-    
     it('resizeBottomLeft should do ajustments for shift', () => {
-        const expectedMouseCoords = {x: 5, y: 0};
+        const expectedMouseCoords = { x: 5, y: 0 };
         const expectedNewWidth = 5;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -341,15 +337,13 @@ describe('ResizeSelectionService', () => {
         expect(service.resizeHeight).toEqual(expectedNewHeight);
     });
 
-    
-
     it('resizeBottomLeft should do change the origin and the rezise', () => {
-        const expectedMouseCoords = {x: 5, y: 0};
+        const expectedMouseCoords = { x: 5, y: 0 };
         const expectedNewWidth = 5;
         const expectedNewHeight = 0;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -361,16 +355,15 @@ describe('ResizeSelectionService', () => {
         expect(service['selectionObject'].origin).toEqual(expectedMouseCoords);
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
-
     });
 
     it('resizeMiddleTop should do change the origin and the rezise', () => {
-        const expectedNewOrigin = {x: 0, y: 5};
+        const expectedNewOrigin = { x: 0, y: 5 };
         const expectedNewWidth = 10;
         const expectedNewHeight = 5;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -382,16 +375,15 @@ describe('ResizeSelectionService', () => {
         expect(service['selectionObject'].origin).toEqual(expectedNewOrigin);
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
-
     });
 
     it('resizeMiddleRight should do change the origin and the rezise', () => {
-        const expectedNewOrigin = {x: 10, y: 10};
+        const expectedNewOrigin = { x: 10, y: 10 };
         const expectedNewWidth = 10;
         const expectedNewHeight = 10;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -403,14 +395,14 @@ describe('ResizeSelectionService', () => {
         expect(service.resizeWidth).toEqual(expectedNewWidth);
         expect(service.resizeHeight).toEqual(expectedNewHeight);
     });
-    
+
     it('resizeMiddleBottom should do change the origin and the rezise', () => {
-        const expectedNewOrigin = {x: 10, y: 10};
+        const expectedNewOrigin = { x: 10, y: 10 };
         const expectedNewWidth = 10;
         const expectedNewHeight = 10;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
 
@@ -424,15 +416,15 @@ describe('ResizeSelectionService', () => {
     });
 
     it('resizeMiddleLeft should do change the origin and the rezise', () => {
-        const expectedNewOrigin = {x: 10, y: 0};
+        const expectedNewOrigin = { x: 10, y: 0 };
         const expectedNewWidth = 0;
         const expectedNewHeight = 10;
 
-        service['selectionObject'].origin = {x:0, y:0};
-        service['selectionObject'].destination = {x: 10, y:10};
+        service['selectionObject'].origin = { x: 0, y: 0 };
+        service['selectionObject'].destination = { x: 10, y: 10 };
         service['selectionObject'].width = 10;
         service['selectionObject'].height = 10;
-       
+
         service['mouseCoord'] = expectedNewOrigin;
         service.shiftKey = false;
 
@@ -449,5 +441,4 @@ describe('ResizeSelectionService', () => {
         const value = service['getSelectionRatio']();
         expect(value).toEqual(expectedValue);
     });
-    
 });
