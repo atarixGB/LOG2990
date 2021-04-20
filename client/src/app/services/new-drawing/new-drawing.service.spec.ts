@@ -14,11 +14,6 @@ describe('NewDrawingService', () => {
         expect(service).toBeTruthy();
     });
 
-    xit('should change clean to true', () => {
-        service.requestCleaning();
-        expect(service['clean']).toBeTrue();
-    });
-
     it('should test clean is observable', () => {
         const spy = spyOn(service['clean'], 'asObservable').and.stub();
         service.getCleanStatus();

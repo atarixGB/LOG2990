@@ -4,7 +4,7 @@ import { MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { AlphaSliderComponent } from './alpha-slider.component';
 // tslint:disable
-export const CASES_ARRAY = [75, 25, 25, 255];
+const CASES_ARRAY = [75, 25, 25, 255];
 
 describe('AlphaSliderComponent', () => {
     let component: AlphaSliderComponent;

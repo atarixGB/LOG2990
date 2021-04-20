@@ -224,18 +224,6 @@ describe('ToolManagerService', () => {
         expect(service.currentTool).toBeInstanceOf(RectangleService);
     });
 
-    xit('should terminate selection if current tool is SelectionService', () => {
-        service.currentTool = selectionServiceSpy;
-        service.switchTool(ToolList.SelectionRectangle);
-        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
-    });
-
-    xit('should write text if current tool is TextService', () => {
-        service.currentTool = selectionServiceSpy;
-        service.switchTool(ToolList.Text);
-        expect(textServiceSpy.write).toHaveBeenCalled();
-    });
-
     it('should trigger onMouseLeave event of current tool', () => {
         const mouseEvent = {} as MouseEvent;
         service.currentTool = rectangleServiceSpy;

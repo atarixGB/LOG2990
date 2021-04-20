@@ -7,13 +7,13 @@ import { Vec2 } from 'src/app/classes/vec2';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
-export const WIDTH = 20;
-export const HEIGHT = 200;
-export const ONE_SIX = 0.17;
-export const ONE_THREE = 0.33;
-export const ONE_TWO = 0.5;
-export const TWO_THREE = 0.67;
-export const FIVE_SIX = 0.83;
+const WIDTH = 20;
+const HEIGHT = 200;
+const ONE_SIX = 0.17;
+const ONE_THREE = 0.33;
+const ONE_TWO = 0.5;
+const TWO_THREE = 0.67;
+const FIVE_SIX = 0.83;
 @Component({
     selector: 'app-color-slider',
     templateUrl: './color-slider.component.html',

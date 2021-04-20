@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { PolygonService } from 'src/app/services/tools/polygon/polygon.service';
 
-export const INITIAL_SIDES = 3;
+const INITIAL_SIDES = 3;
+
 @Component({
     selector: 'app-polygon-config',
     templateUrl: './polygon-config.component.html',

@@ -7,20 +7,24 @@ import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-m
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { ExportService } from '@app/services/export-image/export.service';
 import { IndexService } from '@app/services/index/index.service';
+import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { FileMenuComponent } from './file-menu.component';
 
 // tslint:disable
 describe('FileMenuComponent', () => {
     let component: FileMenuComponent;
     let fixture: ComponentFixture<FileMenuComponent>;
-    let indexServiceSpy: jasmine.SpyObj<any>;
+    let indexServiceSpy: jasmine.SpyObj<IndexService>;
     let exportServiceSpy: jasmine.SpyObj<ExportService>;
+    let selectionServiceSpy: jasmine.SpyObj<SelectionService>;
     const dialogSpy = {
         open: jasmine.createSpy('open'),
     };
 
     beforeEach(async(() => {
         exportServiceSpy = jasmine.createSpyObj('ExportService', ['imagePrevisualization', 'initializeExportParams']);
+        selectionServiceSpy = jasmine.createSpyObj('SelectionService', ['terminateSelection']);
+
         TestBed.configureTestingModule({
             declarations: [FileMenuComponent, NewDrawModalComponent],
             imports: [MatIconModule, MatDialogModule, MatGridListModule],
@@ -36,6 +40,10 @@ describe('FileMenuComponent', () => {
                 {
                     provide: ExportService,
                     useValue: exportServiceSpy,
+                },
+                {
+                    provide: SelectionService,
+                    useValue: selectionServiceSpy,
                 },
             ],
         }).compileComponents();
@@ -53,12 +61,14 @@ describe('FileMenuComponent', () => {
 
     it('should open modal window to confirm creating a new drawing', () => {
         component.handleCreateDraw();
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(NewDrawModalComponent).toBeTruthy();
         expect(dialogSpy.open).toHaveBeenCalled();
     });
 
     it('should open modal window to save drawing', () => {
         component.handleSaveDrawing();
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(SaveDrawingModalComponent).toBeTruthy();
         expect(dialogSpy.open).toHaveBeenCalled();
     });
@@ -66,6 +76,7 @@ describe('FileMenuComponent', () => {
     it('should open modal window to export drawing', () => {
         component.handleExportDrawing();
         expect(ExportModalComponent).toBeTruthy();
+        expect(selectionServiceSpy.terminateSelection).toHaveBeenCalled();
         expect(dialogSpy.open).toHaveBeenCalled();
         expect(exportServiceSpy.imagePrevisualization).toHaveBeenCalled();
         expect(exportServiceSpy.initializeExportParams).toHaveBeenCalled();

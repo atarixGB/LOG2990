@@ -242,33 +242,26 @@ describe('SelectionService', () => {
         expect(terminateSelectionSpy).toHaveBeenCalled();
     });
 
-    it('should call handleKeyDown of resizeSelectionService if Shift key is pressed', () => {
+    it('should change resize selection shiftkey to true if shift key is pressed', () => {
         const keyboardEvent = { key: 'Shift', preventDefault(): void {} } as KeyboardEvent;
-        resizeSelectionServiceSpy.handleKeyDown.and.stub();
-        ellipseServiceSpy.handleKeyDown.and.stub();
-        lassoServiceSpy.handleKeyDown.and.stub();
-        rectangleServiceSpy.handleKeyDown.and.stub();
 
         service.handleKeyDown(keyboardEvent);
-        expect(resizeSelectionServiceSpy.handleKeyDown).toHaveBeenCalled();
-        expect(resizeSelectionServiceSpy.handleKeyDown).toHaveBeenCalled();
-        expect(ellipseServiceSpy.handleKeyDown).not.toHaveBeenCalled();
-        expect(lassoServiceSpy.handleKeyDown).not.toHaveBeenCalled();
-        expect(rectangleServiceSpy.handleKeyDown).toHaveBeenCalled();
+        expect(resizeSelectionServiceSpy.shiftKey).toBeTrue();
     });
 
-    it('should not call handleKeyDown of resizeSelectionService if Shift key is not pressed', () => {
-        const keyboardEvent = { key: 'x', preventDefault(): void {} } as KeyboardEvent;
-        resizeSelectionServiceSpy.handleKeyDown.and.stub();
-        ellipseServiceSpy.handleKeyDown.and.stub();
-        lassoServiceSpy.handleKeyDown.and.stub();
-        rectangleServiceSpy.handleKeyDown.and.stub();
+    it('should change resize selection shiftkey to false if shift key is released', () => {
+        const keyboardEvent = { key: 'Shift', preventDefault(): void {} } as KeyboardEvent;
 
-        service.handleKeyDown(keyboardEvent);
-        expect(resizeSelectionServiceSpy.handleKeyDown).not.toHaveBeenCalled();
-        expect(ellipseServiceSpy.handleKeyDown).not.toHaveBeenCalled();
-        expect(lassoServiceSpy.handleKeyDown).not.toHaveBeenCalled();
-        expect(rectangleServiceSpy.handleKeyDown).toHaveBeenCalled();
+        service.handleKeyUp(keyboardEvent);
+        expect(resizeSelectionServiceSpy.shiftKey).toBeFalse();
+    });
+
+    it('should not change resize selection shiftkey to false if shift key is released', () => {
+        const keyboardEvent = { key: 'X', preventDefault(): void {} } as KeyboardEvent;
+        resizeSelectionServiceSpy.shiftKey = true;
+
+        service.handleKeyUp(keyboardEvent);
+        expect(resizeSelectionServiceSpy.shiftKey).toBeTrue();
     });
 
     it('should call handleKeyDown of ellipseService if isEllipse is true', () => {
@@ -285,6 +278,20 @@ describe('SelectionService', () => {
         expect(rectangleServiceSpy.handleKeyDown).not.toHaveBeenCalled();
     });
 
+    it('should call handleKeyUp of ellipseService if isEllipse is true', () => {
+        const keyboardEvent = {} as KeyboardEvent;
+        service.isEllipse = true;
+        service.isLasso = false;
+        ellipseServiceSpy.handleKeyUp.and.stub();
+        lassoServiceSpy.handleKeyUp.and.stub();
+        rectangleServiceSpy.handleKeyUp.and.stub();
+
+        service.handleKeyUp(keyboardEvent);
+        expect(ellipseServiceSpy.handleKeyUp).toHaveBeenCalled();
+        expect(lassoServiceSpy.handleKeyUp).not.toHaveBeenCalled();
+        expect(rectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
+    });
+
     it('should call handleKeyDown of lassoService if isLasso is true', () => {
         const keyboardEvent = {} as KeyboardEvent;
         service.isEllipse = false;
@@ -299,61 +306,15 @@ describe('SelectionService', () => {
         expect(rectangleServiceSpy.handleKeyDown).not.toHaveBeenCalled();
     });
 
-    it('should call handleKeyUp of resizeSelectionService if Shift key is pressed', () => {
-        const keyboardEvent = { key: 'Shift', preventDefault(): void {} } as KeyboardEvent;
-        resizeSelectionServiceSpy.handleKeyUp.and.stub();
-        ellipseServiceSpy.handleKeyUp.and.stub();
-        lassoServiceSpy.handleKeyUp.and.stub();
-        rectangleServiceSpy.handleKeyUp.and.stub();
-
-        service.handleKeyUp(keyboardEvent);
-        expect(resizeSelectionServiceSpy.handleKeyUp).toHaveBeenCalled();
-        expect(ellipseServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(lassoServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(rectangleServiceSpy.handleKeyUp).toHaveBeenCalled();
-    });
-
-    it('should not call handleKeyUp of resizeSelectionService if Shift key is not pressed', () => {
-        const keyboardEvent = { key: 'x', preventDefault(): void {} } as KeyboardEvent;
-        resizeSelectionServiceSpy.handleKeyUp.and.stub();
-        ellipseServiceSpy.handleKeyUp.and.stub();
-        lassoServiceSpy.handleKeyUp.and.stub();
-        rectangleServiceSpy.handleKeyUp.and.stub();
-
-        service.handleKeyUp(keyboardEvent);
-        expect(resizeSelectionServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(ellipseServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(lassoServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(rectangleServiceSpy.handleKeyUp).toHaveBeenCalled();
-    });
-
-    it('should call handleKeyUp of ellipseService if isEllipse is true', () => {
-        const keyboardEvent = {} as KeyboardEvent;
-        service.isEllipse = true;
-        service.isLasso = false;
-        resizeSelectionServiceSpy.handleKeyUp.and.stub();
-        ellipseServiceSpy.handleKeyUp.and.stub();
-        lassoServiceSpy.handleKeyUp.and.stub();
-        rectangleServiceSpy.handleKeyUp.and.stub();
-
-        service.handleKeyUp(keyboardEvent);
-        expect(resizeSelectionServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(ellipseServiceSpy.handleKeyUp).toHaveBeenCalled();
-        expect(lassoServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-        expect(rectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();
-    });
-
     it('should call handleKeyUp of lassoService if isLasso is true', () => {
         const keyboardEvent = {} as KeyboardEvent;
         service.isEllipse = false;
         service.isLasso = true;
-        resizeSelectionServiceSpy.handleKeyUp.and.stub();
         ellipseServiceSpy.handleKeyUp.and.stub();
         lassoServiceSpy.handleKeyUp.and.stub();
         rectangleServiceSpy.handleKeyUp.and.stub();
 
         service.handleKeyUp(keyboardEvent);
-        expect(resizeSelectionServiceSpy.handleKeyUp).not.toHaveBeenCalled();
         expect(ellipseServiceSpy.handleKeyUp).not.toHaveBeenCalled();
         expect(lassoServiceSpy.handleKeyUp).toHaveBeenCalled();
         expect(rectangleServiceSpy.handleKeyUp).not.toHaveBeenCalled();

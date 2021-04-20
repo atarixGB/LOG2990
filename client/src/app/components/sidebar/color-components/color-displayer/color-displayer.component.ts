@@ -4,7 +4,8 @@ import { ColorPopupComponent } from 'src/app/components/sidebar/color-components
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
-export const COLOR_WINDOW_WIDTH = '500px';
+const COLOR_WINDOW_WIDTH = '500px';
+
 @Component({
     selector: 'app-color-displayer',
     templateUrl: './color-displayer.component.html',

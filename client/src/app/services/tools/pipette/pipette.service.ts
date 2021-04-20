@@ -6,8 +6,8 @@ import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
-export const ZOOM_RADIUS = 75;
-export const ZOOM_RATIO = 0.2;
+const ZOOM_RADIUS = 75;
+const ZOOM_RATIO = 0.2;
 @Injectable({
     providedIn: 'root',
 })

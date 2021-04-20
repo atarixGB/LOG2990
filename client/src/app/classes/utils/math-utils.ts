@@ -1,7 +1,6 @@
 import { Vec2 } from '@app/classes/vec2';
 
-export const INFINITY = 10000;
-export const COLINEAR = 0;
+const COLINEAR = 0;
 const ANGLE_PI_IN_DEGREES = 180;
 const NEGATIVE_LINE_SLOPE = -1;
 const NUMBER_SIGN_CHANGE = -1;

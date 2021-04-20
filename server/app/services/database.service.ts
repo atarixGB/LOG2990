@@ -1,5 +1,22 @@
 import { DrawingMetadata } from '@app/classes/drawing-metadata';
-import { BASE_URL, DATABASE_DRAWINGS_COLLECTION, DATABASE_MONGO_URL, DATABASE_NAME, DATABASE_URL, DRAWINGS_URL } from '@app/constants';
+import {
+    ALPHANUMERIC_REGEX,
+    BASE_URL,
+    DATABASE_DRAWINGS_COLLECTION,
+    DATABASE_MONGO_URL,
+    DATABASE_NAME,
+    DATABASE_URL,
+    DATA_ENCODING,
+    DATA_URL_BASE64_PREFIX,
+    DRAWINGS_URL,
+    IMAGE_FORMAT,
+    MAX_LENGTH_INPUT,
+    MIN_LENGTH_TITLE,
+    NB_TAGS_ALLOWED,
+    RESPONSE_ERROR,
+    RESPONSE_SUCCESS,
+    SAVED_DRAWINGS_PATH,
+} from '@app/constants';
 import { Drawing } from '@common/communication/drawing';
 import { DrawingData } from '@common/communication/drawing-data';
 import * as fs from 'fs';
@@ -7,22 +24,11 @@ import { injectable } from 'inversify';
 import { Collection, Db, MongoClient, MongoClientOptions, ObjectId } from 'mongodb';
 import 'reflect-metadata';
 
-const SAVED_DRAWINGS_PATH = './saved-drawings/';
-const IMAGE_FORMAT = 'png';
-const DATA_ENCODING = 'base64';
-const DATA_URL_BASE64_PREFIX = /^data:image\/\w+;base64,/;
-const ALPHANUMERIC_REGEX = /^[a-z0-9]+$/i;
-const MIN_LENGTH_TITLE = 1;
-const MAX_LENGTH_INPUT = 15;
-const NB_TAGS_ALLOWED = 5;
-const HTTP_STATUS_NO_CONTENT = 204;
-const HTTP_NOT_FOUND = 404;
 @injectable()
 export class DatabaseService {
     drawingsCollection: Collection<DrawingMetadata>;
     clientMessages: DrawingData[];
     drawingURLS: string[];
-
     private db: Db;
     private client: MongoClient;
     private options: MongoClientOptions = {
@@ -44,6 +50,23 @@ export class DatabaseService {
         this.readDrawingDirectory();
     }
 
+    toDrawType(data: DrawingMetadata[]): Drawing[] {
+        const drawings = [];
+        for (const drawing of data) {
+            const previewUrl = drawing._id?.toHexString();
+            const tag = drawing.labels;
+            if (previewUrl !== undefined && tag !== undefined) {
+                const draw: Drawing = {
+                    name: drawing.title,
+                    tags: tag,
+                    imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${previewUrl}.${IMAGE_FORMAT}`,
+                };
+                drawings.push(draw);
+            }
+        }
+        return drawings;
+    }
+
     async start(url: string = DATABASE_MONGO_URL): Promise<MongoClient | null> {
         try {
             this.client = await MongoClient.connect(url, this.options);
@@ -61,26 +84,27 @@ export class DatabaseService {
     }
 
     async addDrawing(drawingData: DrawingData): Promise<number> {
-        if (this.validateRequest(drawingData)) {
-            const drawingMetadata: DrawingMetadata = {
-                title: drawingData.title,
-                labels: drawingData.labels ? drawingData.labels : undefined,
-            };
+        const drawingMetadata: DrawingMetadata = {
+            title: drawingData.title,
+            labels: drawingData.labels ? drawingData.labels : undefined,
+        };
 
-            await this.drawingsCollection
-                .insertOne(drawingMetadata)
-                .then((result) => {
-                    drawingData._id = result.insertedId.toHexString();
-                    this.saveImageAsPNG(drawingData);
-                    console.log(`Le dessin ${drawingData.title} a été ajouté avec succès!`);
-                    return HTTP_STATUS_NO_CONTENT;
-                })
-                .catch((error: Error) => {
-                    console.error(`Échec de l'ajout du dessin ${drawingData.title} à la base de données`, error);
-                    return HTTP_NOT_FOUND;
-                });
+        if (!this.validateRequest(drawingData)) {
+            return RESPONSE_ERROR;
         }
-        return HTTP_NOT_FOUND;
+
+        return this.drawingsCollection
+            .insertOne(drawingMetadata)
+            .then((result) => {
+                drawingData._id = result.insertedId.toHexString();
+                this.saveImageAsPNG(drawingData);
+                console.log(`Le dessin ${drawingData.title} a été ajouté avec succès!`);
+                return RESPONSE_SUCCESS;
+            })
+            .catch((error: Error) => {
+                console.error(`Échec de l'ajout du dessin ${drawingData.title} à la base de données`, error);
+                return RESPONSE_ERROR;
+            });
     }
 
     async deleteDrawingByIdName(id: string): Promise<number> {
@@ -90,11 +114,11 @@ export class DatabaseService {
             .then(() => {
                 this.deleteDrawingFromServer(id);
                 console.log(`Le dessin avec le id:${id} a été supprimé de la base de données avec succès.`);
-                return HTTP_STATUS_NO_CONTENT;
+                return RESPONSE_SUCCESS;
             })
             .catch((error) => {
                 console.log(`Échec de la suppression du dessin ${id}\n${error}`);
-                return HTTP_NOT_FOUND;
+                return RESPONSE_ERROR;
             });
     }
 
@@ -108,23 +132,6 @@ export class DatabaseService {
                     resolve(this.toDrawType(result));
                 });
         });
-    }
-
-    toDrawType(data: DrawingMetadata[]): Drawing[] {
-        const drawings = [];
-        for (const drawing of data) {
-            const previewUrl = drawing._id?.toHexString();
-            const tag = drawing.labels;
-            if (previewUrl !== undefined && tag !== undefined) {
-                const draw: Drawing = {
-                    name: drawing.title,
-                    tags: tag,
-                    imageURL: `${BASE_URL}${DATABASE_URL}${DRAWINGS_URL}/${previewUrl}.${IMAGE_FORMAT}`,
-                };
-                drawings.push(draw);
-            }
-        }
-        return drawings;
     }
 
     private parseImageData(drawingData: DrawingData): Buffer {
@@ -167,7 +174,7 @@ export class DatabaseService {
     private validateTags(tags: string[] | undefined): boolean {
         if (tags) {
             if (tags.length < 0 || tags.length > NB_TAGS_ALLOWED) return false;
-            for (const tag in tags) {
+            for (const tag of tags) {
                 if (!this.validateString(tag, 0)) {
                     return false;
                 }

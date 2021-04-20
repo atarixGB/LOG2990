@@ -10,15 +10,11 @@ import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 
-export const SPRAY_DENSITY = 40;
-export const MIN_SPRAY_WIDTH = 5;
-export const MIN_SPRAY_DOT_WIDTH = 1;
-export const MAX_SPRAY_DOT_WIDTH = 20;
-export const MIN_SPRAY_FREQUENCY = 10;
-export const MAX_SPRAY_FREQUENCY = 50;
+const SPRAY_DENSITY = 40;
+const MIN_SPRAY_WIDTH = 5;
+const MIN_SPRAY_DOT_WIDTH = 1;
+const MIN_SPRAY_FREQUENCY = 10;
 export const ONE_SECOND = 1000;
-export const TWO_DECIMAL_MULTIPLIER = 100;
-export const MAX_TOOL_WIDTH = 50;
 
 @Injectable({
     providedIn: 'root',

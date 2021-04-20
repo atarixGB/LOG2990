@@ -113,13 +113,15 @@ export class SelectionService extends Tool {
         }
 
         if (event.key === 'Shift') {
-            this.resizeSelectionService.handleKeyDown(event);
+            event.preventDefault();
+            this.resizeSelectionService.shiftKey = true;
         }
     }
 
     handleKeyUp(event: KeyboardEvent): void {
         if (event.key === 'Shift') {
-            this.resizeSelectionService.handleKeyUp(event);
+            event.preventDefault();
+            this.resizeSelectionService.shiftKey = false;
         }
 
         if (this.isEllipse) this.ellipseService.handleKeyUp(event);

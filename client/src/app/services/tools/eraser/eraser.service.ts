@@ -6,8 +6,8 @@ import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
-export const MIN_ERASER_THICKNESS = 5;
-export const DEFAULT_ERASER_COLOR = '#FFF';
+const MIN_ERASER_THICKNESS = 5;
+const DEFAULT_ERASER_COLOR = '#FFF';
 @Injectable({
     providedIn: 'root',
 })
