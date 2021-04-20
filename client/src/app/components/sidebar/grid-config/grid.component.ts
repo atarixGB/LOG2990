@@ -3,15 +3,14 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MagnetismService } from '@app/services/selection/magnetism.service';
 import { TextService } from '@app/services/tools/text/text.service';
 
-export const MIN_GRID_SQUARE_SIZE = 5;
-export const MAX_GRID_SQUARE_SIZE = 200;
-export const MIN_GRID_OPACITY = 10;
-export const MAX_GRID_OPACITY = 100;
-export const DEFAULT_GRID_SIZE = 5;
-export const GRID_STEP = 5;
-export const DEFAULT_GRID_OPACITY = 10;
-export const SQUARE_STEP = 5;
-export const TWO_DECIMAL_MULTIPLIER = 100;
+const MIN_GRID_SQUARE_SIZE = 5;
+const MAX_GRID_SQUARE_SIZE = 200;
+const MIN_GRID_OPACITY = 10;
+const MAX_GRID_OPACITY = 100;
+const DEFAULT_GRID_SIZE = 5;
+const DEFAULT_GRID_OPACITY = 10;
+const SQUARE_STEP = 5;
+const TWO_DECIMAL_MULTIPLIER = 100;
 @Component({
     selector: 'app-grid',
     templateUrl: './grid.component.html',

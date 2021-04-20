@@ -4,11 +4,11 @@ import { Vec2 } from '@app/classes/vec2';
 import { Emphasis, Font, TextAlign } from '@app/interfaces-enums/text-properties';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 
-export const DEFAULT_TEXT_SIZE = '20';
-export const DEFAULT_FONT = 'Arial';
-export const DEFAULT_EMPHASIS = 'normal';
-export const DEFAULT_TEXT_ALIGN = 'left';
-export const ACCEPTED_CHAR = RegExp(/^[\S ]$/);
+const DEFAULT_TEXT_SIZE = '20';
+const DEFAULT_FONT = 'Arial';
+const DEFAULT_EMPHASIS = 'normal';
+const DEFAULT_TEXT_ALIGN = 'left';
+const ACCEPTED_CHAR = RegExp(/^[\S ]$/);
 @Injectable({
     providedIn: 'root',
 })

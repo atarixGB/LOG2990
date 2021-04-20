@@ -1,3 +1,4 @@
+// the assertion is not null, we put the "!" to make sure the assertion is not underfined
 // tslint:disable:no-non-null-assertion
 import { Injectable } from '@angular/core';
 import { Stamp } from '@app/classes/stamp';
@@ -12,11 +13,11 @@ import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
 
-export const SCALE_FACTOR_STAMP = 1;
-export const ROTATION_STEP_STAMP = 15;
-export const MAX_ANGLE = 360;
-export const ANGLE_HALF_TURN = 180;
-export const SIZE_STAMP = 24;
+const SCALE_FACTOR_STAMP = 1;
+const ROTATION_STEP_STAMP = 15;
+const MAX_ANGLE = 360;
+const ANGLE_HALF_TURN = 180;
+const SIZE_STAMP = 24;
 @Injectable({
     providedIn: 'root',
 })

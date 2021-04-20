@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Vec2 } from '@app/classes/vec2';
 import { SelectionBox } from '@app/interfaces-enums/selection-box';
 
-export const INITIAL_SQUARE_SIZE = 50;
+const INITIAL_SQUARE_SIZE = 50;
 @Injectable({
     providedIn: 'root',
 })

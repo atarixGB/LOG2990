@@ -9,10 +9,10 @@ import { ColorManagerService } from '@app/services/color-manager/color-manager.s
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
-export const DASH_SEGMENT_FIRST = 1;
-export const DASH_SEGMENT_SECONDARY = 3;
+const DASH_SEGMENT_FIRST = 1;
+const DASH_SEGMENT_SECONDARY = 3;
 export const DOUBLE_MATH = 2;
-export const MIN_SIDE = 3;
+const MIN_SIDE = 3;
 @Injectable({
     providedIn: 'root',
 })

@@ -12,11 +12,11 @@ import { ColorManagerService } from '@app/services/color-manager/color-manager.s
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 
-export const RGBA_COMPONENTS = 4;
-export const MAX_BYTE_VALUE = 255;
-export const MAX_PERCENT = 100;
-export const MAX_TOLERANCE_VALUE = 100;
-export const MIN_TOLERANCE_VALUE = 0;
+const RGBA_COMPONENTS = 4;
+const MAX_BYTE_VALUE = 255;
+const MAX_PERCENT = 100;
+const MAX_TOLERANCE_VALUE = 100;
+const MIN_TOLERANCE_VALUE = 0;
 @Injectable({
     providedIn: 'root',
 })
