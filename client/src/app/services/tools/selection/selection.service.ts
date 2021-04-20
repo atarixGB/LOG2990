@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Utils } from '@app/classes/math-utils';
 import { SelectionTool } from '@app/classes/selection';
 import { Tool } from '@app/classes/tool';
+import { Utils } from '@app/classes/utils/math-utils';
+import { SelectionUtilsService } from '@app/classes/utils/selection-utils.service';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ResizeSelectionService } from '@app/services/selection/resize-selection.service';
 import { RectangleService } from '@app/services/tools//rectangle/rectangle.service';
 import { EllipseService } from '@app/services/tools/ellipse/ellipse.service';
 import { EllipseSelectionService } from '@app/services/tools/selection/ellipse-selection/ellipse-selection.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
-import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 import { LassoService } from './lasso/lasso.service';
 
 @Injectable({

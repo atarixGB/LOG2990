@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FiltersList } from '@app/constants';
+import { FiltersList } from '@app/interfaces-enums/filter-list';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { IndexService } from '@app/services/index/index.service';
 

@@ -40,7 +40,7 @@ export class SaveDrawingModalComponent {
 
     sendToServer(): void {
         if (!this.validateString(this.drawingTitle)) {
-            alert('Il y a une erreur avec les entrées. Veuillez revérifier le format du titre et/ou des étiquettes.'); // temporaire
+            alert('Il y a une erreur avec les entrées. Veuillez revérifier le format du titre et/ou des étiquettes.');
             return;
         }
 
@@ -50,7 +50,7 @@ export class SaveDrawingModalComponent {
             .postDrawing(drawingData)
             .then(() => {
                 this.matDialogRef.close();
-                alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !'); // temporaire
+                alert('Le dessin "' + this.drawingTitle + '" a bien été sauvegardé sur le serveur de PolyDessin !');
             })
             .catch((error) => {
                 alert('Problème de connexion avec le serveur de PolyDessin. Veuillez réessayer. Erreur 503');

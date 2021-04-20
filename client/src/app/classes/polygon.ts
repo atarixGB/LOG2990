@@ -1,10 +1,7 @@
 import { Drawable } from '@app/classes/drawable';
+import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { Vec2 } from './vec2';
-enum TypeStyle {
-    stroke = 'stroke',
-    fill = 'fill',
-    strokeFill = 'strokeFill',
-}
+
 export class Polygon extends Drawable {
     private centerCircle: Vec2;
     private radius: number;
@@ -41,15 +38,15 @@ export class Polygon extends Drawable {
         }
 
         switch (this.type) {
-            case TypeStyle.stroke:
+            case TypeStyle.Stroke:
                 ctx.stroke();
                 break;
 
-            case TypeStyle.fill:
+            case TypeStyle.Fill:
                 ctx.fill();
                 break;
 
-            case TypeStyle.strokeFill:
+            case TypeStyle.StrokeFill:
                 ctx.fill();
                 ctx.stroke();
                 break;

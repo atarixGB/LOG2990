@@ -1,47 +1,53 @@
+// code inspired by spray methods in http://perfectionkills.com/exploring-canvas-drawing-techniques/
 import { Injectable, OnDestroy } from '@angular/core';
 import { Spray } from '@app/classes/spray';
 import { Tool } from '@app/classes/tool';
+import { MouseButton } from '@app/constants/constants';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from 'src/app/classes/vec2';
-import {
-    MAX_SPRAY_DOT_WIDTH,
-    MAX_SPRAY_FREQUENCY,
-    MIN_SPRAY_DOT_WIDTH,
-    MIN_SPRAY_FREQUENCY,
-    MIN_SPRAY_WIDTH,
-    MouseButton,
-    ONE_SECOND,
-    SPRAY_DENSITY,
-} from 'src/app/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
+// import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 
-// code inspired by spray methods in http://perfectionkills.com/exploring-canvas-drawing-techniques/
+export const SPRAY_DENSITY = 40;
+export const MIN_SPRAY_WIDTH = 5;
+export const MIN_SPRAY_DOT_WIDTH = 1;
+export const MAX_SPRAY_DOT_WIDTH = 20;
+export const MIN_SPRAY_FREQUENCY = 10;
+export const MAX_SPRAY_FREQUENCY = 50;
+export const ONE_SECOND = 1000;
+export const TWO_DECIMAL_MULTIPLIER = 100;
+export const MAX_TOOL_WIDTH = 50;
 
 @Injectable({
     providedIn: 'root',
 })
 export class SprayService extends Tool implements OnDestroy {
-    density: number = SPRAY_DENSITY;
-    minDotWidth: number = MIN_SPRAY_DOT_WIDTH;
-    maxDotWidth: number = MAX_SPRAY_DOT_WIDTH;
-    minFrequency: number = MIN_SPRAY_FREQUENCY;
-    maxFrequency: number = MAX_SPRAY_FREQUENCY;
-    minToolWidth: number = MIN_SPRAY_WIDTH;
-    maxToolWidth: number = 50;
-    sprayData: SprayProperties;
-    spray: Spray;
-    timeoutId: ReturnType<typeof setTimeout>;
     mouseCoord: Vec2;
-    width: number = this.minToolWidth;
-    dotWidth: number = this.minDotWidth;
-    sprayFrequency: number = this.minFrequency;
+    width: number;
+    dotWidth: number;
+    sprayFrequency: number;
     canvasData: ImageData;
+    spray: Spray;
+    private density: number;
+    private minDotWidth: number;
+    private minFrequency: number;
+    private minToolWidth: number;
+    private timeoutId: ReturnType<typeof setTimeout>;
 
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
+        this.density = SPRAY_DENSITY;
+        this.minDotWidth = MIN_SPRAY_DOT_WIDTH;
+
+        this.minFrequency = MIN_SPRAY_FREQUENCY;
+
+        this.minToolWidth = MIN_SPRAY_WIDTH;
+
+        this.width = this.minToolWidth;
+        this.dotWidth = this.minDotWidth;
+        this.sprayFrequency = this.minFrequency;
     }
 
     ngOnDestroy(): void {
@@ -115,10 +121,6 @@ export class SprayService extends Tool implements OnDestroy {
         sameSpray.timeoutId = setTimeout(sameSpray.drawSpray, ONE_SECOND / sameSpray.sprayFrequency, sameSpray, ctx);
     }
 
-    getRandomNumber(min: number, max: number): number {
-        return Math.random() * (max - min) + min;
-    }
-
     changeWidth(newWidth: number): void {
         this.width = newWidth;
     }
@@ -136,7 +138,11 @@ export class SprayService extends Tool implements OnDestroy {
         this.drawingService.previewCtx.globalAlpha = 1;
     }
 
-    updateSprayData(): void {
+    private getRandomNumber(min: number, max: number): number {
+        return Math.random() * (max - min) + min;
+    }
+
+    private updateSprayData(): void {
         this.spray = new Spray(this.canvasData);
     }
 }

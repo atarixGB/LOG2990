@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { ToolList } from '@app/constants';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
 import { EllipseService } from './ellipse/ellipse.service';
 import { EraserService } from './eraser/eraser.service';
 import { LineService } from './line/line.service';
 import { PaintBucketService } from './paint-bucket/paint-bucket.service';
-import { PencilService } from './pencil/pencil-service';
+import { PencilService } from './pencil/pencil.service';
 import { PipetteService } from './pipette/pipette.service';
 import { PolygonService } from './polygon/polygon.service';
 import { RectangleService } from './rectangle/rectangle.service';

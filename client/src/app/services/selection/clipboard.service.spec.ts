@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
+import { SelectionUtilsService } from '@app/classes/utils/selection-utils.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { RectangleService } from '@app/services/tools/rectangle/rectangle.service';
 import { LassoService } from '@app/services/tools/selection/lasso/lasso.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { SelectionUtilsService } from '@app/services/utils/selection-utils.service';
 import { ClipboardService } from './clipboard.service';
 
 // tslint:disable

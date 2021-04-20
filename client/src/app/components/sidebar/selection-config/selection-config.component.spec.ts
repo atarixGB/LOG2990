@@ -1,7 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { MatOption } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { TextService } from '@app/services/tools/text/text.service';
 import { SelectionConfigComponent } from './selection-config.component';
+
 
 // tslint:disable
 describe('SelectionConfigComponent', () => {
@@ -19,7 +29,8 @@ describe('SelectionConfigComponent', () => {
                 { provide: MoveSelectionService, useValue: moveSelectionServiceSpy },
                 { provide: TextService, useValue: textServiceSpy },
             ],
-            declarations: [SelectionConfigComponent],
+            declarations: [SelectionConfigComponent,MatOption],
+            imports: [MatSliderModule, MatFormFieldModule, MatSelectModule, FormsModule, BrowserAnimationsModule, MatIconModule,MatSlideToggleModule,MatGridListModule],
         }).compileComponents();
     }));
 

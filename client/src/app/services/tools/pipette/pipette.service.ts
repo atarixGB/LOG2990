@@ -1,16 +1,18 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton, ZOOM_RADIUS, ZOOM_RATIO } from '@app/constants';
+import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
+export const ZOOM_RADIUS = 75;
+export const ZOOM_RATIO = 0.2;
 @Injectable({
     providedIn: 'root',
 })
 export class PipetteService extends Tool {
-    pixelColor: string[] = ['#000000', '0'];
+    pixelColor: string[];
     primaryColor: EventEmitter<string[]> = new EventEmitter<string[]>();
     secondaryColor: EventEmitter<string[]> = new EventEmitter<string[]>();
     zoom: HTMLCanvasElement;
@@ -19,6 +21,7 @@ export class PipetteService extends Tool {
 
     constructor(drawingService: DrawingService, public colorManagerService: ColorManagerService) {
         super(drawingService);
+        this.pixelColor = ['#000000', '0'];
     }
 
     onMouseDown(event: MouseEvent): void {
