@@ -14,14 +14,30 @@ export class EllipseService extends ShapeService {
     height: number;
     constructor(
         protected drawingService: DrawingService,
-        colorManager: ColorManagerService,
         private rectangle: RectangleService,
         private undoRedoService: UndoRedoService,
+        colorManager: ColorManagerService,
     ) {
         super(drawingService, colorManager);
     }
 
-    drawShape(ctx: CanvasRenderingContext2D, isAnotherShapeBorder?: boolean): void {
+    private drawEllipse(ctx: CanvasRenderingContext2D): void {
+        ctx.lineWidth = this.lineWidth;
+        ctx.beginPath();
+        ctx.ellipse(this.origin.x, this.origin.y, this.size.x / 2, this.size.y / 2, 0, 2 * Math.PI, 0);
+        this.updateBorderType(ctx);
+    }
+
+    private drawCircle(ctx: CanvasRenderingContext2D): void {
+        ctx.lineWidth = this.lineWidth;
+        this.radius = Math.abs(this.size.x) < Math.abs(this.size.y) ? Math.abs(this.size.x) / 2 : Math.abs(this.size.y) / 2;
+        this.pathData.push({ x: this.origin.x + this.radius, y: this.origin.y + this.radius });
+        ctx.beginPath();
+        ctx.ellipse(this.origin.x, this.origin.y, this.radius, this.radius, 0, 2 * Math.PI, 0);
+        this.updateBorderType(ctx);
+    }
+
+    drawShape(ctx: CanvasRenderingContext2D): void {
         this.rectangle.setPath(this.pathData);
         this.computeSize();
         this.findMouseDirection();
@@ -34,7 +50,7 @@ export class EllipseService extends ShapeService {
         }
     }
 
-    onMouseUp(event: MouseEvent): void {
+    onMouseUp(): void {
         this.mouseDown = false;
         this.drawingService.clearCanvas(this.drawingService.previewCtx);
         if (!this.isShiftShape) {
@@ -63,21 +79,6 @@ export class EllipseService extends ShapeService {
             this.drawingService.clearCanvas(this.drawingService.previewCtx);
             this.drawShape(this.drawingService.previewCtx);
         }
-    }
-    private drawEllipse(ctx: CanvasRenderingContext2D): void {
-        ctx.lineWidth = this.lineWidth;
-        ctx.beginPath();
-        ctx.ellipse(this.origin.x, this.origin.y, this.size.x / 2, this.size.y / 2, 0, 2 * Math.PI, 0);
-        this.updateBorderType(ctx);
-    }
-
-    private drawCircle(ctx: CanvasRenderingContext2D): void {
-        ctx.lineWidth = this.lineWidth;
-        this.radius = Math.abs(this.size.x) < Math.abs(this.size.y) ? Math.abs(this.size.x) / 2 : Math.abs(this.size.y) / 2;
-        this.pathData.push({ x: this.origin.x + this.radius, y: this.origin.y + this.radius });
-        ctx.beginPath();
-        ctx.ellipse(this.origin.x, this.origin.y, this.radius, this.radius, 0, 2 * Math.PI, 0);
-        this.updateBorderType(ctx);
     }
 
     lowerLeft(): void {

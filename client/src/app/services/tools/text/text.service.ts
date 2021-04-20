@@ -99,14 +99,11 @@ export class TextService extends TextUtilsService {
     onMouseDown(event: MouseEvent): void {
         if (this.isWriting === false) {
             this.textInput[this.currentLine] = '|';
-
             this.mouseDownCoord = this.getPositionFromMouse(event);
             this.initialMousePosition = this.mouseDownCoord;
             this.positionText.x = this.initialMousePosition.x;
             this.positionText.y = this.initialMousePosition.y;
-
             this.isWriting = true;
-
             this.writeOnCanvas(CanvasType.previewCtx);
         } else {
             this.write();
@@ -175,17 +172,14 @@ export class TextService extends TextUtilsService {
             }
         } else {
             this.color = this.colorManager.selectedColor[ColorOrder.PrimaryColor].inString;
-
             this.drawingService.previewCtx.fillStyle = this.color;
             this.drawingService.previewCtx.font = this.emphasis + ' ' + this.size + 'px ' + this.font;
-
             if (this.totalLine === 1) {
                 this.drawingService.previewCtx.textAlign = 'left';
             } else {
                 this.drawingService.previewCtx.textAlign = this.align as CanvasTextAlign;
             }
             let y = this.positionText.y;
-
             for (let i = 0; i < this.totalLine; i++) {
                 this.drawingService.previewCtx.fillText(this.textInput[i], this.positionText.x, y);
                 y += Number(this.size);

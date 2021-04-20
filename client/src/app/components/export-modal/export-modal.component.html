@@ -4,11 +4,11 @@
 
     <mat-form-field>
         <input
-            ngDefaultControl
             matInput
             placeholder="Titre du dessin"
             type="text"
             [(ngModel)]="exportService.drawingTitle"
+            ngDefaultControl
             [maxlength]="this.maxLength"
             required
         />
@@ -31,7 +31,7 @@
     <br />
     <mat-form-field>
         <mat-label>Format de l'image</mat-label>
-        <mat-select ngDefaultControl [(ngModel)]="exportService.currentImageFormat">
+        <mat-select [(ngModel)]="exportService.currentImageFormat" ngDefaultControl>
             <mat-option value="png">PNG</mat-option>
             <mat-option value="jpeg">JPG</mat-option>
         </mat-select>
@@ -39,13 +39,13 @@
 
     <mat-form-field class="filters-container">
         <mat-label>Filtres</mat-label>
-        <mat-select ngDefaultControl [(ngModel)]="exportService.selectedFilter" (selectionChange)="exportService.applyFilter()">
-            <mat-option [value]="FiltersList.None">Aucun</mat-option>
-            <mat-option [value]="FiltersList.Blur">Flou</mat-option>
-            <mat-option [value]="FiltersList.Brightness">Luminosité</mat-option>
-            <mat-option [value]="FiltersList.Contrast">Contraste</mat-option>
-            <mat-option [value]="FiltersList.Invert">Inversion des couleurs</mat-option>
-            <mat-option [value]="FiltersList.Grayscale">Nuance de gris</mat-option>
+        <mat-select [(ngModel)]="exportService.selectedFilter" ngDefaultControl (selectionChange)="exportService.applyFilter()">
+            <mat-option [value]="filters.None">Aucun</mat-option>
+            <mat-option [value]="filters.Blur">Flou</mat-option>
+            <mat-option [value]="filters.Brightness">Luminosité</mat-option>
+            <mat-option [value]="filters.Contrast">Contraste</mat-option>
+            <mat-option [value]="filters.Invert">Inversion des couleurs</mat-option>
+            <mat-option [value]="filters.Grayscale">Nuance de gris</mat-option>
         </mat-select>
     </mat-form-field>
 
@@ -53,13 +53,13 @@
         <h4>Intensité du filtre : {{ exportService.filterIntensity }}</h4>
         <div>
             <mat-slider
-                ngDefaultControl
                 min="0"
                 max="100"
                 tickInterval="1000"
                 thumbLabel
                 (change)="exportService.applyFilter()"
                 [(ngModel)]="exportService.filterIntensity"
+                ngDefaultControl
             >
             </mat-slider>
         </div>

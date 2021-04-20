@@ -80,7 +80,6 @@ export class DatabaseService {
                     return HTTP_NOT_FOUND;
                 });
         }
-
         return HTTP_NOT_FOUND;
     }
 

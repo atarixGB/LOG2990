@@ -10,7 +10,6 @@ describe('EllipseService', () => {
     let canvasTestHelper: CanvasTestHelper;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let rectangleServiceSpy: jasmine.SpyObj<RectangleService>;
-    let mouseEvent: MouseEvent;
 
     let baseCtxStub: CanvasRenderingContext2D;
     let previewCtxStub: CanvasRenderingContext2D;
@@ -45,12 +44,6 @@ describe('EllipseService', () => {
         ];
 
         service['pathData'] = mockPathData;
-
-        mouseEvent = {
-            offsetX: 10,
-            offsetY: 10,
-            button: 0,
-        } as MouseEvent;
     });
 
     it('should be created', () => {
@@ -63,7 +56,7 @@ describe('EllipseService', () => {
         rectangleServiceSpy.drawRectangle.and.stub();
         drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub();
 
-        service.drawShape(previewCtxStub, false);
+        service.drawShape(previewCtxStub);
 
         expect(rectangleServiceSpy.drawRectangle).toHaveBeenCalled();
         expect(drawEllipseSpy).toHaveBeenCalled();
@@ -75,7 +68,7 @@ describe('EllipseService', () => {
         rectangleServiceSpy.drawSquare.and.stub();
         drawCircleSpy = spyOn<any>(service, 'drawCircle').and.stub();
 
-        service.drawShape(previewCtxStub, false);
+        service.drawShape(previewCtxStub);
 
         expect(rectangleServiceSpy.drawSquare).toHaveBeenCalled();
         expect(drawCircleSpy).toHaveBeenCalled();
@@ -85,7 +78,7 @@ describe('EllipseService', () => {
         service['isShiftShape'] = false;
 
         drawEllipseSpy = spyOn<any>(service, 'drawEllipse').and.stub();
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
 
         expect(drawEllipseSpy).toHaveBeenCalled();
     });
@@ -93,14 +86,14 @@ describe('EllipseService', () => {
     it('onMouseUp shoud set mouseDown property to false if not already', () => {
         service['origin'] = { x: 10, y: 10 };
         service['size'] = { x: 20, y: 10 };
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
         expect(service.mouseDown).toBeFalsy();
     });
 
     it('onMouseUp should call drawCircle on base context if Shift key is pressed', () => {
         service['isShiftShape'] = true;
         drawCircleSpy = spyOn<any>(service, 'drawCircle').and.stub();
-        service.onMouseUp(mouseEvent);
+        service.onMouseUp();
         expect(drawCircleSpy).toHaveBeenCalled();
     });
 

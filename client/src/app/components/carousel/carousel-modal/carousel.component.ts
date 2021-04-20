@@ -1,5 +1,4 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Inject, ViewChild } from '@angular/core';
-import { MatButton } from '@angular/material/button';
+import { AfterViewInit, Component, HostListener, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Utils } from '@app/classes/utils/math-utils';
@@ -16,24 +15,19 @@ import { DrawingData } from '@common/communication/drawing-data';
     styleUrls: ['./carousel.component.scss'],
 })
 export class CarouselComponent implements AfterViewInit {
-    readonly URL_POSITION: number = 4;
-
     isLoading: boolean;
     placement: Drawing[];
-    isDisabled: boolean;
     tags: string[];
     tagInput: string;
     drawings: Drawing[];
 
+    private readonly URL_POSITION: number = 4;
     private index: number;
     private mainDrawingURL: string;
     private decision: boolean;
-    @ViewChild('loadImageButton', { static: false }) loadImageButton: ElementRef<MatButton>;
-    @ViewChild('recycleBin', { static: false }) recycleButton: ElementRef<MatButton>;
 
     constructor(
         public indexService: IndexService,
-
         private router: Router,
         private dialogRef: MatDialogRef<CarouselComponent>,
         private drawingService: DrawingService,
@@ -46,7 +40,6 @@ export class CarouselComponent implements AfterViewInit {
         this.tags = [];
         this.isLoading = true;
         this.mainDrawingURL = '';
-        this.isDisabled = true;
         this.tagInput = '';
         this.decision = false;
     }
@@ -103,15 +96,22 @@ export class CarouselComponent implements AfterViewInit {
     }
 
     async searchbyTags(): Promise<void> {
-        await this.indexService
-            .searchByTags(this.tags)
-            .then((result) => {
-                this.drawings = result;
-                this.updateImagePlacement();
-            })
-            .catch((error) => {
-                alert(`Un problème de connexion au serveur est survenu. Veuillez réessayer.\n ${error}`);
-            });
+        this.isLoading = true;
+        let drawingFromDB = [] as Drawing[];
+        let urlFromServer = [] as string[];
+
+        await this.indexService.searchByTags(this.tags).then((drawings: Drawing[]) => {
+            drawingFromDB = drawings;
+        });
+
+        await this.indexService.getAllDrawingsFromLocalServer().then((url: string[]) => {
+            urlFromServer = url;
+        });
+
+        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
+        this.isLoading = false;
+        this.updateImagePlacement();
+        this.updateMainImageURL();
     }
 
     async deleteDrawing(): Promise<void> {
@@ -120,14 +120,12 @@ export class CarouselComponent implements AfterViewInit {
             parseUrl = parseUrl.split('/')[this.URL_POSITION].split('.')[0];
             return parseUrl;
         };
-        this.indexService
-            .deleteDrawingById(path(this.mainDrawingURL))
-            .then(() => {
-                this.fetchDrawings();
-            })
-            .catch((error) => {
-                alert(`Un problème avec le serveur est survenu. Le dessin n'a pas pu être supprimé. Veuillez réessayer.\nError ${error}`);
-            });
+        this.indexService.deleteDrawingById(path(this.mainDrawingURL)).then(() => {
+            this.fetchDrawings();
+        });
+        // .catch((error) => {
+        //     alert(`Un problème avec le serveur est survenu. Le dessin n'a pas pu être supprimé. Veuillez réessayer.\nError ${error}`);
+        // });
     }
 
     private openEditorWithDrawing(): void {
@@ -146,28 +144,23 @@ export class CarouselComponent implements AfterViewInit {
         this.autoSaveService.saveCanvasState(drawing);
     }
 
-    private fetchDrawings(): void {
+    private async fetchDrawings(): Promise<void> {
         this.isLoading = true;
-        let urlFromServer: string[];
-        let drawingFromDB: Drawing[];
-        this.indexService
-            .getAllDrawingsFromDB()
-            .then((drawings: Drawing[]) => {
-                drawingFromDB = drawings;
-            })
-            .then(() => {
-                this.indexService
-                    .getAllDrawingsFromLocalServer()
-                    .then((url: string[]) => {
-                        urlFromServer = url;
-                    })
-                    .then(() => {
-                        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
-                        this.isLoading = false;
-                        this.updateImagePlacement();
-                        this.updateMainImageURL();
-                    });
-            });
+        let urlFromServer: string[] = [];
+        let drawingFromDB: Drawing[] = [];
+
+        await this.indexService.getAllDrawingsFromDB().then((drawings: Drawing[]) => {
+            drawingFromDB = drawings;
+        });
+
+        await this.indexService.getAllDrawingsFromLocalServer().then((url: string[]) => {
+            urlFromServer = url;
+        });
+
+        this.drawings = this.findAvailableImages(urlFromServer, drawingFromDB);
+        this.isLoading = false;
+        this.updateImagePlacement();
+        this.updateMainImageURL();
     }
 
     private updateImagePlacement(): void {
