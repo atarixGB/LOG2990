@@ -16,7 +16,7 @@ enum ControlPoints {
     MiddleLeft = 7,
 }
 
-fdescribe('ResizeSelectionService', () => {
+describe('ResizeSelectionService', () => {
     let service: ResizeSelectionService;
     let canvasTestHelper: CanvasTestHelper;
     let baseCtxStub: CanvasRenderingContext2D;
@@ -37,6 +37,15 @@ fdescribe('ResizeSelectionService', () => {
         expect(service).toBeTruthy();
     });
 
+    it('should call function associate to correct control point', () => {
+        service['currentControlPoint'] = ControlPoints.TopLeft;
+        const func = () => {};
+        const controlPointsBinding = spyOn<any>(service['controlPointsBinding'], 'get').and.returnValue(func);
+        service['controlPointInResize']();
+        expect(controlPointsBinding).toHaveBeenCalled();
+    });
+
+    
     it('should return true if mouse is on a control point', () => {
         const mouseCoord = { x: 10, y: 10 };
         service.controlPointsCoord = [
@@ -48,6 +57,18 @@ fdescribe('ResizeSelectionService', () => {
 
         const result = service.checkIfMouseIsOnControlPoint(mouseCoord);
         expect(result).toBeTrue();
+    });
+    it('should return false if mouse is on a control point', () => {
+        const mouseCoord = { x: 40, y: 40 };
+        service.controlPointsCoord = [
+            { x: 0, y: 0 },
+            { x: 10, y: 0 },
+            { x: 10, y: 10 },
+            { x: 0, y: 10 },
+        ];
+
+        const result = service.checkIfMouseIsOnControlPoint(mouseCoord);
+        expect(result).toBeFalse();
     });
 
     it('onMouseMove should change the selection and mouse coord', () => {

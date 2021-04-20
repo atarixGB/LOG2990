@@ -7,9 +7,9 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
     constructor() {
-        const func = (e: MouseEvent) => {
+        const disableContextMenu = (e: MouseEvent) => {
             e.preventDefault();
         };
-        document.addEventListener('contextmenu', func, false);
+        document.addEventListener('contextmenu', disableContextMenu, false);
     }
 }
