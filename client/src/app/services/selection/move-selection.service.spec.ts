@@ -280,15 +280,6 @@ describe('MoveSelectionService', () => {
         expect(handleKeyDownArrowSpy).not.toHaveBeenCalled();
     });
 
-    xit('should set valid interval if arrow key is pressed', () => {
-        spyOn<any>(service, 'isArrowPressed').and.returnValue(true);
-        const setTimeoutSpy = spyOn(window, 'setTimeout').and.stub();
-        keyboardEvent = { key: 'ArrowLeft', preventDefault(): void {} } as KeyboardEvent;
-
-        service.handleKeyDown(keyboardEvent);
-        expect(setTimeoutSpy).toHaveBeenCalled();
-    });
-
     it('should create boundary box if ArrowLeft key is pressed', () => {
         keyboardEvent = { key: 'ArrowLeft', preventDefault(): void {} } as KeyboardEvent;
         service['selectionObject'] = new SelectionTool({ x: 0, y: 0 }, { x: 10, y: 10 }, 10, 10);

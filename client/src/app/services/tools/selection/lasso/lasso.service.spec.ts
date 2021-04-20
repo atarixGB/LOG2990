@@ -500,22 +500,6 @@ describe('LassoService', () => {
         expect(previewCtxSpy.stroke).not.toHaveBeenCalled();
     });
 
-    xit('should return image data if point is in polygon', () => {
-        const selection = new SelectionTool({ x: 10, y: 10 }, { x: 30, y: 30 }, 20, 20);
-        selection.image = new ImageData(10, 10);
-        const pointInPolygonSpy = spyOn<any>(Utils, 'pointInPolygon').and.returnValue(true);
-        service.polygonCoords = [
-            { x: 0, y: 0 },
-            { x: 340, y: 37 },
-            { x: 546, y: 76 },
-            { x: 5, y: 56 },
-        ];
-
-        const result = service.checkPixelInPolygon(selection);
-        expect(pointInPolygonSpy).toHaveBeenCalled();
-        expect(result).toBeInstanceOf(ImageData);
-    });
-
     it('should return image data if point is not in polygon', () => {
         const selection = new SelectionTool({ x: 10, y: 10 }, { x: 30, y: 30 }, 20, 20);
         selection.image = new ImageData(10, 10);
