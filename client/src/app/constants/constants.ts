@@ -19,17 +19,6 @@ export enum MouseDirection {
     LowerRight = 3,
 }
 
-
-
-export enum FiltersList {
-    None = 0,
-    Blur = 1,
-    Brightness = 2,
-    Contrast = 3,
-    Invert = 4,
-    Grayscale = 5,
-}
-
 // in the following we find testing constants
 export const mouseEventLClick = {
     x: 25,
