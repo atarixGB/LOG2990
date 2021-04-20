@@ -1,24 +1,18 @@
 import { CdkDragEnd, CdkDragMove } from '@angular/cdk/drag-drop';
-import { ComponentType } from '@angular/cdk/portal';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, HostListener, OnChanges, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Vec2 } from '@app/classes/vec2';
-import { CarouselComponent } from '@app/components/carousel/carousel-modal/carousel.component';
-import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
-import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
-import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
 import { MIN_SIZE } from '@app/constants/constants';
 import { ToolList } from '@app/interfaces-enums/tool-list';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
+import { KeyHandlerService } from '@app/services/key-handler/key-handler.service';
 import { NewDrawingService } from '@app/services/new-drawing/new-drawing.service';
-import { ClipboardService } from '@app/services/selection/clipboard.service';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SelectionService } from '@app/services/tools/selection/selection.service';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
-import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { DrawingData } from '@common/communication/drawing-data';
 import { Subscription } from 'rxjs';
 
@@ -32,14 +26,14 @@ const LOAD_IMAGE = 100;
     styleUrls: ['./drawing.component.scss'],
 })
 export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
-    @ViewChild('baseCanvas', { static: false }) baseCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('previewCanvas', { static: false }) previewCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('gridCanvas', { static: false }) gridCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('cursorCanvas', { static: false }) cursorCanvas: ElementRef<HTMLCanvasElement>;
-    @ViewChild('workingArea', { static: false }) workingArea: ElementRef<HTMLDivElement>;
-    @ViewChild('lassoPreviewCanvas', { static: false }) lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('baseCanvas', { static: false }) private baseCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('previewCanvas', { static: false }) private previewCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('gridCanvas', { static: false }) private gridCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('cursorCanvas', { static: false }) private cursorCanvas: ElementRef<HTMLCanvasElement>;
+    @ViewChild('workingArea', { static: false }) private workingArea: ElementRef<HTMLDivElement>;
+    @ViewChild('lassoPreviewCanvas', { static: false }) private lassoPreviewCanvas: ElementRef<HTMLCanvasElement>;
 
-    dragPosition: Vec2 = { x: 0, y: 0 };
+    dragPosition: Vec2;
     canvasSize: Vec2;
     private baseCtx: CanvasRenderingContext2D;
     private previewCtx: CanvasRenderingContext2D;
@@ -61,11 +55,11 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
         private drawingService: DrawingService,
         private cdr: ChangeDetectorRef,
         private newDrawingService: NewDrawingService,
-        private undoRedoService: UndoRedoService,
         private selectionService: SelectionService,
         private autoSaveService: AutoSaveService,
-        private clipboardService: ClipboardService,
+        private keyHandlerService: KeyHandlerService,
     ) {
+        this.dragPosition = { x: 0, y: 0 };
         this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         this.subscription = this.newDrawingService.getCleanStatus().subscribe((isCleanRequest) => {
             if (isCleanRequest) {
@@ -87,23 +81,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
         this.workingArea.nativeElement.style.width = WORKING_AREA_WIDTH;
         this.workingArea.nativeElement.style.height = WORKING_AREA_LENGHT;
 
-        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.lassoPreviewCtx = this.lassoPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.drawingService.baseCtx = this.baseCtx;
-        this.drawingService.previewCtx = this.previewCtx;
-        this.drawingService.cursorCtx = this.cursorCtx;
-        this.drawingService.lassoPreviewCtx = this.lassoPreviewCtx;
-        this.drawingService.gridCtx = this.gridCtx;
-        this.drawingService.canvas = this.baseCanvas.nativeElement;
-        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
-
-        this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
-        if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
-            this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
-        }
+        this.initialiseParameters();
 
         if (!this.autoSaveService.localStorageIsEmpty()) {
             window.onload = () => {
@@ -152,29 +130,13 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     onMouseMove(event: MouseEvent): void {
-        const ELEMENT = event.target as HTMLElement;
-
         if (this.toolManagerService.currentToolEnum === ToolList.Eraser) {
             this.drawingService.cursorCtx = this.cursorCtx;
         } else {
             this.cursorCtx.clearRect(0, 0, this.cursorCanvas.nativeElement.width, this.cursorCanvas.nativeElement.height);
         }
 
-        if (!ELEMENT.className.includes('box')) {
-            this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
-
-            if (
-                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
-                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse ||
-                this.toolManagerService.currentToolEnum === ToolList.Lasso
-            ) {
-                if (!this.selectionService.newSelection) {
-                    this.toolManagerService.currentTool = this.moveSelectionService;
-                } else {
-                    this.toolManagerService.currentTool = this.selectionService;
-                }
-            }
-        }
+        this.handleSelectionTool(event);
     }
 
     onMouseDown(event: MouseEvent): void {
@@ -224,29 +186,12 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     @HostListener('document:keyup', ['$event'])
     handleKeyUp(event: KeyboardEvent): void {
-        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                this.moveSelectionService.handleKeyUp(event);
-            }
-        }
-
-        this.toolManagerService.handleKeyUp(event);
+        this.keyHandlerService.handleKeyUp(event);
     }
 
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
-        this.modalHandler(event, NewDrawModalComponent, 'o');
-        this.modalHandler(event, SaveDrawingModalComponent, 's');
-        this.modalHandler(event, CarouselComponent, 'g');
-        this.modalHandler(event, ExportModalComponent, 'e');
-
-        if (this.selectionToolKeyHandler(event)) return;
-
-        if (this.dialog.openDialogs.length < 1) {
-            this.toolManagerService.handleHotKeysShortcut(event);
-        }
-
-        this.undoRedoToolKeyHandler(event);
+        this.keyHandlerService.handleKeyDown(event);
     }
 
     dragMoved(event: CdkDragMove, resizeX: boolean, resizeY: boolean): void {
@@ -266,19 +211,19 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     dragEnded(event: CdkDragEnd): void {
-        const NEW_WIDTH: number = this.canvasSize.x + event.distance.x;
-        const NEW_HEIGHT: number = this.canvasSize.y + event.distance.y;
+        const newWidth: number = this.canvasSize.x + event.distance.x;
+        const newHeight: number = this.canvasSize.y + event.distance.y;
 
         this.previewCanvas.nativeElement.style.borderStyle = 'solid';
 
-        if (NEW_WIDTH >= MIN_SIZE) {
-            this.canvasSize.x = NEW_WIDTH;
+        if (newWidth >= MIN_SIZE) {
+            this.canvasSize.x = newWidth;
         } else {
             this.canvasSize.x = MIN_SIZE;
         }
 
-        if (NEW_HEIGHT >= MIN_SIZE) {
-            this.canvasSize.y = NEW_HEIGHT;
+        if (newHeight >= MIN_SIZE) {
+            this.canvasSize.y = newHeight;
         } else {
             this.canvasSize.y = MIN_SIZE;
         }
@@ -308,82 +253,62 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges {
         return this.canvasSize.y;
     }
 
-    private modalHandler(
-        event: KeyboardEvent,
-        component: ComponentType<NewDrawModalComponent | SaveDrawingModalComponent | CarouselComponent | ExportModalComponent>,
-        key: string,
-    ): void {
-        if (event.ctrlKey && event.key === key && this.dialog.openDialogs.length === 0) {
-            event.preventDefault();
+    async getNewImage(src: string): Promise<HTMLImageElement> {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => {
+                resolve(img);
+            };
+            img.onerror = (err: string | Event) => {
+                reject(err);
+            };
+            img.src = src;
+        });
+    }
 
-            switch (event.key) {
-                case 'g':
-                    this.dialog.open(component, { data: this.isCanvasBlank() });
-                    break;
-                case 'e':
-                    this.exportService.imagePrevisualization();
-                    this.exportService.initializeExportParams();
-                    this.dialog.open(component, {});
-                    break;
-                default:
-                    this.dialog.open(component, {});
-                    break;
-            }
+    private initialiseParameters(): void {
+        this.baseCtx = this.baseCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.previewCtx = this.previewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.cursorCtx = this.cursorCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.lassoPreviewCtx = this.lassoPreviewCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.gridCtx = this.gridCanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.drawingService.baseCtx = this.baseCtx;
+        this.drawingService.previewCtx = this.previewCtx;
+        this.drawingService.cursorCtx = this.cursorCtx;
+        this.drawingService.lassoPreviewCtx = this.lassoPreviewCtx;
+        this.drawingService.gridCtx = this.gridCtx;
+        this.drawingService.canvas = this.baseCanvas.nativeElement;
+        this.drawingService.gridCanvas = this.gridCanvas.nativeElement;
+        this.keyHandlerService.baseCtx = this.baseCtx;
+        this.keyHandlerService.canvasSize = this.canvasSize;
+        this.adjustCanvasSize();
+    }
+
+    private adjustCanvasSize(): void {
+        this.canvasSize = { x: this.workingArea.nativeElement.offsetWidth / 2, y: this.workingArea.nativeElement.offsetHeight / 2 };
+        if (this.canvasSize.x < MIN_SIZE || this.canvasSize.y < MIN_SIZE) {
+            this.canvasSize = { x: MIN_SIZE, y: MIN_SIZE };
         }
     }
-    // tslint:disable
-    private selectionToolKeyHandler(event: KeyboardEvent): boolean {
-        if (event.ctrlKey && event.key === 'a') {
-            event.preventDefault();
-            this.toolManagerService.currentToolEnum = ToolList.SelectionRectangle;
-            this.selectionService.selectAll();
-        }
 
-        if (this.toolManagerService.currentTool === this.selectionService || this.toolManagerService.currentTool === this.moveSelectionService) {
-            if (event.ctrlKey) {
-                switch (event.key) {
-                    case 'c':
-                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.copy();
-                        break;
-                    case 'x':
-                        if (this.clipboardService.actionsAreAvailable()) this.clipboardService.cut();
-                        break;
-                    case 'v':
-                        if (this.clipboardService.pasteAvailable) this.clipboardService.paste();
-                        break;
+    private handleSelectionTool(event: MouseEvent): void {
+        const element = event.target as HTMLElement;
+        if (!element.className.includes('box')) {
+            this.toolManagerService.onMouseMove(event, this.mouseCoord(event));
+
+            if (
+                this.toolManagerService.currentToolEnum === ToolList.SelectionRectangle ||
+                this.toolManagerService.currentToolEnum === ToolList.SelectionEllipse ||
+                this.toolManagerService.currentToolEnum === ToolList.Lasso
+            ) {
+                if (!this.selectionService.newSelection) {
+                    this.toolManagerService.currentTool = this.moveSelectionService;
+                } else {
+                    this.toolManagerService.currentTool = this.selectionService;
                 }
-                return true;
-            }
-
-            if (event.key === 'Delete' && this.clipboardService.actionsAreAvailable()) this.clipboardService.delete();
-
-            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown') {
-                this.moveSelectionService.handleKeyDown(event);
             }
         }
-        return false;
-    }
-
-    private undoRedoToolKeyHandler(event: KeyboardEvent): void {
-        if (event.ctrlKey && event.key === 'z' && this.undoRedoService.canUndo() && !this.toolManagerService.currentTool?.mouseDown) {
-            event.preventDefault();
-            this.undoRedoService.undo();
-        }
-
-        if (
-            event.ctrlKey &&
-            event.shiftKey &&
-            event.code === 'KeyZ' &&
-            this.undoRedoService.canRedo() &&
-            !this.toolManagerService.currentTool?.mouseDown
-        ) {
-            event.preventDefault();
-            this.undoRedoService.redo();
-        }
-    }
-
-    private isCanvasBlank(): boolean {
-        return !this.baseCtx.getImageData(0, 0, this.width, this.height).data.some((channel) => channel !== 0);
     }
 
     private whiteBackgroundCanvas(): void {

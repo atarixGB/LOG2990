@@ -3,7 +3,7 @@ import { CarouselDrawingComponent } from './carousel-drawing.component';
 
 // tslint:disable
 describe('CarouselDrawingComponent', () => {
-    let component: CarouselDrawingComponent;
+    let component:CarouselDrawingComponent;
     let fixture: ComponentFixture<CarouselDrawingComponent>;
 
     beforeEach(async(() => {
@@ -13,8 +13,8 @@ describe('CarouselDrawingComponent', () => {
     }));
 
     beforeEach(() => {
+        component=fixture.componentInstance;
         fixture = TestBed.createComponent(CarouselDrawingComponent);
-        component = fixture.componentInstance;
         fixture.detectChanges();
     });
 

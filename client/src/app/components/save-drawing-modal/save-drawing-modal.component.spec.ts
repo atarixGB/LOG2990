@@ -147,24 +147,4 @@ describe('SaveDrawingModalComponent', () => {
         component.validateTagDuplicate();
         expect(component.validateTagDuplicate).toBeTruthy();
     });
-
-    xit('should return correct drawing data', () => {
-        spyOn<any>(drawingServiceSpy.canvas, 'toDataURL').and.returnValue('dataurl');
-
-        component.drawingTitle = 'title';
-        component.tags = ['tag'];
-        component['drawingService'].baseCtx.canvas.height = 100;
-        component['drawingService'].baseCtx.canvas.width = 100;
-
-        const expectedResult = {
-            title: 'title',
-            tags: ['tags'],
-            height: 100,
-            width: 100,
-            body: 'dataurl',
-        };
-
-        const result = component['getDrawingData']();
-        expect(result).toEqual(expectedResult);
-    });
 });
