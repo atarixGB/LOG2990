@@ -2,15 +2,32 @@ import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ColorDisplayerComponent } from 'src/app/components/sidebar/color-components/color-displayer/color-displayer.component';
 import { FIRSTCOLORTEST, SECONDCOLORTEST } from '@app/constants/constants';
+import { ColorDisplayerComponent } from 'src/app/components/sidebar/color-components/color-displayer/color-displayer.component';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { RGBA } from 'src/app/interfaces-enums/rgba';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { ColorPickerComponent } from './color-picker.component';
-import{EventMock,SecondEventMock,ThirdEventMock} from '@app/classes/utils/testing-utils';
 // tslint:disable
 
+class EventMock {
+    button: number = 2;
+    preventDefault(): boolean {
+        return false;
+    }
+}
+class SecondEventMock {
+    button: number = 0;
+    preventDefault(): boolean {
+        return false;
+    }
+}
+class ThirdEventMock {
+    button: number = 1;
+    preventDefault(): boolean {
+        return false;
+    }
+}
 
 describe('ColorPickerComponent', () => {
     let component: ColorPickerComponent;

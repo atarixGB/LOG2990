@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
 import { Line } from '@app/classes/line';
-import { Utils } from '@app/classes/utils/math-utils';
 import { Tool } from '@app/classes/tool';
+import { Utils } from '@app/classes/utils/math-utils';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_LINE_THICKNESS, MouseButton} from '@app/constants/constants';
+import { DEFAULT_LINE_THICKNESS, MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 
-import{TypeOfJunctions} from '@app/interfaces-enums/junction-type'
+import { TypeOfJunctions } from '@app/interfaces-enums/junction-type';
 export const DEFAULT_JUNCTION_RADIUS = 2;
 const SECOND_LAST_INDEX = -2;
 const LINE_RADIUS = 5;
@@ -123,7 +123,6 @@ export class LineService extends Tool {
                 this.hasPressedShiftKey = true;
                 break;
             case 'Backspace':
-                // We use the second last index to get the canvas state just before last stroked line
                 this.drawingService.baseCtx.putImageData(this.lastCanvasImages[this.lastCanvasImages.length + SECOND_LAST_INDEX], 0, 0);
                 break;
         }

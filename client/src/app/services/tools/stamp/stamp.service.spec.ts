@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { mouseEventLClick, mouseEventRClick} from '@app/constants/constants';
-import{StampList} from '@app/interfaces-enums/stamp-list'
+import { mouseEventLClick, mouseEventRClick } from '@app/constants/constants';
+import { StampList } from '@app/interfaces-enums/stamp-list';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { StampService } from './stamp.service';
 

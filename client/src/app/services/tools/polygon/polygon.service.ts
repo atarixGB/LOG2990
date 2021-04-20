@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Polygon } from '@app/classes/polygon';
 import { ToolShape } from '@app/classes/tool-shape';
 import { Vec2 } from '@app/classes/vec2';
-import { DEFAULT_LINE_THICKNESS} from '@app/constants/constants';
+import { DEFAULT_LINE_THICKNESS } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';

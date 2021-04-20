@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { PolygonService } from 'src/app/services/tools/polygon/polygon.service';
 
-export const INITIAL_SIDES=3;
+export const INITIAL_SIDES = 3;
 @Component({
     selector: 'app-polygon-config',
     templateUrl: './polygon-config.component.html',
@@ -9,11 +9,11 @@ export const INITIAL_SIDES=3;
 })
 export class PolygonConfigComponent {
     polygonService: PolygonService;
-    sides: number 
+    sides: number;
 
     constructor(polygonService: PolygonService) {
         this.polygonService = polygonService;
-        this.sides=INITIAL_SIDES;
+        this.sides = INITIAL_SIDES;
     }
 
     updateLineWidth(value: number): number {

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { DrawingContextStyle } from '@app/classes/drawing-context-styles';
-import { Segment, Utils } from '@app/classes/utils/math-utils';
 import { SelectionTool } from '@app/classes/selection';
+import { Segment, Utils } from '@app/classes/utils/math-utils';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants/constants';
 import { DrawingService } from '@app/services/drawing/drawing.service';

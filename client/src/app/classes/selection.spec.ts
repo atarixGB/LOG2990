@@ -3,8 +3,7 @@ import { SelectionTool } from '@app/classes/selection';
 import { CanvasTestHelper } from './canvas-test-helper';
 import { Vec2 } from './vec2';
 
-// const PIXEL_LENGTH = 4;
-// const MAX_RGB = 255;
+
 //tslint:disable
 describe('Selection', () => {
     let canvasTestHelper:CanvasTestHelper;
@@ -165,42 +164,4 @@ describe('Selection', () => {
         expect(drawImageSpy).toHaveBeenCalled();
     });
 
-    // it('clearUnderneathShape should update clearPolygon if isLasso true',()=>{
-    //     const ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-
-    //     const selection= new SelectionTool({x:1,y:1} as Vec2,{x:4, y:4} as Vec2, 3, 3);
-    //     selection.isEllipse = false;
-    //     selection.isLasso = true;
-    //     selection.clearImageDataPolygon=new ImageData(10,10);
-    //     selection.image=new ImageData(100,100);
-    //     selection.initialOrigin={x:1,y:1};
-    //     selection.polygonCoords=[{x:1,y:1},{x:2,y:2}];
-    //     selection.initialWidth=1;
-    //     selection.initialHeight=1;
-
-    //    const clearPolygonSpy=spyOn<any>(selection,'clearPolygon').and.stub();
-    //    selection.draw(ctx);
-    //    expect(clearPolygonSpy).toHaveBeenCalled();
-
-    // });
-
-    // it('should clear underneath if lasso', () => {
-    //     const ctx = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
-    //     const selection = new SelectionTool({ x: 50, y: 50 } as Vec2, { x: 100, y: 100 } as Vec2, 50, 50);
-    //     selection.isEllipse = false;
-    //     selection.isLasso = true;
-    //     selection.clearImageDataPolygon = new ImageData(10, 10);
-    //     selection.image=new ImageData(10,10);
-    //     selection.initialOrigin={x:1,y:1};
-    //     selection.polygonCoords=[{x:1,y:1},{x:2,y:2}];
-    //     selection.initialWidth=1;
-    //     selection.initialHeight=1;
-
-    //     const clearPolygonSpy = spyOn<any>(selection,'clearPolygon').and.stub();
-    //     const beginPathSpy=spyOn<any>(ctx,'beginPath').and.stub();
-    //     selection.clearUnderneathShape(ctx);
-    //     expect(ctx.fillStyle).toEqual('#ffffff');
-    //     expect(beginPathSpy).toHaveBeenCalled();
-    //     expect(clearPolygonSpy).toHaveBeenCalled();
-    // });
 });

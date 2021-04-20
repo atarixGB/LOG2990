@@ -1,6 +1,6 @@
 import { Drawable } from '@app/classes/drawable';
-import { Vec2 } from './vec2';
 import { TypeStyle } from '@app/interfaces-enums/type-style';
+import { Vec2 } from './vec2';
 
 export class Polygon extends Drawable {
     private centerCircle: Vec2;

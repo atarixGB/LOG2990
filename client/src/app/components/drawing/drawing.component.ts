@@ -18,8 +18,8 @@ import { CarouselComponent } from '@app/components/carousel/carousel-modal/carou
 import { ExportModalComponent } from '@app/components/export-modal/export-modal.component';
 import { NewDrawModalComponent } from '@app/components/new-draw-modal/new-draw-modal.component';
 import { SaveDrawingModalComponent } from '@app/components/save-drawing-modal/save-drawing-modal.component';
-import { MIN_SIZE} from '@app/constants/constants';
-import{ToolList} from '@app/interfaces-enums/tool-list';
+import { MIN_SIZE } from '@app/constants/constants';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ExportService } from '@app/services/export-image/export.service';
@@ -244,7 +244,6 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
         this.toolManagerService.handleKeyUp(event);
     }
 
-    // tslint:disable
     @HostListener('document:keydown', ['$event'])
     handleKeyDown(event: KeyboardEvent): void {
         this.modalHandler(event, NewDrawModalComponent, 'o');
@@ -343,7 +342,7 @@ export class DrawingComponent implements AfterViewInit, OnDestroy, OnChanges, Af
             }
         }
     }
-
+    // tslint:disable
     private selectionToolKeyHandler(event: KeyboardEvent): boolean {
         if (event.ctrlKey && event.key === 'a') {
             event.preventDefault();

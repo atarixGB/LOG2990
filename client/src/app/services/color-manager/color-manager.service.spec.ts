@@ -67,28 +67,6 @@ describe('ColorManagerService', () => {
         expect(colorManagerService.selectedColor[ColorOrder.SecondaryColor].inString).toBe('rgba(255,255,255,1)');
     });
 
-    // it('should not update primary color with hex', () => {
-    //     colorManagerService.updateWithHex(ColorOrder.primaryColor, 'ZQ', 'TP', 'SS');
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Dec.Red).toBe(255);
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Dec.Green).toBe(0);
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Dec.Blue).toBe(0);
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Hex.Red).toBe('ff');
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Hex.Green).toBe('0');
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].Hex.Blue).toBe('0');
-    //     expect(colorManagerService.selectedColor[ColorOrder.primaryColor].inString).toBe('rgba(255,0,0,1)');
-    // });
-
-    // it('should not update secondary color with hex', () => {
-    //     colorManagerService.updateWithHex(ColorOrder.secondaryColor, 'zQ', 'TP', 'ss');
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].Dec.Red).toBe(0);
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].Dec.Green).toBe(255);
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].Dec.Blue).toBe(0);
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].Hex.Red).toBe('0');
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].Hex.Green).toBe('ff');
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].Hex.Blue).toBe('0');
-    //     expect(colorManagerService.selectedColor[ColorOrder.secondaryColor].inString).toBe('rgba(0,255,0,1)');
-    // });
-
     it('should update color with hex and update history', () => {
         const colorPixel = new Uint8ClampedArray(4);
         colorPixel[0] = 197;

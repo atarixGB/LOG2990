@@ -176,10 +176,10 @@ export class Utils {
 
     static getClosestLine(currentPoint: Vec2, basePoint: Vec2): number[] {
         const lineList = [
-            [1, 1, NUMBER_SIGN_CHANGE * (basePoint.x + basePoint.y)], // ascending diagonal
-            [1, NEGATIVE_LINE_SLOPE, NUMBER_SIGN_CHANGE * (basePoint.x - basePoint.y)], // descending diagonal
-            [1, 0, -basePoint.x], // x axis
-            [0, 1, -basePoint.y], // y axis
+            [1, 1, NUMBER_SIGN_CHANGE * (basePoint.x + basePoint.y)],
+            [1, NEGATIVE_LINE_SLOPE, NUMBER_SIGN_CHANGE * (basePoint.x - basePoint.y)],
+            [1, 0, -basePoint.x],
+            [0, 1, -basePoint.y],
         ];
         const distance: number[] = lineList.map((line) => this.getDistanceBetweenPointAndLine(currentPoint, line));
         const maxDistance: number = Math.min(...distance);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {MAX_DEC_RANGE} from '@app/constants/constants';
+import { MAX_DEC_RANGE } from '@app/constants/constants';
 import { Observable, Subject } from 'rxjs';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
 import { DecimalRGBA, RGBA } from 'src/app/interfaces-enums/rgba';

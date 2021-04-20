@@ -1,18 +1,18 @@
 export class EventMock {
-    button = 2;
-    preventDefault() {
+    button:number = 2;
+    preventDefault():boolean {
         return false;
     }
 }
 export class SecondEventMock {
-    button = 0;
-    preventDefault() {
+    button:number = 0;
+    preventDefault():boolean {
         return false;
     }
 }
 export class ThirdEventMock {
-    button = 1;
-    preventDefault() {
+    button:number = 1;
+    preventDefault():boolean {
         return false;
     }
 }

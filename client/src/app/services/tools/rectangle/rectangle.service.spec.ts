@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
-import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { Vec2 } from '@app/classes/vec2';
+import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ShapeService } from '@app/services/tools/shape/shape.service';
 import { RectangleService } from './rectangle.service';

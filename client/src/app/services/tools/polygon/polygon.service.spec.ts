@@ -4,7 +4,7 @@ import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { TypeStyle } from '@app/interfaces-enums/type-style';
 import { DrawingService } from '@app/services/drawing/drawing.service';
-import { PolygonService,DOUBLE_MATH } from './polygon.service';
+import { DOUBLE_MATH, PolygonService } from './polygon.service';
 
 //tslint:disable
 describe('PolygonService', () => {

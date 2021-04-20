@@ -19,7 +19,6 @@ export enum MouseDirection {
     LowerRight = 3,
 }
 
-// in the following we find testing constants
 export const mouseEventLClick = {
     x: 25,
     y: 25,

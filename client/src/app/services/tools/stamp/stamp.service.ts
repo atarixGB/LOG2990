@@ -4,13 +4,13 @@ import { Stamp } from '@app/classes/stamp';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
 import { MouseButton } from '@app/constants/constants';
+import { DEAD, GLASSES, HAPPY, SAD, SURPRISED } from '@app/constants/stamp-data';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { StampList } from '@app/interfaces-enums/stamp-list';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Subject } from 'rxjs';
-import{SURPRISED,HAPPY, SAD, GLASSES, DEAD} from '@app/constants/stamp-data';
 
 export const SCALE_FACTOR_STAMP = 1;
 export const ROTATION_STEP_STAMP = 15;
@@ -49,12 +49,7 @@ export class StampService extends Tool {
             .set(StampList.Dead, 'dead');
 
         this.srcBinding = new Map<string, string>();
-        this.srcBinding
-            .set('surprised',SURPRISED)
-            .set('happy',HAPPY)
-            .set('sad',SAD)
-            .set('glasses',GLASSES)
-            .set('dead', DEAD);
+        this.srcBinding.set('surprised', SURPRISED).set('happy', HAPPY).set('sad', SAD).set('glasses', GLASSES).set('dead', DEAD);
 
         this.currentStamp = 'happy';
         this.selectStamp = StampList.Happy;

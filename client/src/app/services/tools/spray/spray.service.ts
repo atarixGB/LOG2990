@@ -2,11 +2,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Spray } from '@app/classes/spray';
 import { Tool } from '@app/classes/tool';
+import { MouseButton } from '@app/constants/constants';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { Vec2 } from 'src/app/classes/vec2';
-import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from 'src/app/interfaces-enums/color-order';
-//import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
+// import { SprayProperties } from 'src/app/interfaces-enums/spray-properties';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 
@@ -35,7 +35,7 @@ export class SprayService extends Tool implements OnDestroy {
     private minFrequency: number;
     private minToolWidth: number;
     private timeoutId: ReturnType<typeof setTimeout>;
-    
+
     constructor(drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
         this.density = SPRAY_DENSITY;

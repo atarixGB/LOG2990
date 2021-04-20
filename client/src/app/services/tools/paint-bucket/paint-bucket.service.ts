@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import { PaintBucket } from '@app/classes/paint';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MAX_DEC_RANGE,MouseButton } from '@app/constants/constants';
+import { MAX_DEC_RANGE, MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { RGBA, RGBA_INDEX } from '@app/interfaces-enums/rgba';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
@@ -22,9 +22,9 @@ export const MIN_TOLERANCE_VALUE = 0;
 })
 export class PaintBucketService extends Tool {
     startPixelColor: Uint8ClampedArray;
-    maxTolerance: number; 
-    minTolerance: number; 
-    tolerance: number; 
+    maxTolerance: number;
+    minTolerance: number;
+    tolerance: number;
     mouseDownCoord: Vec2;
     canvasData: ImageData;
     paintBucket: PaintBucket;
@@ -32,9 +32,9 @@ export class PaintBucketService extends Tool {
 
     constructor(protected drawingService: DrawingService, private colorManager: ColorManagerService, private undoRedoService: UndoRedoService) {
         super(drawingService);
-        this.maxTolerance=MAX_TOLERANCE_VALUE;
-        this.minTolerance=MIN_TOLERANCE_VALUE;
-        this.tolerance=MIN_TOLERANCE_VALUE;
+        this.maxTolerance = MAX_TOLERANCE_VALUE;
+        this.minTolerance = MIN_TOLERANCE_VALUE;
+        this.tolerance = MIN_TOLERANCE_VALUE;
     }
 
     onMouseDown(event: MouseEvent): void {

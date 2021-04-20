@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import{ToolList} from '@app/interfaces-enums/tool-list';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 
 @Component({

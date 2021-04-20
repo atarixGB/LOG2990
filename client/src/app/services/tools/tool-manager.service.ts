@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import{ToolList} from '@app/interfaces-enums/tool-list';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { MoveSelectionService } from '@app/services/selection/move-selection.service';
 import { SprayService } from '@app/services/tools/spray/spray.service';
 import { EllipseService } from './ellipse/ellipse.service';

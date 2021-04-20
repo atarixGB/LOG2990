@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { CanvasTestHelper } from '@app/classes/canvas-test-helper';
 import { Vec2 } from '@app/classes/vec2';
-import { CanvasType,Emphasis, Font, TextAlign } from '@app/interfaces-enums/text-properties';
+import { CanvasType, Emphasis, Font, TextAlign } from '@app/interfaces-enums/text-properties';
 import { ColorManagerService } from '@app/services/color-manager/color-manager.service';
 import { DrawingService } from '@app/services/drawing/drawing.service';
+import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { of } from 'rxjs';
 import { TextService } from './text.service';
 
@@ -12,6 +13,7 @@ describe('TextService', () => {
     let service: TextService;
     let drawServiceSpy: jasmine.SpyObj<DrawingService>;
     let colorServiceSpy: ColorManagerService;
+    let undoRedoSpy: UndoRedoService;
     const mouseEventClick = {
         x: 25,
         y: 25,
@@ -22,11 +24,15 @@ describe('TextService', () => {
     let previewCtxStub: CanvasRenderingContext2D;
 
     beforeEach(() => {
-        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas']);
+        drawServiceSpy = jasmine.createSpyObj('DrawingService', ['clearCanvas','getCanvasData']);
+        undoRedoSpy=jasmine.createSpyObj('UndoRedoService',['addToStack']);
         colorServiceSpy = new ColorManagerService();
         TestBed.configureTestingModule({
-            providers: [{ provide: DrawingService, useValue: drawServiceSpy },
-            { provide: ColorManagerService, useValue: colorServiceSpy }],
+            providers: [
+                { provide: DrawingService, useValue: drawServiceSpy },
+                { provide: ColorManagerService, useValue: colorServiceSpy },
+                { provide: UndoRedoService, useValue: undoRedoSpy },
+            ],
         });
         canvasTestHelper = TestBed.inject(CanvasTestHelper);
         baseCtxStub = canvasTestHelper.canvas.getContext('2d') as CanvasRenderingContext2D;
@@ -42,9 +48,9 @@ describe('TextService', () => {
     });
 
     it('should subscribe to colorManager color change', () => {
-        spyOn(colorServiceSpy, "changeColorObserver").and.returnValue(of({} as any));
+        spyOn(colorServiceSpy, 'changeColorObserver').and.returnValue(of({} as any));
         const spyWriteCanvas = spyOn<any>(TextService.prototype, 'writeOnCanvas').and.stub();
-        service = new TextService(drawServiceSpy, colorServiceSpy);
+        service = new TextService(drawServiceSpy, colorServiceSpy,undoRedoSpy);
         expect(spyWriteCanvas).toHaveBeenCalled();
     });
 
@@ -386,6 +392,7 @@ describe('TextService', () => {
     it('should call write on canvas', () => {
         service['textInput'][0] = 'ac';
         const spyWrite = spyOn<any>(service, 'writeOnCanvas').and.stub();
+        
 
         service.write();
 
@@ -417,7 +424,7 @@ describe('TextService', () => {
 
     it('should not apply align when not a defined align', () => {
         service.align = 'undefined';
-        service.isWriting = false
+        service.isWriting = false;
         service.isWriting = false;
         spyOn(service['alignBinding'], 'has').and.returnValue(false);
         const spyWriteCanvas = spyOn<any>(service, 'writeOnCanvas').and.stub();
@@ -654,7 +661,6 @@ describe('TextService', () => {
         expect(service['drawingService'].baseCtx.textAlign).toEqual('center');
     });
 
-
     it('should adjust cursor position when arrow up', () => {
         service['cursorPosition'] = 5;
         service['currentLine'] = 2;
@@ -723,5 +729,4 @@ describe('TextService', () => {
 
         expect(alignCenterSpy).toHaveBeenCalled();
     });
-
 });

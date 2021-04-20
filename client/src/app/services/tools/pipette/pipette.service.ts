@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Tool } from '@app/classes/tool';
 import { Vec2 } from '@app/classes/vec2';
-import { MouseButton} from '@app/constants/constants';
+import { MouseButton } from '@app/constants/constants';
 import { ColorOrder } from '@app/interfaces-enums/color-order';
 import { DrawingService } from '@app/services/drawing/drawing.service';
 import { ColorManagerService } from 'src/app/services/color-manager/color-manager.service';
@@ -21,7 +21,7 @@ export class PipetteService extends Tool {
 
     constructor(drawingService: DrawingService, public colorManagerService: ColorManagerService) {
         super(drawingService);
-        this.pixelColor= ['#000000', '0'];
+        this.pixelColor = ['#000000', '0'];
     }
 
     onMouseDown(event: MouseEvent): void {

@@ -4,7 +4,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSlider } from '@angular/material/slider';
-import{ToolList} from '@app/interfaces-enums/tool-list';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { ColorDisplayerComponent } from 'src/app/components/sidebar/color-components/color-displayer/color-displayer.component';
 import { PencilConfigComponent } from 'src/app/components/sidebar/pencil-config/pencil-config.component';

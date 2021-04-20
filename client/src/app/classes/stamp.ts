@@ -38,7 +38,6 @@ export class Stamp extends Drawable {
         ctx.stroke(path);
         ctx.fill(path);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        // ctx.drawImage(image,0,0);
 
         ctx.restore();
     }

@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
-import{ToolList} from '@app/interfaces-enums/tool-list';
+import { ToolList } from '@app/interfaces-enums/tool-list';
 import { ToolManagerService } from '@app/services/tools/tool-manager.service';
 import { UndoRedoService } from '@app/services/undo-redo/undo-redo.service';
 import { ToolsListComponent } from './tools-list.component';
