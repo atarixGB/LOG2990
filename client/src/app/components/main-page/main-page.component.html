@@ -1,16 +1,14 @@
 <div class="container">
-    <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
+  <h1 class="header-item">{{ title }}</h1>
 
-    <div id="server-message">
-        <p>Petit message du serveur : {{ message | async }}</p>
-        <button class="button" (click)="getMessagesFromServer()">Récuper un message du serveur</button>
-        <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
-    </div>
+  <button class="button" routerLink="/editor" (click)='clearLocalStorage()'>Créer un nouveau dessin</button>
 
-    <button class="button" routerLink="/editor">Ouvir Éditeur</button>
+  <button class="button" (click)="openCarousel()">Ouvrir le carrousel de dessins</button>
 
-    <div class="footer-item">
-        <h4 class="team-name">Équipe Poly</h4>
-        <p>Coequipier #1, Coequipier #2, Coequipier #3, Coequipier #4, Coequipier #5, Coequipier #6</p>
-    </div>
+  <button class="button" (click)="continueDrawing()" [disabled]="isDisabled">Continuer un dessin</button>
+
+  <div class="footer-item">
+    <h4 class="team-name">Équipe Polytechnique Montréal</h4>
+    <p>Nassim Boughe, Léa Kim Gilbert, Noursen Houidhek, Audrey Leblanc, Juliette Morin et Miora Rakoto</p>
+  </div>
 </div>

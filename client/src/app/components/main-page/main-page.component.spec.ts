@@ -1,26 +1,26 @@
 import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
-import { IndexService } from '@app/services/index/index.service';
-import { of } from 'rxjs';
+import { AutoSaveService } from '@app/services/auto-save/auto-save.service';
 import { MainPageComponent } from './main-page.component';
 
-import SpyObj = jasmine.SpyObj;
-
+//tslint:disable
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
-    let indexServiceSpy: SpyObj<IndexService>;
+    let dialogOpenSpy = jasmine.createSpy('open');
+    let autoSaveServiceSpy: jasmine.SpyObj<AutoSaveService>;
 
     beforeEach(async(() => {
-        indexServiceSpy = jasmine.createSpyObj('IndexService', ['basicGet', 'basicPost']);
-        indexServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
-        indexServiceSpy.basicPost.and.returnValue(of());
-
+        autoSaveServiceSpy = jasmine.createSpyObj('AutoSaveService', ['loadImage', 'localStorageIsEmpty']);
         TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: IndexService, useValue: indexServiceSpy }],
+            providers: [
+                { provide: MatDialog, useValue: { open: dialogOpenSpy } },
+                { provide: AutoSaveService, useValue: autoSaveServiceSpy },
+            ],
         }).compileComponents();
     }));
 
@@ -30,21 +30,35 @@ describe('MainPageComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it('should be created', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should have as title 'LOG2990'", () => {
-        expect(component.title).toEqual('LOG2990');
+    it('should open Carousel modal when Ctrl+G are pressed', () => {
+        const keyboardEvent = { ctrlKey: true, key: 'g', preventDefault(): void {} } as KeyboardEvent;
+        const openCarouselSpy = spyOn<any>(component, 'openCarousel').and.stub();
+        component.handleKeyDown(keyboardEvent);
+        expect(openCarouselSpy).toHaveBeenCalled();
     });
 
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(indexServiceSpy.basicGet).toHaveBeenCalled();
+    it('should NOT open Carousel modal if Ctrl+G key are NOT pressed', () => {
+        const keyboardEvent = { ctrlKey: false, key: 'f', preventDefault(): void {} } as KeyboardEvent;
+        const openCarouselSpy = spyOn<any>(component, 'openCarousel').and.stub();
+        component.handleKeyDown(keyboardEvent);
+        expect(openCarouselSpy).not.toHaveBeenCalled();
     });
 
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(indexServiceSpy.basicPost).toHaveBeenCalled();
+    it('should open Carousel modal when clicking on "Ouvrir le carousel de dessins" button', () => {
+        dialogOpenSpy.and.stub();
+        component.openCarousel();
+        expect(dialogOpenSpy).toHaveBeenCalled();
+    });
+
+    it('should redirect page to editor when clicking on "Continuer un dessin"', () => {
+        autoSaveServiceSpy.loadImage.and.stub();
+        const changeLocationSpy = spyOn<any>(component, 'changeLocation').and.callFake(() => {});
+        component.continueDrawing();
+        expect(autoSaveServiceSpy.loadImage).toHaveBeenCalled();
+        expect(changeLocationSpy).toHaveBeenCalled();
     });
 });

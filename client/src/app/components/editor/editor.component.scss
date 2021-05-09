@@ -1,11 +1,7 @@
 .container {
     height: 100%;
     display: flex;
-}
-
-.drawing-container {
-    overflow: auto;
-    flex: 1 1 auto;
+    overflow: hidden;
 }
 
 .drawing {
@@ -13,4 +9,3 @@
     width: min-content;
     outline: none;
 }
-  
